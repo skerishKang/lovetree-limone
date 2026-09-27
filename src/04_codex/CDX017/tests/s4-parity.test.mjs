@@ -134,9 +134,9 @@ const SETTLE_PREDICATES = Object.freeze({
   // terminal condition - .portal-view also animates scale(.985) -> identity, and capturing
   // before the scale finished made the visual digest marginal (11/11 at one head, 10/11 at
   // the next). Both properties must reach their terminal value.
-  PORTAL_OPEN: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform")],
+  PORTAL_OPEN: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform"), styleAt("#pageTransition", "opacity")],
   // Portal close: shell chrome fully withdrawn.
-  PORTAL_CLOSE_ABOUT_BLANK_RESET: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform")],
+  PORTAL_CLOSE_ABOUT_BLANK_RESET: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform"), styleAt("#pageTransition", "opacity")],
   SOUND_OFF: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
   SOUND_ON_PERSISTED: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
   POINTER_PARALLAX: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
@@ -1201,7 +1201,13 @@ async function captureState(browser, { origin, viewportKey, state, surface, rast
   const requests = [];
   const responses = [];
   const failedRequests = [];
-  page.on("console", (message) => consoleMessages.push({ type: message.type(), text: message.text() }));
+  page.on("console", (message) => consoleMessages.push({
+    type: message.type(),
+    text: message.text(),
+    // CENTRAL: the sporadic extra 404 console entry must be attributable to a concrete
+    // URL, so the message location is recorded rather than only its text.
+    location: message.location(),
+  }));
   page.on("pageerror", (error) => pageErrors.push(String(error && error.message ? error.message : error)));
   page.on("request", (request) => requests.push({ url: request.url(), method: request.method(), resourceType: request.resourceType() }));
   page.on("response", (response) => responses.push({ url: response.url(), status: response.status() }));
@@ -1301,6 +1307,8 @@ async function captureState(browser, { origin, viewportKey, state, surface, rast
     requestCount: requests.length,
     requests,
     responses,
+    // CENTRAL: every >=400 response, so any 4xx console entry can be attributed to a URL.
+    httpErrorResponses: responses.filter((entry) => entry.status >= 400),
     failedRequests,
   };
   await context.close();
@@ -1465,9 +1473,13 @@ const GEOMETRY_ENVELOPE_STATES = Object.freeze([
   "CHAPTER_02", "CHAPTER_04", "WHEEL_NEXT_PREV_WRAP_LOCK", "KEY_ARROW_NEXT_PREV",
 ]);
 const GEOMETRY_ENVELOPE_VIEWPORT = "desktop";
+// The parity channel compares `landmarks[N].box` for a document-order walk that skips the
+// mechanical glue tags. The observed sub-pixel differences were at indices 36 and 39, so the
+// envelope records this whole window at full precision rather than guessing an element.
+const GEOMETRY_LANDMARK_WINDOW = Object.freeze([30, 46]);
 
 async function readChapterDotGeometry(page, sampleIndex) {
-  return page.evaluate((index) => {
+  return page.evaluate(({ index, glueTags, landmarkWindow }) => {
     const round2 = (value) => Math.round(value * 100) / 100;
     const rectOf = (element) => {
       if (!element) return null;
@@ -1477,17 +1489,29 @@ async function readChapterDotGeometry(page, sampleIndex) {
         x2: round2(r.x), y2: round2(r.y), w2: round2(r.width), h2: round2(r.height),
       };
     };
-    const styleOf = (selector) => {
-      const element = document.querySelector(selector);
-      if (!element) return null;
-      const style = getComputedStyle(element);
-      return {
-        position: style.position, display: style.display, width: style.width,
-        gap: style.gap, transform: style.transform, justifyContent: style.justifyContent,
-      };
+    // Re-walk the document EXACTLY like the collectState landmark channel, so the
+    // envelope measures the same element indices the parity channel compares.
+    const landmarks = [];
+    const walk = (element) => {
+      const tag = element.tagName;
+      if (!glueTags.includes(tag)) {
+        const ownText = Array.prototype.filter
+          .call(element.childNodes, (node) => node.nodeType === 3)
+          .map((node) => node.textContent.replace(/\s+/g, " ").trim())
+          .filter(Boolean).join("|");
+        landmarks.push({
+          tag,
+          id: element.getAttribute("id"),
+          class: element.getAttribute("class"),
+          ownText,
+          box: rectOf(element),
+        });
+      }
+      for (const child of element.children) walk(child);
     };
+    walk(document.documentElement);
+    const window_ = landmarks.slice(landmarkWindow[0], landmarkWindow[1]);
     const dot = document.querySelector(".chapter-dot.active");
-    const allDots = Array.from(document.querySelectorAll(".chapter-dot"));
     return {
       sample: index,
       devicePixelRatio: window.devicePixelRatio,
@@ -1495,19 +1519,15 @@ async function readChapterDotGeometry(page, sampleIndex) {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
       scrollLeft: document.documentElement.scrollLeft,
+      landmarkCount: landmarks.length,
+      landmarkWindowStart: landmarkWindow[0],
+      landmarks: window_.map((entry, offset) => ({ index: landmarkWindow[0] + offset, ...entry })),
       activeDotDataChapter: dot ? dot.getAttribute("data-chapter") : null,
-      activeDotIndexInNodeList: dot ? allDots.indexOf(dot) : -1,
-      activeDotCount: allDots.length,
       activeDotRect: rectOf(dot),
-      activeDotTransform: dot ? getComputedStyle(dot).transform : null,
-      activeDotTransitionDuration: dot ? getComputedStyle(dot).transitionDuration : null,
-      activeDotBackgroundColor: dot ? getComputedStyle(dot).backgroundColor : null,
       chapterDotsRect: rectOf(document.querySelector(".chapter-dots")),
       chapterNavRect: rectOf(document.querySelector(".chapter-nav")),
-      chapterDotsStyle: styleOf(".chapter-dots"),
-      chapterNavStyle: styleOf(".chapter-nav"),
     };
-  }, sampleIndex);
+  }, { index: sampleIndex, glueTags: GLUE_TAGS, landmarkWindow: GEOMETRY_LANDMARK_WINDOW });
 }
 
 async function captureGeometryEnvelopeSample(browser, { origin, state, surface, repeatLabel }) {
@@ -1657,63 +1677,110 @@ for (const stateId of GEOMETRY_ENVELOPE_STATES) {
   }
 }
 
-// Analysis: compare the within-surface repeat spread against the cross-surface gap.
-// CENTRAL's decision rule, applied verbatim.
+// Analysis: per landmark index in the recorded window, compare the within-surface repeat
+// spread against the cross-surface gap. CENTRAL's decision rule is applied verbatim:
+//
+//   same surface also wobbles by the same order of magnitude
+//     -> BROWSER_LAYOUT_MEASUREMENT_VARIANCE  (bring the envelope to CENTRAL)
+//
+//   each surface internally fully fixed, but ORIGINAL vs SPLIT stay separated
+//     -> CROSS_SURFACE_GEOMETRY_DIFFERENCE       (possible real parity defect, STOP)
 const geometryEnvelope = [];
 for (const stateId of GEOMETRY_ENVELOPE_STATES) {
   const runs = geometryEnvelopeRuns.filter((run) => run.state === stateId);
   if (runs.length < 4) continue;
-  const first = (run) => run.samples[0]?.activeDotRect ?? null;
-  const originals = runs.filter((run) => run.surface === "original").map(first);
-  const splits = runs.filter((run) => run.surface === "split").map(first);
+  const originals = runs.filter((run) => run.surface === "original");
+  const splits = runs.filter((run) => run.surface === "split");
+  const firstSample = (run) => run.samples[0] ?? null;
   const mean = (values) => (values.length ? values.reduce((total, value) => total + value, 0) / values.length : null);
-  const originalMeanX = mean(originals.filter(Boolean).map((rect) => rect.x));
-  const splitMeanX = mean(splits.filter(Boolean).map((rect) => rect.x));
-  const originalMeanY = mean(originals.filter(Boolean).map((rect) => rect.y));
-  const splitMeanY = mean(splits.filter(Boolean).map((rect) => rect.y));
-  const crossSurfaceX = originalMeanX === null || splitMeanX === null ? null : Math.abs(originalMeanX - splitMeanX);
-  const crossSurfaceY = originalMeanY === null || splitMeanY === null ? null : Math.abs(originalMeanY - splitMeanY);
-  const withinSurfaceX = originals.length >= 2 && originals.every(Boolean)
-    ? Math.max(...originals.map((rect) => rect.x)) - Math.min(...originals.map((rect) => rect.x)) : null;
-  const withinSurfaceYSplit = splits.length >= 2 && splits.every(Boolean)
-    ? Math.max(...splits.map((rect) => rect.y)) - Math.min(...splits.map((rect) => rect.y)) : null;
-  // Also compare the 2-decimal values that the parity channel actually compares.
-  const roundedOriginalX = originals.filter(Boolean).map((rect) => rect.x2);
-  const roundedSplitX = splits.filter(Boolean).map((rect) => rect.x2);
-  const roundedSpreadOriginal = roundedOriginalX.length >= 2 ? Math.max(...roundedOriginalX) - Math.min(...roundedOriginalX) : null;
-  const roundedSpreadSplit = roundedSplitX.length >= 2 ? Math.max(...roundedSplitX) - Math.min(...roundedSplitX) : null;
-  const roundedCross = roundedOriginalX.length && roundedSplitX.length
-    ? Math.abs(mean(roundedOriginalX) - mean(roundedSplitX)) : null;
+  const spread = (values) => (values.length >= 2 ? Math.max(...values) - Math.min(...values) : null);
 
-  const withinSurfaceMax = [withinSurfaceX, withinSurfaceYSplit].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
-  const crossSurfaceMax = [crossSurfaceX, crossSurfaceY].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
-  const roundedWithinMax = [roundedSpreadOriginal, roundedSpreadSplit].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
+  const indexReports = [];
+  const reference = firstSample(originals[0]);
+  for (const identity of (reference?.landmarks ?? [])) {
+    const index = identity.index;
+    const pick = (run, field) => firstSample(run)?.landmarks?.find((entry) => entry.index === index)?.box?.[field] ?? null;
+    const perField = {};
+    for (const field of ["x", "y", "w", "h"]) {
+      const originalFull = originals.map((run) => pick(run, field)).filter((value) => typeof value === "number");
+      const splitFull = splits.map((run) => pick(run, field)).filter((value) => typeof value === "number");
+      if (originalFull.length < 2 || splitFull.length < 2) continue;
+      const originalRounded = originals.map((run) => pick(run, `${field}2`)).filter((value) => typeof value === "number");
+      const splitRounded = splits.map((run) => pick(run, `${field}2`)).filter((value) => typeof value === "number");
+      const withinFull = Math.max(spread(originalFull) ?? 0, spread(splitFull) ?? 0);
+      const crossFull = Math.abs((mean(originalFull) ?? 0) - (mean(splitFull) ?? 0));
+      const withinRounded = Math.max(spread(originalRounded) ?? 0, spread(splitRounded) ?? 0);
+      const crossRounded = Math.abs((mean(originalRounded) ?? 0) - (mean(splitRounded) ?? 0));
+      perField[field] = {
+        originalFullPrecision: originalFull,
+        splitFullPrecision: splitFull,
+        withinSurfaceSpreadFull: withinFull,
+        crossSurfaceGapFull: crossFull,
+        withinSurfaceSpreadRounded: withinRounded,
+        crossSurfaceGapRounded: crossRounded,
+        // CENTRAL's rule, evaluated on the value the parity channel actually compares.
+        classification: crossRounded === 0 ? "EQUAL"
+          : withinRounded > 0 && crossRounded <= withinRounded ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE"
+            : "CROSS_SURFACE_GEOMETRY_DIFFERENCE",
+      };
+    }
+    const fields = Object.values(perField);
+    if (!fields.length) continue;
+    indexReports.push({
+      landmarkIndex: index,
+      tag: identity.tag ?? null,
+      id: identity.id ?? null,
+      class: identity.class ?? null,
+      ownText: identity.ownText ?? null,
+      fields: perField,
+      classification: fields.some((entry) => entry.classification === "CROSS_SURFACE_GEOMETRY_DIFFERENCE")
+        ? "CROSS_SURFACE_GEOMETRY_DIFFERENCE"
+        : fields.some((entry) => entry.classification === "BROWSER_LAYOUT_MEASUREMENT_VARIANCE")
+          ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE" : "EQUAL",
+    });
+  }
 
-  // Per CENTRAL: if the same surface wobbles by the same order of magnitude, the
-  // separation is browser layout measurement variance, not a cross-surface difference.
-  const measurementVariance = roundedWithinMax > 0 || crossSurfaceMax <= withinSurfaceMax;
+  const crossSurfaceFields = indexReports.filter((entry) => entry.classification === "CROSS_SURFACE_GEOMETRY_DIFFERENCE");
+  const varianceFields = indexReports.filter((entry) => entry.classification === "BROWSER_LAYOUT_MEASUREMENT_VARIANCE");
+  const briefFields = (list, only) => list.map((entry) => ({
+    landmarkIndex: entry.landmarkIndex,
+    tag: entry.tag,
+    id: entry.id,
+    class: entry.class,
+    ownText: entry.ownText,
+    fields: Object.fromEntries(Object.entries(entry.fields)
+      .filter(([, value]) => value.classification === only)
+      .map(([name, value]) => [name, {
+        originalFullPrecision: value.originalFullPrecision,
+        splitFullPrecision: value.splitFullPrecision,
+        withinSurfaceSpreadFull: value.withinSurfaceSpreadFull,
+        crossSurfaceGapFull: value.crossSurfaceGapFull,
+        withinSurfaceSpreadRounded: value.withinSurfaceSpreadRounded,
+        crossSurfaceGapRounded: value.crossSurfaceGapRounded,
+      }])),
+  }));
   geometryEnvelope.push({
     state: stateId,
     viewport: GEOMETRY_ENVELOPE_VIEWPORT,
-    dpr: runs[0]?.samples?.[0]?.devicePixelRatio ?? null,
-    originalFullPrecisionX: originals.filter(Boolean).map((rect) => rect.x),
-    splitFullPrecisionX: splits.filter(Boolean).map((rect) => rect.x),
-    originalRoundedX: roundedOriginalX,
-    splitRoundedX: roundedSplitX,
-    withinSurfaceSpreadFull: withinSurfaceMax,
-    withinSurfaceSpreadRounded: roundedWithinMax,
-    crossSurfaceGapFull: crossSurfaceMax,
-    crossSurfaceGapRounded: roundedCross,
+    dpr: reference?.devicePixelRatio ?? null,
+    landmarkCount: reference?.landmarkCount ?? null,
+    landmarkWindow: GEOMETRY_LANDMARK_WINDOW,
+    // Stability of the three consecutive post-settle samples inside a single run.
     withinRunSampleStability: runs.map((run) => ({
       repeatLabel: run.repeatLabel,
-      spreadWithinThreeSamples: run.samples.length >= 2 && run.samples.every((sample) => sample.activeDotRect)
-        ? Math.max(...run.samples.map((sample) => sample.activeDotRect.x)) - Math.min(...run.samples.map((sample) => sample.activeDotRect.x))
-        : null,
+      settleReason: run.settle?.reason ?? null,
+      landmark36SpreadWithinThreeSamples: (() => {
+        const xs = run.samples
+          .map((sample) => sample?.landmarks?.find((entry) => entry.index === 36)?.box?.x)
+          .filter((value) => typeof value === "number");
+        return xs.length >= 2 ? Math.max(...xs) - Math.min(...xs) : null;
+      })(),
     })),
-    activeDotChapter: runs[0]?.samples?.[0]?.activeDotDataChapter ?? null,
-    classification: measurementVariance
-      ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE"
-      : "CROSS_SURFACE_GEOMETRY_DIFFERENCE",
+    activeDotChapter: reference?.activeDotDataChapter ?? null,
+    crossSurfaceDifferenceFields: briefFields(crossSurfaceFields, "CROSS_SURFACE_GEOMETRY_DIFFERENCE"),
+    measurementVarianceFields: briefFields(varianceFields, "BROWSER_LAYOUT_MEASUREMENT_VARIANCE"),
+    classification: crossSurfaceFields.length ? "CROSS_SURFACE_GEOMETRY_DIFFERENCE"
+      : varianceFields.length ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE" : "EQUAL",
   });
 }
 
@@ -2133,6 +2200,12 @@ const summary = {
     count: (record.requests ?? []).filter((entry) => /\/favicon\.ico(\?|$)/.test(entry.url)).length,
     entries: (record.requests ?? []).filter((entry) => /\/favicon\.ico(\?|$)/.test(entry.url)),
   })).filter((entry) => entry.count > 0),
+  // CENTRAL: attribute every >=400 response and every 4xx console entry to a concrete URL.
+  http_error_responses: captures.map((record) => ({
+    state: record.state, viewport: record.viewport, surface: record.surface,
+    httpErrors: record.httpErrorResponses ?? [],
+    errorConsoleEntries: (record.consoleMessages ?? []).filter((entry) => entry.type === "error"),
+  })).filter((entry) => entry.httpErrors.length || entry.errorConsoleEntries.length),
   portal_shell_contract_equal: portalShellEqual,
   portal_shell_checks: portalShellChecks,
   frozen_defects_preserved: frozenFailures.length === 0,
@@ -2367,7 +2440,17 @@ console.log(`CDX017_S4_TIME_DEPENDENT_CONTROL_STATES=${controlStates}`);
 console.log(`CDX017_S4_LANE2_DETERMINISTIC_CHANNEL_RESIDUALS=${lane2DeterministicChannelResiduals.length}`);
 console.log(`CDX017_S4_REAL_PARITY_DEFECTS=${realParityDefects}`);
 for (const entry of geometryEnvelope) {
-  console.log(`CDX017_S4_GEOMETRY_ENVELOPE=${entry.state}|within_full=${entry.withinSurfaceSpreadFull}|cross_full=${entry.crossSurfaceGapFull}|within_rounded=${entry.withinSurfaceSpreadRounded}|cross_rounded=${entry.crossSurfaceGapRounded}|orig_x=${JSON.stringify(entry.originalRoundedX)}|split_x=${JSON.stringify(entry.splitRoundedX)}|class=${entry.classification}`);
+  const cross = (entry.crossSurfaceDifferenceFields ?? []).map((field) =>
+    `${field.landmarkIndex}:${field.tag}#${field.id ?? ""}.${field.class ?? ""} ` +
+    Object.entries(field.fields).map(([name, value]) =>
+      `${name} withinR=${value.withinSurfaceSpreadRounded} crossR=${value.crossSurfaceGapRounded} orig=${JSON.stringify(value.originalFullPrecision)} split=${JSON.stringify(value.splitFullPrecision)}`).join(" "));
+  const variance = (entry.measurementVarianceFields ?? []).map((field) =>
+    `${field.landmarkIndex}:${field.tag}#${field.id ?? ""}.${field.class ?? ""} ` +
+    Object.entries(field.fields).map(([name, value]) =>
+      `${name} withinR=${value.withinSurfaceSpreadRounded} crossR=${value.crossSurfaceGapRounded}`).join(" "));
+  console.log(`CDX017_S4_GEOMETRY_ENVELOPE=${entry.state}|dpr=${entry.dpr}|class=${entry.classification}`);
+  for (const line of cross) console.log(`  CROSS_SURFACE ${line}`);
+  for (const line of variance) console.log(`  MEASUREMENT_VARIANCE ${line}`);
 }
 console.log(`CDX017_S4_FAVICON_REQUEST_CAPTURES=${captures.filter((record) => (record.requests ?? []).some((entry) => /\/favicon\.ico(\?|$)/.test(entry.url))).length}`);
 console.log(`CDX017_S4_CANONICAL16_TECHNIQUE_SELF_CHECK=${summary.canonical16_normalization.technique_self_check ? "PASS" : "FAIL"}`);
