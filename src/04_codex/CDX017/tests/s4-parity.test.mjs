@@ -1775,6 +1775,7 @@ async function captureGeometryEnvelopeSample(browser, { origin, state, surface, 
   };
 }
 
+const boundedPhaseStyleEvidence = [];
 const comparisonRows = [];
 for (const [key, records] of byKey) {
   const original = records.find((record) => record.surface === "original" && !record.isControl);
@@ -1816,7 +1817,6 @@ for (const [key, records] of byKey) {
   // states that actually drive the portal transition. authority-context.json#/nondeterminism_contract
   // already classifies "clip-path radius" as MOTION_PHASE_VARIANCE. The raw values are kept
   // as evidence on the row; no other computed-style property is projected.
-  const boundedPhaseStyleEvidence = [];
   const clipPathProjected = PORTAL_PHASE_STATES.has(original.state)
     ? {
       left: original.collected?.computedStyle?.["#pageTransition"]?.clipPath ?? null,
