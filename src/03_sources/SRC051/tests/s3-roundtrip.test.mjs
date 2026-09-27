@@ -139,8 +139,17 @@ ok(manifest.stages.mechanical_split_complete === true
   && manifest.tsx_allowed_during_split === false,
   "T18", "S3 asserted, S4 parity explicitly false, mechanical-only policy");
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
-let matOk = mat.source_id === "SRC051" && mat.status === "MATERIALIZED_PENDING_PARITY"
-  && mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE" && mat.parity_ref === null
+// S3 correction (#589 comment 5860509930): the record must express "mechanically materialized,
+// CENTRAL S4 not released", not "parity capture pending" (which read as if parity were licensed).
+let matOk = mat.source_id === "SRC051"
+  && mat.status === "MECHANICAL_MATERIALIZED"
+  && mat.parity_status === "CENTRAL_S4_RELEASE_PENDING"
+  && mat.stage_gate?.s4_release === "HOLD_CENTRAL"
+  && mat.stage_gate?.parity_capture_authorized === false
+  && mat.stage_gate?.skip_reason === "CENTRAL_S4_NOT_RELEASED"
+  && mat.parity_ref === null
+  && mat.parity_claim_made === false
+  && mat.s4_started === false
   && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA
   && mat.contracts.round_trip_byte_identity === true
   && mat.contracts.redesign_or_refactor === false

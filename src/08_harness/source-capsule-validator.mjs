@@ -47,6 +47,65 @@ export function validateMechanicalSplitSurface({ repoRoot, roots = ['src/03_sour
   return failures;
 }
 
+export const MATERIALIZATION_STATUSES = Object.freeze([
+  'MATERIALIZED_PENDING_PARITY',
+  'MECHANICAL_MATERIALIZED',
+  'ACCEPTED',
+]);
+
+/**
+ * CENTRAL S4 release gate for parity capture.
+ *
+ * `stages.mechanical_split_complete = true` with `stages.source_split_parity_pass = false`
+ * describes a Source whose split is complete but whose parity has not been judged yet. That
+ * condition alone is NOT an authorization to run original-vs-split parity: only CENTRAL can
+ * release S4. A capsule therefore carries an explicit `stage_gate` block, and the shared parity
+ * harness consults this resolver before it captures anything.
+ *
+ * Fail-closed by design:
+ *   - no `stage_gate` at all            -> legacy behaviour, authorized (unchanged for every
+ *                                           capsule written before this gate existed);
+ *   - a `stage_gate` that is malformed   -> NOT authorized, reason STAGE_GATE_INCONSISTENT;
+ *   - `s4_release: 'HOLD_CENTRAL'`       -> NOT authorized, reason CENTRAL_S4_NOT_RELEASED;
+ *   - `parity_capture_authorized: false` -> NOT authorized, reason CENTRAL_S4_NOT_RELEASED;
+ *   - `s4_release: 'RELEASED'` + `parity_capture_authorized: true` -> authorized.
+ *
+ * A `stage_gate` may never claim RELEASED while CENTRAL still holds S4: the two fields must agree,
+ * and a disagreement fails closed rather than resolving in favour of capture.
+ */
+export const STAGE_GATE_REASONS = Object.freeze({
+  S4_HOLD: 'CENTRAL_S4_NOT_RELEASED',
+  INCONSISTENT: 'STAGE_GATE_INCONSISTENT',
+  AUTHORIZED: 'PARITY_CAPTURE_AUTHORIZED',
+});
+
+export function resolveParityCaptureAuthorization(manifest, record) {
+  const gate = record?.stage_gate ?? manifest?.stage_gate ?? null;
+  if (gate === null || gate === undefined) {
+    return { authorized: true, gate: null, reason: null, source: 'LEGACY_NO_STAGE_GATE' };
+  }
+  if (typeof gate !== 'object' || Array.isArray(gate)) {
+    return { authorized: false, gate, reason: STAGE_GATE_REASONS.INCONSISTENT, source: 'STAGE_GATE_MALFORMED' };
+  }
+  const released = gate.s4_release === 'RELEASED';
+  const held = gate.s4_release === 'HOLD_CENTRAL';
+  if (!released && !held) {
+    return { authorized: false, gate, reason: STAGE_GATE_REASONS.INCONSISTENT, source: 'STAGE_GATE_UNKNOWN_S4_RELEASE' };
+  }
+  if (typeof gate.parity_capture_authorized !== 'boolean') {
+    return { authorized: false, gate, reason: STAGE_GATE_REASONS.INCONSISTENT, source: 'STAGE_GATE_MISSING_AUTHORIZATION' };
+  }
+  // The two fields must agree. A capsule cannot be RELEASED and simultaneously unauthorized, nor
+  // held and authorized; either shape is an authoring error and fails closed.
+  if (released !== gate.parity_capture_authorized) {
+    return { authorized: false, gate, reason: STAGE_GATE_REASONS.INCONSISTENT, source: 'STAGE_GATE_FIELD_DISAGREEMENT' };
+  }
+  if (held) {
+    return { authorized: false, gate, reason: gate.skip_reason ?? STAGE_GATE_REASONS.S4_HOLD, source: 'CENTRAL_S4_HOLD' };
+  }
+  return { authorized: true, gate, reason: null, source: 'CENTRAL_S4_RELEASED' };
+}
+
 export const DUPLICATE_VARIANT_VALUES = Object.freeze([
   'UNRESOLVED',
   'SINGLE_EXECUTABLE_NO_DUPLICATE',
@@ -314,7 +373,7 @@ function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, author
     if (stages.baseline_captured !== true) fail('mechanical split cannot precede accepted baseline');
     for (const required of ['split/index.html', 'split/styles.css', 'split/script.js', 'split/materialization.json']) requirePath(repoRoot, `${base}/${required}`, failures);
     const materialization = readJson(repoRoot, `${base}/split/materialization.json`, failures);
-    if (!materialization || !['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(materialization.status)) fail('invalid materialization status');
+    if (!materialization || !MATERIALIZATION_STATUSES.includes(materialization.status)) fail('invalid materialization status');
     if (materialization) {
       if (materialization.authority_mode !== 'DUAL_VARIANT') fail('materialization authority_mode must be DUAL_VARIANT');
       for (const key of ['A', 'B']) {
@@ -458,8 +517,23 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       if (stages.baseline_captured !== true) failures.push(`${sourceId}: mechanical split cannot precede accepted baseline`);
       for (const required of ['split/index.html', 'split/styles.css', 'split/script.js', 'split/materialization.json']) requirePath(repoRoot, `${base}/${required}`, failures);
       const materialization = readJson(repoRoot, `${base}/split/materialization.json`, failures);
-      if (!materialization || !['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(materialization.status)) failures.push(`${sourceId}: invalid materialization status`);
+      if (!materialization || !MATERIALIZATION_STATUSES.includes(materialization.status)) failures.push(`${sourceId}: invalid materialization status`);
       if (materialization && (materialization.authority?.bytes !== m.bytes || materialization.authority?.sha256 !== m.sha256)) failures.push(`${sourceId}: materialization authority drift`);
+      // MECHANICAL_MATERIALIZED means "the split exists and is verified, but CENTRAL has not
+      // released S4". That claim is only meaningful together with an explicit stage gate, and the
+      // gate must actually withhold parity authorization. A record that says the split is
+      // materialized while leaving S4 implicitly authorized is rejected, so the status cannot be
+      // used to launder an unreleased S4 into the parity harness.
+      if (materialization?.status === 'MECHANICAL_MATERIALIZED') {
+        const gate = materialization.stage_gate ?? manifest.stage_gate ?? null;
+        const verdict = resolveParityCaptureAuthorization(manifest, materialization);
+        if (!gate) failures.push(`${sourceId}: MECHANICAL_MATERIALIZED requires an explicit stage_gate`);
+        else if (verdict.authorized) failures.push(`${sourceId}: MECHANICAL_MATERIALIZED must not authorize parity capture while CENTRAL holds S4`);
+        else if (materialization.parity_status !== 'CENTRAL_S4_RELEASE_PENDING') {
+          failures.push(`${sourceId}: MECHANICAL_MATERIALIZED requires parity_status=CENTRAL_S4_RELEASE_PENDING`);
+        }
+        if (gate && gate.s4_release !== 'HOLD_CENTRAL') failures.push(`${sourceId}: MECHANICAL_MATERIALIZED requires stage_gate.s4_release=HOLD_CENTRAL`);
+      }
     }
     if (stages.source_split_parity_pass === true) {
       if (stages.mechanical_split_complete !== true) failures.push(`${sourceId}: parity cannot precede mechanical split`);

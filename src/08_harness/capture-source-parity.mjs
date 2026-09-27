@@ -14,6 +14,7 @@ import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
 import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
+import { resolveParityCaptureAuthorization } from './source-capsule-validator.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -284,6 +285,21 @@ try {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
     if (manifest.stages?.mechanical_split_complete !== true || manifest.stages?.source_split_parity_pass !== false) continue;
+    // CENTRAL S4 release gate. A completed mechanical split with no parity verdict is a *pending*
+    // state, not an authorization: only CENTRAL can release S4, and the capsule must say so
+    // explicitly in its stage_gate. Checked before any browser work and before evidence/parity/
+    // is created, so a held capsule leaves no parity artifact behind. Capsules with no stage_gate
+    // keep the pre-existing behaviour unchanged.
+    const materializationPath = path.join(sourceDir, 'split', 'materialization.json');
+    const materializationRecord = fs.existsSync(materializationPath)
+      ? JSON.parse(fs.readFileSync(materializationPath, 'utf8'))
+      : null;
+    const authorization = resolveParityCaptureAuthorization(manifest, materializationRecord);
+    if (!authorization.authorized) {
+      const gate = authorization.gate ?? {};
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${authorization.reason} s4_release=${gate.s4_release ?? 'UNKNOWN'} parity_capture_authorized=${gate.parity_capture_authorized ?? 'UNKNOWN'} gate_source=${authorization.source} central_s4_released=false`);
+      continue;
+    }
     // DUAL_VARIANT + S4 HOLD: never silently promote into S4 and never pick A/B
     // as an implicit canonical default. The generic single-executable parity
     // harness cannot represent two retained authorities. SKIP with an explicit

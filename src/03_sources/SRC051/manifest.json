@@ -17,13 +17,41 @@
     "MST104"
   ],
   "family_ref": null,
-  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
   "duplicate_variant_note": {
-    "status": "UNRESOLVED",
-    "known_situation": "A byte-identical convenience copy of the authority exists under the Korean alias name 10_병행안_네온인간분석_홍보대문_바로보기.html at a different Drive file id 1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8. S0 recorded both ids against the same SHA-256 5b7f084b...df07fdf014 in docs/design-intake/source-track-51-gate.md, design-intake/manifests/source-track-51-neon-human-analysis.json and reference/source-track-51-neon-human-analysis/PROVENANCE.md.",
-    "why_unresolved_not_settled": "Adjudicating DUPLICATE_COPY_SAME_SHA requires a CENTRAL_FRESH_DRIVE_READBACK of the alias object. S3 performed no Drive write and no fresh alias download, so the status is held at UNRESOLVED rather than asserted. This follows the SRC071 precedent, which also held adjudication open and recorded it as not performed.",
-    "adjudicated": false,
-    "adjudication_owner": "next CENTRAL stage",
+    "status": "DUPLICATE_COPY_SAME_SHA",
+    "adjudicated": true,
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §2.3 step 2 (identical SHA-256), §4.2 record location",
+    "adjudicated_at_utc": "2026-09-27T00:00:00Z",
+    "adjudicated_by": "S1 fresh-read enumeration, accepted by CENTRAL — #589 comment 5852908478, reaffirmed #589 comment 5859197749",
+    "closing_step": "step 2 - identical SHA-256 and identical Drive MD5",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-27T00:00:00Z",
+      "verified_by": "S1 fresh Drive enumeration (read-only), accepted by CENTRAL #589 comment 5852908478",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK"
+    },
+    "fresh_enumeration": {
+      "object_count": 8,
+      "executable_html_objects": 2,
+      "canonical_file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+      "canonical_filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+      "alias_file_id": "1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8",
+      "alias_filename": "10_병행안_네온인간분석_홍보대문_바로보기.html",
+      "bytes_each": 2782365,
+      "drive_md5_each": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256_each": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+      "relation": "DUPLICATE_COPY_SAME_SHA",
+      "basis": "Both Drive objects carry the same size, the same Drive-native MD5 and the same SHA-256, so the pair is a byte-identical convenience copy under a different name, not a content variant."
+    },
+    "provenance": {
+      "s1_report_commit": "ed22f458b5f9522b357464e99694d085df537058",
+      "s1_report_path": "lovetree-reports/2026-09-27/LOCAL1/589-mst104-src051-s1-authority.md",
+      "central_s1_acceptance": "skerishKang/lovetree-limone#589 comment 5852908478 (accepted at #589 comment 5859197749: MST104_S1=PASS)",
+      "inherited_at": "S3 correction 2026-09-28, under CENTRAL #589 comment 5860509930 (BLOCKER 4)"
+    },
+    "no_new_readback_performed": true,
+    "no_new_readback_reason": "The S1 fact was already accepted by CENTRAL. Re-proving it with another Drive readback would spend Drive budget to re-derive a settled prior-stage conclusion.",
     "drive_mutation": 0
   },
   "baseline_ref": "baseline/accepted-baseline.json",
@@ -52,7 +80,13 @@
     ],
     "scroll_behavior": "smooth",
     "reduced_motion_behavior": "the authored CSS media query disables CSS animation, but the JavaScript Web Animations CTA pulse is NOT gated on prefers-reduced-motion and still runs",
-    "interaction_surface": "scroll-driven section phases, pointer parallax, hover affordances, and one #pulseBtn click that raises a declared WAAPI pulse"
+    "interaction_surface": "scroll-driven section phases, pointer parallax, hover affordances, and one #pulseBtn click that raises a declared WAAPI pulse",
+    "qa_hook_members": [
+      "sections",
+      "scrollToSection",
+      "setProgress",
+      "update"
+    ]
   },
   "scope": {
     "s3_scope": "src/03_sources/SRC051/ only",
@@ -60,7 +94,9 @@
     "product_adoption": false,
     "lineage51_allocated": false,
     "backend_auth_db_work": false,
-    "drive_mutation": false
+    "drive_mutation": false,
+    "parity_capture_authorized": false,
+    "central_s4_release": "HOLD"
   },
   "preserved_metadata": {
     "synchronization_contract": {
@@ -155,5 +191,14 @@
         "s3_action": "recorded as unresolved metadata only; not resolved, not converted to source truth, not counted as a defect and not counted as a parity input"
       }
     ]
+  },
+  "stage_gate": {
+    "s4_release": "HOLD_CENTRAL",
+    "parity_capture_authorized": false,
+    "decided_by": "CENTRAL",
+    "decision_ref": "skerishKang/lovetree-limone#589 comment 5859197749 (S3_RELEASE=BOUNDED_SRC051_ONLY, S4_RELEASE=NO) and #589 comment 5860509930 (HOLD_CORRECTION_REQUIRED, S4_RELEASE=NO)",
+    "skip_reason": "CENTRAL_S4_NOT_RELEASED",
+    "original_vs_split_comparison_authorized": false,
+    "note": "mechanical_split_complete=true with source_split_parity_pass=false is a pending state, NOT a parity authorization. The shared parity harness must skip SRC051 with reason CENTRAL_S4_NOT_RELEASED and must not create any evidence/parity/ artifact until CENTRAL releases S4."
   }
 }

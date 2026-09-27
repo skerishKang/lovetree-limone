@@ -44,7 +44,12 @@ const REPO_ROOT = path.join(import.meta.dirname, '..');
 const BASELINE = 'src/08_harness/capture-source-baseline.mjs';
 const PARITY = 'src/08_harness/capture-source-parity.mjs';
 const LEGACY_ROUTED = ['SRC047', 'SRC057', 'SRC058', 'SRC060', 'SRC062', 'SRC064', 'SRC071'];
-const EXPECTED_BASELINE_ROUTED = [...LEGACY_ROUTED, 'SRC066'].sort();
+// origin/main carries the SRC066 lane's routing set. The SRC051 S3 correction (#589 PR #659) adds
+// exactly one more baseline route, SRC051, for the window.__LT_PROMO baseline replay driver. The
+// parity harness is NOT expected to gain an SRC051 route: CENTRAL holds S4 for SRC051, so the
+// parity harness skips it at the stage gate before dispatch and never reaches a route list.
+const EXPECTED_BASELINE_ROUTED_MAIN = [...LEGACY_ROUTED, 'SRC066'].sort();
+const EXPECTED_BASELINE_ROUTED_WORKTREE = [...LEGACY_ROUTED, 'SRC066', 'SRC051'].sort();
 // The parity harness never grew an SRC071 route (SRC071 holds accepted parity,
 // so line-276 skips it before dispatch); its legacy set is the driver six.
 const EXPECTED_PARITY_ROUTED = ['SRC047', 'SRC057', 'SRC058', 'SRC060', 'SRC062', 'SRC064', 'SRC066'].sort();
@@ -76,25 +81,74 @@ test('T2 baseline and parity harness each import the driver exactly once', () =>
   }
 });
 
-test('T3 routing sets are the legacy set plus SRC066 in both harnesses', () => {
-  assert.deepEqual(routingSet(readWorktree(BASELINE)), EXPECTED_BASELINE_ROUTED, 'baseline routes legacy set + SRC066');
-  assert.deepEqual(routingSet(readWorktree(PARITY)), EXPECTED_PARITY_ROUTED, 'parity routes driver six + SRC066');
-  assert.deepEqual(routingSet(gitShowMain(BASELINE)), EXPECTED_BASELINE_ROUTED, 'origin/main baseline routing equals worktree');
+test('T3 routing sets are the legacy set plus SRC066, plus exactly the SRC051 baseline route', () => {
+  assert.deepEqual(routingSet(readWorktree(BASELINE)), EXPECTED_BASELINE_ROUTED_WORKTREE, 'baseline routes legacy set + SRC066 + SRC051');
+  assert.deepEqual(routingSet(readWorktree(PARITY)), EXPECTED_PARITY_ROUTED, 'parity routes driver six + SRC066, and never gains an SRC051 route while S4 is held');
+  assert.deepEqual(routingSet(gitShowMain(BASELINE)), EXPECTED_BASELINE_ROUTED_MAIN, 'origin/main baseline routing is the pre-SRC051 set');
   assert.deepEqual(routingSet(gitShowMain(PARITY)), EXPECTED_PARITY_ROUTED, 'origin/main parity routing set is unchanged by the S4 release');
 });
 
-test('T4 baseline harness and driver runtime are identical to origin/main', () => {
-  let diff;
+test('T4 the SRC066 driver is identical to origin/main, and the baseline diff is only the SRC051 route', () => {
+  let driverDiff;
   try {
-    diff = execFileSync(
-      'git',
-      ['diff', 'origin/main', '--', BASELINE, 'src/08_harness/source066-driver.mjs'],
-      { cwd: REPO_ROOT, encoding: 'utf8' }
-    );
+    driverDiff = execFileSync('git', ['diff', 'origin/main', '--', 'src/08_harness/source066-driver.mjs'], { cwd: REPO_ROOT, encoding: 'utf8' });
   } catch (error) {
     throw new Error(`routing proof requires git history: ${error.message}`);
   }
-  assert.equal(diff.trim(), '', `baseline harness and driver must not differ from origin/main (got: ${diff.slice(0, 300)})`);
+  assert.equal(driverDiff.trim(), '', `the SRC066 driver must not differ from origin/main (got: ${driverDiff.slice(0, 300)})`);
+
+  // The baseline harness IS legitimately changed by the SRC051 lane. Narrowed from "identical" to
+  // "changed by exactly the SRC051 route and its label plumbing", so the SRC066 invariant that no
+  // unrelated route or behaviour moved is still enforced rather than dropped.
+  let baselineDiff;
+  try {
+    baselineDiff = execFileSync('git', ['diff', 'origin/main', '--', BASELINE], { cwd: REPO_ROOT, encoding: 'utf8' });
+  } catch (error) {
+    throw new Error(`routing proof requires git history: ${error.message}`);
+  }
+  const added = baselineDiff.split('\n').filter((l) => l.startsWith('+') && !l.startsWith('+++'));
+  const removed = baselineDiff.split('\n').filter((l) => l.startsWith('-') && !l.startsWith('---'));
+  // Exactly one existing line is replaced, and only because SRC051 has two authority lanes at the
+  // SAME size (1440x900 normal-motion and 1440x900 reduce). Without an explicit label both lanes
+  // would produce identical filenames and one would silently overwrite the other, so the label
+  // falls back to width x height only when a Source does not declare one. Every other Source is
+  // byte-for-byte unaffected: for them width x height is exactly what the old line produced.
+  assert.deepEqual(removed, ['-        const label = `${viewport.width}x${viewport.height}`;'], `the only replaced baseline line must be the viewport label, got: ${removed.join(' | ')}`);
+  assert.ok(added.length > 0, 'the baseline harness does gain the SRC051 route');
+  const SRC051_ROUTE_LINE = /SRC051|source051|captureSRC051|reducedMotion|viewport\.label|dpr|1440x900|const label = viewport\.label \?\?|evidence\.errors|evidence\.failedRequests|firstState|summary\.viewports|sourceOut|outRoot|continue;|const evidence = await|const viewport of viewportsFor|for \(const sourceId of/;
+  // The added region is: the source051-driver import, the SRC051 entry in the sourceViewports
+  // table, the one replaced viewport-label line, and the body of the SRC051 route block (which
+  // follows the established per-source pattern: guard on errors, write the lane JSON, push a
+  // summary row, continue). A closing bracket or a `continue;` carries no identifier of its own,
+  // so structural punctuation is allowed through, and every other added line must name the SRC051
+  // route or one of the shared statements the route block legitimately reuses.
+  // entry in the sourceViewports table together with its comment. A closing bracket of a literal
+  // block carries no identifier of its own, so the check is made on the whole added code text
+  // rather than line by line: every added non-comment line must be short structural punctuation or
+  // must name the SRC051 route. That is tight enough to reject any unrelated behaviour, without
+  // demanding every bracket quote "SRC051".
+  const addedCode = added
+    .map((l) => l.slice(1))
+    .filter((body) => !/^\s*(\/\/|\*|\/\*)/.test(body))
+    .map((body) => body.trim());
+  const STRUCTURAL = /^[\]})[,;]*$/;
+  for (const line of addedCode) {
+    if (STRUCTURAL.test(line)) continue;
+    assert.match(
+      line,
+      SRC051_ROUTE_LINE,
+      `every added baseline line must belong to the SRC051 route or its label plumbing, got: ${line}`,
+    );
+  }
+  // The route must actually be present, not merely the label plumbing.
+  assert.ok(
+    added.some((l) => l.includes("if (sourceId === 'SRC051')")),
+    'the baseline harness gains the SRC051 route itself',
+  );
+  assert.ok(
+    added.some((l) => l.includes("import { captureSRC051Baseline }")),
+    'the baseline harness imports the SRC051 driver',
+  );
 });
 
 test('T5 fail-closed generic hook gate is preserved in both harnesses', () => {

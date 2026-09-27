@@ -148,7 +148,12 @@ test('the SRC 108 harness gate passes with the §7 check wired in', () => {
   });
   assert.equal(result.status, 0, (result.stderr ?? '') + (result.stdout ?? ''));
   assert.match(result.stdout, /SRC_108_HARNESS_GATE=PASS/);
-  assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=14/);
+  // SRC051 joined as the 15th active Source capsule on 2026-09-28 under the
+  // CENTRAL S3 bounded release for MST104: SRC051, MST104, #589, PR #659.
+  // The count is an exact tree-state assertion, not a lower bound: it must be
+  // bumped in lockstep every time a Source capsule becomes active, so a
+  // capsule silently entering or leaving the active set cannot pass here.
+  assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=15/);
   // Tree-state assertion: CDX014 (2026-09-06) + CDX017 (2026-09-26, S3
   // mechanical capsule under #589 comment 5845654192). Each new Codex capsule
   // lane must bump this count, exactly as the batch-pass expectation list above

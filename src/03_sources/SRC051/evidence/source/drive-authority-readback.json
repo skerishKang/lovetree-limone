@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC051",
-  "verified_at_utc": "2026-08-21T00:00:00.000Z",
+  "verified_at_utc": "2026-09-27T00:00:00Z",
   "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
   "verification_mode_caveat": "This mode string is required by src/08_harness/source-capsule-validator.mjs. The underlying readback is the S0 #308 full-tree transport (2026-08-21), NOT a readback performed during S3. S3 performed no Drive write and no fresh Drive download; S3 re-proved the byte lock locally from the committed Git blob instead.",
   "fresh_drive": {
@@ -13,8 +13,8 @@
     "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
   },
   "readback_transport": {
-    "tool": "rclone (shared gdrive client, read-only)",
-    "method": "S0 #308 full-tree read-only copy of 51_네온인간분석_인터랙티브홍보대문, 8 files / 19,574,411 B; all 8 files verified OK against Drive-native MD5",
+    "governing": "S1 fresh read-only Drive enumeration, 2026-09-27 (see fresh_authority_evidence)",
+    "historical": "S0 full-tree transport, 2026-08-21 (see historical_evidence)",
     "byte_identity": "PASS",
     "sha256_identity": "PASS"
   },
@@ -25,21 +25,18 @@
     "lf_count": 404,
     "crlf_count": 0,
     "bom": false,
-    "note": "The repository Git blob is byte-exact to the Drive authority. The Windows working-tree checkout is CRLF-translated and was NOT used as authority at any point."
+    "note": "The repository Git blob is byte-exact to the Drive authority. The Windows working-tree checkout is CRLF-translated and was NOT used as authority at any point.",
+    "performed_at": "S3, and re-proved at S3 correction"
   },
   "s2_crosscheck": {
     "s2_authority_copy": "2782365 bytes / 5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
     "result": "MATCH"
   },
-  "verified_by": "S0 #308 source gate registration; S3 byte lock re-proved by LOCAL1",
+  "verified_by": "S1 fresh Drive enumeration accepted by CENTRAL #589 comment 5852908478; S3 byte lock re-proved locally by LOCAL1",
   "drive_folder_identity": {
     "status": "UNRESOLVED",
-    "what_is_missing": "The Google Drive FOLDER id for [[지피티 작업]]/[01_러브트리]/03_디자인채택본/51_네온인간분석_인터랙티브홍보대문 was never recorded by S0 (#308 gate record, FILE_INDEX, intake manifest all record FILE ids and the Drive PATH, not the folder id).",
-    "why_not_guessed": "Identity must never be inferred from a filename or a path. An unverified id is worse than an explicit unknown, so the sentinel UNRESOLVED is recorded in all three identity files rather than a fabricated value.",
-    "identity_basis_actually_used": "docs/design-intake/src rule + SRC071/authority/authority.json decoy_resolution: 'Identity resolved by canonical Drive file id plus SHA-256 byte lock; filename alone never establishes identity.' The canonical Drive FILE id 1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt plus the SHA-256 byte lock is the identity basis and is fully verified.",
-    "bounded_enumeration_attempted": "Read-only rclone lsjson at the SRC071 design_root_folder_id (1bv5BpMjhOgCxlpdHwPfr4MoSSPT6HbgN) returned SRC071's own V1..V7 revision folders, i.e. that id is SRC071's V1 folder and not 03_디자인채택본, so it is not a usable ancestor. A Drive-root lsjson exceeded the bounded-read budget and was abandoned per AGENTS.md section 7. No Drive mutation occurred.",
-    "drive_mutation": 0,
-    "needed_from_central": "Supply the Drive folder id for 51_네온인간분석_인터랙티브홍보대문, or confirm that drive_folder_id may remain UNRESOLVED when the canonical file id plus the SHA-256 lock are present."
+    "blocking": false,
+    "note": "The Drive folder id was never recorded by S0 or S1. CENTRAL ruled it non-blocking for SRC051 S3/S4 (#589 comment 5860509930): canonical identity is locked by Drive file id + exact byte hash. No further Drive enumeration was performed and none should be."
   },
   "identity_non_inference": {
     "master_rows": [
@@ -47,5 +44,39 @@
     ],
     "family_ref": null,
     "relations_imported_from_intake_pr_text": false
+  },
+  "fresh_authority_evidence": {
+    "stage": "S1",
+    "date": "2026-09-27",
+    "transport": "fresh read-only Drive enumeration of 51_네온인간분석_인터랙티브홍보대문 (8 objects)",
+    "objects": 8,
+    "executable_html_objects": 2,
+    "canonical": {
+      "file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+      "bytes": 2782365,
+      "drive_md5": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+    },
+    "alias": {
+      "file_id": "1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8",
+      "filename": "10_병행안_네온인간분석_홍보대문_바로보기.html",
+      "bytes": 2782365,
+      "drive_md5": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+    },
+    "alias_relation": "DUPLICATE_COPY_SAME_SHA",
+    "report": {
+      "repo": "skerishKang/workdiary",
+      "commit": "ed22f458b5f9522b357464e99694d085df537058",
+      "path": "lovetree-reports/2026-09-27/LOCAL1/589-mst104-src051-s1-authority.md"
+    },
+    "accepted_by": "skerishKang/lovetree-limone#589 comment 5852908478; reaffirmed as MST104_S1=PASS in #589 comment 5859197749"
+  },
+  "historical_evidence": {
+    "stage": "S0",
+    "date": "2026-08-21",
+    "role": "HISTORICAL_EARLIER_TRANSPORT",
+    "transport": "read-only full-tree rclone copy of the same folder, 8 files / 19,574,411 B, all 8 verified OK against Drive-native MD5",
+    "note": "This is the earlier intake transport. It is retained as provenance but is NOT the governing fresh authority evidence; the 2026-09-27 S1 enumeration is. S3 performs no Drive readback of its own and performs no Drive mutation."
   }
 }

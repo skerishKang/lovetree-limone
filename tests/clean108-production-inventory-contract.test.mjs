@@ -74,9 +74,14 @@ test('exactly one CLEAN-108 pilot exclusion exists in production-auto-deploy.yml
   assert.equal(matches.length, 1, `expected exactly 1 pilot reference, got ${matches.length}`);
 });
 
-test('A-track inventory semantics are unchanged (11-test expected browser inventory)', () => {
+test('A-track inventory semantics are unchanged (12-test expected browser inventory)', () => {
   const workflow = readWorkflow('a-track-p0-validation.yml');
-  assert.match(workflow, /expected_browser_count=11/);
+  // 11 -> 12 with SRC051's baseline-driver contract test, which is a real Playwright test and must
+  // therefore appear in the expected browser inventory. The count is an exact declaration that the
+  // workflow's two independent detectors are diffed against, so it moves in lockstep with the
+  // inventory rather than becoming a lower bound.
+  assert.match(workflow, /expected_browser_count=12/);
+  assert.match(workflow, /tests\/src051-baseline-driver\.test\.mjs/);
   // the A-track exclusion list names the pilot exactly once and nothing else CLEAN-108
   const clean108Exclusions = [...workflow.matchAll(/! -name 'clean108-[^']+\.test\.mjs'/g)];
   assert.equal(clean108Exclusions.length, 1, 'A-track must exclude exactly one CLEAN-108 test');
