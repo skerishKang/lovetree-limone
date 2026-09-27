@@ -43,14 +43,14 @@
       "detail": "All four shared scripts enumerate only src/03_sources directories matching ^SRC\\d{3}$ and therefore never address src/04_codex/CDX017. Unlike CDX014 (CONTEXT_AWARE_ONLY, whose repository path is NOT a runtime surface and which records an explicit SKIP), CDX017 needs no skip disposition: its repository original and split surfaces ARE runtime surfaces once served with their own assets/ directory. No shared harness file was modified and no skip was fabricated.",
       "s3_evidence_executor": "src/04_codex/CDX017/tests/s3-roundtrip.test.mjs"
     },
-    "note": "S4 parity is NOT started and NOT claimed by this capsule. Per the S2 nondeterminism contract (#589 comment 5845654192) raw PNG byte equality is not a valid S4 acceptance rule for this source, and no SSIM / perceptual / pixel threshold is proposed or recorded here. S4 will compare ORIGINAL vs SPLIT using source-specific structural/state/geometry parity plus a CENTRAL-approved bounded visual method, under a separate S4 release."
+    "note": "S4 parity ACCEPTED by CENTRAL at PR #658 comment 5852772691. The accepted visual gate is exact repository canonical16 digest equality on the 11 required settled pairs after visual-only suppression of .water-canvas and .cursor; raw PNG equality and numeric visual tolerances are not claimed. Shell-owned structural/state/geometry/runtime channels are accepted EQUAL under the bounded source-native phase evidence recorded in evidence/parity/accepted-parity.json."
   },
   "stages": {
     "identity_verified": true,
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
@@ -255,12 +255,14 @@
       "The source-owned document 04_QA.md records the author's own save path as 17_러브트리_글로벌셸_롤링메뉴_V1/버전4 while the live Drive object is the subfolder 버전4-선택. That is a naming variance inside the source's own documentation. It is recorded, not corrected, and it is not a duplicate-variant question.",
       "The shell's 'Memory Orbit' Enter destination resolves to the 14_러브트리_로테이팅메모리인덱스_V1 family ROOT 최종본.html (drive_file_id 1F2cN40KjDAQjkPuYHVWF93He1JxNqORs, 28927 B, sha256 1c9c23430c455c7c78e9efcedaef72972a5b3b4fc151a9949d8124ba7aa5839b), which is NOT the object CDX014 pins (13SXRBG5AOonRELM6_sIr0HLBQzc2gNZZ/v1/최종본.html, 19631 B, sha256 0cef6497103d05a853c4849d58967bed66e3af85db5e345a69724b2d26719361). Recorded for CENTRAL cross-lane awareness only. No action, no substitution, no adjudication in this lane.",
       "MST102 resolution to CDX017 is recorded in src/02_master/MST102/record.json with EXPLICIT_LEDGER_PROVENANCE (design-intake/master-design-coverage.json row master_id=102, master_filename 'Codex-17 Global Shell Rolling Menu', product_job SHELL); it is not numeric inference from the folder name.",
-      "CDX017 is S0-S3 COMPLETE. S4 parity is NOT started, no parity evidence exists in this capsule, and no parity acceptance is claimed."
+      "CDX017 is S0-S4 COMPLETE. S4 parity is ACCEPTED by CENTRAL at PR #658 comment 5852772691; accepted evidence is evidence/parity/accepted-parity.json. Product adoption remains false."
     ]
   },
   "s2_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5845654192 (CDX017 S2 acceptance / S3 release)",
   "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5845654192",
-  "s4_status": "NOT_RELEASED",
+  "s4_status": "ACCEPTED",
   "product_adoption": false,
-  "product_canonical": false
+  "product_canonical": false,
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "s4_acceptance_ref": "skerishKang/lovetree-limone#658 comment 5852772691"
 }
