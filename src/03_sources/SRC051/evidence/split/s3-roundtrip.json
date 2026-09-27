@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC051",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "run_at": "2026-09-27T20:04:41.802Z",
+  "authority": {
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+  },
+  "reconstructed": {
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+  },
+  "roundtrip": true,
+  "data_uris_preserved": 15,
+  "s4_parity_claimed": false,
+  "passed": 28,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "original locked at 2782365 bytes"
+    },
+    {
+      "id": "T01b",
+      "pass": true,
+      "detail": "exactly one style block and one script block in the authority"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "styles.css === authority style inner (23753 chars)"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "script.js === authority script inner (2750395 chars)"
+    },
+    {
+      "id": "T04",
+      "pass": true,
+      "detail": "reconstruction byte-identical to frozen authority"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "link + script src glue only"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "21 authored ids preserved exactly in the shell"
+    },
+    {
+      "id": "T06b",
+      "pass": true,
+      "detail": "116 class attributes preserved exactly"
+    },
+    {
+      "id": "T07",
+      "pass": true,
+      "detail": "@keyframes preserved: noise, spin, dash, pulse"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "9 transition declarations preserved"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "scroll-behavior:smooth preserved"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "WAAPI pulse logic present and not rewritten"
+    },
+    {
+      "id": "T09",
+      "pass": true,
+      "detail": "reduced-motion media query preserved"
+    },
+    {
+      "id": "T09b",
+      "pass": true,
+      "detail": "FROZEN: the WAAPI pulse is still NOT gated on prefers-reduced-motion"
+    },
+    {
+      "id": "T12",
+      "pass": true,
+      "detail": "window.__LT_PROMO + scrollToSection preserved"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "section-local phase formula preserved verbatim: p = -a.top / (a.height - innerHeight)"
+    },
+    {
+      "id": "T13",
+      "pass": true,
+      "detail": "all 15 authored data URIs survive inside script.js (found 15)"
+    },
+    {
+      "id": "T13b",
+      "pass": true,
+      "detail": "no data URI moved into the shell or CSS"
+    },
+    {
+      "id": "T17",
+      "pass": true,
+      "detail": "no assets/ directory (self-contained data URIs)"
+    },
+    {
+      "id": "T14",
+      "pass": true,
+      "detail": "no React/TS/TSX/JSX/Next/ESM in split runtime files"
+    },
+    {
+      "id": "T15",
+      "pass": true,
+      "detail": "no backend/DB/auth markers in split"
+    },
+    {
+      "id": "T16",
+      "pass": true,
+      "detail": "no product/MVP adapter in split"
+    },
+    {
+      "id": "T18",
+      "pass": true,
+      "detail": "S3 asserted, S4 parity explicitly false, mechanical-only policy"
+    },
+    {
+      "id": "T19",
+      "pass": true,
+      "detail": "materialization record matches files on disk and claims no parity"
+    },
+    {
+      "id": "T20a",
+      "pass": true,
+      "detail": "all four synchronization classes preserved in authority-context + baseline"
+    },
+    {
+      "id": "T20b",
+      "pass": true,
+      "detail": "7 unique frozen defects preserved (8 observations) in both files"
+    },
+    {
+      "id": "T20c",
+      "pass": true,
+      "detail": "animation-bookkeeping probe preserved as UNRESOLVED, not resolved into source truth"
+    },
+    {
+      "id": "T20d",
+      "pass": true,
+      "detail": "accepted reduced-motion WAAPI source truth recorded and preserved"
+    }
+  ]
+}

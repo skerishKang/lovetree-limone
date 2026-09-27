@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC051",
+  "status": "MATERIALIZED_PENDING_PARITY",
+  "generation": "MECHANICAL_INLINE_EXTRACTION",
+  "authority": {
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "git_blob": "fd7e48b1301abe0f857e9a7bbc06162c088d0abc"
+  },
+  "boundaries": {
+    "style_open": 207,
+    "style_close": 23967,
+    "script_open": 31483,
+    "script_close": 2781886,
+    "script_blocks": [
+      {
+        "open": 31483,
+        "close": 2781886,
+        "length": 2750395
+      }
+    ],
+    "script_gaps": [],
+    "style_blocks": [
+      {
+        "open": 207,
+        "close": 23967,
+        "length": 23753
+      }
+    ],
+    "derivation": "Character indices into the UTF-8 text of original/original.html, re-derived independently by the S3 round-trip test from the frozen file itself rather than copied from the builder."
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 8264,
+      "sha256": "ff9f019c403bb358b06825e162f13ba8814473ceb4300d8ec1acb3eecd1bcaf4",
+      "git_blob_sha1": "886ecba2940e87b49af0a1190da7c357423b255f"
+    },
+    "split/styles.css": {
+      "bytes": 23753,
+      "sha256": "cb11a6fde09f60fa617143a052cd94daaef08726197895c5acbc5cd26c5c9270",
+      "git_blob_sha1": "18518d06f49d16d8e95231ffd060ecdcb1053bbc"
+    },
+    "split/script.js": {
+      "bytes": 2750395,
+      "sha256": "5d804c7e2352d2a8b393be82c1b976dfc6a374fec49f0e4257cab9992290ee10",
+      "git_blob_sha1": "16ede72b689a3d4db0b015080c62dd1f658ef23d"
+    }
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "product_data_injection": false,
+    "dom_normalization": false,
+    "source_defect_repair": false,
+    "accessibility_repair": false,
+    "mobile_repair": false,
+    "reduced_motion_repair": false,
+    "css_cleanup": false,
+    "js_refactor": false,
+    "asset_externalization": false
+  },
+  "glue": {
+    "css_link": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "script_src": "<script src=\"./script.js\"></script>",
+    "note": "These two references are the ONLY differences between split/index.html and the authority. The shell is the authority document with the whole <style>...</style> and <script>...</script> spans replaced by these references, edited back-to-front so earlier offsets stay valid. No attribute, text node, id, class, comment or whitespace run outside those two spans was touched."
+  },
+  "asset_disposition": {
+    "mode": "INLINE_PRESERVED",
+    "data_uri_count": 15,
+    "assets_directory_created": false,
+    "reason": "The 15 authored data URIs live inside the extracted script.js in the source's own __LT_ASSETS map and are byte-identical there. The current-main validator does not require an assets/ directory, and the SRC071 precedent records self_contained with no assets/ directory. Decoding, re-encoding, externalizing, renaming or rewriting references was not performed and must not be, because it would change source bytes without a mechanical basis."
+  },
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
+  "parity_ref": null,
+  "parity_claim_made": false,
+  "s4_started": false,
+  "source_candidate": {
+    "exact_head": null,
+    "generation": "MECHANICAL_INLINE_EXTRACTION"
+  },
+  "provenance": {
+    "s2_report_commit": "9ff0e7dcedce8582023e88def4ded76d31d5d16d",
+    "central_s2_acceptance": "skerishKang/lovetree-limone#589 comment 5859197749",
+    "s3_release": "BOUNDED_SRC051_ONLY",
+    "final_metadata_commit_head": "NOT EMBEDDED / set after commit by CI or the reviewing human"
+  },
+  "preserved_metadata": {
+    "synchronization_contract": {
+      "provenance": "skerishKang/workdiary lovetree-reports/2026-09-27/LOCAL1/589-src051-s2-baseline.md @ 9ff0e7dcedce8582023e88def4ded76d31d5d16d, accepted at skerishKang/lovetree-limone#589 comment 5859197749",
+      "classes": [
+        {
+          "name": "CONTINUOUS_CSS_PHASE_VARIANCE",
+          "s4_rule": "screenshot pixel difference may be necessary; state semantics must still match",
+          "tolerance_permitted": true,
+          "not_a_tolerance_for": "state semantics"
+        },
+        {
+          "name": "DECLARED_WAAPI_TRANSIENT_STATE",
+          "s4_rule": "compare at the exact authored phase/state; never normalize away",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "authored phase"
+        },
+        {
+          "name": "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION",
+          "s4_rule": "wait for arrival, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "note": "the source authors scroll-behavior:smooth"
+        },
+        {
+          "name": "CSS_TRANSITION_SETTLE_SYNCHRONIZATION",
+          "s4_rule": "for states intended to be resting/settled, wait until the relevant CSSTransition objects finish, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "states_affected": [
+            "THERMAL_CITY",
+            "CONNECTION",
+            "SAVED_PRE_CTA"
+          ],
+          "added_by": "CENTRAL #589 comment 5859197749",
+          "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other"
+        }
+      ],
+      "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. Three are harness synchronization conditions that must be resolved before an exact comparison; the fourth is bounded screenshot variance only."
+    },
+    "frozen_defects": {
+      "count_unique": 7,
+      "count_observations": 8,
+      "policy": "PRESERVE_VERBATIM. S3 must not repair, mitigate, normalize or document away any of these.",
+      "items": [
+        {
+          "id": "SRC051_NO_AUTHORED_FOCUS_AFFORDANCE",
+          "defect": "9 focusable elements, zero authored :focus and :focus-visible rules; focus is browser default outline:auto only.",
+          "kind": "keyboard accessibility gap"
+        },
+        {
+          "id": "SRC051_HOVER_ONLY_NO_TOUCH_EQUIVALENT",
+          "defect": "Six hover-only affordances (.hero-stage lens, .dossier figure, .node, .flow-card, .btn, .topbar nav a) with no authored touch/press activation path on a coarse pointer.",
+          "kind": "touch accessibility gap"
+        },
+        {
+          "id": "SRC051_N5_N6_HIDDEN_LE_900",
+          "defect": ".n5 / .n6 hidden at <=900px by the source's own media query.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_TOPBAR_NAV_HIDDEN_LE_900",
+          "defect": ".topbar nav hidden at <=900px, removing all 5 section anchors on mobile.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE",
+          "defect": "The source's reduced-motion media query kills CSS animation (computed animation-name:none), but the #pulseBtn pulse is a JavaScript Web Animation never gated on prefers-reduced-motion. One real click raises 2 Animation objects (.heart-core 700ms, .logo-close 900ms) and .heart-core visibly scales none -> 1.23041 -> 1.0398 under reduce.",
+          "kind": "reduced-motion accessibility defect",
+          "accepted_as_source_truth_by": "CENTRAL #589 comment 5859197749",
+          "s3_must_not": "gate, rewrite or suppress this pulse"
+        },
+        {
+          "id": "SRC051_LOGO_CLOSE_PAST_DOCUMENT_MAXIMUM",
+          "defect": ".logo-close cannot be scrolled to its layout centre because it lies past the document scroll maximum.",
+          "kind": "layout reachability"
+        },
+        {
+          "id": "SRC051_SMOOTH_SCROLL_ASYNC_PROGRAMMATIC_SCROLL",
+          "defect": "scroll-behavior:smooth makes programmatic navigation asynchronous; a consumer assuming scrollTo is synchronous reads stale geometry. This invalidated one S2 capture run.",
+          "kind": "automation trap"
+        }
+      ]
+    },
+    "unresolved_observations": [
+      {
+        "id": "SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED",
+        "status": "UNRESOLVED",
+        "must_not": "be converted into source truth, and must not be used to authorize a source change or a parity tolerance, without a separate proof (CENTRAL #589 comment 5859197749).",
+        "observation": "Under prefers-reduced-motion: reduce at 1440x900@DPR1, document.getAnimations() reported 3 CSSAnimation objects against .hero-orbit (x2) and .radar whose reported currentTime advanced across the run (0 -> 33 -> 234 -> 367 -> 434), while getComputedStyle(...).animationName was 'none', element-scoped element.getAnimations() returned [] for those same elements, and CSSTransition counts of 0..7 were present on the same pages.",
+        "why_unresolved": "Element-scoped getAnimations() being empty while document-scoped getAnimations() lists animations against the same targets is internally inconsistent. 700ms-separated clips of the orbit and radar regions were not pixel-identical, so residual visual change exists there, but it cannot be attributed to those named elements. The instrumentation cannot separate a browser bookkeeping artefact from real residual motion.",
+        "s3_action": "recorded as unresolved metadata only; not resolved, not converted to source truth, not counted as a defect and not counted as a parity input"
+      }
+    ]
+  }
+}

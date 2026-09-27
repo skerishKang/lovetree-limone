@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC051",
+  "source_folder_name": "51_네온인간분석_인터랙티브홍보대문",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/51_네온인간분석_인터랙티브홍보대문/lovetree-neon-human-analysis-promo-gate-v1.html",
+  "authority": {
+    "drive_folder_id": "UNRESOLVED",
+    "design_root_folder_id": "UNRESOLVED",
+    "drive_file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+    "filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "revision": "PROMO_GATE_V1",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST104"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_note": {
+    "status": "UNRESOLVED",
+    "known_situation": "A byte-identical convenience copy of the authority exists under the Korean alias name 10_병행안_네온인간분석_홍보대문_바로보기.html at a different Drive file id 1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8. S0 recorded both ids against the same SHA-256 5b7f084b...df07fdf014 in docs/design-intake/source-track-51-gate.md, design-intake/manifests/source-track-51-neon-human-analysis.json and reference/source-track-51-neon-human-analysis/PROVENANCE.md.",
+    "why_unresolved_not_settled": "Adjudicating DUPLICATE_COPY_SAME_SHA requires a CENTRAL_FRESH_DRIVE_READBACK of the alias object. S3 performed no Drive write and no fresh alias download, so the status is held at UNRESOLVED rather than asserted. This follows the SRC071 precedent, which also held adjudication open and recorded it as not performed.",
+    "adjudicated": false,
+    "adjudication_owner": "next CENTRAL stage",
+    "drive_mutation": 0
+  },
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": null,
+  "authority_context_ref": "authority-context.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "qa_hook": "window.__LT_PROMO",
+    "url_hooks": [],
+    "external_requests": 0,
+    "data_uri_images": 15,
+    "css_keyframes": [
+      "noise",
+      "spin",
+      "dash",
+      "pulse"
+    ],
+    "scroll_behavior": "smooth",
+    "reduced_motion_behavior": "the authored CSS media query disables CSS animation, but the JavaScript Web Animations CTA pulse is NOT gated on prefers-reduced-motion and still runs",
+    "interaction_surface": "scroll-driven section phases, pointer parallax, hover affordances, and one #pulseBtn click that raises a declared WAAPI pulse"
+  },
+  "scope": {
+    "s3_scope": "src/03_sources/SRC051/ only",
+    "s4_parity_claimed": false,
+    "product_adoption": false,
+    "lineage51_allocated": false,
+    "backend_auth_db_work": false,
+    "drive_mutation": false
+  },
+  "preserved_metadata": {
+    "synchronization_contract": {
+      "provenance": "skerishKang/workdiary lovetree-reports/2026-09-27/LOCAL1/589-src051-s2-baseline.md @ 9ff0e7dcedce8582023e88def4ded76d31d5d16d, accepted at skerishKang/lovetree-limone#589 comment 5859197749",
+      "classes": [
+        {
+          "name": "CONTINUOUS_CSS_PHASE_VARIANCE",
+          "s4_rule": "screenshot pixel difference may be necessary; state semantics must still match",
+          "tolerance_permitted": true,
+          "not_a_tolerance_for": "state semantics"
+        },
+        {
+          "name": "DECLARED_WAAPI_TRANSIENT_STATE",
+          "s4_rule": "compare at the exact authored phase/state; never normalize away",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "authored phase"
+        },
+        {
+          "name": "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION",
+          "s4_rule": "wait for arrival, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "note": "the source authors scroll-behavior:smooth"
+        },
+        {
+          "name": "CSS_TRANSITION_SETTLE_SYNCHRONIZATION",
+          "s4_rule": "for states intended to be resting/settled, wait until the relevant CSSTransition objects finish, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "states_affected": [
+            "THERMAL_CITY",
+            "CONNECTION",
+            "SAVED_PRE_CTA"
+          ],
+          "added_by": "CENTRAL #589 comment 5859197749",
+          "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other"
+        }
+      ],
+      "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. Three are harness synchronization conditions that must be resolved before an exact comparison; the fourth is bounded screenshot variance only."
+    },
+    "frozen_defects": {
+      "count_unique": 7,
+      "count_observations": 8,
+      "policy": "PRESERVE_VERBATIM. S3 must not repair, mitigate, normalize or document away any of these.",
+      "items": [
+        {
+          "id": "SRC051_NO_AUTHORED_FOCUS_AFFORDANCE",
+          "defect": "9 focusable elements, zero authored :focus and :focus-visible rules; focus is browser default outline:auto only.",
+          "kind": "keyboard accessibility gap"
+        },
+        {
+          "id": "SRC051_HOVER_ONLY_NO_TOUCH_EQUIVALENT",
+          "defect": "Six hover-only affordances (.hero-stage lens, .dossier figure, .node, .flow-card, .btn, .topbar nav a) with no authored touch/press activation path on a coarse pointer.",
+          "kind": "touch accessibility gap"
+        },
+        {
+          "id": "SRC051_N5_N6_HIDDEN_LE_900",
+          "defect": ".n5 / .n6 hidden at <=900px by the source's own media query.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_TOPBAR_NAV_HIDDEN_LE_900",
+          "defect": ".topbar nav hidden at <=900px, removing all 5 section anchors on mobile.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE",
+          "defect": "The source's reduced-motion media query kills CSS animation (computed animation-name:none), but the #pulseBtn pulse is a JavaScript Web Animation never gated on prefers-reduced-motion. One real click raises 2 Animation objects (.heart-core 700ms, .logo-close 900ms) and .heart-core visibly scales none -> 1.23041 -> 1.0398 under reduce.",
+          "kind": "reduced-motion accessibility defect",
+          "accepted_as_source_truth_by": "CENTRAL #589 comment 5859197749",
+          "s3_must_not": "gate, rewrite or suppress this pulse"
+        },
+        {
+          "id": "SRC051_LOGO_CLOSE_PAST_DOCUMENT_MAXIMUM",
+          "defect": ".logo-close cannot be scrolled to its layout centre because it lies past the document scroll maximum.",
+          "kind": "layout reachability"
+        },
+        {
+          "id": "SRC051_SMOOTH_SCROLL_ASYNC_PROGRAMMATIC_SCROLL",
+          "defect": "scroll-behavior:smooth makes programmatic navigation asynchronous; a consumer assuming scrollTo is synchronous reads stale geometry. This invalidated one S2 capture run.",
+          "kind": "automation trap"
+        }
+      ]
+    },
+    "unresolved_observations": [
+      {
+        "id": "SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED",
+        "status": "UNRESOLVED",
+        "must_not": "be converted into source truth, and must not be used to authorize a source change or a parity tolerance, without a separate proof (CENTRAL #589 comment 5859197749).",
+        "observation": "Under prefers-reduced-motion: reduce at 1440x900@DPR1, document.getAnimations() reported 3 CSSAnimation objects against .hero-orbit (x2) and .radar whose reported currentTime advanced across the run (0 -> 33 -> 234 -> 367 -> 434), while getComputedStyle(...).animationName was 'none', element-scoped element.getAnimations() returned [] for those same elements, and CSSTransition counts of 0..7 were present on the same pages.",
+        "why_unresolved": "Element-scoped getAnimations() being empty while document-scoped getAnimations() lists animations against the same targets is internally inconsistent. 700ms-separated clips of the orbit and radar regions were not pixel-identical, so residual visual change exists there, but it cannot be attributed to those named elements. The instrumentation cannot separate a browser bookkeeping artefact from real residual motion.",
+        "s3_action": "recorded as unresolved metadata only; not resolved, not converted to source truth, not counted as a defect and not counted as a parity input"
+      }
+    ]
+  }
+}
