@@ -2129,6 +2129,27 @@ for (const stateId of COUNTER_CONTROL_STATES) {
 }
 
 // Apply the conditional approval only where the control proved it.
+// Phase allowances recorded outside the per-row comparison loop, then attached to the row.
+// (`allowed` is scoped to the comparison loop, so it is not reachable from here.)
+const phaseAllowedDifferences = [];
+const applyPhaseGeometryAllowance = (row, indexes, reason) => {
+  if (!indexes.size) return;
+  const kept = [];
+  for (const entry of row.differences) {
+    const match = /^landmarks\.(\d+)\./.exec(entry.path);
+    if (match && indexes.has(Number(match[1]))) {
+      const allowance = { channel: entry.channel, path: entry.path, left: entry.left, right: entry.right, reason };
+      phaseAllowedDifferences.push(allowance);
+      row.allowedDifferences = [...(row.allowedDifferences ?? []), allowance];
+      continue;
+    }
+    kept.push(entry);
+  }
+  row.differences = kept;
+  row.nonScreenshotEqual = kept.length === 0;
+  if (kept.length === 0) channelNotes.push(`${row.key}: differences were confined to a same-surface-proven phase element`);
+};
+
 const counterPhaseGeometryKeys = new Set(
   counterControl.filter((e) => e.sameSurfaceBoxMovesWithPhase).map((e) => `${e.viewport}::${e.state}`),
 );
@@ -2136,22 +2157,11 @@ for (const row of comparisonRows) {
   if (!counterPhaseGeometryKeys.has(row.key)) continue;
   const counterIds = new Set(counterControl.filter((e) => e.state === row.state).map((e) => e.counterId));
   const marks = captures.find((r) => r.surface === "original" && !r.isControl && pairKey(r) === row.key)?.collected?.landmarks ?? [];
-  const counterIndexes = new Set(marks.map((entry, index) => (counterIds.has(entry.attributes?.id) ? index : -1)).filter((i) => i >= 0));
-  const kept = [];
-  for (const entry of row.differences) {
-    const match = /^landmarks\.(\d+)\./.exec(entry.path);
-    if (match && counterIndexes.has(Number(match[1]))) {
-      allowed.push({
-        channel: entry.channel, path: entry.path, left: entry.left, right: entry.right,
-        reason: "SOURCE_NATIVE_PHASE_GEOMETRY: counter element box, proven to move with phase on the same surface by the counter control",
-      });
-      continue;
-    }
-    kept.push(entry);
-  }
-  row.differences = kept;
-  row.nonScreenshotEqual = kept.length === 0;
-  if (kept.length === 0) channelNotes.push(`H9 counter box: ${row.key} differed only on the counter element box, proven phase geometry by the same-surface control`);
+  applyPhaseGeometryAllowance(
+    row,
+    new Set(marks.map((entry, index) => (counterIds.has(entry.attributes?.id) ? index : -1)).filter((i) => i >= 0)),
+    "SOURCE_NATIVE_PHASE_GEOMETRY: counter element box, proven to move with phase on the same surface by the counter control",
+  );
 }
 for (const failure of [...channelFailures]) {
   if (!failure.name.startsWith("non_screenshot_channel:")) continue;
@@ -2220,22 +2230,11 @@ const enterOrbPhaseKeys = new Set(
 for (const row of comparisonRows) {
   if (!enterOrbPhaseKeys.has(row.key)) continue;
   const marks = captures.find((r) => r.surface === "original" && !r.isControl && pairKey(r) === row.key)?.collected?.landmarks ?? [];
-  const orbIndexes = new Set(marks.map((entry, index) => (String(entry.attributes?.class ?? "").includes("enter-orb") ? index : -1)).filter((i) => i >= 0));
-  const kept = [];
-  for (const entry of row.differences) {
-    const match = /^landmarks\.(\d+)\./.exec(entry.path);
-    if (match && orbIndexes.has(Number(match[1]))) {
-      allowed.push({
-        channel: entry.channel, path: entry.path, left: entry.left, right: entry.right,
-        reason: "SOURCE_NATIVE_PHASE_GEOMETRY: SPAN.enter-orb inside #talkBtn, transform .35s hover transition, proven to move with phase on the same surface by the enter-orb control",
-      });
-      continue;
-    }
-    kept.push(entry);
-  }
-  row.differences = kept;
-  row.nonScreenshotEqual = kept.length === 0;
-  if (kept.length === 0) channelNotes.push(`enter-orb: ${row.key} differed only on SPAN.enter-orb, proven phase geometry by the same-surface control`);
+  applyPhaseGeometryAllowance(
+    row,
+    new Set(marks.map((entry, index) => (String(entry.attributes?.class ?? "").includes("enter-orb") ? index : -1)).filter((i) => i >= 0)),
+    "SOURCE_NATIVE_PHASE_GEOMETRY: SPAN.enter-orb inside #talkBtn, transform .35s hover transition, proven to move with phase on the same surface by the enter-orb control",
+  );
 }
 
 // Raw pixel instrumentation (never a threshold) for every pair, computed on the raster page.
