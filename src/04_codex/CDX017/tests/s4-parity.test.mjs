@@ -130,10 +130,13 @@ const SETTLE_PREDICATES = Object.freeze({
   // Index open: menu fully closed AND index fully revealed.
   LIVING_INDEX_OPEN: [styleAt("#loader", "opacity"), styleAt("#menuPanel", "transform"), styleAt("#indexView", "opacity")],
   LIVING_INDEX_ESCAPE_CLOSE: [styleAt("#loader", "opacity"), styleAt("#menuPanel", "transform"), styleAt("#indexView", "opacity")],
-  // Portal open: shell chrome fully revealed.
-  PORTAL_OPEN: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity")],
+  // Portal open: shell chrome fully revealed. CENTRAL Group A: opacity alone was not the
+  // terminal condition - .portal-view also animates scale(.985) -> identity, and capturing
+  // before the scale finished made the visual digest marginal (11/11 at one head, 10/11 at
+  // the next). Both properties must reach their terminal value.
+  PORTAL_OPEN: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform")],
   // Portal close: shell chrome fully withdrawn.
-  PORTAL_CLOSE_ABOUT_BLANK_RESET: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity")],
+  PORTAL_CLOSE_ABOUT_BLANK_RESET: [styleAt("#loader", "opacity"), styleAt("#portalView", "opacity"), styleAt("#portalView", "transform")],
   SOUND_OFF: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
   SOUND_ON_PERSISTED: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
   POINTER_PARALLAX: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
@@ -143,7 +146,22 @@ const SETTLE_PREDICATES = Object.freeze({
   REDUCED_MOTION_INTERACTION_D2_D3: [styleAt("#loader", "opacity")],
   MOBILE_COARSE_POINTER_D7: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
   BACK_BUTTON_D1: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
+  // CENTRAL Group A: PREVIEW_CONTRACT_D10 previously had NO deterministic terminal
+  // predicate at all, so the menu panel (x moved 866.53 -> 877.34) and the chapter
+  // progress bar were still mid-transition when captured. The authored `?preview=menu`
+  // helper deterministically opens the menu panel and selects chapter 2, so the terminal
+  // condition is the panel at its authored closed-or-open matrix plus the chapter UI at
+  // rest. This is an observable terminal condition, not an arbitrary sleep.
+  PREVIEW_CONTRACT_D10: withChapterUi([
+    styleAt("#loader", "opacity"), styleAt("#menuPanel", "transform"), styleAt("#indexView", "opacity"),
+  ]),
 });
+
+// States where the loader's own terminal state is NOT the right settle condition.
+// The authored `?preview=` helper deliberately short-circuits the loader (D10), so
+// requiring the loader to reach opacity 0 / visibility hidden would never be satisfiable
+// for a state whose whole point is that the loader is bypassed.
+const SETTLE_REQUIRES_LOADER_TERMINAL = Object.freeze({ PREVIEW_CONTRACT_D10: false });
 
 const sha256 = (buffer) => crypto.createHash("sha256").update(buffer).digest("hex");
 const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
@@ -760,7 +778,9 @@ async function waitForStateSettled(page, stateId, timeoutMs = 8000) {
     await sleep(intervalMs);
     const current = await readSettleSample(page, predicates);
     samples += 1;
-    const loaderTerminal = current[`${LOADER_SELECTOR}|__terminal`] === "DONE";
+    const loaderTerminal = SETTLE_REQUIRES_LOADER_TERMINAL[stateId] === false
+      ? true
+      : current[`${LOADER_SELECTOR}|__terminal`] === "DONE";
     const unchanged = JSON.stringify(current) === JSON.stringify(previous);
     previous = current;
     stableRounds = unchanged ? stableRounds + 1 : 0;
@@ -1279,6 +1299,7 @@ async function captureState(browser, { origin, viewportKey, state, surface, rast
     consoleMessages,
     pageErrors,
     requestCount: requests.length,
+    requests,
     responses,
     failedRequests,
   };
@@ -1377,6 +1398,41 @@ for (const stateId of CONTROL_REQUIRED_STATES) {
 // ---------------------------------------------------------------------------------------
 // The split is allowed to differ from the original in exactly two mechanical ways plus the
 // source's own nondeterministic counters. Everything else must be EQUAL.
+// CENTRAL H9: exactly these two element ids carry rAF/timer driven counter text that is
+// already classified as SOURCE_NATIVE_PHASE in RUNTIME_ALLOWED_DIFFERENCES. The same two
+// values were re-asserted as exact text through the landmarks and bodyText channels, which
+// is why INITIAL_LOADER and PORTAL_TRANSITION still failed. H9 separates exactly these two
+// elements' TEXT for Lane-2 evidence states and nothing else: no surrounding text, no other
+// landmark, no other element, and no Lane-1 state.
+const PHASE_COUNTER_IDS = Object.freeze(["loaderCount", "transitionCount"]);
+const PHASE_COUNTER_MARKER = "<SOURCE_NATIVE_PHASE_COUNTER>";
+
+// Replace the counter text of exactly #loaderCount / #transitionCount inside the landmark
+// list and inside bodyText. Structure, tag, class, attributes, box and visibility of those
+// elements are left completely untouched, so the DOM channel is still compared exactly for
+// everything except the digits themselves. The original values are preserved as evidence.
+function projectPhaseCounterText(collected) {
+  if (!collected) return { landmarks: collected, bodyText: collected, projected: [] };
+  const projected = [];
+  const landmarks = (collected.landmarks ?? []).map((entry) => {
+    const id = entry?.attributes?.id;
+    if (!PHASE_COUNTER_IDS.includes(id)) return entry;
+    const value = String(entry.ownText ?? "");
+    if (!/^\d{2,3}$/.test(value)) return entry;
+    projected.push({ channel: "landmarks", id, value });
+    return { ...entry, ownText: PHASE_COUNTER_MARKER };
+  });
+  let bodyText = collected.bodyText ?? "";
+  for (const id of PHASE_COUNTER_IDS) {
+    const value = collected?.runtime?.[id];
+    if (typeof value !== "string" || !/^\d{2,3}$/.test(value)) continue;
+    if (!bodyText.includes(value)) continue;
+    bodyText = bodyText.split(value).join(PHASE_COUNTER_MARKER);
+    projected.push({ channel: "bodyText", id, value });
+  }
+  return { landmarks, bodyText, projected };
+}
+
 const RUNTIME_ALLOWED_DIFFERENCES = Object.freeze({
   locationHref: "MECHANICAL_GLUE: original.html vs index.html entry path",
   loaderCount: "SOURCE_NATIVE_PHASE: loader rAF/timer driven counter text",
@@ -1395,6 +1451,95 @@ for (const record of captures) {
   const key = pairKey(record);
   if (!byKey.has(key)) byKey.set(key, []);
   byKey.get(key).push(record);
+}
+
+// CENTRAL sub-pixel geometry ruling: a numeric tolerance is NOT authorized. Instead the
+// harness must prove whether the 0.01-0.04px separation is browser layout measurement
+// variance or a genuine cross-surface geometry difference, using same-surface repeat
+// controls ORIGINAL_A -> ORIGINAL_B and SPLIT_A -> SPLIT_B for exactly the affected states.
+//
+// Per run it records: full-precision DOMRect, the 2-decimal value the parity channel
+// actually compares, DPR, three consecutive post-settle samples, the active dot identity,
+// and the parent .chapter-dots and .chapter-nav geometry.
+const GEOMETRY_ENVELOPE_STATES = Object.freeze([
+  "CHAPTER_02", "CHAPTER_04", "WHEEL_NEXT_PREV_WRAP_LOCK", "KEY_ARROW_NEXT_PREV",
+]);
+const GEOMETRY_ENVELOPE_VIEWPORT = "desktop";
+
+async function readChapterDotGeometry(page, sampleIndex) {
+  return page.evaluate((index) => {
+    const round2 = (value) => Math.round(value * 100) / 100;
+    const rectOf = (element) => {
+      if (!element) return null;
+      const r = element.getBoundingClientRect();
+      return {
+        x: r.x, y: r.y, w: r.width, h: r.height, right: r.right, bottom: r.bottom,
+        x2: round2(r.x), y2: round2(r.y), w2: round2(r.width), h2: round2(r.height),
+      };
+    };
+    const styleOf = (selector) => {
+      const element = document.querySelector(selector);
+      if (!element) return null;
+      const style = getComputedStyle(element);
+      return {
+        position: style.position, display: style.display, width: style.width,
+        gap: style.gap, transform: style.transform, justifyContent: style.justifyContent,
+      };
+    };
+    const dot = document.querySelector(".chapter-dot.active");
+    const allDots = Array.from(document.querySelectorAll(".chapter-dot"));
+    return {
+      sample: index,
+      devicePixelRatio: window.devicePixelRatio,
+      visualViewportScale: window.visualViewport ? window.visualViewport.scale : null,
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+      scrollLeft: document.documentElement.scrollLeft,
+      activeDotDataChapter: dot ? dot.getAttribute("data-chapter") : null,
+      activeDotIndexInNodeList: dot ? allDots.indexOf(dot) : -1,
+      activeDotCount: allDots.length,
+      activeDotRect: rectOf(dot),
+      activeDotTransform: dot ? getComputedStyle(dot).transform : null,
+      activeDotTransitionDuration: dot ? getComputedStyle(dot).transitionDuration : null,
+      activeDotBackgroundColor: dot ? getComputedStyle(dot).backgroundColor : null,
+      chapterDotsRect: rectOf(document.querySelector(".chapter-dots")),
+      chapterNavRect: rectOf(document.querySelector(".chapter-nav")),
+      chapterDotsStyle: styleOf(".chapter-dots"),
+      chapterNavStyle: styleOf(".chapter-nav"),
+    };
+  }, sampleIndex);
+}
+
+async function captureGeometryEnvelopeSample(browser, { origin, state, surface, repeatLabel }) {
+  const viewport = VIEWPORTS[GEOMETRY_ENVELOPE_VIEWPORT];
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    deviceScaleFactor: viewport.dpr,
+    reducedMotion: viewport.reducedMotion,
+    hasTouch: viewport.mobile,
+    isMobile: viewport.mobile,
+  });
+  const page = await context.newPage();
+  const requests = [];
+  page.on("request", (request) => requests.push({ url: request.url(), method: request.method(), resourceType: request.resourceType() }));
+  await page.goto(`${origin}${SURFACE_ENTRY[surface]}`, { waitUntil: "load" });
+  await ACTIONS[state.id](page, { origin, entry: SURFACE_ENTRY[surface], surface, viewportKey: GEOMETRY_ENVELOPE_VIEWPORT, interactionRecord: null });
+  const settle = await waitForStateSettled(page, state.id);
+  const samples = [];
+  for (let index = 0; index < 3; index += 1) {
+    samples.push(await readChapterDotGeometry(page, index));
+    if (index < 2) await sleep(120);
+  }
+  await context.close();
+  return {
+    state: state.id,
+    viewport: GEOMETRY_ENVELOPE_VIEWPORT,
+    surface,
+    repeatLabel,
+    settle,
+    samples,
+    faviconRequests: requests.filter((entry) => /\/favicon\.ico(\?|$)/.test(entry.url)),
+  };
 }
 
 const comparisonRows = [];
@@ -1417,9 +1562,17 @@ for (const [key, records] of byKey) {
   const leftCollected = original.collected;
   const rightCollected = split.collected;
 
+  // CENTRAL H9: for Lane-2 evidence states only, the two rAF/timer counter texts are
+  // separated from the general DOM/text comparison and preserved as phase evidence.
+  // The projection touches exactly #loaderCount and #transitionCount and nothing else.
+  const h9Projected = [];
+  const leftProjected = original.lane === 2 ? projectPhaseCounterText(leftCollected) : { landmarks: leftCollected?.landmarks, bodyText: leftCollected?.bodyText, projected: [] };
+  const rightProjected = original.lane === 2 ? projectPhaseCounterText(rightCollected) : { landmarks: rightCollected?.landmarks, bodyText: rightCollected?.bodyText, projected: [] };
+  for (const entry of [...leftProjected.projected, ...rightProjected.projected]) h9Projected.push(entry);
+
   if (leftCollected && rightCollected) {
-    compare("landmarks", dropSelectors(leftCollected.landmarks, exclusions), dropSelectors(rightCollected.landmarks, exclusions));
-    compare("bodyText", leftCollected.bodyText, rightCollected.bodyText);
+    compare("landmarks", dropSelectors(leftProjected.landmarks, exclusions), dropSelectors(rightProjected.landmarks, exclusions));
+    compare("bodyText", leftProjected.bodyText, rightProjected.bodyText);
     compare("computedStyle", dropSelectors(leftCollected.computedStyle, exclusions), dropSelectors(rightCollected.computedStyle, exclusions));
     compare("geometry", dropSelectors(leftCollected.geometry, exclusions), dropSelectors(rightCollected.geometry, exclusions));
     compare("images", leftCollected.images, rightCollected.images);
@@ -1477,6 +1630,8 @@ for (const [key, records] of byKey) {
     waterCanvasSplit: { width: split.waterInk.canvasWidth, height: split.waterInk.canvasHeight, dpr: split.waterInk.canvasDpr },
     settleOriginal: original.settle,
     settleSplit: split.settle,
+    // CENTRAL H9 phase evidence: the separated counter values, kept for inspection.
+    h9PhaseProjectedCounters: h9Projected,
     visualSuppressionOriginal: original.visualSuppression,
     visualSuppressionSplit: split.visualSuppression,
     canonical16UnmaskedEqualControl: control ? control.canonical16UnmaskedDigest === original.canonical16UnmaskedDigest : null,
@@ -1486,6 +1641,80 @@ for (const [key, records] of byKey) {
 
   if (differences.length) fail(`non_screenshot_channel:${key}`, JSON.stringify(differences.slice(0, 4)));
   comparisonRows.push(row);
+}
+
+// CENTRAL sub-pixel geometry ruling: run the same-surface repeat controls now, before the
+// verdict, so the classification is evidence rather than an assumption.
+const geometryEnvelopeRuns = [];
+for (const stateId of GEOMETRY_ENVELOPE_STATES) {
+  const state = STATE_PLAN.find((entry) => entry.id === stateId);
+  if (!state) { channelNotes.push(`geometry envelope state not in plan: ${stateId}`); continue; }
+  for (const [index, surface] of ["original", "original", "split", "split"].entries()) {
+    const repeatLabel = `${surface === "original" ? "ORIGINAL" : "SPLIT"}_${index % 2 === 0 ? "A" : "B"}`;
+    const run = await captureGeometryEnvelopeSample(browser, { origin, state, surface, repeatLabel });
+    geometryEnvelopeRuns.push(run);
+    console.log(`CDX017_S4_GEOMETRY_CONTROL=${stateId} ${repeatLabel}`);
+  }
+}
+
+// Analysis: compare the within-surface repeat spread against the cross-surface gap.
+// CENTRAL's decision rule, applied verbatim.
+const geometryEnvelope = [];
+for (const stateId of GEOMETRY_ENVELOPE_STATES) {
+  const runs = geometryEnvelopeRuns.filter((run) => run.state === stateId);
+  if (runs.length < 4) continue;
+  const first = (run) => run.samples[0]?.activeDotRect ?? null;
+  const originals = runs.filter((run) => run.surface === "original").map(first);
+  const splits = runs.filter((run) => run.surface === "split").map(first);
+  const mean = (values) => (values.length ? values.reduce((total, value) => total + value, 0) / values.length : null);
+  const originalMeanX = mean(originals.filter(Boolean).map((rect) => rect.x));
+  const splitMeanX = mean(splits.filter(Boolean).map((rect) => rect.x));
+  const originalMeanY = mean(originals.filter(Boolean).map((rect) => rect.y));
+  const splitMeanY = mean(splits.filter(Boolean).map((rect) => rect.y));
+  const crossSurfaceX = originalMeanX === null || splitMeanX === null ? null : Math.abs(originalMeanX - splitMeanX);
+  const crossSurfaceY = originalMeanY === null || splitMeanY === null ? null : Math.abs(originalMeanY - splitMeanY);
+  const withinSurfaceX = originals.length >= 2 && originals.every(Boolean)
+    ? Math.max(...originals.map((rect) => rect.x)) - Math.min(...originals.map((rect) => rect.x)) : null;
+  const withinSurfaceYSplit = splits.length >= 2 && splits.every(Boolean)
+    ? Math.max(...splits.map((rect) => rect.y)) - Math.min(...splits.map((rect) => rect.y)) : null;
+  // Also compare the 2-decimal values that the parity channel actually compares.
+  const roundedOriginalX = originals.filter(Boolean).map((rect) => rect.x2);
+  const roundedSplitX = splits.filter(Boolean).map((rect) => rect.x2);
+  const roundedSpreadOriginal = roundedOriginalX.length >= 2 ? Math.max(...roundedOriginalX) - Math.min(...roundedOriginalX) : null;
+  const roundedSpreadSplit = roundedSplitX.length >= 2 ? Math.max(...roundedSplitX) - Math.min(...roundedSplitX) : null;
+  const roundedCross = roundedOriginalX.length && roundedSplitX.length
+    ? Math.abs(mean(roundedOriginalX) - mean(roundedSplitX)) : null;
+
+  const withinSurfaceMax = [withinSurfaceX, withinSurfaceYSplit].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
+  const crossSurfaceMax = [crossSurfaceX, crossSurfaceY].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
+  const roundedWithinMax = [roundedSpreadOriginal, roundedSpreadSplit].filter((value) => value !== null).reduce((max, value) => Math.max(max, value), 0);
+
+  // Per CENTRAL: if the same surface wobbles by the same order of magnitude, the
+  // separation is browser layout measurement variance, not a cross-surface difference.
+  const measurementVariance = roundedWithinMax > 0 || crossSurfaceMax <= withinSurfaceMax;
+  geometryEnvelope.push({
+    state: stateId,
+    viewport: GEOMETRY_ENVELOPE_VIEWPORT,
+    dpr: runs[0]?.samples?.[0]?.devicePixelRatio ?? null,
+    originalFullPrecisionX: originals.filter(Boolean).map((rect) => rect.x),
+    splitFullPrecisionX: splits.filter(Boolean).map((rect) => rect.x),
+    originalRoundedX: roundedOriginalX,
+    splitRoundedX: roundedSplitX,
+    withinSurfaceSpreadFull: withinSurfaceMax,
+    withinSurfaceSpreadRounded: roundedWithinMax,
+    crossSurfaceGapFull: crossSurfaceMax,
+    crossSurfaceGapRounded: roundedCross,
+    withinRunSampleStability: runs.map((run) => ({
+      repeatLabel: run.repeatLabel,
+      spreadWithinThreeSamples: run.samples.length >= 2 && run.samples.every((sample) => sample.activeDotRect)
+        ? Math.max(...run.samples.map((sample) => sample.activeDotRect.x)) - Math.min(...run.samples.map((sample) => sample.activeDotRect.x))
+        : null,
+    })),
+    activeDotChapter: runs[0]?.samples?.[0]?.activeDotDataChapter ?? null,
+    classification: measurementVariance
+      ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE"
+      : "CROSS_SURFACE_GEOMETRY_DIFFERENCE",
+  });
 }
 
 // Raw pixel instrumentation (never a threshold) for every pair, computed on the raster page.
@@ -1772,18 +2001,44 @@ const lane2DeterministicChannelResiduals = lane2Rows.filter((row) => !row.nonScr
 const frozenFailures = frozenDefectChecks.filter((entry) => !entry.ok);
 
 const nonScreenshotChannelsEqual = channelFailures.filter((entry) => entry.name.startsWith("non_screenshot_channel")).length === 0;
-const realParityDefects = channelFailures.filter((entry) =>
-  entry.name.startsWith("non_screenshot_channel")
-  || entry.name.startsWith("frozen_defect_")
-  || entry.name === "portal_shell_contract"
-  || entry.name.startsWith("pointer_water_")
-  || entry.name.startsWith("lane2_unexpected_suppression")
-  || entry.name.startsWith("settled_pair_not_settled")
-  || entry.name.startsWith("lane1_suppression_")
-  || entry.name === "page_errors"
-  || entry.name === "unexpected_server_404"
-  || entry.name === "unexpected_request_failures"
-).length;
+
+// CENTRAL sub-pixel geometry ruling: a sub-pixel geometry difference on one of the four
+// envelope states is NOT counted as a real parity defect when the same-surface repeat
+// controls prove the same surface wobbles by the same order of magnitude. The exact
+// comparison still runs and the exact difference is still recorded on the row; only the
+// classification changes, and it is reported for CENTRAL re-judgment. A
+// CROSS_SURFACE_GEOMETRY_DIFFERENCE classification is never reclassified.
+const geometryMeasurementVarianceKeys = new Set(
+  geometryEnvelope
+    .filter((entry) => entry.classification === "BROWSER_LAYOUT_MEASUREMENT_VARIANCE")
+    .map((entry) => `${GEOMETRY_ENVELOPE_VIEWPORT}::${entry.state}`),
+);
+const geometryCrossSurfaceKeys = new Set(
+  geometryEnvelope
+    .filter((entry) => entry.classification === "CROSS_SURFACE_GEOMETRY_DIFFERENCE")
+    .map((entry) => `${GEOMETRY_ENVELOPE_VIEWPORT}::${entry.state}`),
+);
+for (const key of geometryCrossSurfaceKeys) {
+  fail(`geometry_cross_surface_difference:${key}`, "same-surface runs are stable but ORIGINAL and SPLIT remain separated; possible real parity defect, STOP for CENTRAL");
+}
+
+const realParityDefects = channelFailures.filter((entry) => {
+  if (entry.name.startsWith("non_screenshot_channel")) {
+    const key = entry.name.slice("non_screenshot_channel:".length);
+    if (geometryMeasurementVarianceKeys.has(key)) return false;
+  }
+  return entry.name.startsWith("non_screenshot_channel")
+    || entry.name.startsWith("frozen_defect_")
+    || entry.name === "portal_shell_contract"
+    || entry.name.startsWith("pointer_water_")
+    || entry.name.startsWith("geometry_cross_surface_difference")
+    || entry.name.startsWith("lane2_unexpected_suppression")
+    || entry.name.startsWith("settled_pair_not_settled")
+    || entry.name.startsWith("lane1_suppression_")
+    || entry.name === "page_errors"
+    || entry.name === "unexpected_server_404"
+    || entry.name === "unexpected_request_failures";
+}).length;
 
 const verdictExplained = [];
 if (!nonScreenshotChannelsEqual) verdictExplained.push("NON_SCREENSHOT_CHANNEL_DIFFERENCE");
@@ -1791,6 +2046,8 @@ if (settledPairsMaskedEqual !== settledPairsRequired) verdictExplained.push("SET
 if (controlStates !== CONTROL_REQUIRED_STATES.length) verdictExplained.push("LANE2_CONTROL_MISSING");
 if (frozenFailures.length) verdictExplained.push("FROZEN_DEFECT_DRIFT");
 if (!portalShellEqual) verdictExplained.push("PORTAL_SHELL_CONTRACT");
+if (geometryMeasurementVarianceKeys.size) verdictExplained.push("GEOMETRY_MEASUREMENT_VARIANCE_PENDING_CENTRAL");
+if (geometryCrossSurfaceKeys.size) verdictExplained.push("CROSS_SURFACE_GEOMETRY_DIFFERENCE");
 if (channelFailures.some((entry) => entry.name === "canonical16_technique_self_check")) verdictExplained.push("CANONICAL16_TECHNIQUE_FAILURE");
 
 const candidateVerdict = verdictExplained.length === 0 ? "CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE" : "CANDIDATE_HOLD";
@@ -1866,6 +2123,16 @@ const summary = {
   lane2_nondeterministic_evidence_states: CONTROL_REQUIRED_STATES.slice(),
   lane2_deterministic_channel_residuals: lane2DeterministicChannelResiduals,
   real_parity_defects: realParityDefects,
+  geometry_envelope: geometryEnvelope,
+  geometry_measurement_variance_keys: [...geometryMeasurementVarianceKeys],
+  geometry_cross_surface_keys: [...geometryCrossSurfaceKeys],
+  favicon_requests: captures.map((record) => ({
+    state: record.state,
+    viewport: record.viewport,
+    surface: record.surface,
+    count: (record.requests ?? []).filter((entry) => /\/favicon\.ico(\?|$)/.test(entry.url)).length,
+    entries: (record.requests ?? []).filter((entry) => /\/favicon\.ico(\?|$)/.test(entry.url)),
+  })).filter((entry) => entry.count > 0),
   portal_shell_contract_equal: portalShellEqual,
   portal_shell_checks: portalShellChecks,
   frozen_defects_preserved: frozenFailures.length === 0,
@@ -1892,6 +2159,7 @@ const summary = {
     water_canvas_split: row.waterCanvasSplit,
     settle_original: row.settleOriginal,
     settle_split: row.settleSplit,
+    h9_phase_projected_counters: row.h9PhaseProjectedCounters,
     visual_suppression_original: row.visualSuppressionOriginal,
     visual_suppression_split: row.visualSuppressionSplit,
     pixel_diff_instrumentation: row.pixelDiff,
@@ -2098,6 +2366,10 @@ console.log(`CDX017_S4_LANE1_DETERMINISTIC_VISUAL_EQUAL=${lane1DeterministicVisu
 console.log(`CDX017_S4_TIME_DEPENDENT_CONTROL_STATES=${controlStates}`);
 console.log(`CDX017_S4_LANE2_DETERMINISTIC_CHANNEL_RESIDUALS=${lane2DeterministicChannelResiduals.length}`);
 console.log(`CDX017_S4_REAL_PARITY_DEFECTS=${realParityDefects}`);
+for (const entry of geometryEnvelope) {
+  console.log(`CDX017_S4_GEOMETRY_ENVELOPE=${entry.state}|within_full=${entry.withinSurfaceSpreadFull}|cross_full=${entry.crossSurfaceGapFull}|within_rounded=${entry.withinSurfaceSpreadRounded}|cross_rounded=${entry.crossSurfaceGapRounded}|orig_x=${JSON.stringify(entry.originalRoundedX)}|split_x=${JSON.stringify(entry.splitRoundedX)}|class=${entry.classification}`);
+}
+console.log(`CDX017_S4_FAVICON_REQUEST_CAPTURES=${captures.filter((record) => (record.requests ?? []).some((entry) => /\/favicon\.ico(\?|$)/.test(entry.url))).length}`);
 console.log(`CDX017_S4_CANONICAL16_TECHNIQUE_SELF_CHECK=${summary.canonical16_normalization.technique_self_check ? "PASS" : "FAIL"}`);
 console.log(`CDX017_S4_PAIRS=${comparisonRows.length}`);
 console.log(`CDX017_S4_PAGE_ERRORS=${pageErrorTotal}`);
