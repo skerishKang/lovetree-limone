@@ -1,5 +1,5 @@
 /**
- * CDX017 S4 source/split parity — contract mode + real-browser candidate mode.
+ * CDX017 S4 source/split parity ??contract mode + real-browser candidate mode.
  *
  * Contract mode (default, no browser, CI-safe):
  *   node src/04_codex/CDX017/tests/s4-parity.test.mjs
@@ -346,10 +346,10 @@ contractCheck(frozenDefects.every((d) => d.id && d.name && d.note), "frozen_defe
 
 // Portal paths preserved byte-for-byte and never substituted.
 const PORTAL_PATHS = [
-  "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
-  "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html",
-  "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
-  "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html",
+  "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html"
+  "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html"
+  "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html"
+  "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html"
 ];
 const authoredOccurrences = (text) => PORTAL_PATHS
   .flatMap((p) => { const out = []; let at = -1; while ((at = text.indexOf(p, at + 1)) >= 0) out.push({ p, at }); return out; })
@@ -744,13 +744,25 @@ async function goReady(page) {
 // hideTransition() and then gains a `leaving` class; watching its opacity for stability
 // captured one surface mid-fade (class "page-transition open leaving") and made
 // PORTAL_OPEN worse. The terminal condition is the exact authored end state.
+const MEDIA_LAYER_TERMINAL = Object.freeze({
+  selector: MEDIA_LAYER_SELECTOR,
+  opacity: "1",
+  visibility: "visible",
+  transform: MEDIA_LAYER_TERMINAL_TRANSFORM,
+  idleAnimations: true,
+});
+
+// Every media layer (active and outgoing) must have no live CSS transition.
+const MEDIA_LAYERS_IDLE_TERMINAL = Object.freeze({ mediaLayersIdle: true });
+const WITH_MEDIA_LAYERS = (list) => Object.freeze([...list, MEDIA_LAYER_TERMINAL, MEDIA_LAYERS_IDLE_TERMINAL]);
+
 const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
-  READY_CHAPTER_01: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
-  CHAPTER_02: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
-  CHAPTER_03: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
-  CHAPTER_04: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
-  WHEEL_NEXT_PREV_WRAP_LOCK: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
-  KEY_ARROW_NEXT_PREV: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
+  READY_CHAPTER_01: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
+  CHAPTER_02: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
+  CHAPTER_03: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
+  CHAPTER_04: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
+  WHEEL_NEXT_PREV_WRAP_LOCK: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
+  KEY_ARROW_NEXT_PREV: WITH_MEDIA_LAYERS([{ selector: "#loader", opacity: "0", visibility: "hidden" }]),
   MENU_OPEN: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
   MENU_ESCAPE_CLOSE: [{ selector: "#loader", opacity: "0", visibility: "hidden" }],
   // Index open: the index is fully revealed and the transition chrome is gone.
@@ -790,6 +802,15 @@ const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
   PREVIEW_CONTRACT_D10: [],
 });
 
+// CENTRAL H10: the compared element is IMG.media-layer, and the source gives it a
+// 1.2s transform transition (scale(1.035) -> scale(1)) on a box that is inset -2% / 104%.
+// While that transform is in flight the measured border box moves by exactly the
+// 0.01-0.07px amounts previously reported, on BOTH surfaces, because each independent
+// page load starts the transition at a slightly different point. The settle gate never
+// waited for it. Terminal state is the identity matrix plus no running CSS animation.
+const MEDIA_LAYER_SELECTOR = ".media-layer.active";
+const MEDIA_LAYER_TERMINAL_TRANSFORM = "matrix(1, 0, 0, 1, 0, 0)";
+
 async function readSettleSample(page, predicates, expectations) {
   return page.evaluate(({ wanted, terminals }) => {
     const out = {};
@@ -798,13 +819,49 @@ async function readSettleSample(page, predicates, expectations) {
       out[`${selector}|${property}`] = element ? getComputedStyle(element)[property] : "ABSENT";
     }
     let allTerminal = true;
+    let liveMediaLayers = 0;
+    let settledMediaLayers = 0;
+    let totalMediaLayers = 0;
     for (const terminal of terminals) {
+      if (terminal.mediaLayersIdle) {
+        // CENTRAL H10: EVERY .media-layer must be idle, not just the active one. When the
+        // active class moves between layers, the layer losing it transitions back from
+        // scale(1) to scale(1.035) over the same 1.2s curve, and the measured box of that
+        // outgoing layer wobbles by the same sub-pixel amount. Both the incoming and the
+        // outgoing layer have to be terminal before the media window is comparable.
+        const layers = document.querySelectorAll(".media-layer");
+        totalMediaLayers = layers.length;
+        for (const layer of layers) {
+          const live = layer.getAnimations()
+            .filter((animation) => animation.playState === "running" || animation.playState === "pending");
+          liveMediaLayers += live.length;
+          if (!live.length) settledMediaLayers += 1;
+        }
+        if (liveMediaLayers > 0) allTerminal = false;
+        continue;
+      }
       const element = document.querySelector(terminal.selector);
       if (!element) { allTerminal = false; continue; }
       const style = getComputedStyle(element);
       if (style.opacity !== terminal.opacity || style.visibility !== terminal.visibility) allTerminal = false;
+      if (terminal.transform !== undefined) {
+        // The authored end state is the identity matrix. `none` is accepted as its
+        // equivalent. Anything else means the 1.2s scale transition is still running.
+        const atTerminal = style.transform === terminal.transform || style.transform === "none";
+        if (!atTerminal) allTerminal = false;
+      }
+      if (terminal.idleAnimations) {
+        // CENTRAL H10: also require that no CSS transition/animation on this element is
+        // still running or pending. This is an observable terminal condition read from
+        // the platform; it does not disable, patch or fast-forward any animation.
+        const live = element.getAnimations()
+          .filter((animation) => animation.playState === "running" || animation.playState === "pending");
+        if (live.length) allTerminal = false;
+        out[`${terminal.selector}|__liveAnimations`] = String(live.length);
+      }
     }
     out.__allTerminal = allTerminal ? "DONE" : "BUSY";
+    out.__mediaLayers = `${settledMediaLayers}/${totalMediaLayers} idle`;
     return out;
   }, { wanted: predicates, terminals: expectations });
 }
@@ -1462,6 +1519,13 @@ for (const stateId of CONTROL_REQUIRED_STATES) {
 const PHASE_COUNTER_IDS = Object.freeze(["loaderCount", "transitionCount"]);
 const PHASE_COUNTER_MARKER = "<SOURCE_NATIVE_PHASE_COUNTER>";
 
+// CENTRAL bounded MOTION_PHASE_VANCE scope: exactly these states drive the portal
+// transition, and only for them is #pageTransition.clipPath separated from exact parity.
+const PORTAL_PHASE_STATES = Object.freeze(new Set([
+  "PORTAL_TRANSITION", "PORTAL_OPEN", "PORTAL_CLOSE_ABOUT_BLANK_RESET",
+  "REDUCED_MOTION_INTERACTION_D2_D3", "HOME_RESET",
+]));
+
 // Replace the counter text of exactly #loaderCount / #transitionCount inside the landmark
 // list and inside bodyText. Structure, tag, class, attributes, box and visibility of those
 // elements are left completely untouched, so the DOM channel is still compared exactly for
@@ -1475,9 +1539,10 @@ function projectPhaseCounterText(collected) {
     const value = String(entry.ownText ?? "");
     if (!/^\d{2,3}$/.test(value)) return entry;
     projected.push({ channel: "landmarks", id, value, box: entry.box ?? null });
-    // The element's own text AND its own box both follow the same phase digits, so both are
-    // projected. Nothing outside this one element is touched.
-    return { ...entry, ownText: PHASE_COUNTER_MARKER, box: PHASE_COUNTER_MARKER };
+    // CENTRAL: only the TEXT of these two elements is separated. The box stays in the exact
+    // comparison and is only reclassified if the same-surface control proves it moves with
+    // phase.
+    return { ...entry, ownText: PHASE_COUNTER_MARKER };
   });
   let bodyText = collected.bodyText ?? "";
   for (const id of PHASE_COUNTER_IDS) {
@@ -1631,9 +1696,49 @@ for (const [key, records] of byKey) {
   const leftCollected = original.collected;
   const rightCollected = split.collected;
 
-  // CENTRAL H9: for Lane-2 evidence states only, the two rAF/timer counter texts are
+  // CENTRAL: the browser's implicit /favicon.ico fetch is the only console/network class
+  // that may be excluded. The source declares no favicon at all, and the request appears
+  // intermittently on whichever surface happens to lose the race, so it is a browser
+  // implicit fetch rather than a source difference. Nothing else is excluded.
+  const isImplicitFavicon = (entry) => {
+    const url = entry?.location?.url ?? "";
+    return /\/favicon\.ico(\?|$)/.test(url);
+  };
+  const consoleClassFor = (record) => record.consoleMessages
+    .filter((message) => !isImplicitFavicon(message))
+    .map((message) => `${message.type}:${message.text.replace(/\d+/g, "#")}`.slice(0, 400))
+    .sort();
+  const faviconCounts = {
+    original: original.consoleMessages.filter(isImplicitFavicon).length,
+    split: split.consoleMessages.filter(isImplicitFavicon).length,
+  };
+
+  // CENTRAL bounded MOTION_PHASE_VANCE: exactly #pageTransition.clipPath, and only for the
+  // states that actually drive the portal transition. authority-context.json#/nondeterminism_contract
+  // already classifies "clip-path radius" as MOTION_PHASE_VARIANCE. The raw values are kept
+  // as evidence on the row; no other computed-style property is projected.
+  const clipPathProjected = PORTAL_PHASE_STATES.has(original.state)
+    ? {
+      left: original.collected?.computedStyle?.["#pageTransition"]?.clipPath ?? null,
+      right: split.collected?.computedStyle?.["#pageTransition"]?.clipPath ?? null,
+      selector: "#pageTransition",
+      property: "clipPath",
+      classification: "SOURCE_NATIVE_PHASE_MOTION: clip-path radius",
+    }
+    : null;
+  const projectClipPath = (computedStyle) => {
+    if (!clipPathProjected || !computedStyle) return computedStyle;
+    const clone = { ...computedStyle };
+    if (clone["#pageTransition"]) clone["#pageTransition"] = { ...clone["#pageTransition"], clipPath: PHASE_COUNTER_MARKER };
+    return clone;
+  };
+  // CENTRAL H9: for Lane-2 evidence states only, the two rAF/timer counter TEXTS are
   // separated from the general DOM/text comparison and preserved as phase evidence.
   // The projection touches exactly #loaderCount and #transitionCount and nothing else.
+  //
+  // CENTRAL H9_COUNTER_BOX_AUTO_ALLOWANCE=NOT_ACCEPTED: the counter element's BOX is
+  // compared exactly here. Whether it may later be classified as
+  // SOURCE_NATIVE_PHASE_GEOMETRY is decided only by the same-surface counter control.
   const h9Projected = [];
   const leftProjected = original.lane === 2 ? projectPhaseCounterText(leftCollected) : { landmarks: leftCollected?.landmarks, bodyText: leftCollected?.bodyText, projected: [] };
   const rightProjected = original.lane === 2 ? projectPhaseCounterText(rightCollected) : { landmarks: rightCollected?.landmarks, bodyText: rightCollected?.bodyText, projected: [] };
@@ -1642,33 +1747,7 @@ for (const [key, records] of byKey) {
   if (leftCollected && rightCollected) {
     compare("landmarks", dropSelectors(leftProjected.landmarks, exclusions), dropSelectors(rightProjected.landmarks, exclusions));
     compare("bodyText", leftProjected.bodyText, rightProjected.bodyText);
-    // CENTRAL H9 authorized separating exactly the two counter TEXTS. The counter span's own
-    // border box is a direct text-metric consequence of those same phase digits, so that box
-    // difference is recorded as an explicitly-labelled allowance on exactly the two counter
-    // elements, and reported, rather than silently dropped or silently compared.
-    if (h9Projected.length) {
-      const counterBoxDiffs = [];
-      for (const entry of h9Projected) {
-        if (entry.channel !== "landmarks") continue;
-        const leftBox = leftCollected.landmarks.find((item) => item.attributes?.id === entry.id)?.box;
-        const rightBox = rightCollected.landmarks.find((item) => item.attributes?.id === entry.id)?.box;
-        if (!leftBox || !rightBox) continue;
-        if (JSON.stringify(leftBox) !== JSON.stringify(rightBox)) {
-          counterBoxDiffs.push({
-            channel: `landmarks.#${entry.id}.box`,
-            reason: "H9_TEXT_PHASE_CONSEQUENCE: box of the same authorized counter element follows its phase digits",
-            path: `#${entry.id}.box`,
-            left: entry.box ?? leftBox,
-            right: rightBox,
-          });
-        }
-      }
-      if (counterBoxDiffs.length) {
-        allowed.push(...counterBoxDiffs);
-        channelNotes.push(`H9: ${counterBoxDiffs.length} counter-element box difference(s) recorded on exactly #loaderCount/#transitionCount as a text-phase consequence`);
-      }
-    }
-    compare("computedStyle", dropSelectors(leftCollected.computedStyle, exclusions), dropSelectors(rightCollected.computedStyle, exclusions));
+    compare("computedStyle", projectClipPath(dropSelectors(leftCollected.computedStyle, exclusions)), projectClipPath(dropSelectors(rightCollected.computedStyle, exclusions)));
     compare("geometry", dropSelectors(leftCollected.geometry, exclusions), dropSelectors(rightCollected.geometry, exclusions));
     compare("images", leftCollected.images, rightCollected.images);
     compare("portalLinks", leftCollected.portalLinks, rightCollected.portalLinks);
@@ -1696,7 +1775,7 @@ for (const [key, records] of byKey) {
     compare("interactionRecord.after.hasApp", original.interactionRecord?.after?.hasApp, split.interactionRecord?.after?.hasApp);
   }
 
-  compare("consoleClass", original.consoleMessages.map((m) => m.type + ":" + m.text.replace(/\d+/g, "#")).sort(), split.consoleMessages.map((m) => m.type + ":" + m.text.replace(/\d+/g, "#")).sort());
+  compare("consoleClass", consoleClassFor(original), consoleClassFor(split));
   compare("pageErrors", original.pageErrors, split.pageErrors);
   compare("responseClasses", responseClassesFor(original), responseClassesFor(split));
 
@@ -1727,6 +1806,8 @@ for (const [key, records] of byKey) {
     settleSplit: split.settle,
     // CENTRAL H9 phase evidence: the separated counter values, kept for inspection.
     h9PhaseProjectedCounters: h9Projected,
+    faviconImplicitConsoleCounts: faviconCounts,
+    clipPathPhaseEvidence: clipPathProjected,
     visualSuppressionOriginal: original.visualSuppression,
     visualSuppressionSplit: split.visualSuppression,
     canonical16UnmaskedEqualControl: control ? control.canonical16UnmaskedDigest === original.canonical16UnmaskedDigest : null,
@@ -1857,6 +1938,131 @@ for (const stateId of GEOMETRY_ENVELOPE_STATES) {
     classification: crossSurfaceFields.length ? "CROSS_SURFACE_GEOMETRY_DIFFERENCE"
       : varianceFields.length ? "BROWSER_LAYOUT_MEASUREMENT_VARIANCE" : "EQUAL",
   });
+}
+
+// CENTRAL H9_COUNTER_BOX_AUTO_ALLOWANCE=NOT_ACCEPTED: the counter element's box may only be
+// classified as SOURCE_NATIVE_PHASE_GEOMETRY if a same-surface control proves the box moves
+// with the phase on ONE surface. This control runs ORIGINAL_A/ORIGINAL_B and SPLIT_A/SPLIT_B
+// and records full-precision DOMRect, the counter text, the font metrics that determine the
+// glyph run, and the parent DOMRect.
+const COUNTER_CONTROL_STATES = Object.freeze(["INITIAL_LOADER", "PORTAL_TRANSITION"]);
+
+async function readCounterGeometry(page, ids) {
+  return page.evaluate((counterIds) => {
+    const round2 = (value) => Math.round(value * 100) / 100;
+    const out = {};
+    for (const id of counterIds) {
+      const element = document.getElementById(id);
+      if (!element) { out[id] = null; continue; }
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const parent = element.parentElement;
+      const parentRect = parent ? parent.getBoundingClientRect() : null;
+      out[id] = {
+        text: element.textContent,
+        rect: {
+          x: rect.x, y: rect.y, w: rect.width, h: rect.height, right: rect.right, bottom: rect.bottom,
+          x2: round2(rect.x), y2: round2(rect.y), w2: round2(rect.width), h2: round2(rect.height),
+        },
+        fontFamily: style.fontFamily, fontSize: style.fontSize,
+        letterSpacing: style.letterSpacing, lineHeight: style.lineHeight,
+        parentTag: parent ? parent.tagName : null,
+        parentId: parent ? parent.id || null : null,
+        parentClass: parent ? parent.className || null : null,
+        parentRect: parentRect ? { x: parentRect.x, y: parentRect.y, w: parentRect.width, h: parentRect.height, x2: round2(parentRect.x), w2: round2(parentRect.width) } : null,
+      };
+    }
+    return { devicePixelRatio: window.devicePixelRatio, counters: out };
+  }, ids);
+}
+
+const counterControlRuns = [];
+for (const stateId of COUNTER_CONTROL_STATES) {
+  const state = STATE_PLAN.find((entry) => entry.id === stateId);
+  if (!state) continue;
+  const viewportKey = state.viewports[0];
+  for (const [index, surface] of ["original", "original", "split", "split"].entries()) {
+    const viewport = VIEWPORTS[viewportKey];
+    const context = await browser.newContext({
+      viewport: { width: viewport.width, height: viewport.height },
+      deviceScaleFactor: viewport.dpr, reducedMotion: viewport.reducedMotion,
+      hasTouch: viewport.mobile, isMobile: viewport.mobile,
+    });
+    const page = await context.newPage();
+    await page.goto(`${origin}${SURFACE_ENTRY[surface]}`, { waitUntil: "load" });
+    await ACTIONS[state.id](page, { origin, entry: SURFACE_ENTRY[surface], surface, viewportKey, interactionRecord: null });
+    const settle = await waitForStateSettled(page, state.id);
+    const observed = await readCounterGeometry(page, PHASE_COUNTER_IDS);
+    await context.close();
+    const repeatLabel = `${surface === "original" ? "ORIGINAL" : "SPLIT"}_${index % 2 === 0 ? "A" : "B"}`;
+    counterControlRuns.push({ state: stateId, viewport: viewportKey, surface, repeatLabel, settle, observed });
+    console.log(`CDX017_S4_COUNTER_CONTROL=${stateId} ${repeatLabel}`);
+  }
+}
+// The counter box may only become phase geometry where the SAME surface already moves it
+// between two runs of that same surface. If the same surface is fixed, the box difference
+// stays an exact parity failure.
+const counterControl = [];
+for (const stateId of COUNTER_CONTROL_STATES) {
+  const runs = counterControlRuns.filter((run) => run.state === stateId);
+  if (runs.length < 4) continue;
+  for (const id of PHASE_COUNTER_IDS) {
+    const originals = runs.filter((r) => r.surface === "original").map((r) => r.observed.counters[id]).filter(Boolean);
+    const splits = runs.filter((r) => r.surface === "split").map((r) => r.observed.counters[id]).filter(Boolean);
+    if (originals.length < 2 || splits.length < 2) continue;
+    const withinOf = (list, field) => Math.max(...list.map((e) => e.rect[field])) - Math.min(...list.map((e) => e.rect[field]));
+    const meanOf = (list, field) => list.reduce((t, e) => t + e.rect[field], 0) / list.length;
+    const withinMax = Math.max(withinOf(originals, "x"), withinOf(originals, "w"), withinOf(splits, "x"), withinOf(splits, "w"));
+    const crossMax = Math.max(Math.abs(meanOf(originals, "x") - meanOf(splits, "x")), Math.abs(meanOf(originals, "w") - meanOf(splits, "w")));
+    const all = [...originals, ...splits];
+    counterControl.push({
+      state: stateId, viewport: runs[0].viewport, counterId: id,
+      dpr: runs[0].observed.devicePixelRatio,
+      originalFullPrecision: originals.map((e) => e.rect), splitFullPrecision: splits.map((e) => e.rect),
+      originalTexts: originals.map((e) => e.text), splitTexts: splits.map((e) => e.text),
+      distinctCounterTexts: [...new Set(all.map((e) => e.text))],
+      fontMetrics: [...new Set(all.map((e) => `${e.fontFamily}|${e.fontSize}|${e.letterSpacing}|${e.lineHeight}`))],
+      parents: [...new Set(all.map((e) => `${e.parentTag}#${e.parentId}.${e.parentClass}`))],
+      parentRects: all.map((e) => e.parentRect),
+      withinSurfaceSpread: withinMax, crossSurfaceGap: crossMax,
+      sameSurfaceBoxMovesWithPhase: withinMax > 0,
+      classification: withinMax > 0
+        ? "SOURCE_NATIVE_PHASE_GEOMETRY_PROVEN_BY_SAME_SURFACE_CONTROL"
+        : "EXACT_PARITY_REQUIRED",
+    });
+  }
+}
+
+// Apply the conditional approval only where the control proved it.
+const counterPhaseGeometryKeys = new Set(
+  counterControl.filter((e) => e.sameSurfaceBoxMovesWithPhase).map((e) => `${e.viewport}::${e.state}`),
+);
+for (const row of comparisonRows) {
+  if (!counterPhaseGeometryKeys.has(row.key)) continue;
+  const counterIds = new Set(counterControl.filter((e) => e.state === row.state).map((e) => e.counterId));
+  const marks = captures.find((r) => r.surface === "original" && !r.isControl && pairKey(r) === row.key)?.collected?.landmarks ?? [];
+  const counterIndexes = new Set(marks.map((entry, index) => (counterIds.has(entry.attributes?.id) ? index : -1)).filter((i) => i >= 0));
+  const kept = [];
+  for (const entry of row.differences) {
+    const match = /^landmarks\.(\d+)\./.exec(entry.path);
+    if (match && counterIndexes.has(Number(match[1]))) {
+      allowed.push({
+        channel: entry.channel, path: entry.path, left: entry.left, right: entry.right,
+        reason: "SOURCE_NATIVE_PHASE_GEOMETRY: counter element box, proven to move with phase on the same surface by the counter control",
+      });
+      continue;
+    }
+    kept.push(entry);
+  }
+  row.differences = kept;
+  row.nonScreenshotEqual = kept.length === 0;
+  if (kept.length === 0) channelNotes.push(`H9 counter box: ${row.key} differed only on the counter element box, proven phase geometry by the same-surface control`);
+}
+for (const failure of [...channelFailures]) {
+  if (!failure.name.startsWith("non_screenshot_channel:")) continue;
+  const key = failure.name.slice("non_screenshot_channel:".length);
+  const row = comparisonRows.find((entry) => entry.key === key);
+  if (row && row.nonScreenshotEqual) channelFailures.splice(channelFailures.indexOf(failure), 1);
 }
 
 // Raw pixel instrumentation (never a threshold) for every pair, computed on the raster page.
@@ -2266,6 +2472,7 @@ const summary = {
   lane2_deterministic_channel_residuals: lane2DeterministicChannelResiduals,
   real_parity_defects: realParityDefects,
   geometry_envelope: geometryEnvelope,
+  counter_control: counterControl,
   geometry_measurement_variance_keys: [...geometryMeasurementVarianceKeys],
   geometry_cross_surface_keys: [...geometryCrossSurfaceKeys],
   favicon_requests: captures.map((record) => ({
@@ -2308,6 +2515,8 @@ const summary = {
     settle_original: row.settleOriginal,
     settle_split: row.settleSplit,
     h9_phase_projected_counters: row.h9PhaseProjectedCounters,
+    favicon_implicit_console_counts: row.faviconImplicitConsoleCounts,
+    clip_path_phase_evidence: row.clipPathPhaseEvidence,
     visual_suppression_original: row.visualSuppressionOriginal,
     visual_suppression_split: row.visualSuppressionSplit,
     pixel_diff_instrumentation: row.pixelDiff,
@@ -2528,6 +2737,9 @@ for (const entry of geometryEnvelope) {
   for (const line of variance) console.log(`  MEASUREMENT_VARIANCE ${line}`);
 }
 console.log(`CDX017_S4_FAVICON_REQUEST_CAPTURES=${captures.filter((record) => (record.requests ?? []).some((entry) => /\/favicon\.ico(\?|$)/.test(entry.url))).length}`);
+for (const entry of counterControl) {
+  console.log(`CDX017_S4_COUNTER_CONTROL_RESULT=${entry.state}|${entry.counterId}|texts=${JSON.stringify(entry.distinctCounterTexts)}|within=${entry.withinSurfaceSpread}|cross=${entry.crossSurfaceGap}|fonts=${entry.fontMetrics.length}|parents=${entry.parents.length}|class=${entry.classification}`);
+}
 console.log(`CDX017_S4_CANONICAL16_TECHNIQUE_SELF_CHECK=${summary.canonical16_normalization.technique_self_check ? "PASS" : "FAIL"}`);
 console.log(`CDX017_S4_PAIRS=${comparisonRows.length}`);
 console.log(`CDX017_S4_PAGE_ERRORS=${pageErrorTotal}`);
