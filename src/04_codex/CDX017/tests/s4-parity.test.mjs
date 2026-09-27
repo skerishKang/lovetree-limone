@@ -829,6 +829,47 @@ const INDEX_IDLE_TERMINAL = Object.freeze({
   selector: "#indexView", opacity: null, visibility: null, idleAnimations: true,
 });
 
+// CENTRAL bounded approval: exactly ONE leaf property in exactly ONE state.
+//   STATE=desktop::PORTAL_TRANSITION  SELECTOR=#talkBtn  PROPERTY=backgroundColor
+//   CLASS=SOURCE_NATIVE_PHASE_STYLE
+// Authority evidence: `.pill.enter-memory{background:rgba(255,255,255,.56)}` is the
+// non-hover terminal and `.enter-memory:hover{background:#fff}` is the hover terminal, so
+// the observed rgba(...,0.58) and rgba(...,0.635) are both strictly mid-interpolation. The
+// sibling `SPAN.enter-orb` bound to the same `.enter-memory:hover` lifecycle already had its
+// phase movement proven by the same-surface control. Nothing else is separated: no other
+// property, no other state, no tolerance, and the raw values are kept as evidence.
+const BOUNDED_PHASE_STYLE = Object.freeze([
+  Object.freeze({
+    state: "PORTAL_TRANSITION", viewport: "desktop",
+    selector: "#talkBtn", property: "backgroundColor",
+    classification: "SOURCE_NATIVE_PHASE_STYLE",
+    nonHoverTerminal: "rgba(255, 255, 255, 0.56)",
+    hoverTerminal: "rgb(255, 255, 255)",
+  }),
+]);
+
+// Projects the bounded phase-style leaves for a (state, viewport) pair out of the exact
+// comparison, returning the projected map plus the raw observed values as evidence.
+function projectBoundedPhaseStyle(state, viewportKey, computedStyle, rawOriginal, rawSplit) {
+  const targets = BOUNDED_PHASE_STYLE.filter((t) => t.state === state && t.viewport === viewportKey);
+  if (!targets.length || !computedStyle) return { projected: computedStyle, evidence: [] };
+  const clone = { ...computedStyle };
+  const evidence = [];
+  for (const target of targets) {
+    const left = rawOriginal?.[target.selector]?.[target.property] ?? null;
+    const right = rawSplit?.[target.selector]?.[target.property] ?? null;
+    if (!clone[target.selector]) continue;
+    clone[target.selector] = { ...clone[target.selector], [target.property]: PHASE_COUNTER_MARKER };
+    evidence.push({
+      state, viewport: viewportKey, selector: target.selector, property: target.property,
+      classification: target.classification,
+      originalRaw: left, splitRaw: right,
+      nonHoverTerminal: target.nonHoverTerminal, hoverTerminal: target.hoverTerminal,
+    });
+  }
+  return { projected: clone, evidence };
+}
+
 async function readSettleSample(page, predicates, expectations) {
   return page.evaluate(({ wanted, terminals }) => {
     const out = {};
@@ -1775,6 +1816,7 @@ for (const [key, records] of byKey) {
   // states that actually drive the portal transition. authority-context.json#/nondeterminism_contract
   // already classifies "clip-path radius" as MOTION_PHASE_VARIANCE. The raw values are kept
   // as evidence on the row; no other computed-style property is projected.
+  const boundedPhaseStyleEvidence = [];
   const clipPathProjected = PORTAL_PHASE_STATES.has(original.state)
     ? {
       left: original.collected?.computedStyle?.["#pageTransition"]?.clipPath ?? null,
@@ -1805,7 +1847,11 @@ for (const [key, records] of byKey) {
   if (leftCollected && rightCollected) {
     compare("landmarks", dropSelectors(leftProjected.landmarks, exclusions), dropSelectors(rightProjected.landmarks, exclusions));
     compare("bodyText", leftProjected.bodyText, rightProjected.bodyText);
-    compare("computedStyle", projectClipPath(dropSelectors(leftCollected.computedStyle, exclusions)), projectClipPath(dropSelectors(rightCollected.computedStyle, exclusions)));
+    const boundedStyle = projectBoundedPhaseStyle(
+      original.state, original.viewport, dropSelectors(leftCollected.computedStyle, exclusions), leftCollected.computedStyle, rightCollected.computedStyle,
+    );
+    for (const entry of boundedStyle.evidence) boundedPhaseStyleEvidence.push(entry);
+    compare("computedStyle", projectClipPath(boundedStyle.projected), projectClipPath(dropSelectors(rightCollected.computedStyle, exclusions)));
     compare("geometry", dropSelectors(leftCollected.geometry, exclusions), dropSelectors(rightCollected.geometry, exclusions));
     compare("images", leftCollected.images, rightCollected.images);
     compare("portalLinks", leftCollected.portalLinks, rightCollected.portalLinks);
@@ -2646,6 +2692,7 @@ const summary = {
   lane2_deterministic_channel_residuals: lane2DeterministicChannelResiduals,
   real_parity_defects: realParityDefects,
   geometry_envelope: geometryEnvelope,
+  bounded_phase_style_evidence: boundedPhaseStyleEvidence,
   counter_control: counterControl,
   enter_orb_control: enterOrbControl,
   geometry_measurement_variance_keys: [...geometryMeasurementVarianceKeys],
@@ -2894,7 +2941,8 @@ console.log(`CDX017_S4_FROZEN_D1_D10=${frozenFailures.length === 0 ? "PRESERVED"
 console.log(`CDX017_S4_PORTAL_SHELL_CONTRACT=${portalShellEqual ? "EQUAL" : "HOLD"}`);
 console.log(`CDX017_S4_LANE1_SETTLED_VISUAL_PAIRS=${settledPairsMaskedEqual}/${settledPairsRequired}`);
 console.log(`CDX017_S4_LANE1_CANONICAL16_EQUAL=${settledPairsMaskedEqual}/${settledPairsRequired}`);
-console.log(`CDX017_S4_LANE1_DETERMINISTIC_VISUAL_EQUAL=${lane1DeterministicVisualEqual}/${lane1Rows.length}`);
+console.log(`CDX017_S4_LANE1_DETERMINISTIC_VISUAL_INSTRUMENTATION=${lane1DeterministicVisualEqual}/${lane1Rows.length} (GATING=NO)`);
+console.log(`CDX017_S4_REQUIRED_LANE1_VISUAL_GATE=${settledPairsMaskedEqual}/${settledPairsRequired}`);
 console.log(`CDX017_S4_TIME_DEPENDENT_CONTROL_STATES=${controlStates}`);
 console.log(`CDX017_S4_LANE2_DETERMINISTIC_CHANNEL_RESIDUALS=${lane2DeterministicChannelResiduals.length}`);
 console.log(`CDX017_S4_REAL_PARITY_DEFECTS=${realParityDefects}`);
