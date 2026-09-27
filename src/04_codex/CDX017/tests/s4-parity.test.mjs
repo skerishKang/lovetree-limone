@@ -744,6 +744,15 @@ async function goReady(page) {
 // hideTransition() and then gains a `leaving` class; watching its opacity for stability
 // captured one surface mid-fade (class "page-transition open leaving") and made
 // PORTAL_OPEN worse. The terminal condition is the exact authored end state.
+// CENTRAL H10: the compared element is IMG.media-layer, and the source gives it a
+// 1.2s transform transition (scale(1.035) -> scale(1)) on a box that is inset -2% / 104%.
+// While that transform is in flight the measured border box moves by exactly the
+// 0.01-0.07px amounts previously reported, on BOTH surfaces, because each independent
+// page load starts the transition at a slightly different point. The settle gate never
+// waited for it. Terminal state is the identity matrix plus no running CSS animation.
+const MEDIA_LAYER_SELECTOR = ".media-layer.active";
+const MEDIA_LAYER_TERMINAL_TRANSFORM = "matrix(1, 0, 0, 1, 0, 0)";
+
 const MEDIA_LAYER_TERMINAL = Object.freeze({
   selector: MEDIA_LAYER_SELECTOR,
   opacity: "1",
@@ -801,15 +810,6 @@ const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
   // The authored ?preview= helper deliberately bypasses the loader (D10).
   PREVIEW_CONTRACT_D10: [],
 });
-
-// CENTRAL H10: the compared element is IMG.media-layer, and the source gives it a
-// 1.2s transform transition (scale(1.035) -> scale(1)) on a box that is inset -2% / 104%.
-// While that transform is in flight the measured border box moves by exactly the
-// 0.01-0.07px amounts previously reported, on BOTH surfaces, because each independent
-// page load starts the transition at a slightly different point. The settle gate never
-// waited for it. Terminal state is the identity matrix plus no running CSS animation.
-const MEDIA_LAYER_SELECTOR = ".media-layer.active";
-const MEDIA_LAYER_TERMINAL_TRANSFORM = "matrix(1, 0, 0, 1, 0, 0)";
 
 async function readSettleSample(page, predicates, expectations) {
   return page.evaluate(({ wanted, terminals }) => {
