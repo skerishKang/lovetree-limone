@@ -346,10 +346,10 @@ contractCheck(frozenDefects.every((d) => d.id && d.name && d.note), "frozen_defe
 
 // Portal paths preserved byte-for-byte and never substituted.
 const PORTAL_PATHS = [
-  "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html"
-  "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html"
-  "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html"
-  "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html"
+  "../../15_러브트리_메모리바이오스피어_인터랙티브대문_V1/버전2/최종본.html",
+  "../../14_러브트리_로테이팅메모리인덱스_V1/최종본.html",
+  "../../../[01_러브트리]/03_디자인채택본/68_인물감정경로_모션아카이브/V6_CODEX_PORTALS/68_V3.3_COMPARE_LAUNCHER.html",
+  "../../13_러브트리_리퀴드글라스_인피니트비디오월_V1/최종본.html",
 ];
 const authoredOccurrences = (text) => PORTAL_PATHS
   .flatMap((p) => { const out = []; let at = -1; while ((at = text.indexOf(p, at + 1)) >= 0) out.push({ p, at }); return out; })
