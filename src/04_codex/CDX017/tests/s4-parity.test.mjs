@@ -818,7 +818,7 @@ const SETTLE_TERMINAL_EXPECTATIONS = Object.freeze({
 const SETTLE_TERMINAL_EXPECTATIONS_FINAL = Object.freeze(
   Object.fromEntries(Object.entries(SETTLE_TERMINAL_EXPECTATIONS).map(([state, list]) => [
     state,
-    list.some((entry) => entry.mediaLayersIdle) || list.length === 0
+    list.some((entry) => entry.mediaLayersIdle)
       ? list
       : [...list, MEDIA_LAYER_TERMINAL, MEDIA_LAYERS_IDLE_TERMINAL],
   ])),
@@ -1349,10 +1349,20 @@ async function captureState(browser, { origin, viewportKey, state, surface, rast
   assert(typeof action === "function", `no action implemented for state ${state.id}`);
   await action(page, actionContext);
 
+  // CENTRAL H10 regression guard: the water canvas must be observed IMMEDIATELY after the
+  // interaction and BEFORE the settle wait. The media-layer settle legitimately adds up to
+  // ~1.2s, and the source's water ink fades during that time, so reading the canvas only after
+  // settle would erase the very evidence the frozen D3 assertion depends on.
+  let waterInkPostAction;
+  try {
+    waterInkPostAction = await readWaterInk(page);
+  } catch {
+    waterInkPostAction = { present: false, inkPixelsApprox: 0 };
+  }
+
   // CENTRAL H6: authoritative settle. The authored transitions on this source run
-  // up to 780ms (.menu-panel .75s, .index-view .72s, .portal-view .65s), so the
-  // previous fixed sleeps captured mid-transition and produced the phase noise that
-  // the candidate reported as geometry/computedStyle differences. Every non-screenshot
+  // up to 1.2s (.media-layer transform), so the previous fixed sleeps captured
+  // mid-transition and produced the phase noise the candidate reported. Every non-screenshot
   // channel below is still read from the untouched page.
   const settle = await waitForStateSettled(page, state.id);
 
@@ -1426,6 +1436,7 @@ async function captureState(browser, { origin, viewportKey, state, surface, rast
       appliedToNonScreenshotChannels: false,
     },
     waterInk: { present: waterInk.present, inkPixelsApprox: waterInk.inkPixelsApprox, canvasWidth: waterInk.width, canvasHeight: waterInk.height, canvasDpr: waterInk.dpr, rowCount: Array.isArray(waterInk.rows) ? waterInk.rows.length : 0 },
+    waterInkPostAction: { present: waterInkPostAction.present, inkPixelsApprox: waterInkPostAction.inkPixelsApprox },
     maskGeometry,
     collected,
     interactionRecord: actionContext.interactionRecord,
@@ -2200,7 +2211,9 @@ for (const surface of ["original", "split"]) {
 // D3: pointer ripples still draw under reduced motion.
 for (const surface of ["original", "split"]) {
   const record = captureFor("REDUCED_MOTION_INTERACTION_D2_D3", surface, "reduced");
-  defectCheck("D3", (record?.waterInk?.inkPixelsApprox ?? 0) > 0, `${surface}: reduced-motion water ink = ${record?.waterInk?.inkPixelsApprox}`);
+  // D3 is observed immediately after the pointer sequence, before the H10 media-layer
+  // settle, so the settle cannot erase the very evidence this frozen defect asserts.
+  defectCheck("D3", (record?.waterInkPostAction?.inkPixelsApprox ?? 0) > 0, `${surface}: reduced-motion water ink (post-action, pre-settle) = ${record?.waterInkPostAction?.inkPixelsApprox}`);
 }
 
 // D4: no focus management when an overlay opens - focus stays on the trigger.
