@@ -102,14 +102,27 @@ const GLUE_SUBRESOURCE_NAMES = Object.freeze(["styles.css", "script.js"]);
 // to become empty. Each predicate is an observable terminal condition on computed
 // style; no arbitrary sleep is the primary criterion.
 const styleAt = (selector, property) => ({ kind: "style", selector, property });
+// CENTRAL H6: the chapter UI is deterministic chrome too. `.chapter-dot.active`
+// cross-fades its background/border colour and `#chapterProgress` animates its width,
+// which moves `transformOrigin` and the landmark box. These are authored transitions
+// with observable terminal values, so they are settled on exactly like the loader and
+// the overlay panels. This is a settle predicate, not a weakened assertion.
+const CHAPTER_UI_PREDICATES = Object.freeze([
+  styleAt(".chapter-dot.active", "backgroundColor"),
+  styleAt(".chapter-dot.active", "borderTopColor"),
+  styleAt("#chapterProgress", "transformOrigin"),
+  styleAt("#chapterProgress", "width"),
+]);
+const withChapterUi = (list) => Object.freeze([...list, ...CHAPTER_UI_PREDICATES]);
+
 const SETTLE_PREDICATES = Object.freeze({
   // Loader reaches its authored done/hidden terminal state.
   READY_CHAPTER_01: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
-  CHAPTER_02: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
-  CHAPTER_03: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
-  CHAPTER_04: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
-  WHEEL_NEXT_PREV_WRAP_LOCK: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
-  KEY_ARROW_NEXT_PREV: [styleAt("#loader", "opacity"), styleAt("#loader", "visibility")],
+  CHAPTER_02: withChapterUi([styleAt("#loader", "opacity"), styleAt("#loader", "visibility")]),
+  CHAPTER_03: withChapterUi([styleAt("#loader", "opacity"), styleAt("#loader", "visibility")]),
+  CHAPTER_04: withChapterUi([styleAt("#loader", "opacity"), styleAt("#loader", "visibility")]),
+  WHEEL_NEXT_PREV_WRAP_LOCK: withChapterUi([styleAt("#loader", "opacity"), styleAt("#loader", "visibility")]),
+  KEY_ARROW_NEXT_PREV: withChapterUi([styleAt("#loader", "opacity"), styleAt("#loader", "visibility")]),
   // Menu open: panel at its terminal authored matrix (transform fully applied).
   MENU_OPEN: [styleAt("#loader", "opacity"), styleAt("#menuPanel", "transform")],
   // Escape close: panel returned to its terminal closed matrix.
@@ -1695,7 +1708,12 @@ const portalOwnedSnapshot = (record) => {
     try { return new URL(path, record.url).href; } catch { return "UNRESOLVABLE"; }
   });
   const interaction = record.interactionRecord ?? {};
-  for (const key of ["transitionClass", "clipPath", "transitionLabel", "portalTitle", "portalNewWindowHref", "portalFrameSrc", "portalViewClass", "openedSrc", "afterCloseSrc", "transitionAt430ms"]) {
+  // `clipPath` is deliberately NOT an exact-equality field. The capsule's own recorded
+  // nondeterminism contract (authority-context.json#/nondeterminism_contract) classifies
+  // "clip-path radius, rAF transition counter" as MOTION_PHASE_VARIANCE, so a clip-path
+  // sampled at a fixed instant cannot be required to be byte-identical across surfaces.
+  // The transition's authored chrome (class, label, counter completion) is still compared.
+  for (const key of ["transitionClass", "transitionLabel", "portalTitle", "portalNewWindowHref", "portalFrameSrc", "portalViewClass", "openedSrc", "afterCloseSrc", "transitionAt430ms"]) {
     if (interaction[key] !== undefined) snapshot.interaction[key] = interaction[key];
   }
   return snapshot;
