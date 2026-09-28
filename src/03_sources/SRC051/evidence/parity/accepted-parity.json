@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC051",
+  "status": "ACCEPTED",
+  "review_method": "DIRECT_CENTRAL_ARTIFACT_REVIEW",
+  "source_head": "61742068c2a0999ccbfb9b70888916c5bef4cde2",
+  "candidate_capture_head": "61742068c2a0999ccbfb9b70888916c5bef4cde2",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "workflow": {
+    "name": "SRC 108 Reimplementation Harness Gate",
+    "run_id": 36392646675,
+    "conclusion": "SUCCESS"
+  },
+  "artifact": {
+    "id": 10957655770,
+    "name": "src-split-parity-61742068c2a0999ccbfb9b70888916c5bef4cde2",
+    "size_bytes": 38007394,
+    "digest": "sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f"
+  },
+  "central_visual_pass": true,
+  "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+  "authority": {
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "git_blob": "fd7e48b1301abe0f857e9a7bbc06162c088d0abc"
+  },
+  "lanes": [
+    {
+      "lane": "desktop-normal",
+      "role": "AUTHORITY",
+      "width": 1440,
+      "height": 900,
+      "reduced_motion": "no-preference",
+      "states": 18,
+      "states_passed": 18,
+      "semantic_parity": "PASS"
+    },
+    {
+      "lane": "desktop-reduced",
+      "role": "AUTHORITY",
+      "width": 1440,
+      "height": 900,
+      "reduced_motion": "reduce",
+      "states": 14,
+      "states_passed": 14,
+      "semantic_parity": "PASS"
+    },
+    {
+      "lane": "mobile-390",
+      "role": "REGRESSION",
+      "width": 390,
+      "height": 844,
+      "reduced_motion": "no-preference",
+      "states": 12,
+      "states_passed": 12,
+      "semantic_parity": "PASS"
+    },
+    {
+      "lane": "mobile-320",
+      "role": "REGRESSION",
+      "width": 320,
+      "height": 720,
+      "reduced_motion": "no-preference",
+      "states": 10,
+      "states_passed": 10,
+      "semantic_parity": "PASS"
+    }
+  ],
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "computed_style": "EQUAL_FOR_STABLE_SOURCE_LANDMARKS",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "state": "EQUAL",
+    "visibility": "EQUAL",
+    "runtime_health": "EQUAL",
+    "network_health": "EQUAL",
+    "screenshots": "MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED",
+    "screenshot_byte_identity": "desktop-normal 1/18, desktop-reduced 6/14, mobile-390 4/12, mobile-320 3/10",
+    "raw_png_equality_used": false,
+    "pixel_tolerance_used": false,
+    "ssim_used": false,
+    "hamming_threshold_used": false
+  },
+  "browser_errors": 0,
+  "required_network_errors": 0,
+  "runtime": {
+    "page_errors_original": 0,
+    "page_errors_split": 0,
+    "console_errors": 0,
+    "failed_required_requests": 0,
+    "broken_images_original": 0,
+    "broken_images_split": 0,
+    "rendered_images": 19
+  },
+  "visual_review": {
+    "central_direct_artifact_review": true,
+    "central_visual_pass": true,
+    "central_acceptance_issue_comment": 5867690624,
+    "central_acceptance_pr_comment": 5867691709,
+    "artifact_id": 10957655770,
+    "artifact_digest": "sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f",
+    "downloaded_zip_sha256": "52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f",
+    "digest_match": true,
+    "reviewed_representative_states": [
+      "1440x900 no-preference HERO_FACE_LENS_ORBIT_HOVER",
+      "1440x900 reduce RM_ANALYSIS_PHASE3_EYE_OVERLAY",
+      "1440x900 reduce RM_SAVED_CTA_ACTIVE",
+      "390x844 no-preference CONNECTION_NODE_PRESENCE_N5_N6",
+      "320x720 no-preference BRAND_CLOSE"
+    ],
+    "source_native_observation": "DOM, state, geometry at stable landmarks, visibility, interaction, runtime and network are equal on every paired state. Raw PNG differences are limited to the already-adjudicated source-native continuous animation phase, both under no-preference and, after the S4 transition-settling correction, under reduced motion where the only remaining movement is the authored pseudo-element CSS animation the Source never silences."
+  },
+  "frozen_defects": {
+    "count_unique": 8,
+    "all_prior_preserved": true,
+    "newly_proven": [
+      "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_PSEUDO_ELEMENT_CSS_ANIMATIONS"
+    ]
+  },
+  "pseudo_element_reduced_motion_resolution": {
+    "s2_animation_bookkeeping_status": "RESOLVED",
+    "resolution": "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION",
+    "affected": [
+      ".hero-orbit::before",
+      ".hero-orbit::after",
+      ".radar::after"
+    ],
+    "meaning": "The Source authors @keyframes spin on pseudo-elements, and its reduced-motion rule * { animation:none!important } does not select pseudo-elements. The remaining reduced-motion screenshot differences are therefore source-native authored behaviour, not harness drift, and are not a parity tolerance."
+  },
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "protected_runtime_blobs": {
+    "original/original.html": "fd7e48b1301abe0f857e9a7bbc06162c088d0abc",
+    "split/index.html": "886ecba2940e87b49af0a1190da7c357423b255f",
+    "split/styles.css": "18518d06f49d16d8e95231ffd060ecdcb1053bbc",
+    "split/script.js": "16ede72b689a3d4db0b015080c62dd1f658ef23d",
+    "unchanged": true
+  },
+  "notes": [
+    "CENTRAL downloaded the exact-head artifact and independently verified its ZIP SHA-256 against the recorded digest.",
+    "CENTRAL directly reviewed the paired ORIGINAL/SPLIT PNGs across all four lanes.",
+    "The S4 synchronization correction closed the transition-phase false green at desktop-reduced / RM_ANALYSIS_PHASE3_EYE_OVERLAY.",
+    "CSS_TRANSITION_SETTLE_SYNCHRONIZATION is applied to every stable S4 state and verified by re-reading, not trusted.",
+    "The declared WAAPI CTA transient is never waited away; it remains a real observed state (frozen defect D5).",
+    "This record follows the SOURCE_SPECIFIC_MOTION_AWARE contract already used by SRC036 and SRC038, because SRC051 also has a continuously animating surface.",
+    "No Source authority, split output, product adapter, backend, DB, auth, Ready transition, merge or production deploy is part of this acceptance."
+  ],
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "hamming_threshold_used": false
+}

@@ -134,31 +134,35 @@ console.log("\nManifest / materialization truth:");
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
 ok(manifest.stages.mechanical_split_complete === true
   && manifest.stages.baseline_captured === true
-  && manifest.stages.source_split_parity_pass === false
+  // S4 evidence is now CENTRAL-ACCEPTED (#589 comment 5867690624). The parity verdict is true, and it
+  // is bound to the reviewed artifact through parity_ref rather than being asserted locally.
+  && manifest.stages.source_split_parity_pass === true
+  && manifest.parity_ref === "evidence/parity/accepted-parity.json"
+  && fs.existsSync(path.join(ROOT, "evidence/parity/accepted-parity.json"))
   && manifest.runtime_policy === "HTML_CSS_JS_MECHANICAL_ONLY"
   && manifest.tsx_allowed_during_split === false,
-  "T18", "S3 asserted, S4 parity explicitly false, mechanical-only policy");
+  "T18", "S3 asserted, S4 parity accepted against a reviewed artifact, mechanical-only policy");
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
 // S3 correction (#589 comment 5860509930) required the record to express "mechanically
-// materialized, CENTRAL S4 not released" rather than "parity capture pending", which read as if
-// parity were already licensed. S4 correction (#589 comment 5862568703) then released S4 for SRC051
-// only, so the record now expresses the bounded release. What must NOT change either way: the record
-// still claims no parity, names no parity ref, and sets no accepted-parity or next-stage field.
+// materialized, CENTRAL S4 not released". S4 was then released for SRC051 only (#589 comment
+// 5862568703) and its evidence was directly accepted after artifact review (#589 comment 5867690624),
+// so the record now expresses the accepted verdict. What must not change either way: the Source is
+// preserved byte-for-byte, no contract was relaxed, and the authority lock still holds.
 let matOk = mat.source_id === "SRC051"
-  && mat.status === "MATERIALIZED_PENDING_PARITY"
-  && mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE"
+  && mat.status === "ACCEPTED"
+  && mat.parity_status === "PASS"
+  && mat.parity_ref === "evidence/parity/accepted-parity.json"
   && mat.stage_gate?.s4_release === "RELEASED"
   && mat.stage_gate?.parity_capture_authorized === true
-  && mat.stage_gate?.original_vs_split_comparison_authorized === true
+  && mat.stage_gate?.central_visual_review === "PASS"
   && /5862568703/.test(mat.stage_gate?.decision_ref ?? "")
-  // Candidate-stage invariants: a released gate is still not a verdict.
-  && mat.stage_gate?.candidate_stage_invariants?.source_split_parity_pass === false
-  && mat.stage_gate?.candidate_stage_invariants?.parity_ref === null
-  && mat.stage_gate?.candidate_stage_invariants?.accepted_parity_created === false
-  && mat.stage_gate?.candidate_stage_invariants?.central_visual_review === "PENDING"
-  && mat.stage_gate?.candidate_stage_invariants?.next_stage_authorized === null
-  && mat.parity_ref === null
-  && mat.parity_claim_made === false
+  && /5867690624/.test(mat.s4_parity_acceptance?.ref ?? JSON.stringify(mat).slice(0, 200))
+  // The S2 animation-bookkeeping observation is resolved, with the cause recorded.
+  && (mat.preserved_metadata?.unresolved_observations ?? []).every((o) => o.status === "RESOLVED")
+  && (mat.preserved_metadata?.unresolved_observations ?? []).some((o) => o.resolution === "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION")
+  // Frozen defects are 7 prior + the newly proven D8.
+  && mat.preserved_metadata?.frozen_defects?.count_unique === 8
+  && mat.preserved_metadata?.frozen_defects?.items?.length === 8
   && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA
   && mat.contracts.round_trip_byte_identity === true
   && mat.contracts.redesign_or_refactor === false
@@ -182,11 +186,29 @@ const base = JSON.parse(fs.readFileSync(path.join(ROOT, "baseline/accepted-basel
 ok(SYNC.every((k) => ctx.synchronization_contract.classes.some((c) => c.name === k))
   && SYNC.every((k) => base.synchronization_contract.classes.some((c) => c.name === k)),
   "T20a", "all four synchronization classes preserved in authority-context + baseline");
-ok(ctx.frozen_defects.count_unique === 7 && ctx.frozen_defects.items.length === 7
-  && base.frozen_defect_ledger.count_unique === 7,
-  "T20b", "7 unique frozen defects preserved (8 observations) in both files");
-ok(ctx.unresolved_observations[0].status === "UNRESOLVED" && base.unresolved_observations[0].status === "UNRESOLVED",
-  "T20c", "animation-bookkeeping probe preserved as UNRESOLVED, not resolved into source truth");
+// Frozen defects went 7 -> 8: CENTRAL accepted S4 with a newly proven defect D8, that
+// prefers-reduced-motion does not silence authored CSS animations on pseudo-elements because the
+// source rule targets `*` and the universal selector does not match ::before / ::after (#589 comment
+// 5867690624). All seven prior defects are still present.
+const D8_ID = "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_PSEUDO_ELEMENT_CSS_ANIMATIONS";
+ok(ctx.frozen_defects.count_unique === 8 && ctx.frozen_defects.items.length === 8
+  && base.frozen_defect_ledger.count_unique === 8
+  && base.frozen_defect_ledger.items.length === 8
+  && ctx.frozen_defects.items.some((d) => d.id === D8_ID)
+  && base.frozen_defect_ledger.items.some((d) => d.id === D8_ID)
+  // The prior WAAPI defect must survive alongside the new one; they are distinct mechanisms.
+  && ctx.frozen_defects.items.some((d) => d.id === "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE"),
+  "T20b", "8 unique frozen defects (7 prior + newly proven D8) preserved in both files");
+// The S2 animation-bookkeeping observation is now RESOLVED with an identified authored cause, and it
+// keeps the original observation text so the resolution stays auditable. It is no longer an open item.
+const resolvedCtx = ctx.unresolved_observations[0];
+const resolvedBase = base.unresolved_observations[0];
+ok(resolvedCtx.status === "RESOLVED" && resolvedBase.status === "RESOLVED"
+  && resolvedCtx.resolution === "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION"
+  && resolvedCtx.supersedes === "SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED"
+  && resolvedCtx.observation.length > 40
+  && resolvedBase.resolution === "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION",
+  "T20c", "animation-bookkeeping observation RESOLVED as pseudo-element CSS animation, original text retained");
 ok(ctx.accepted_source_truth.reduced_motion_waapi_pulse_runs === true,
   "T20d", "accepted reduced-motion WAAPI source truth recorded and preserved");
 

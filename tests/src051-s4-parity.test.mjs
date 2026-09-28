@@ -231,34 +231,59 @@ test('the two conditional exclusions apply only where the named noise can occur'
   assert.ok(!/css_var_scroll|progress_bar_width/.test(PARITY_EXCLUSIONS.map((e) => e.match.source).join(' ')), '--scroll and .progress b width are always compared exactly');
 });
 
-test('the parity harness claims no acceptance and writes no accepted-parity artifact', () => {
-  // Comments legitimately name the forbidden artifacts in order to forbid them, so the check is made
-  // against executable code only. A comment cannot write a file or set a verdict.
+test('the parity MODULE is a candidate harness: it still cannot author acceptance metadata', () => {
+  // S4 was accepted, but the acceptance was authored from the reviewed artifact under a CENTRAL
+  // decision. The candidate capture code must not have gained the ability to self-accept.
   const code = readRepo('src/08_harness/source051-parity.mjs').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-  // A candidate harness that could author acceptance metadata would be able to self-accept S4.
   assert.ok(!/accepted-parity\.json/.test(code), 'the parity module never names an accepted-parity artifact in code');
   assert.ok(!/source_split_parity_pass\s*[:=]\s*true/.test(code), 'source_split_parity_pass is never set true by the harness');
-  assert.match(code, /source_split_parity_pass: false/, 'the candidate summary records the verdict as false');
-  assert.match(code, /accepted_parity_created: false/);
-  assert.match(code, /central_visual_review: 'PENDING'/);
-  assert.match(code, /next_stage_authorized: null/);
-  assert.equal(readJson('manifest.json').stages.source_split_parity_pass, false);
-  assert.equal(fs.existsSync(path.join(capsule, 'evidence', 'parity', 'accepted-parity.json')), false);
+  assert.match(code, /central_visual_review: 'PENDING'/, 'the candidate summary still reports PENDING, not PASS');
+  // The accepted record exists, and it follows the SOURCE_SPECIFIC_MOTION_AWARE contract already used
+  // by SRC036 and SRC038, because SRC051 also has a continuously animating surface. Screenshot bytes are
+  // therefore never claimed equal; the motion-aware policy is the honest statement.
+  const accepted = readJson('evidence/parity/accepted-parity.json');
+  assert.equal(accepted.status, 'ACCEPTED');
+  assert.equal(accepted.parity_contract, 'SOURCE_SPECIFIC_MOTION_AWARE');
+  assert.equal(accepted.central_visual_pass, true);
+  assert.equal(accepted.candidate_capture_head, '61742068c2a0999ccbfb9b70888916c5bef4cde2');
+  assert.equal(accepted.artifact.id, 10957655770);
+  assert.equal(accepted.artifact.digest, 'sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f');
+  assert.match(accepted.central_acceptance_ref, /5867690624/);
+  assert.equal(accepted.comparisons.screenshots, 'MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED');
+  assert.equal(accepted.visual_review.central_direct_artifact_review, true);
+  assert.equal(accepted.visual_review.digest_match, true);
+  // The acceptance must not imply a pixel-equality pass it never performed.
+  for (const key of ['raw_png_equality_used', 'pixel_tolerance_used', 'qa_clock_patch_used', 'qa_raf_patch_used', 'qa_runtime_hook_used']) {
+    assert.equal(accepted[key], false, `accepted record does not claim ${key}`);
+  }
+  assert.equal(accepted.browser_errors, 0);
+  assert.equal(accepted.required_network_errors, 0);
+  // The four protected runtime blobs are recorded as unchanged in the acceptance itself.
+  assert.equal(accepted.protected_runtime_blobs['original/original.html'], 'fd7e48b1301abe0f857e9a7bbc06162c088d0abc');
+  assert.equal(accepted.protected_runtime_blobs.unchanged, true);
 });
 
 
-test('the S4 route is reached only because the gate says RELEASED, and no other Source inherited it', () => {
+test('the S4 route is reached because the gate says RELEASED, and no other Source inherited it', () => {
   const manifest = readJson('manifest.json');
   const materialization = readJson('split/materialization.json');
   assert.equal(manifest.stage_gate.s4_release, 'RELEASED');
   assert.equal(manifest.stage_gate.parity_capture_authorized, true);
   assert.equal(materialization.stage_gate.s4_release, 'RELEASED');
   assert.equal(materialization.stage_gate.parity_capture_authorized, true);
-  assert.equal(materialization.status, 'MATERIALIZED_PENDING_PARITY');
-  assert.equal(materialization.parity_status, 'PENDING_EXACT_HEAD_CAPTURE');
+  // S4 evidence is accepted, and the verdict is bound to the reviewed artifact rather than claimed.
+  assert.equal(manifest.stages.source_split_parity_pass, true);
+  assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json');
+  assert.equal(materialization.status, 'ACCEPTED');
+  assert.equal(materialization.parity_status, 'PASS');
+  assert.equal(materialization.parity_ref, 'evidence/parity/accepted-parity.json');
   // The release cites the CENTRAL decision and preserves the prior holds for the record.
   assert.match(materialization.stage_gate.decision_ref, /5862568703/);
   assert.match(materialization.stage_gate.previous_decision_ref, /5859197749/);
+  assert.equal(materialization.stage_gate.central_visual_review, 'PASS');
+  assert.equal(materialization.stage_gate.s4_metadata_promotion, 'RELEASED');
+  assert.match(manifest.s4_parity_acceptance.ref, /5867690624/);
+  assert.equal(manifest.s4_parity_acceptance.artifact_id, 10957655770);
   // This was a bounded, SRC051-only release. No other capsule may claim it.
   for (const id of fs.readdirSync(path.join(repoRoot, 'src', '03_sources')).filter((n) => /^SRC\d{3}$/.test(n))) {
     if (id === 'SRC051') continue;
@@ -266,7 +291,7 @@ test('the S4 route is reached only because the gate says RELEASED, and no other 
     if (!fs.existsSync(record)) continue;
     const other = JSON.parse(fs.readFileSync(record, 'utf8'));
     if (other.stage_gate) {
-      assert.ok(!/5862568703/.test(JSON.stringify(other.stage_gate)), `${id} must not inherit the SRC051-only S4 release`);
+      assert.ok(!/5862568703|5867690624/.test(JSON.stringify(other.stage_gate)), `${id} must not inherit the SRC051-only S4 release or acceptance`);
     }
   }
 });
@@ -289,9 +314,25 @@ test('the four protected runtime blobs and the frozen defect ledger are untouche
   assert.equal(context.drive.folder_id, 'UNRESOLVED', 'the non-blocking Drive folder id stays UNRESOLVED');
   assert.equal(context.drive.bytes, 2782365, 'authority-context keeps the authority byte count');
   assert.equal(context.drive.sha256, '5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014', 'authority-context keeps the authority SHA-256');
-  // Repairing any of the seven would itself be a parity failure, so they must all still be recorded.
-  assert.equal(readJson('baseline/accepted-baseline.json').frozen_defect_ledger.count_unique, 7);
-  assert.equal(readJson('baseline/accepted-baseline.json').frozen_defect_ledger.items.length, 7);
+  // Repairing any of the eight would itself be a parity failure, so they must all still be recorded.
+  // D8 was added by the S4 acceptance: prefers-reduced-motion does not silence authored CSS
+  // animations on pseudo-elements, because the source rule targets `*` and `*` does not match
+  // ::before / ::after. CENTRAL #589 comment 5867690624.
+  assert.equal(readJson('baseline/accepted-baseline.json').frozen_defect_ledger.count_unique, 8);
+  assert.equal(readJson('baseline/accepted-baseline.json').frozen_defect_ledger.items.length, 8);
+  const ledgerIds = readJson('baseline/accepted-baseline.json').frozen_defect_ledger.items.map((d) => d.id);
+  for (const required of [
+    'SRC051_NO_AUTHORED_FOCUS_AFFORDANCE',
+    'SRC051_HOVER_ONLY_NO_TOUCH_EQUIVALENT',
+    'SRC051_N5_N6_HIDDEN_LE_900',
+    'SRC051_TOPBAR_NAV_HIDDEN_LE_900',
+    'SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE',
+    'SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_PSEUDO_ELEMENT_CSS_ANIMATIONS',
+    'SRC051_LOGO_CLOSE_PAST_DOCUMENT_MAXIMUM',
+    'SRC051_SMOOTH_SCROLL_ASYNC_PROGRAMMATIC_SCROLL',
+  ]) {
+    assert.ok(ledgerIds.includes(required), `frozen defect preserved: ${required}`);
+  }
 });
 
 test('the parity harness introduces none of the forbidden comparison techniques', () => {

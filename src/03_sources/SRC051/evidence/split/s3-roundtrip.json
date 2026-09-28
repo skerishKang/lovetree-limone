@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "source_id": "SRC051",
   "stage": "S3_MECHANICAL_SPLIT",
-  "run_at": "2026-09-28T07:35:59.320Z",
+  "run_at": "2026-09-28T10:39:22.061Z",
   "authority": {
     "bytes": 2782365,
     "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
@@ -130,7 +130,7 @@
     {
       "id": "T18",
       "pass": true,
-      "detail": "S3 asserted, S4 parity explicitly false, mechanical-only policy"
+      "detail": "S3 asserted, S4 parity accepted against a reviewed artifact, mechanical-only policy"
     },
     {
       "id": "T19",
@@ -145,12 +145,12 @@
     {
       "id": "T20b",
       "pass": true,
-      "detail": "7 unique frozen defects preserved (8 observations) in both files"
+      "detail": "8 unique frozen defects (7 prior + newly proven D8) preserved in both files"
     },
     {
       "id": "T20c",
       "pass": true,
-      "detail": "animation-bookkeeping probe preserved as UNRESOLVED, not resolved into source truth"
+      "detail": "animation-bookkeeping observation RESOLVED as pseudo-element CSS animation, original text retained"
     },
     {
       "id": "T20d",

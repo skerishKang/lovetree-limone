@@ -67,26 +67,38 @@ test('the SRC051 manifest records the accepted runtime API inventory in full', (
 });
 
 
-test('SRC051 materialization expresses the bounded CENTRAL S4 release, with candidate-only invariants', () => {
+test('SRC051 materialization expresses the CENTRAL S4 acceptance, with the resolved provenance', () => {
   const materialization = readJson('split/materialization.json');
-  assert.equal(materialization.status, 'MATERIALIZED_PENDING_PARITY');
-  assert.equal(materialization.parity_status, 'PENDING_EXACT_HEAD_CAPTURE');
+  assert.equal(materialization.status, 'ACCEPTED');
+  assert.equal(materialization.parity_status, 'PASS');
+  assert.equal(materialization.parity_ref, 'evidence/parity/accepted-parity.json');
+  assert.equal(materialization.parity_claim_made, true);
   assert.equal(materialization.stage_gate.s4_release, 'RELEASED');
   assert.equal(materialization.stage_gate.parity_capture_authorized, true);
-  assert.equal(materialization.stage_gate.original_vs_split_comparison_authorized, true);
-  // The release is bounded to SRC051 and cites the CENTRAL decision that granted it.
+  assert.equal(materialization.stage_gate.central_visual_review, 'PASS');
+  assert.equal(materialization.stage_gate.s4_metadata_promotion, 'RELEASED');
+  // The acceptance is traceable to the CENTRAL decision, and the prior holds are kept for the record.
   assert.match(materialization.stage_gate.decision_ref, /5862568703/);
-  // Candidate-stage invariants: a released gate must NOT become a verdict.
-  assert.equal(materialization.parity_ref, null, 'no parity reference until CENTRAL reviews the artifacts');
-  assert.equal(materialization.parity_claim_made, false);
-  assert.equal(materialization.stage_gate.candidate_stage_invariants.source_split_parity_pass, false);
-  assert.equal(materialization.stage_gate.candidate_stage_invariants.parity_ref, null);
-  assert.equal(materialization.stage_gate.candidate_stage_invariants.accepted_parity_created, false);
-  assert.equal(materialization.stage_gate.candidate_stage_invariants.central_visual_review, 'PENDING');
-  assert.equal(materialization.stage_gate.candidate_stage_invariants.next_stage_authorized, null);
-  // accepted-parity.json is CENTRAL-owned and must still not exist at candidate stage.
-  assert.equal(fs.existsSync(path.join(capsule, 'evidence', 'parity', 'accepted-parity.json')), false, 'accepted parity is never authored locally');
-  assert.equal(readJson('manifest.json').stages.source_split_parity_pass, false, 'a released gate never flips the verdict');
+  assert.match(materialization.stage_gate.previous_decision_ref, /5859197749/);
+  assert.equal(readJson('manifest.json').s4_parity_acceptance.artifact_id, 10957655770);
+  assert.match(readJson('manifest.json').s4_parity_acceptance.ref, /5867690624/);
+
+  // The S2 animation-bookkeeping observation is RESOLVED, not open. It keeps the original
+  // observation and the reason it was previously unexplained, so the resolution stays auditable.
+  const observations = materialization.preserved_metadata.unresolved_observations;
+  const resolved = observations.find((o) => o.id === 'SRC051_REDUCED_MOTION_PSEUDO_ELEMENT_CSS_ANIMATION');
+  assert.ok(resolved, 'the observation is recorded with its resolved id');
+  assert.equal(resolved.status, 'RESOLVED');
+  assert.equal(resolved.resolution, 'PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION');
+  assert.equal(resolved.supersedes, 'SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED');
+  assert.ok(resolved.observation.length > 40, 'the original observation is retained');
+  assert.ok(resolved.why_previously_unresolved.length > 40, 'the earlier uncertainty is retained');
+  // Every duplicated copy must agree, or the capsule contradicts itself again.
+  for (const rel of ['manifest.json', 'authority-context.json', 'baseline/accepted-baseline.json']) {
+    const copy = readJson(rel);
+    const list = copy.unresolved_observations ?? copy.preserved_metadata?.unresolved_observations;
+    assert.ok(list.every((o) => o.status === 'RESOLVED'), `${rel} carries no UNRESOLVED observation`);
+  }
 });
 
 test('the S4 authorization gate releases SRC051 parity capture, and only because CENTRAL said so', () => {
