@@ -53,6 +53,7 @@ import {
   goToSection,
   scrollElementIntoView,
   setAnalysisPhase,
+  waitForRelevantTransitionsSettled,
   waitForScrollArrival,
 } from './source051-driver.mjs';
 
@@ -143,6 +144,17 @@ function collectSRC051ParityExtras() {
   });
   const topbarNav = document.querySelector('.topbar nav');
   const progressBar = document.querySelector('.progress b');
+  // The visible analysis gates, by ID. Recorded by ID rather than through the class-based `describe`
+  // helper because CENTRAL's artifact review showed an active class is not sufficient evidence: the
+  // authored CSS transitions `.white-gate{transition:.3s}` and `.eye-overlay{transition:.25s}` mean an
+  // element can carry `.active` while its computed opacity is still mid-transition. Active booleans and
+  // rects matched while the visible result did not, which is precisely the false green that was found.
+  const gate = (id) => {
+    const element = document.getElementById(id);
+    if (!element) return null;
+    const style = getComputedStyle(element);
+    return { display: style.display, visibility: style.visibility, opacity: style.opacity };
+  };
   return {
     parity: {
       // Authored structure, compared exactly.
@@ -159,6 +171,10 @@ function collectSRC051ParityExtras() {
       // Authored responsive reductions: frozen defects D3 and D4 stay observable.
       connection_nodes: connectionNodes,
       topbar_nav_display: topbarNav ? getComputedStyle(topbarNav).display : null,
+      // Authored visible gates, compared at full precision. No epsilon, no quantization: an opacity
+      // that is genuinely mid-transition is a real difference and must fail.
+      white_gate_presentation: gate('whiteGate'),
+      eye_overlay_presentation: gate('eyeOverlay'),
       // Authored scroll progress contract.
       progress_bar_width: progressBar ? getComputedStyle(progressBar).width : null,
     },
@@ -243,11 +259,40 @@ function toComparable(value, exclusions, path = '') {
   return out;
 }
 
-const CHANNELS = ['DOM', 'STATE', 'GEOMETRY', 'VISIBILITY', 'INTERACTION', 'RUNTIME', 'NETWORK', 'SCREENSHOT'];
+const CHANNELS = ['DOM', 'STATE', 'GEOMETRY', 'VISIBILITY', 'INTERACTION', 'RUNTIME', 'NETWORK'];
+
+/**
+ * The truthful screenshot classification.
+ *
+ * Screenshot bytes are never an exact-comparison channel, so this channel may never be labelled
+ * EXACT_EQUAL. It reports what was actually done: the bytes were recorded, not compared, and a
+ * difference is attributed to CONTINUOUS_CSS_PHASE_VARIANCE only in the lanes where a continuous CSS
+ * animation is genuinely active. A reduced-motion state is not excused by that class: CSS animation is
+ * disabled there, so a difference after transitions have settled is a finding for CENTRAL, not variance.
+ */
+function classifyScreenshots(evidence, laneSpec) {
+  const continuousCssActive = laneSpec.reducedMotion === 'no-preference';
+  return {
+    status: 'EVIDENCE_ONLY_NOT_A_PASS_RULE',
+    byte_equality_compared: false,
+    pass_rule: 'NONE',
+    pairs: evidence.pairs,
+    byte_identical: evidence.byte_identical,
+    byte_differing: evidence.byte_differing,
+    continuous_css_phase_variance_active_in_lane: continuousCssActive,
+    attribution: continuousCssActive
+      ? 'DIFFERENCES_IN_THIS_LANE_MAY_BE_CONTINUOUS_CSS_PHASE_VARIANCE_PENDING_CENTRAL_REVIEW'
+      : 'NOT_EXCUSED: this lane disables CSS animation, so any difference after transitions settle is a finding, not variance',
+  };
+}
 
 /** Assign an exact-comparison path to the CENTRAL comparison channel it belongs to. */
 function classify(path) {
-  if (path.startsWith('screenshot')) return 'SCREENSHOT';
+  // Screenshot is NOT an exact-comparison channel and must never be reported as one. Its status is
+  // computed separately, from whether the bytes were actually compared, and a byte difference can only
+  // be attributed to CONTINUOUS_CSS_PHASE_VARIANCE where that class is genuinely active. CENTRAL caught
+  // the summary claiming SCREENSHOT=EXACT_EQUAL while the same run recorded 1/18 byte-identical pairs.
+  if (path.startsWith('screenshot')) return 'SCREENSHOT_EVIDENCE';
   if (path.startsWith('pageErrors') || path.startsWith('errors') || path.startsWith('filteredBrowserProbeNoise')) return 'RUNTIME';
   if (path.startsWith('failedRequests') || path.startsWith('rendered_images')) return 'NETWORK';
   if (path.startsWith('action_detail')) return 'INTERACTION';
@@ -289,12 +334,24 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
   // At 320px the authored layout makes the CTA unreachable, so S2 recorded no pulse state there. The
   // shared core only *finds* the CTA state; the frozen-defect assertion is not applied on a lane that
   // has no such state, because asserting it would invent a state the source does not author.
+  // The CTA matcher is defined before the capture below uses it. It names the ONE state whose authored
+  // JS Web Animation must survive sampling.
   const ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE') || name.includes('SAVED_CTA_PULSE_CLICK');
+  // CSS_TRANSITION_SETTLE_SYNCHRONIZATION for S4, applied to every STABLE state rather than only to the
+  // three recipes that carry `settle: true`. CENTRAL's artifact review found stable states sampled
+  // mid-transition well outside those three, so the settle is derived from one decision instead of a
+  // hand-maintained list of "resting" names.
+  //
+  // The authored CTA state still settles its CSS transitions; only its JS Web Animation is left running,
+  // because that finite transient is the declared WAAPI state (frozen defect D5) and waiting it away
+  // would delete the evidence S4 exists to preserve.
+  const settleRelevant = (page, stateName) => waitForRelevantTransitionsSettled(page, stateName);
   const capture = (url, variant) => captureSRC051Lane(browser, url, viewport, laneSpec.states, path.join(outDir, variant), `${laneSpec.lane}-${variant}`, {
     sourceId,
     reducedMotion: laneSpec.reducedMotion,
     ctaStateMatcher,
     extras: collectSRC051ParityExtras,
+    settleRelevant,
   });
 
   const original = await capture(originalUrl, 'original');
@@ -317,6 +374,13 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
     byte_identical: states[name].screenshot?.byte_identical ?? null,
   }));
 
+  const screenshotEvidence = {
+    pairs: screenshotPairs.length,
+    byte_identical: screenshotPairs.filter((pair) => pair.byte_identical === true).length,
+    byte_differing: screenshotPairs.filter((pair) => pair.byte_identical === false).length,
+    files: screenshotPairs,
+  };
+
   return {
     lane: laneSpec.lane,
     role: laneSpec.role,
@@ -327,6 +391,9 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
     states_passed: stateNames.length - failedStates.length,
     failed_states: failedStates,
     channels: Object.fromEntries(CHANNELS.map((channel) => [channel, failedStates.some((name) => states[name].channels_failed.includes(channel)) ? 'DRIFT' : 'EXACT_EQUAL'])),
+    // A channel that is not compared must not be labelled EXACT_EQUAL. The screenshot bytes were
+    // recorded, not compared, and this says so explicitly instead of implying a verdict.
+    screenshot_channel: classifyScreenshots(screenshotEvidence, laneSpec),
     semantic_parity: failedStates.length === 0 ? 'PASS' : 'FAIL',
     runtime_health: {
       original: { page_errors: original.pageErrors.length, console_errors: original.errors.length, filtered_browser_probe_noise: original.filteredBrowserProbeNoise.length },
@@ -337,11 +404,8 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
       split: { failed_requests: split.failedRequests.length, rendered_images: split.states[firstState]?.state?.rendered_images ?? null, broken_images: split.states[firstState]?.state?.rendered_images?.broken ?? null },
     },
     screenshot_evidence: {
-      pairs: screenshotPairs.length,
-      byte_identical: screenshotPairs.filter((pair) => pair.byte_identical === true).length,
-      byte_differing: screenshotPairs.filter((pair) => pair.byte_identical === false).length,
+      ...screenshotEvidence,
       pass_rule: 'NONE. Screenshot bytes are evidence only under CONTINUOUS_CSS_PHASE_VARIANCE and never substitute for exact semantic parity.',
-      files: screenshotPairs,
     },
     waapi_transient: {
       taxonomy_class: 'DECLARED_WAAPI_TRANSIENT_STATE',

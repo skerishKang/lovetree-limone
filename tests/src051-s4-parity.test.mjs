@@ -97,6 +97,91 @@ test('the parity route is wired before the generic fallback and the driver stays
   assert.match(driver, /export async function captureSRC051Lane\(/, 'both baseline and parity drive one shared capture core');
 });
 
+
+test('the S4 capture settles CSS transitions for stable states, and proves it', () => {
+  // CENTRAL found stable states sampled mid-transition (BLOCKER 1). The S3 wait only applied to the
+  // three recipes carrying `settle: true`, and a wait that can time out silently is not synchronization
+  // at all, so S4 has its own settle applied to EVERY stable state and then verified.
+  const driver = readRepo('src/08_harness/source051-driver.mjs');
+  const parity = readRepo('src/08_harness/source051-parity.mjs');
+
+  assert.match(driver, /export async function waitForRelevantTransitionsSettled\(/, 'the S4 settle exists as its own function');
+  // It must discriminate CSS transitions from JavaScript Web Animations, or it would wait away the
+  // authored CTA pulse that frozen defect D5 requires to be preserved.
+  assert.match(driver, /a\.constructor\.name === 'CSSTransition'/, 'the settle targets CSSTransition only');
+  const settleBody = driver.split('export async function waitForRelevantTransitionsSettled')[1]?.split('\n}')[0] ?? '';
+  assert.ok(!/constructor\.name === 'Animation'/.test(settleBody), 'the settle never waits on JS Web Animations');
+  // It must verify rather than trust, and must fail loudly instead of producing a green from an
+  // unfinished frame.
+  assert.match(driver, /if \(last\.every\(\(transition\) => transition\.play_state !== 'running'\)\)/, 'the settle re-reads and verifies');
+  assert.match(driver, /CSS_TRANSITION_SETTLE_SYNCHRONIZATION did not settle/, 'an unsettled state throws instead of passing');
+  // The settle is wired into the S4 route, not only into the S3 resting states.
+  assert.match(parity, /settleRelevant,/, 'the parity route passes the settle into the shared capture core');
+  assert.match(parity, /const settleRelevant = \(page, stateName\)/, 'the parity route defines the settle');
+  // S3 baseline behaviour is preserved: the old wait still exists and is still the default path.
+  assert.match(driver, /export async function waitForTransitionsSettled\(/, 'the S3 resting-state wait is retained');
+  assert.match(driver, /if \(settleRelevant\) await settleRelevant\(page, stateName\);/, 'the settle takes precedence when supplied');
+  assert.match(driver, /else if \(settleTransitions\) await waitForTransitionsSettled\(page\);/, 'baseline keeps the S3 wait when no S4 settle is supplied');
+});
+
+test('#whiteGate and #eyeOverlay computed presentation is part of parity', () => {
+  // An active class is not sufficient evidence: the authored CSS transitions .white-gate{transition:.3s}
+  // and .eye-overlay{transition:.25s}, so an element can be .active while its opacity is still moving.
+  // CENTRAL's artifact review found exactly that, reported as EXACT_EQUAL.
+  const parity = readRepo('src/08_harness/source051-parity.mjs');
+  assert.match(parity, /white_gate_presentation: gate\('whiteGate'\)/, '#whiteGate presentation is recorded');
+  assert.match(parity, /eye_overlay_presentation: gate\('eyeOverlay'\)/, '#eyeOverlay presentation is recorded');
+  assert.match(parity, /const gate = \(id\) => \{[\s\S]*?display: style\.display, visibility: style\.visibility, opacity: style\.opacity/, 'the gate records display, visibility and opacity');
+  // These are parity inputs, so they must not be excluded.
+  const excluded = PARITY_EXCLUSIONS.map((e) => e.match.source).join(' ');
+  assert.ok(!/white_gate_presentation|eye_overlay_presentation|whiteGate|eyeOverlay/.test(excluded), 'gate presentation is never excluded from comparison');
+  // And they classify to the visibility channel, where a difference is a failure. The gate records
+  // opacity/display/visibility, which the existing VISIBILITY rule already covers by field name, so this
+  // asserts the classification is genuinely reached for these paths rather than relying on a
+  // name-specific rule that could silently stop matching.
+  assert.match(parity, /display\|visibility\|opacity\|class_name/, 'display/visibility/opacity classify to VISIBILITY');
+  assert.ok(!/\.presentation\)\./.test(parity), 'no dead classification rule is left behind');
+});
+
+test('the screenshot channel cannot claim EXACT_EQUAL, and reduced-motion is not excused', () => {
+  // BLOCKER 2. CENTRAL found channels.SCREENSHOT=EXACT_EQUAL while the same run recorded 1/18
+  // byte-identical pairs. A channel that is not compared must never be labelled EXACT_EQUAL.
+  const parity = readRepo('src/08_harness/source051-parity.mjs');
+  assert.match(parity, /const CHANNELS = \['DOM', 'STATE', 'GEOMETRY', 'VISIBILITY', 'INTERACTION', 'RUNTIME', 'NETWORK'\];/, 'SCREENSHOT is not an exact-comparison channel');
+  assert.ok(!/const CHANNELS = \[[^\]]*'SCREENSHOT'\]/.test(parity), 'the channel list has no SCREENSHOT entry');
+  assert.match(parity, /function classifyScreenshots\(evidence, laneSpec\)/, 'a dedicated screenshot classification exists');
+  assert.match(parity, /status: 'EVIDENCE_ONLY_NOT_A_PASS_RULE'/, 'the channel states it is not a pass rule');
+  assert.match(parity, /byte_equality_compared: false/, 'the channel states bytes were not compared');
+  // BLOCKER 2b: a reduced-motion lane must not be excused by CONTINUOUS_CSS_PHASE_VARIANCE, because the
+  // source disables CSS animation there. A difference after settling is a finding.
+  assert.match(parity, /NOT_EXCUSED: this lane disables CSS animation/, 'reduced-motion differences are not attributed to CSS phase variance');
+  assert.match(parity, /DIFFERENCES_IN_THIS_LANE_MAY_BE_CONTINUOUS_CSS_PHASE_VARIANCE_PENDING_CENTRAL_REVIEW/, 'variance is only claimed where continuous CSS is active');
+  assert.match(parity, /continuous_css_phase_variance_active_in_lane: continuousCssActive/, 'the lane condition is recorded, not assumed');
+});
+
+test('a successful bounded SRC051 capture increments the shared capture count', () => {
+  // BLOCKER 3. The custom branch continued past the counter, emitting a PASS line next to
+  // SRC_SPLIT_PARITY_CAPTURE_COUNT=0, which reads as "nothing was captured" beside a success.
+  const harness = readRepo('src/08_harness/capture-source-parity.mjs');
+  const routeAt = harness.indexOf("if (sourceId === 'SRC051')");
+  const incrementAt = harness.indexOf('captured += 1;', routeAt);
+  assert.ok(routeAt > 0, 'the SRC051 route exists');
+  assert.ok(incrementAt > routeAt, 'the SRC051 route increments the capture count');
+  // The increment must come after the pass assertion, so a failed capture is never counted.
+  const failAt = harness.indexOf('S4 candidate parity FAILED', routeAt);
+  assert.ok(failAt > 0 && failAt < incrementAt, 'the count is incremented only after the candidate passed');
+  assert.match(harness, /SRC_SPLIT_PARITY_CAPTURE_COUNT=/, 'the shared count marker is emitted');
+});
+
+test('the parity harness still forbids acceptance metadata and forbidden techniques', () => {
+  const code = readRepo('src/08_harness/source051-parity.mjs').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  assert.ok(!/accepted-parity\.json/.test(code), 'the parity module never names an accepted-parity artifact in code');
+  assert.ok(!/source_split_parity_pass\s*[:=]\s*true/.test(code), 'source_split_parity_pass is never set true');
+  for (const forbidden of ['SSIM', 'ssim', 'hamming', 'Hamming', 'pixelTolerance', 'Date.now =', 'Math.random =', 'requestAnimationFrame =', 'cancelAnimation', 'finish()', 'addInitScript']) {
+    assert.ok(!code.includes(forbidden), `the parity harness must not use ${forbidden}`);
+  }
+});
+
 test('the parity comparison excludes only what a taxonomy class authorizes', () => {
   // Each exclusion must name its authorizing class. An unjustified exclusion would mean a semantic field
   // was dropped to force a green, and an unconditional one would quietly weaken a lane that does not

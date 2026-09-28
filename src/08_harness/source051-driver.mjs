@@ -190,6 +190,47 @@ export async function waitForTransitionsSettled(page) {
     .every((a) => a.playState !== 'running'), null, { timeout: CSS_TRANSITION_SETTLE_TIMEOUT_MS, polling: 50 });
 }
 
+/**
+ * The S4 form of CSS_TRANSITION_SETTLE_SYNCHRONIZATION, and the one that matters for parity.
+ *
+ * A wait that can silently time out is not synchronization. CENTRAL reviewed the exact-head artifact
+ * and found stable states sampled mid-transition: at RM_ANALYSIS_PHASE3_EYE_OVERLAY the ORIGINAL sat
+ * at 33ms of an authored `.white-gate{transition:.3s}` and the SPLIT at a different point, with
+ * computed #whiteGate opacity 0.112756 on one side and 0 on the other - a real visible difference that
+ * the old collector never recorded and the old wait never guaranteed.
+ *
+ * So: wait for every CSSTransition to finish, then PROVE it by re-reading, and throw if anything is
+ * still running. A state that cannot prove its transitions settled fails loudly instead of producing a
+ * green result from an unfinished frame.
+ *
+ * JavaScript Web Animations are deliberately NOT waited on. The authored CTA pulse is a finite transient
+ * that must be observed as a real state (frozen defect D5), and waiting it away would delete the very
+ * evidence S4 has to preserve.
+ */
+export async function waitForRelevantTransitionsSettled(page, stateName) {
+  const readTransitions = () => page.evaluate(() => document.getAnimations()
+    .filter((a) => a.constructor.name === 'CSSTransition')
+    .map((a) => ({
+      target: a.effect?.target ? (a.effect.target.id || a.effect.target.className || a.effect.target.tagName) : null,
+      play_state: a.playState,
+      current_time_ms: a.currentTime === null ? null : Math.round(a.currentTime),
+    })));
+  let last = [];
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    // Swallow the wait's own timeout, then verify independently. Trusting the wait is what produced the
+    // false green; re-reading is what makes this a synchronization rather than a hope.
+    await page.waitForFunction(() => document.getAnimations()
+      .filter((a) => a.constructor.name === 'CSSTransition')
+      .every((a) => a.playState !== 'running'), null, { timeout: CSS_TRANSITION_SETTLE_TIMEOUT_MS, polling: 50 })
+      .catch(() => {});
+    last = await readTransitions();
+    if (last.every((transition) => transition.play_state !== 'running')) {
+      return { settled: true, attempts: attempt + 1, css_transitions_at_capture: last };
+    }
+  }
+  throw new Error(`SRC051 ${stateName}: CSS_TRANSITION_SETTLE_SYNCHRONIZATION did not settle - ${JSON.stringify(last)}`);
+}
+
 /** Drive the source's own section-local phase formula; never a document-scroll shortcut. */
 export async function setAnalysisPhase(page, targetP) {
   const targetY = await page.evaluate((p) => {
@@ -223,8 +264,9 @@ export async function goToSection(page, id) {
   return Math.round(await page.evaluate(() => window.scrollY));
 }
 
-export async function captureState(page, sourceOut, label, stateName, { settleTransitions = false, collect = collectSRC051State, extras = null } = {}) {
-  if (settleTransitions) await waitForTransitionsSettled(page);
+export async function captureState(page, sourceOut, label, stateName, { settleTransitions = false, collect = collectSRC051State, extras = null, settleRelevant = null } = {}) {
+  if (settleRelevant) await settleRelevant(page, stateName);
+  else if (settleTransitions) await waitForTransitionsSettled(page);
   const base = await page.evaluate(collect);
   // A page-evaluated body cannot close over module scope, so an extras collector receives the base
   // state as a serializable argument instead of calling the base collector itself. Doing the latter
@@ -373,7 +415,7 @@ export async function scrollElementIntoView(page, selector) {
  * scroll that had not yet begun on one surface resolve differently from the other and turned into
  * large false state drift.
  */
-export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State, extras = null } = {}) {
+export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State, extras = null, settleRelevant = null } = {}) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: viewport.dpr ?? 1,
@@ -402,7 +444,7 @@ export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut,
     const states = {};
     for (const state of plan) {
       const detail = await state.run(page);
-      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true, collect, extras })), action_detail: detail ?? null };
+      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true, collect, extras, settleRelevant })), action_detail: detail ?? null };
     }
 
     // FROZEN DEFECT D5 must remain observable on every surface: the click-created Web Animations pulse

@@ -394,6 +394,10 @@ try {
         if (evidence.s4_candidate !== 'PASS') {
           throw new Error(`${sourceId}: S4 candidate parity FAILED - ${evidence.lanes.filter((lane) => lane.semantic_parity !== 'PASS').map((lane) => `${lane.lane} failed states: ${lane.failed_states.join(',')}`).join('; ')}`);
         }
+        // A successful bounded capture IS a capture. Continuing past the counter used to emit
+        // SRC_SPLIT_PARITY_CAPTURE_PASS=SRC051 alongside SRC_SPLIT_PARITY_CAPTURE_COUNT=0, which reads as
+        // "nothing was captured" next to a success line.
+        captured += 1;
         continue;
       }
 
