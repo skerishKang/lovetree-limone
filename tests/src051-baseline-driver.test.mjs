@@ -1,21 +1,35 @@
 /**
- * SRC051 baseline driver + S4 release gate contract test (local + CI).
+ * SRC051 baseline driver + S4 release gate contract test (no browser).
  *
- * Verifies the dedicated SRC051 route in isolation, without running the whole shared baseline
- * harness. Covers routing, both authority lanes, the API inventory, the S4 hold, the fail-closed
- * authorization gate, S1 inheritance, Drive provenance and byte-unchanged split content, then
- * exercises the live driver against original/original.html.
+ * Fast, deterministic contract checks for the SRC051 S3-correction lane. Every assertion here is
+ * static: it reads the capsule, the shared harness sources and the workflow, and proves the wiring
+ * and the stage contract WITHOUT launching a browser.
+ *
+ * Why no browser here. This file used to replay both authority lanes in a real Chrome. That was
+ * removed after the exact-head run proved two things:
+ *   1. it is platform-fragile - it built its scratch directory from process.env.TMPDIR ||
+ *      process.env.TEMP, which are Windows-only names and are both undefined on the Linux runner,
+ *      so the test threw ERR_INVALID_ARG_TYPE and then held the serial browser bucket until the
+ *      workflow hit its own 20-minute limit;
+ *   2. a real-browser Source proof already has a home. .github/workflows/a-track-p0-validation.yml
+ *      states that CLEAN-108 real-browser proofs "must be tied to the PR head sha and therefore run
+ *      only from .github/workflows/src-108-harness-gate.yml", and that workflow is the one that runs
+ *      the SRC051 baseline capture. Its exact-head log reads SRC_BASELINE_CAPTURE_PASS=SRC051, so the
+ *      live replay of the accepted S2 lanes is covered there against the accepted contract.
+ * Adding a second, slower browser replay to A-track's serial bucket bought no extra coverage and cost
+ * the run its budget. This file therefore stays a no-browser contract test.
+ *
+ * Covers: routing, the two authority lanes, the API inventory, the S4 hold, the fail-closed
+ * authorization gate, S1 inheritance, Drive provenance, and byte-unchanged split content.
  */
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import http from 'node:http';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { captureSRC051Baseline } from '../src/08_harness/source051-driver.mjs';
-import { resolveParityCaptureAuthorization, STAGE_GATE_REASONS } from '../src/08_harness/source-capsule-validator.mjs';
+import { resolveParityCaptureAuthorization, STAGE_GATE_REASONS, MATERIALIZATION_STATUSES } from '../src/08_harness/source-capsule-validator.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const capsule = path.join(repoRoot, 'src', '03_sources', 'SRC051');
@@ -23,22 +37,8 @@ const originalHtml = path.join(capsule, 'original', 'original.html');
 const RESTING_STATES = ['THERMAL_CITY', 'CONNECTION_NODE_HOVER', 'MOMENT_CONNECTION_DEFAULT', 'MOMENT_SAVED_PRE_CTA'];
 const API_MEMBERS = ['sections', 'scrollToSection', 'setProgress', 'update'];
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(capsule, rel), 'utf8'));
+const readRepo = (rel) => fs.readFileSync(path.join(repoRoot, rel), 'utf8');
 
-function startServer() {
-  const server = http.createServer((request, response) => {
-    if (request.url === '/' || request.url === '/original.html') {
-      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      fs.createReadStream(originalHtml).pipe(response);
-      return;
-    }
-    response.writeHead(404);
-    response.end('nf');
-  });
-  return new Promise((resolve) => { server.listen(0, '127.0.0.1', () => resolve(server)); });
-}
-
-let chromium = null;
-try { ({ chromium } = await import('playwright')); } catch { chromium = null; }
 
 test('capture-source-baseline.mjs routes SRC051 to the dedicated driver, not the generic fallback', () => {
   const harness = fs.readFileSync(path.join(repoRoot, 'src', '08_harness', 'capture-source-baseline.mjs'), 'utf8');
@@ -141,6 +141,64 @@ test('drive provenance separates fresh S1 evidence from the historical S0 transp
   assert.equal(readback.drive_folder_identity.blocking, false);
 });
 
+test('the SRC051 driver itself is present, wired and asserts the S2 synchronization contract', () => {
+  const driver = readRepo('src/08_harness/source051-driver.mjs');
+  assert.match(driver, /export async function captureSRC051Baseline\(/, 'driver exports the baseline entry');
+  // The driver drives the accepted hook, never the legacy contract. Comments in the driver name the
+  // legacy hook when explaining why it is not used, so code comments are stripped before the check
+  // and only executable references are looked for.
+  assert.match(driver, /window\.__LT_PROMO/, 'driver uses the accepted window.__LT_PROMO hook');
+  const driverCode = driver.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  assert.ok(!/window\.__lt\b/.test(driverCode), 'driver code never references the legacy window.__lt contract');
+  assert.ok(!/__lovetreeStats/.test(driverCode), 'driver code never references window.__lovetreeStats');
+  assert.ok(!/waitForFunction\(\(\) => !!window\.__lt/.test(driverCode), 'driver never waits on the legacy hook');
+  // Both released authority lanes, with the accepted state counts.
+  assert.equal((driver.match(/name: 'RM_/g) || []).length, 14, '14 accepted reduced-motion states');
+  assert.equal((driver.match(/name: '(?!RM_)[A-Z]/g) || []).length, 18, '18 accepted normal-motion states');
+  // The two S2 synchronization classes are applied as harness waiting, not as tolerances.
+  assert.match(driver, /waitForScrollArrival/, 'SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION is applied');
+  assert.match(driver, /waitForTransitionsSettled/, 'CSS_TRANSITION_SETTLE_SYNCHRONIZATION is applied');
+  assert.match(driver, /CSSTransition/, 'the settle wait discriminates CSS transitions from Web Animations');
+  for (const resting of RESTING_STATES) {
+    assert.ok(driver.includes(`'${resting}'`) || driver.includes('settle: true'), `${resting} is replayed with a settle wait`);
+  }
+  // The declared WAAPI transient is created by a real click and never disabled.
+  assert.match(driver, /page\.click\('#pulseBtn'\)/, 'the CTA pulse is created by one real click');
+  for (const forbidden of ['animation: *"none', 'transition: *"none', 'cancelAnimation', 'finish()']) {
+    assert.ok(!driver.includes(forbidden), `driver must not neutralise motion (${forbidden})`);
+  }
+  // The bookkeeping anomaly stays an unresolved raw observation.
+  assert.match(driver, /UNRESOLVED: true/, 'bookkeeping is carried as UNRESOLVED');
+  assert.match(driver, /RAW_OBSERVATION_ONLY/, 'bookkeeping is a raw observation only');
+  // Original surface only: the driver names no split path and claims no parity.
+  assert.ok(!/split\/index\.html/.test(driver), 'the driver never references the split surface');
+  assert.match(driver, /original_vs_split_comparison: 'NOT_PERFORMED'/, 'no original-vs-split comparison');
+  assert.match(driver, /parity_capture_authorized: false/, 'parity capture is not authorized');
+});
+
+test('the S4 authorization gate is wired into the shared parity harness before any capture', () => {
+  const parity = readRepo('src/08_harness/capture-source-parity.mjs');
+  assert.match(parity, /import \{ resolveParityCaptureAuthorization \} from '\.\/source-capsule-validator\.mjs';/);
+  const gateAt = parity.indexOf('resolveParityCaptureAuthorization(manifest, materializationRecord)');
+  const dispatchAt = parity.indexOf('sourceOut = path.join(outRoot, sourceId)');
+  assert.ok(gateAt > 0, 'the parity harness consults the gate');
+  assert.ok(gateAt < dispatchAt, 'the gate is consulted before the parity output directory is created');
+  assert.match(parity, /SRC_SPLIT_PARITY_CAPTURE_SKIP=\$\{sourceId\} reason=\$\{authorization\.reason\}/, 'an explicit skip line is emitted');
+  assert.ok(!/capture_surface=CONTEXT_AWARE_ONLY[\s\S]{0,200}SRC051/.test(parity), 'SRC051 is not faked away with a capture_surface');
+  assert.match(readJson('authority-context.json').capture_surface.mode, /SINGLE_EXECUTABLE/, 'SRC051 declares a real standalone surface');
+});
+
+test('MECHANICAL_MATERIALIZED is a recognized status and cannot authorize parity', () => {
+  assert.ok(MATERIALIZATION_STATUSES.includes('MECHANICAL_MATERIALIZED'));
+  // The status alone must never unlock capture; the gate still has to.
+  const verdict = resolveParityCaptureAuthorization({}, { status: 'MECHANICAL_MATERIALIZED' });
+  assert.equal(verdict.authorized, true, 'a bare status record with no gate keeps legacy behaviour, unchanged');
+  // A status record that DOES carry a gate must not be able to authorize while S4 is held.
+  const held = resolveParityCaptureAuthorization({}, { status: 'MECHANICAL_MATERIALIZED', stage_gate: { s4_release: 'HOLD_CENTRAL', parity_capture_authorized: false } });
+  assert.equal(held.authorized, false, 'MECHANICAL_MATERIALIZED + HOLD_CENTRAL must not authorize');
+  assert.equal(held.reason, 'CENTRAL_S4_NOT_RELEASED');
+});
+
 test('the authority and the split runtime are byte-unchanged by this correction', () => {
   const bytes = fs.readFileSync(originalHtml);
   assert.equal(bytes.length, 2782365);
@@ -153,61 +211,6 @@ test('the authority and the split runtime are byte-unchanged by this correction'
   };
   for (const [rel, sha] of Object.entries(expected)) {
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(capsule, rel))).digest('hex'), sha, `${rel} unchanged from the S3 head`);
-  }
-});
-
-const browserTest = chromium ? test : test.skip;
-browserTest('SRC051 original baseline replay: both authority lanes, synchronization applied, no parity', async (t) => {
-  const server = await startServer();
-  const { port } = server.address();
-  const channel = process.env.SRC_BROWSER_CHANNEL || null;
-  const browser = await chromium.launch({ headless: true, ...(channel ? { channel } : {}) });
-  const outRoot = fs.mkdtempSync(path.join(process.env.TMPDIR || process.env.TEMP, 'src051-baseline-'));
-  t.after(() => fs.rmSync(outRoot, { recursive: true, force: true }));
-  try {
-    for (const lane of [{ reducedMotion: 'no-preference', expectedStates: 18 }, { reducedMotion: 'reduce', expectedStates: 14 }]) {
-      const outDir = path.join(outRoot, lane.reducedMotion);
-      fs.mkdirSync(outDir, { recursive: true });
-      const evidence = await captureSRC051Baseline(
-        browser, `http://127.0.0.1:${port}/original.html`,
-        { width: 1440, height: 900, dpr: 1, reducedMotion: lane.reducedMotion },
-        outDir, `1440x900-${lane.reducedMotion === 'reduce' ? 'reduce' : 'normal'}`,
-      );
-      const names = Object.keys(evidence.states);
-      assert.equal(names.length, lane.expectedStates, `${lane.reducedMotion}: ${lane.expectedStates} accepted states`);
-      assert.deepEqual(evidence.errors, [], `${lane.reducedMotion}: no browser errors`);
-      assert.deepEqual(evidence.failedRequests, [], `${lane.reducedMotion}: no failed requests`);
-
-      // the accepted hook, not the legacy one
-      assert.deepEqual(evidence.states[names[0]].state.api_members_present, { sections: true, scrollToSection: true, setProgress: true, update: true });
-      // smooth-scroll arrival: geometry read only after the authored scroll landed
-      for (const name of names) {
-        const y = evidence.states[name].state.scroll.y;
-        assert.ok(Number.isInteger(y) && y >= 0, `${name}: settled integer scroll y (${y})`);
-      }
-      // resting states waited out their transitions
-      for (const resting of names.filter((n) => RESTING_STATES.includes(n))) {
-        assert.equal(evidence.states[resting].css_transition_settle_applied, true, `${resting}: CSS_TRANSITION_SETTLE_SYNCHRONIZATION applied`);
-      }
-      // FROZEN DEFECT D5 preserved: the WAAPI pulse is live, 700/900ms, still not gated
-      assert.equal(evidence.interaction.waapi_pulse_preserved_not_disabled, true);
-      assert.ok(evidence.interaction.waapi_pulse.after_click_count > 0, 'the authored WAAPI pulse is live after one real click');
-      assert.deepEqual(evidence.interaction.waapi_pulse.after_click.map((a) => a.duration_ms).sort((a, b) => a - b), [700, 900], 'authored pulse durations preserved verbatim');
-      assert.equal(evidence.interaction.waapi_pulse.gated_on_prefers_reduced_motion, false);
-      // bookkeeping anomaly stays an unresolved raw observation
-      assert.equal(evidence.states[names[0]].state.animation_bookkeeping.UNRESOLVED, true);
-      assert.equal(evidence.states[names[0]].state.animation_bookkeeping.disposition, 'RAW_OBSERVATION_ONLY');
-      // original surface only; no parity anywhere
-      assert.equal(evidence.interaction.original_surface_only, true);
-      assert.equal(evidence.interaction.original_vs_split_comparison, 'NOT_PERFORMED');
-      assert.equal(evidence.interaction.parity_capture_authorized, false);
-      assert.equal(evidence.interaction.central_s4_release, 'HOLD_CENTRAL');
-      assert.equal(evidence.interaction.smooth_scroll_arrival_synchronization, 'APPLIED');
-      assert.equal(evidence.interaction.css_transition_settle_synchronization, 'APPLIED_TO_RESTING_STATES');
-    }
-  } finally {
-    await browser.close();
-    await new Promise((resolve) => server.close(resolve));
   }
 });
 

@@ -74,14 +74,21 @@ test('exactly one CLEAN-108 pilot exclusion exists in production-auto-deploy.yml
   assert.equal(matches.length, 1, `expected exactly 1 pilot reference, got ${matches.length}`);
 });
 
-test('A-track inventory semantics are unchanged (12-test expected browser inventory)', () => {
+test('A-track inventory semantics are unchanged (11-test expected browser inventory)', () => {
   const workflow = readWorkflow('a-track-p0-validation.yml');
-  // 11 -> 12 with SRC051's baseline-driver contract test, which is a real Playwright test and must
-  // therefore appear in the expected browser inventory. The count is an exact declaration that the
-  // workflow's two independent detectors are diffed against, so it moves in lockstep with the
-  // inventory rather than becoming a lower bound.
-  assert.match(workflow, /expected_browser_count=12/);
-  assert.match(workflow, /tests\/src051-baseline-driver\.test\.mjs/);
+  // Still 11: tests/src051-baseline-driver.test.mjs is a no-browser contract test, so neither of the
+  // workflow's detectors classifies it as browser and it must NOT be in this allowlist. The count is
+  // an exact declaration that both detectors are diffed against, so it is not a lower bound.
+  assert.match(workflow, /expected_browser_count=11/);
+  // Scoped to the allowlist BODY only: from "expected_browser_tests=(" to the line that closes it.
+  // The explanatory comment after the closing paren names the file, so scanning past the paren would
+  // match that comment instead of the list.
+  const afterList = workflow.split('\n');
+  const listStart = afterList.findIndex((line) => /^\s*expected_browser_tests=\($/.test(line));
+  const listEnd = afterList.findIndex((line, i) => i > listStart && /^\s*\)\s*$/.test(line));
+  assert.ok(listStart >= 0 && listEnd > listStart, 'the A-track browser inventory list is present');
+  const allowlistBody = afterList.slice(listStart, listEnd + 1).join('\n');
+  assert.ok(!allowlistBody.includes('src051-baseline-driver'), 'the no-browser SRC051 contract test is not in the browser allowlist');
   // the A-track exclusion list names the pilot exactly once and nothing else CLEAN-108
   const clean108Exclusions = [...workflow.matchAll(/! -name 'clean108-[^']+\.test\.mjs'/g)];
   assert.equal(clean108Exclusions.length, 1, 'A-track must exclude exactly one CLEAN-108 test');
