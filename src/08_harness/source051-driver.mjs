@@ -173,9 +173,13 @@ export async function goToSection(page, id) {
   return Math.round(await page.evaluate(() => window.scrollY));
 }
 
-export async function captureState(page, sourceOut, label, stateName, { settleTransitions = false, collect = collectSRC051State } = {}) {
+export async function captureState(page, sourceOut, label, stateName, { settleTransitions = false, collect = collectSRC051State, extras = null } = {}) {
   if (settleTransitions) await waitForTransitionsSettled(page);
-  const state = await page.evaluate(collect);
+  const base = await page.evaluate(collect);
+  // A page-evaluated body cannot close over module scope, so an extras collector receives the base
+  // state as a serializable argument instead of calling the base collector itself. Doing the latter
+  // fails at runtime with "collectSRC051State is not defined" inside the browser.
+  const state = extras ? { ...base, ...(await page.evaluate(extras, base)) } : base;
   const png = await page.screenshot({ path: path.join(sourceOut, `${label}-${stateName.toLowerCase()}.png`) });
   return {
     state,
@@ -312,7 +316,7 @@ export async function scrollElementIntoView(page, selector) {
  * and returns the raw observations. It builds NO parity verdict, writes no accepted-parity metadata,
  * and hard-codes no original-vs-split claim; that judgement belongs to the caller.
  */
-export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State } = {}) {
+export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State, extras = null } = {}) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: viewport.dpr ?? 1,
@@ -341,7 +345,7 @@ export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut,
     const states = {};
     for (const state of plan) {
       const detail = await state.run(page);
-      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true, collect })), action_detail: detail ?? null };
+      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true, collect, extras })), action_detail: detail ?? null };
     }
 
     // FROZEN DEFECT D5 must remain observable on every surface: the click-created Web Animations pulse

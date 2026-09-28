@@ -56,6 +56,32 @@ test('no mobile state is invented: each traces to an accepted desktop state or t
   }
 });
 
+test('no page-evaluated collector closes over module scope', () => {
+  // A page-evaluated body is serialized and runs in the browser, where module scope does not exist.
+  // The first S4 run failed exactly this way: "page.evaluate: ReferenceError: collectSRC051State is
+  // not defined", because the parity collector called the imported driver collector from inside the
+  // page. It now receives the base state as a serializable argument instead. This test is static
+  // because the failure only appears with a live browser, and the fix must not need one to verify.
+  const parity = readRepo('src/08_harness/source051-parity.mjs');
+  const code = parity.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
+  // Names that only exist at module scope in the driver and therefore cannot be called from a page body.
+  const MODULE_ONLY = ['collectSRC051State', 'captureSRC051Lane', 'waitForScrollArrival', 'waitForTransitionsSettled', 'setAnalysisPhase', 'goToSection', 'scrollElementIntoView', 'collectWaapiPulseEvidence', 'captureState', 'partitionErrors'];
+  for (const name of MODULE_ONLY) {
+    // Allowed only as an import specifier, never invoked inside a page-evaluated body.
+    const invoked = new RegExp(`\\(\\s*${name}\\s*\\(`).test(code);
+    assert.ok(!invoked, `the parity module must not call ${name}() from a page-evaluated body`);
+  }
+
+  // The extras collector is passed as data, and the base is handed to it as an argument.
+  assert.match(code, /extras: collectSRC051ParityExtras/, 'the extras collector is passed, not called');
+  assert.match(code, /function collectSRC051ParityExtras\(\)/, 'the extras collector takes no closure input');
+
+  // The driver must hand the base state in as an argument rather than expecting the page to have it.
+  const driver = readRepo('src/08_harness/source051-driver.mjs');
+  assert.match(driver, /page\.evaluate\(extras, base\)/, 'the driver passes the base state into the extras body');
+});
+
 test('the parity route is wired before the generic fallback and the driver stays original-only', () => {
   const parity = readRepo('src/08_harness/capture-source-parity.mjs');
   assert.match(parity, /import \{ captureSRC051Parity \} from '\.\/source051-parity\.mjs';/);

@@ -50,7 +50,6 @@ import {
   NORMAL_MOTION_STATES,
   REDUCED_MOTION_STATES,
   captureSRC051Lane,
-  collectSRC051State,
   goToSection,
   scrollElementIntoView,
   setAnalysisPhase,
@@ -107,17 +106,20 @@ export const MOBILE_320_STATES = MOBILE_390_STATES.filter(
 /**
  * The extended S4 state collector.
  *
- * It starts from the accepted driver collector, so the parity lanes measure exactly the channels
- * baseline replay already measures, then adds the S4 comparison channels the driver has no reason to
- * collect: authored class/attribute content and computed display/visibility/opacity for the elements
- * the S2 evidence names. Every added field is an authored source property, so a difference in any of
- * them is a real parity difference and must fail.
+ * It runs AFTER the accepted driver collector and receives that result as a serializable argument,
+ * rather than calling the driver collector from inside the page. A page-evaluated body cannot close
+ * over module scope, so calling an imported helper from inside one fails at runtime with
+ * "collectSRC051State is not defined". The exact-head SRC108 gate caught that on the first S4 run.
+ *
+ * It adds the S4 comparison channels the driver has no reason to collect: authored class/attribute
+ * content and computed display/visibility/opacity for the elements the S2 evidence names. Every added
+ * field is an authored source property, so a difference in any of them is a real parity difference and
+ * must fail.
  *
  * Deliberately absent: any timestamp, frame counter or animation clock value. Those are handled by the
  * taxonomy rules in the comparison step, not smuggled out of the collector.
  */
-function collectSRC051ParityState() {
-  const base = collectSRC051State();
+function collectSRC051ParityExtras() {
   const round = (value) => Math.round(value * 1e6) / 1e6;
   const describe = (selector) => {
     const element = document.querySelector(selector);
@@ -142,7 +144,6 @@ function collectSRC051ParityState() {
   const topbarNav = document.querySelector('.topbar nav');
   const progressBar = document.querySelector('.progress b');
   return {
-    ...base,
     parity: {
       // Authored structure, compared exactly.
       section_ids: [...document.querySelectorAll('section[id]')].map((el) => el.id),
@@ -259,7 +260,7 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
     sourceId,
     reducedMotion: laneSpec.reducedMotion,
     ctaStateMatcher,
-    collect: collectSRC051ParityState,
+    extras: collectSRC051ParityExtras,
   });
 
   const original = await capture(originalUrl, 'original');
