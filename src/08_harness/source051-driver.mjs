@@ -47,6 +47,12 @@ export function collectSRC051State() {
   // draft called a module-level round6() and a module-level collectAnimationBookkeeping(); both
   // failed at runtime with "is not defined" inside the page. Everything the page needs is
   // therefore defined inside this one serialized function.
+  //
+  // Full precision is kept deliberately. Two sources of sub-pixel movement were identified and are
+  // handled where they belong, by a named exclusion in the parity comparison, not by quietly
+  // quantising the measurement here: an element under a continuous animation, and rects derived from a
+  // scroll offset the browser snaps to device pixels. Loosening this rounding would have hidden real
+  // differences instead of naming them.
   const round = (value) => Math.round(value * 1e6) / 1e6;
   const WAAPI_CLASS = 'Animation';
   // Raw observation only. CSSAnimation / CSSTransition / JS Web Animations are three distinct
@@ -117,14 +123,58 @@ export function collectSRC051State() {
  * geometry is sampled. This is synchronization, not a tolerance, and not a source change.
  */
 export async function waitForScrollArrival(page, targetY) {
-  await page.waitForFunction((target) => {
-    const y = Math.round(window.scrollY);
-    if (Math.abs(y - target) <= 1) return true;
-    const last = window.__SRC051_SCROLL_SAMPLE__;
+  // SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION, and this is the part that matters.
+  //
+  // The previous form accepted "two consecutive equal samples" as arrival. A smooth scroll has not
+  // necessarily STARTED when the first two samples are taken, so that test could return while scrollY
+  // was still at its old value and the scroll had not begun; the parity run then read stale geometry on
+  // one surface and not the other. Two equal samples is simply too weak an arrival signal.
+  //
+  // Arrival is therefore the target being met, with a stability fallback that requires the value to hold
+  // for several consecutive polls. The fallback must stay reachable even when the page never moves at
+  // all: frozen defect D6 means .logo-close lies past the document scroll maximum, so its target can
+  // never be reached and the scroll clamps immediately. Requiring observed motion before the fallback
+  // would have deadlocked exactly there.
+  const STABLE_SAMPLES_REQUIRED = 6;
+  // Arrival is judged on the FRACTIONAL scroll position, not Math.round(window.scrollY). Rounding hid
+  // sub-pixel differences: both surfaces could report the same integer scrollY while actually resting
+  // up to half a pixel apart, and every fractional rect then differed. The captured state rounds
+  // scroll.y for readability, so the synchronization has to be the stricter of the two.
+  const ARRIVAL_EPSILON_PX = 0.01;
+  await page.waitForFunction((args) => {
+    const y = window.scrollY;
+    if (Math.abs(y - args.target) <= args.epsilon) return true;
+    const previous = window.__SRC051_SCROLL_SAMPLE__;
     window.__SRC051_SCROLL_SAMPLE__ = y;
-    return last === y;
-  }, targetY, { timeout: SMOOTH_SCROLL_SETTLE_TIMEOUT_MS, polling: 50 });
-  await page.evaluate(() => { delete window.__SRC051_SCROLL_SAMPLE__; });
+    if (previous === undefined) {
+      window.__SRC051_SCROLL_STEADY__ = 0;
+      return false;
+    }
+    if (Math.abs(previous - y) < 0.01) {
+      window.__SRC051_SCROLL_STEADY__ = (window.__SRC051_SCROLL_STEADY__ ?? 0) + 1;
+      return window.__SRC051_SCROLL_STEADY__ >= args.stableRequired;
+    }
+    // Genuine movement resets the counter: a scroll still in flight is not a settled viewport.
+    window.__SRC051_SCROLL_STEADY__ = 0;
+    return false;
+  }, { target: targetY, stableRequired: STABLE_SAMPLES_REQUIRED, epsilon: ARRIVAL_EPSILON_PX }, { timeout: SMOOTH_SCROLL_SETTLE_TIMEOUT_MS, polling: 50 });
+  await page.evaluate(() => {
+    delete window.__SRC051_SCROLL_SAMPLE__;
+    delete window.__SRC051_SCROLL_STEADY__;
+  });
+  // The source writes --scroll from a rAF-throttled scroll handler, so a settled viewport can still
+  // carry a stale authored progress value for a frame or two. Under reduced motion the source's own
+  // query forces scroll-behavior:auto, so the position is already final while --scroll is not. CENTRAL
+  // requires the source-authored progress state "after synchronization", so wait for it to hold steady
+  // before anything samples it. Read-only: the source is never patched and the wait is not a tolerance.
+  await page.waitForFunction(() => {
+    const current = document.documentElement.style.getPropertyValue('--scroll');
+    const previous = window.__SRC051_PROGRESS_SAMPLE__;
+    window.__SRC051_PROGRESS_SAMPLE__ = current;
+    if (previous === undefined) return false;
+    return previous === current;
+  }, null, { timeout: 5000, polling: 50 });
+  await page.evaluate(() => { delete window.__SRC051_PROGRESS_SAMPLE__; });
 }
 
 /**
@@ -315,6 +365,13 @@ export async function scrollElementIntoView(page, selector) {
  * The function is deliberately surface-agnostic. It receives a URL and a plan, captures the states,
  * and returns the raw observations. It builds NO parity verdict, writes no accepted-parity metadata,
  * and hard-codes no original-vs-split claim; that judgement belongs to the caller.
+ *
+ * `pages` is how the two surfaces are kept in lockstep. A single-surface baseline pass passes one page
+ * and runs the whole plan in order. The parity pass passes BOTH pages and the plan is advanced one
+ * state at a time across them, so the two surfaces stay adjacent in time while evolving through the
+ * same sequence. Running the whole original plan and then the whole split plan, minutes apart, let a
+ * scroll that had not yet begun on one surface resolve differently from the other and turned into
+ * large false state drift.
  */
 export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State, extras = null } = {}) {
   const context = await browser.newContext({

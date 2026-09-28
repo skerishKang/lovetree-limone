@@ -195,17 +195,50 @@ export const PARITY_EXCLUSIONS = Object.freeze([
     taxonomy_class: 'DECLARED_WAAPI_TRANSIENT_STATE',
     reason: 'The authored 700ms/900ms pulse is created by one real click and compared at the same authored phase by a fixed read-only wait. The absolute Animation.currentTime is a clock read and is recorded, not compared. Targets, durations, play state and count are all still compared exactly.',
   },
+  {
+    id: 'ANIMATED_HEART_CORE_RECT',
+    path: 'state.parity.heart_core.rect',
+    match: /^state\.parity\.heart_core\.rect$/,
+    // Applied per state, not per lane: see activeExclusions below. Two different authored animations can
+    // move this element, and only that element.
+    taxonomy_class: 'CONTINUOUS_CSS_PHASE_VARIANCE | DECLARED_WAAPI_TRANSIENT_STATE',
+    reason: 'Only .heart-core is animated, and only its instantaneous rect is excluded. (a) In the normal-motion lanes the source authors `@keyframes pulse{to{transform:scale(1.09);box-shadow:...}}`, so the rect changes continuously and never settles. (b) In the reduced-motion lane the CSS animation is off, but frozen defect D5 means the JS WAAPI pulse still runs, so in the SAVED_CTA_ACTIVE state the rect is a sample of the authored 700ms pulse. Both surfaces were captured at slightly different phases, moving the rect by about 0.002-0.03px. Every other .heart-core field (class, display, visibility, opacity) and every other element rect is still compared exactly. This is not a geometry tolerance: it is one element, one measurement, only where that element is animating.',
+  },
+  {
+    id: 'SCROLL_EXTREME_CTA_RECT',
+    path: 'state.pulse_button.{x,y,width,height}',
+    match: /^state\.pulse_button\.(x|y|width|height)$/,
+    taxonomy_class: 'CONTINUOUS_CSS_PHASE_VARIANCE',
+    reason: 'Applied ONLY in the SCROLL_PROGRESS_* states, which deliberately sit at the scroll extremes. The browser snaps the scroll offset to device pixels, so the two surfaces can rest on adjacent device pixels at the document maximum and #pulseBtn inherits that; measured landings varied between 698.78 and 699.12 across runs of the SAME surface. This is scroll-landing noise on an incidental measurement, not a behavioural difference. The contract these states exist to prove - the authored --scroll ratio and the .progress b width - are still compared exactly, as is the scroll position itself.',
+  },
 ]);
 
-/** Strip only the documented exclusions. Everything else is compared exactly. */
-function toComparable(value, path = '') {
+/**
+ * Which exclusions actually apply to one state of one lane.
+ *
+ * Each conditional exclusion is applied only where the named noise can actually occur, so the rest of
+ * the surface stays compared at full strictness.
+ */
+function activeExclusions(laneName, stateName) {
+  const normalMotionLane = laneName === 'desktop-normal' || laneName === 'mobile-390' || laneName === 'mobile-320';
+  const ctaState = /SAVED_CTA_ACTIVE|SAVED_CTA_PULSE_CLICK/.test(stateName);
+  const scrollExtremeState = stateName.startsWith('SCROLL_PROGRESS');
+  return PARITY_EXCLUSIONS.filter((exclusion) => {
+    if (exclusion.id === 'ANIMATED_HEART_CORE_RECT') return normalMotionLane || ctaState;
+    if (exclusion.id === 'SCROLL_EXTREME_CTA_RECT') return scrollExtremeState;
+    return true;
+  });
+}
+
+/** Strip only the documented exclusions that apply to this state of this lane. */
+function toComparable(value, exclusions, path = '') {
   if (value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map((item, index) => toComparable(item, `${path}[${index}]`));
+  if (Array.isArray(value)) return value.map((item, index) => toComparable(item, exclusions, `${path}[${index}]`));
   const out = {};
   for (const [key, item] of Object.entries(value)) {
     const childPath = path ? `${path}.${key}` : key;
-    if (PARITY_EXCLUSIONS.some((exclusion) => exclusion.match.test(childPath))) continue;
-    out[key] = toComparable(item, childPath);
+    if (exclusions.some((exclusion) => exclusion.match.test(childPath))) continue;
+    out[key] = toComparable(item, exclusions, childPath);
   }
   return out;
 }
@@ -226,8 +259,9 @@ function classify(path) {
 }
 
 /** The exact semantic comparison for one ORIGINAL/SPLIT paired state. */
-function compareState(originalEntry, splitEntry) {
-  const drift = diffExact(toComparable(originalEntry), toComparable(splitEntry))
+function compareState(originalEntry, splitEntry, lane, stateName) {
+  const exclusions = activeExclusions(lane, stateName);
+  const drift = diffExact(toComparable(originalEntry, exclusions), toComparable(splitEntry, exclusions))
     .map((entry) => ({ ...entry, channel: classify(entry.path) }));
   return {
     passed: drift.length === 0,
@@ -270,7 +304,7 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
   const states = {};
   for (const name of stateNames) {
     states[name] = (original.states[name] && split.states[name])
-      ? compareState(original.states[name], split.states[name])
+      ? compareState(original.states[name], split.states[name], laneSpec.lane, name)
       : { passed: false, drift: [{ path: '<state>', channel: 'INTERACTION', original: Boolean(original.states[name]), split: Boolean(split.states[name]) }], channels_failed: ['INTERACTION'], screenshot: null };
   }
 
@@ -329,6 +363,14 @@ export async function captureSRC051LanePair(browser, originalUrl, splitUrl, lane
       resting_states: ['THERMAL_CITY', 'CONNECTION', 'MOMENT_CONNECTION_DEFAULT', 'SAVED_PRE_CTA', 'CONNECTION_FLOW', 'SAVED_CTA'],
     },
     exclusions_applied: PARITY_EXCLUSIONS.map(({ id, path: exclusionPath, taxonomy_class, reason }) => ({ id, path: exclusionPath, taxonomy_class, reason })),
+    // Per-state verdicts are part of the evidence, not just a count. A reviewer must be able to see
+    // which state failed and on which exact field, without rerunning anything.
+    state_comparisons: Object.fromEntries(stateNames.map((name) => [name, {
+      passed: states[name].passed,
+      channels_failed: states[name].channels_failed,
+      drift: states[name].drift,
+      screenshot: states[name].screenshot,
+    }])),
     original_observations: { errors: original.errors, rawErrors: original.rawErrors, pageErrors: original.pageErrors, failedRequests: original.failedRequests },
     split_observations: { errors: split.errors, rawErrors: split.rawErrors, pageErrors: split.pageErrors, failedRequests: split.failedRequests },
     raw: { original, split },
@@ -348,7 +390,7 @@ export async function captureSRC051Parity(browser, originalUrl, splitUrl, outDir
     lanes.push(result);
     console.log(`SRC051_S4_LANE=${result.lane} states=${result.states_passed}/${result.state_count} semantic_parity=${result.semantic_parity} screenshot_byte_identical=${result.screenshot_evidence.byte_identical}/${result.screenshot_evidence.pairs} role=${result.role}`);
     for (const name of result.failed_states) {
-      for (const entry of result.states[name].drift) {
+      for (const entry of result.state_comparisons[name]?.drift ?? []) {
         console.log(`SRC051_S4_DRIFT=${result.lane}/${name} channel=${entry.channel} path=${entry.path} original=${JSON.stringify(entry.original)} split=${JSON.stringify(entry.split)}`);
       }
     }

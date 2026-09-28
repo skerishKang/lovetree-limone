@@ -98,9 +98,16 @@ test('the parity route is wired before the generic fallback and the driver stays
 });
 
 test('the parity comparison excludes only what a taxonomy class authorizes', () => {
-  // Each exclusion must name its authorizing class. A fourth, unjustified exclusion would mean a
-  // semantic field was dropped to force a green.
-  assert.deepEqual(PARITY_EXCLUSIONS.map((e) => e.id), ['S2_ANIMATION_BOOKKEEPING', 'CONTINUOUS_CSS_PHASE_VARIANCE', 'DECLARED_WAAPI_TRANSIENT_STATE']);
+  // Each exclusion must name its authorizing class. An unjustified exclusion would mean a semantic field
+  // was dropped to force a green, and an unconditional one would quietly weaken a lane that does not
+  // need it, so both the count and the conditionality are pinned here.
+  assert.deepEqual(PARITY_EXCLUSIONS.map((e) => e.id), [
+    'S2_ANIMATION_BOOKKEEPING',
+    'CONTINUOUS_CSS_PHASE_VARIANCE',
+    'DECLARED_WAAPI_TRANSIENT_STATE',
+    'ANIMATED_HEART_CORE_RECT',
+    'SCROLL_EXTREME_CTA_RECT',
+  ]);
   for (const exclusion of PARITY_EXCLUSIONS) {
     assert.ok(exclusion.match instanceof RegExp, `${exclusion.id} has a matcher`);
     assert.ok(exclusion.reason.length > 40, `${exclusion.id} states why it is allowed`);
@@ -111,6 +118,32 @@ test('the parity comparison excludes only what a taxonomy class authorizes', () 
   // Only the WAAPI clock reading is excluded; the declared timing contract stays compared.
   assert.match(PARITY_EXCLUSIONS[2].match.source, /current_time_ms/);
   assert.ok(!/duration_ms|play_state|target/.test(PARITY_EXCLUSIONS[2].match.source), 'the WAAPI exclusion does not cover the declared timing contract');
+
+  // The two conditional exclusions are one element / one measurement each, never a geometry band.
+  const heart = PARITY_EXCLUSIONS[3];
+  assert.match(heart.match.source, /heart_core/, 'the animated-element exclusion is scoped to .heart-core');
+  assert.ok(!/\|/.test(heart.match.source), 'it does not match a general path');
+  const cta = PARITY_EXCLUSIONS[4];
+  assert.match(cta.match.source, /pulse_button/, 'the scroll-extreme exclusion is scoped to #pulseBtn');
+  assert.ok(!/heart|lens|hero_stage|logo_close|dossier/.test(cta.match.source), 'it does not touch other element rects');
+
+  // Geometry stays at full measurement precision. A precision floor was tried and reverted: it would
+  // have hidden differences instead of naming them, which is the opposite of what a parity harness is for.
+  for (const file of ['src/08_harness/source051-driver.mjs', 'src/08_harness/source051-parity.mjs']) {
+    const code = readRepo(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    assert.match(code, /Math\.round\(value \* 1e6\) \/ 1e6/, `${file} keeps full geometry precision`);
+  }
+});
+
+test('the two conditional exclusions apply only where the named noise can occur', () => {
+  const source = readRepo('src/08_harness/source051-parity.mjs');
+  // The heart-core rect is only excluded in normal-motion lanes or in the CTA state, because those are
+  // the only places that element is animating.
+  assert.match(source, /if \(exclusion\.id === 'ANIMATED_HEART_CORE_RECT'\) return normalMotionLane \|\| ctaState;/);
+  // The #pulseBtn rect is only excluded in the scroll-extreme states.
+  assert.match(source, /if \(exclusion\.id === 'SCROLL_EXTREME_CTA_RECT'\) return scrollExtremeState;/);
+  // The authored progress contract those states exist to prove is never excluded.
+  assert.ok(!/css_var_scroll|progress_bar_width/.test(PARITY_EXCLUSIONS.map((e) => e.match.source).join(' ')), '--scroll and .progress b width are always compared exactly');
 });
 
 test('the parity harness claims no acceptance and writes no accepted-parity artifact', () => {
