@@ -199,6 +199,84 @@ test('MECHANICAL_MATERIALIZED is a recognized status and cannot authorize parity
   assert.equal(held.reason, 'CENTRAL_S4_NOT_RELEASED');
 });
 
+test('every duplicated SRC051 synchronization-contract copy states the accepted 1+1+2 taxonomy', () => {
+  // The S3 correction round fixed this taxonomy in authority-context.json and
+  // baseline/accepted-baseline.json but left two stale copies of the old sentence behind in
+  // manifest.json and split/materialization.json (CENTRAL #589 comment 5861425839). The contract is
+  // deliberately duplicated across four files, so a prose change has to be applied to all of them or
+  // the capsule starts disagreeing with itself. This test makes that failure impossible to reintroduce.
+  const COPIES = [
+    'authority-context.json',
+    'baseline/accepted-baseline.json',
+    'manifest.json',
+    'split/materialization.json',
+  ];
+
+  // Locate the contract by shape rather than by an assumed path, so relocating it in one file does
+  // not silently make this test vacuous.
+  const findContract = (node) => {
+    if (!node || typeof node !== 'object') return null;
+    if (node.explicit_non_tolerance_rule && Array.isArray(node.classes) && node.classes.length === 4) return node;
+    for (const value of Object.values(node)) {
+      const hit = findContract(value);
+      if (hit) return hit;
+    }
+    return null;
+  };
+
+  const contracts = COPIES.map((rel) => {
+    const found = findContract(JSON.parse(fs.readFileSync(path.join(capsule, rel), 'utf8')));
+    assert.ok(found, `${rel} carries a 4-class synchronization contract`);
+    return { rel, contract: found };
+  });
+
+  // 1. One canonical statement, byte-identical in all four copies.
+  const [first, ...rest] = contracts;
+  for (const { rel, contract } of rest) {
+    assert.equal(
+      contract.explicit_non_tolerance_rule,
+      first.contract.explicit_non_tolerance_rule,
+      `${rel} states the non-tolerance rule identically to ${first.rel}`,
+    );
+  }
+
+  // 2. The withdrawn sentence must be gone everywhere, not merely corrected in some copies.
+  const WITHDRAWN = 'Three are harness synchronization conditions';
+  const MISCREDITED = 'the fourth is bounded screenshot variance only';
+  for (const { rel, contract } of contracts) {
+    assert.ok(!contract.explicit_non_tolerance_rule.includes(WITHDRAWN), `${rel} no longer claims three synchronization classes`);
+    assert.ok(!contract.explicit_non_tolerance_rule.includes(MISCREDITED), `${rel} no longer reduces the taxonomy to "the fourth"`);
+  }
+
+  // 3. The counts are machine-readable and agree, so nobody has to count from prose.
+  for (const { rel, contract } of contracts) {
+    const s = contract.taxonomy_summary;
+    assert.ok(s, `${rel} carries a machine-readable taxonomy_summary`);
+    assert.deepEqual(
+      [s.variance_classes, s.declared_transient_exact_state_classes, s.synchronization_classes, s.total_classes],
+      [1, 1, 2, 4],
+      `${rel} states 1 variance + 1 declared transient + 2 synchronization = 4`,
+    );
+  }
+
+  // 4. The declared-transient class must not be classified as a synchronization class. This is the
+  //    specific miscount that caused the hold.
+  const EXPECTED_KINDS = {
+    CONTINUOUS_CSS_PHASE_VARIANCE: 'VARIANCE',
+    DECLARED_WAAPI_TRANSIENT_STATE: 'DECLARED_TRANSIENT_EXACT_STATE',
+    SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION: 'SYNCHRONIZATION',
+    CSS_TRANSITION_SETTLE_SYNCHRONIZATION: 'SYNCHRONIZATION',
+  };
+  for (const { rel, contract } of contracts) {
+    const kinds = Object.fromEntries(contract.classes.map((c) => [c.name, c.kind]));
+    assert.deepEqual(kinds, EXPECTED_KINDS, `${rel} classifies each class by kind`);
+    const sync = contract.classes.filter((c) => c.kind === 'SYNCHRONIZATION').map((c) => c.name);
+    assert.deepEqual(sync.sort(), ['CSS_TRANSITION_SETTLE_SYNCHRONIZATION', 'SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION'], `${rel} names exactly the two synchronization classes`);
+    const transient = contract.classes.find((c) => c.name === 'DECLARED_WAAPI_TRANSIENT_STATE');
+    assert.equal(transient.tolerance_permitted, false, 'the declared WAAPI transient is never a tolerance');
+  }
+});
+
 test('the authority and the split runtime are byte-unchanged by this correction', () => {
   const bytes = fs.readFileSync(originalHtml);
   assert.equal(bytes.length, 2782365);

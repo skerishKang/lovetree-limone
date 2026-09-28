@@ -106,20 +106,23 @@
           "name": "CONTINUOUS_CSS_PHASE_VARIANCE",
           "s4_rule": "screenshot pixel difference may be necessary; state semantics must still match",
           "tolerance_permitted": true,
-          "not_a_tolerance_for": "state semantics"
+          "not_a_tolerance_for": "state semantics",
+          "kind": "VARIANCE"
         },
         {
           "name": "DECLARED_WAAPI_TRANSIENT_STATE",
           "s4_rule": "compare at the exact authored phase/state; never normalize away",
           "tolerance_permitted": false,
-          "not_a_tolerance_for": "authored phase"
+          "not_a_tolerance_for": "authored phase",
+          "kind": "DECLARED_TRANSIENT_EXACT_STATE"
         },
         {
           "name": "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION",
           "s4_rule": "wait for arrival, then compare exactly",
           "tolerance_permitted": false,
           "not_a_tolerance_for": "settled geometry",
-          "note": "the source authors scroll-behavior:smooth"
+          "note": "the source authors scroll-behavior:smooth",
+          "kind": "SYNCHRONIZATION"
         },
         {
           "name": "CSS_TRANSITION_SETTLE_SYNCHRONIZATION",
@@ -132,10 +135,18 @@
             "SAVED_PRE_CTA"
           ],
           "added_by": "CENTRAL #589 comment 5859197749",
-          "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other"
+          "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other",
+          "kind": "SYNCHRONIZATION"
         }
       ],
-      "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. Three are harness synchronization conditions that must be resolved before an exact comparison; the fourth is bounded screenshot variance only."
+      "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. The accepted taxonomy is 1 variance class (CONTINUOUS_CSS_PHASE_VARIANCE), 1 declared transient exact-state class (DECLARED_WAAPI_TRANSIENT_STATE) and 2 synchronization classes (SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION, CSS_TRANSITION_SETTLE_SYNCHRONIZATION). Both synchronization classes are harness conditions that must be resolved BEFORE an exact comparison; neither is a tolerance. Only the variance class permits a screenshot-diff allowance, and even then state semantics must match.",
+      "taxonomy_summary": {
+        "variance_classes": 1,
+        "declared_transient_exact_state_classes": 1,
+        "synchronization_classes": 2,
+        "total_classes": 4,
+        "plain_statement": "1 screenshot-phase variance class, 1 declared transient exact-state class, 2 synchronization classes."
+      }
     },
     "frozen_defects": {
       "count_unique": 7,
