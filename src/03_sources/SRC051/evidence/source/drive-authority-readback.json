@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC051",
+  "verified_at_utc": "2026-09-27T00:00:00Z",
+  "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK",
+  "verification_mode_caveat": "This mode string is required by src/08_harness/source-capsule-validator.mjs. The underlying readback is the S0 #308 full-tree transport (2026-08-21), NOT a readback performed during S3. S3 performed no Drive write and no fresh Drive download; S3 re-proved the byte lock locally from the committed Git blob instead.",
+  "fresh_drive": {
+    "folder_id": "UNRESOLVED",
+    "file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+    "filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+    "mime_type": "text/html",
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+  },
+  "readback_transport": {
+    "governing": "S1 fresh read-only Drive enumeration, 2026-09-27 (see fresh_authority_evidence)",
+    "historical": "S0 full-tree transport, 2026-08-21 (see historical_evidence)",
+    "byte_identity": "PASS",
+    "sha256_identity": "PASS"
+  },
+  "s3_local_byte_lock": {
+    "method": "git cat-file blob fd7e48b1301abe0f857e9a7bbc06162c088d0abc",
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "lf_count": 404,
+    "crlf_count": 0,
+    "bom": false,
+    "note": "The repository Git blob is byte-exact to the Drive authority. The Windows working-tree checkout is CRLF-translated and was NOT used as authority at any point.",
+    "performed_at": "S3, and re-proved at S3 correction"
+  },
+  "s2_crosscheck": {
+    "s2_authority_copy": "2782365 bytes / 5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "result": "MATCH"
+  },
+  "verified_by": "S1 fresh Drive enumeration accepted by CENTRAL #589 comment 5852908478; S3 byte lock re-proved locally by LOCAL1",
+  "drive_folder_identity": {
+    "status": "UNRESOLVED",
+    "blocking": false,
+    "note": "The Drive folder id was never recorded by S0 or S1. CENTRAL ruled it non-blocking for SRC051 S3/S4 (#589 comment 5860509930): canonical identity is locked by Drive file id + exact byte hash. No further Drive enumeration was performed and none should be."
+  },
+  "identity_non_inference": {
+    "master_rows": [
+      "MST104"
+    ],
+    "family_ref": null,
+    "relations_imported_from_intake_pr_text": false
+  },
+  "fresh_authority_evidence": {
+    "stage": "S1",
+    "date": "2026-09-27",
+    "transport": "fresh read-only Drive enumeration of 51_네온인간분석_인터랙티브홍보대문 (8 objects)",
+    "objects": 8,
+    "executable_html_objects": 2,
+    "canonical": {
+      "file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+      "bytes": 2782365,
+      "drive_md5": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+    },
+    "alias": {
+      "file_id": "1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8",
+      "filename": "10_병행안_네온인간분석_홍보대문_바로보기.html",
+      "bytes": 2782365,
+      "drive_md5": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014"
+    },
+    "alias_relation": "DUPLICATE_COPY_SAME_SHA",
+    "report": {
+      "repo": "skerishKang/workdiary",
+      "commit": "ed22f458b5f9522b357464e99694d085df537058",
+      "path": "lovetree-reports/2026-09-27/LOCAL1/589-mst104-src051-s1-authority.md"
+    },
+    "accepted_by": "skerishKang/lovetree-limone#589 comment 5852908478; reaffirmed as MST104_S1=PASS in #589 comment 5859197749"
+  },
+  "historical_evidence": {
+    "stage": "S0",
+    "date": "2026-08-21",
+    "role": "HISTORICAL_EARLIER_TRANSPORT",
+    "transport": "read-only full-tree rclone copy of the same folder, 8 files / 19,574,411 B, all 8 verified OK against Drive-native MD5",
+    "note": "This is the earlier intake transport. It is retained as provenance but is NOT the governing fresh authority evidence; the 2026-09-27 S1 enumeration is. S3 performs no Drive readback of its own and performs no Drive mutation."
+  }
+}

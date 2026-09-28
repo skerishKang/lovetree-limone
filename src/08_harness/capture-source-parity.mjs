@@ -14,6 +14,11 @@ import { captureSRC47Variant, src47SourceFiles } from './source047-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantParityDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
 import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
+import { resolveParityCaptureAuthorization } from './source-capsule-validator.mjs';
+// SRC051's bounded S4 route. It reuses the accepted source051-driver.mjs recipes, so the baseline
+// replay and the parity capture share one state machine. Routed before the generic fallback because
+// SRC051 exposes window.__LT_PROMO rather than the legacy window.__lt / window.__lovetreeStats contract.
+import { captureSRC051Parity } from './source051-parity.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -284,6 +289,21 @@ try {
     const sourceDir = path.join(sourceRoot, sourceId);
     const manifest = JSON.parse(fs.readFileSync(path.join(sourceDir, 'manifest.json'), 'utf8'));
     if (manifest.stages?.mechanical_split_complete !== true || manifest.stages?.source_split_parity_pass !== false) continue;
+    // CENTRAL S4 release gate. A completed mechanical split with no parity verdict is a *pending*
+    // state, not an authorization: only CENTRAL can release S4, and the capsule must say so
+    // explicitly in its stage_gate. Checked before any browser work and before evidence/parity/
+    // is created, so a held capsule leaves no parity artifact behind. Capsules with no stage_gate
+    // keep the pre-existing behaviour unchanged.
+    const materializationPath = path.join(sourceDir, 'split', 'materialization.json');
+    const materializationRecord = fs.existsSync(materializationPath)
+      ? JSON.parse(fs.readFileSync(materializationPath, 'utf8'))
+      : null;
+    const authorization = resolveParityCaptureAuthorization(manifest, materializationRecord);
+    if (!authorization.authorized) {
+      const gate = authorization.gate ?? {};
+      console.log(`SRC_SPLIT_PARITY_CAPTURE_SKIP=${sourceId} reason=${authorization.reason} s4_release=${gate.s4_release ?? 'UNKNOWN'} parity_capture_authorized=${gate.parity_capture_authorized ?? 'UNKNOWN'} gate_source=${authorization.source} central_s4_released=false`);
+      continue;
+    }
     // DUAL_VARIANT + S4 HOLD: never silently promote into S4 and never pick A/B
     // as an implicit canonical default. The generic single-executable parity
     // harness cannot represent two retained authorities. SKIP with an explicit
@@ -325,6 +345,62 @@ try {
     const { port } = server.address();
     const summary = { schema_version: '1.0', source_id: sourceId, exact_head: exactHead, viewports: [] };
     try {
+      // SRC051 S4 route, BEFORE the generic single-executable fallback. SRC051 exposes
+      // window.__LT_PROMO, not window.__lt / window.__lovetreeStats, so the generic captureVariant below
+      // can never succeed for it. This route reuses the accepted source051-driver.mjs recipes and
+      // capture core, so baseline and parity cannot drift, and it writes CANDIDATE evidence only.
+      if (sourceId === 'SRC051') {
+        const gate = authorization.gate ?? {};
+        const decisionRef = gate.decision_ref ?? null;
+        const evidence = await captureSRC051Parity(
+          browser,
+          `http://127.0.0.1:${port}/${sourceId}/original.html`,
+          `http://127.0.0.1:${port}/${sourceId}/split/index.html`,
+          sourceOut,
+          { sourceId, exactHead, decisionRef },
+        );
+        fs.writeFileSync(path.join(sourceOut, 'src051-s4-parity-candidate.json'), JSON.stringify(evidence, null, 2));
+        // The SRC108 workflow decides whether to upload the artifact by looking for a summary.json, so
+        // the bounded route must publish the same sentinel. Without it the paired PNGs CENTRAL needs to
+        // review would be captured and then silently discarded.
+        fs.writeFileSync(path.join(sourceOut, 'summary.json'), JSON.stringify({
+          schema_version: '1.0',
+          source_id: sourceId,
+          exact_head: exactHead,
+          route: 'SRC051_BOUNDED_S4',
+          s4_candidate: evidence.s4_candidate,
+          source_split_parity_pass: false,
+          accepted_parity_created: false,
+          lanes: evidence.lanes.map((lane) => ({
+            lane: lane.lane,
+            role: lane.role,
+            states_passed: lane.states_passed,
+            state_count: lane.state_count,
+            semantic_parity: lane.semantic_parity,
+            channels: lane.channels,
+            runtime_health: lane.runtime_health,
+            network_health: lane.network_health,
+            screenshot_evidence: {
+              pairs: lane.screenshot_evidence.pairs,
+              byte_identical: lane.screenshot_evidence.byte_identical,
+              byte_differing: lane.screenshot_evidence.byte_differing,
+            },
+            waapi_transient: lane.waapi_transient,
+          })),
+        }, null, 2));
+        console.log(`SRC_SPLIT_PARITY_CAPTURE_PASS=${sourceId} s4_release=${gate.s4_release} parity_capture_authorized=${gate.parity_capture_authorized} s4_candidate=${evidence.s4_candidate} lanes=${evidence.lanes.map((lane) => `${lane.lane}:${lane.states_passed}/${lane.state_count}`).join(',')}`);
+        // Candidate evidence is a report, not a verdict. Nothing here flips source_split_parity_pass,
+        // and accepted-parity.json is never written; CENTRAL reviews the exact-head artifacts.
+        if (evidence.s4_candidate !== 'PASS') {
+          throw new Error(`${sourceId}: S4 candidate parity FAILED - ${evidence.lanes.filter((lane) => lane.semantic_parity !== 'PASS').map((lane) => `${lane.lane} failed states: ${lane.failed_states.join(',')}`).join('; ')}`);
+        }
+        // A successful bounded capture IS a capture. Continuing past the counter used to emit
+        // SRC_SPLIT_PARITY_CAPTURE_PASS=SRC051 alongside SRC_SPLIT_PARITY_CAPTURE_COUNT=0, which reads as
+        // "nothing was captured" next to a success line.
+        captured += 1;
+        continue;
+      }
+
       for (const viewport of viewportsFor(sourceId)) {
         if (sourceId === 'SRC064') {
           const original = await captureTrack64Variant(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, 'original', sourceId);

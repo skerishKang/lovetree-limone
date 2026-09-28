@@ -12,6 +12,7 @@ import { captureSRC62Baseline } from './source062-driver.mjs';
 import { captureSRC66Baseline } from './source066-driver.mjs';
 import { captureSRC71Baseline } from './source071-driver.mjs';
 import { captureSRC47Baseline, src47SourceFiles } from './source047-driver.mjs';
+import { captureSRC051Baseline } from './source051-driver.mjs';
 import { sendFileRange } from './src-range.mjs';
 import { getDualVariantBaselineDisposition, listDualVariantKeys } from './dual-variant-mechanical.mjs';
 import { getCaptureSurfaceDisposition } from './capture-surface.mjs';
@@ -80,6 +81,15 @@ const sourceViewports = {
     { width: 1440, height: 900 },
     { width: 430, height: 932 },
     { width: 390, height: 844 },
+  ],
+  // SRC051's released authority surfaces are the two S2-accepted 1440x900 lanes: the normal-motion
+  // lane and the reduced-motion lane. The S2 report treats 1440x900 @ DPR1 as the authority for
+  // both, so both are captured at that size rather than inheriting the 1280x800 default that made
+  // the earlier 1280x800 reduced-motion evidence non-authoritative. `reducedMotion` is read by the
+  // SRC051 driver; other sources ignore the field.
+  SRC051: [
+    { width: 1440, height: 900, dpr: 1, reducedMotion: 'no-preference', label: '1440x900-normal' },
+    { width: 1440, height: 900, dpr: 1, reducedMotion: 'reduce', label: '1440x900-reduce' },
   ],
 };
 const viewportsFor = (sourceId) => sourceViewports[sourceId] ?? defaultViewports;
@@ -326,7 +336,10 @@ try {
       };
 
       for (const viewport of viewportsFor(sourceId)) {
-        const label = `${viewport.width}x${viewport.height}`;
+        // A Source may ship more than one lane at the same size (SRC051 has a normal-motion and a
+        // reduced-motion authority lane, both 1440x900). Its explicit `label` keeps screenshot and
+        // JSON filenames distinct instead of letting one lane overwrite the other.
+        const label = viewport.label ?? `${viewport.width}x${viewport.height}`;
         if (sourceId === 'SRC062') {
           // SRC062 owns a dedicated S2-proven driver (full desktop/mobile/
           // small-mobile interaction matrix via window.__track62). It manages
@@ -337,6 +350,22 @@ try {
           if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
           fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
           summary.viewports.push({ viewport, interaction: evidence.interaction, idCount: evidence.states.D01_INITIAL_SCENE01.ids.length, elementCount: evidence.states.D01_INITIAL_SCENE01.elementCount });
+          continue;
+        }
+        if (sourceId === 'SRC051') {
+          // SRC051 exposes window.__LT_PROMO (sections, scrollToSection, setProgress, update),
+          // not the legacy window.__lt / window.__lovetreeStats contract, so the generic fallback
+          // below would wait forever and time out. Route it to a dedicated original-surface
+          // baseline driver that replays the S2-accepted 1440x900 normal-motion and
+          // reduced-motion authority states. The driver performs ORIGINAL BASELINE REPLAY ONLY:
+          // no original-vs-split comparison, no parity verdict, no evidence/parity artifact.
+          // S4 remains held by CENTRAL for SRC051.
+          const evidence = await captureSRC051Baseline(browser, `http://127.0.0.1:${port}/${sourceId}/original.html`, viewport, sourceOut, label, sourceId);
+          if (evidence.errors.length) throw new Error(`${sourceId} ${label}: browser errors: ${evidence.errors.join('; ')}`);
+          if (evidence.failedRequests.length) throw new Error(`${sourceId} ${label}: failed requests: ${evidence.failedRequests.join('; ')}`);
+          fs.writeFileSync(path.join(sourceOut, `${label}.json`), JSON.stringify({ viewport, ...evidence }, null, 2));
+          const firstState = Object.values(evidence.states)[0];
+          summary.viewports.push({ viewport, reducedMotion: evidence.reducedMotion, interaction: evidence.interaction, idCount: firstState.state.ids.length, elementCount: firstState.state.elementCount, stateCount: Object.keys(evidence.states).length });
           continue;
         }
         if (sourceId === 'SRC071') {

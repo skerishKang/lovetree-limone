@@ -1,0 +1,248 @@
+{
+  "schema_version": "1.1",
+  "source_id": "SRC051",
+  "source_folder_name": "51_네온인간분석_인터랙티브홍보대문",
+  "source_path": "[[지피티 작업]]/[01_러브트리]/03_디자인채택본/51_네온인간분석_인터랙티브홍보대문/lovetree-neon-human-analysis-promo-gate-v1.html",
+  "authority": {
+    "drive_folder_id": "UNRESOLVED",
+    "design_root_folder_id": "UNRESOLVED",
+    "drive_file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+    "filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "revision": "PROMO_GATE_V1",
+    "status": "LOCKED"
+  },
+  "master_rows": [
+    "MST104"
+  ],
+  "family_ref": null,
+  "duplicate_variant_status": "DUPLICATE_COPY_SAME_SHA",
+  "duplicate_variant_note": {
+    "status": "DUPLICATE_COPY_SAME_SHA",
+    "adjudicated": true,
+    "rule_ref": "docs/design-intake/duplicate-variant-governance-rule-2026-09-06.md §2.3 step 2 (identical SHA-256), §4.2 record location",
+    "adjudicated_at_utc": "2026-09-27T00:00:00Z",
+    "adjudicated_by": "S1 fresh-read enumeration, accepted by CENTRAL — #589 comment 5852908478, reaffirmed #589 comment 5859197749",
+    "closing_step": "step 2 - identical SHA-256 and identical Drive MD5",
+    "readback": {
+      "ref": "evidence/source/drive-authority-readback.json",
+      "verified_at_utc": "2026-09-27T00:00:00Z",
+      "verified_by": "S1 fresh Drive enumeration (read-only), accepted by CENTRAL #589 comment 5852908478",
+      "verification_mode": "CENTRAL_FRESH_DRIVE_READBACK"
+    },
+    "fresh_enumeration": {
+      "object_count": 8,
+      "executable_html_objects": 2,
+      "canonical_file_id": "1db5gYJPjTrvKxx_RzY-CAPG2WAg-e2nt",
+      "canonical_filename": "lovetree-neon-human-analysis-promo-gate-v1.html",
+      "alias_file_id": "1Ijr8nefQ-wwAAQyXexZnO10oj4Vf5_J8",
+      "alias_filename": "10_병행안_네온인간분석_홍보대문_바로보기.html",
+      "bytes_each": 2782365,
+      "drive_md5_each": "9ad120f06687135c7c73a9f8da2b4293",
+      "sha256_each": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+      "relation": "DUPLICATE_COPY_SAME_SHA",
+      "basis": "Both Drive objects carry the same size, the same Drive-native MD5 and the same SHA-256, so the pair is a byte-identical convenience copy under a different name, not a content variant."
+    },
+    "provenance": {
+      "s1_report_commit": "ed22f458b5f9522b357464e99694d085df537058",
+      "s1_report_path": "lovetree-reports/2026-09-27/LOCAL1/589-mst104-src051-s1-authority.md",
+      "central_s1_acceptance": "skerishKang/lovetree-limone#589 comment 5852908478 (accepted at #589 comment 5859197749: MST104_S1=PASS)",
+      "inherited_at": "S3 correction 2026-09-28, under CENTRAL #589 comment 5860509930 (BLOCKER 4)"
+    },
+    "no_new_readback_performed": true,
+    "no_new_readback_reason": "The S1 fact was already accepted by CENTRAL. Re-proving it with another Drive readback would spend Drive budget to re-derive a settled prior-stage conclusion.",
+    "drive_mutation": 0
+  },
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "authority_context_ref": "authority-context.json",
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "tsx_allowed_during_split": false,
+  "source_contract": {
+    "qa_hook": "window.__LT_PROMO",
+    "url_hooks": [],
+    "external_requests": 0,
+    "data_uri_images": 15,
+    "css_keyframes": [
+      "noise",
+      "spin",
+      "dash",
+      "pulse"
+    ],
+    "scroll_behavior": "smooth",
+    "reduced_motion_behavior": "The authored prefers-reduced-motion rule disables CSS animations on matched elements via `* { animation:none!important; scroll-behavior:auto!important }`, but the universal selector does not select pseudo-elements, so the authored .hero-orbit::before, .hero-orbit::after and .radar::after CSS animations survive reduced motion. The JavaScript Web Animations CTA pulse is also not gated and survives reduced motion.",
+    "interaction_surface": "scroll-driven section phases, pointer parallax, hover affordances, and one #pulseBtn click that raises a declared WAAPI pulse",
+    "qa_hook_members": [
+      "sections",
+      "scrollToSection",
+      "setProgress",
+      "update"
+    ]
+  },
+  "scope": {
+    "s3_scope": "src/03_sources/SRC051/ only",
+    "s4_parity_claimed": true,
+    "product_adoption": false,
+    "lineage51_allocated": false,
+    "backend_auth_db_work": false,
+    "drive_mutation": false,
+    "parity_capture_authorized": true,
+    "central_s4_release": "S4_EVIDENCE_ACCEPTED"
+  },
+  "preserved_metadata": {
+    "synchronization_contract": {
+      "provenance": "skerishKang/workdiary lovetree-reports/2026-09-27/LOCAL1/589-src051-s2-baseline.md @ 9ff0e7dcedce8582023e88def4ded76d31d5d16d, accepted at skerishKang/lovetree-limone#589 comment 5859197749",
+      "classes": [
+        {
+          "name": "CONTINUOUS_CSS_PHASE_VARIANCE",
+          "s4_rule": "screenshot pixel difference may be necessary; state semantics must still match",
+          "tolerance_permitted": true,
+          "not_a_tolerance_for": "state semantics",
+          "kind": "VARIANCE"
+        },
+        {
+          "name": "DECLARED_WAAPI_TRANSIENT_STATE",
+          "s4_rule": "compare at the exact authored phase/state; never normalize away",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "authored phase",
+          "kind": "DECLARED_TRANSIENT_EXACT_STATE"
+        },
+        {
+          "name": "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION",
+          "s4_rule": "wait for arrival, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "note": "the source authors scroll-behavior:smooth",
+          "kind": "SYNCHRONIZATION"
+        },
+        {
+          "name": "CSS_TRANSITION_SETTLE_SYNCHRONIZATION",
+          "s4_rule": "for states intended to be resting/settled, wait until the relevant CSSTransition objects finish, then compare exactly",
+          "tolerance_permitted": false,
+          "not_a_tolerance_for": "settled geometry",
+          "states_affected": [
+            "THERMAL_CITY",
+            "CONNECTION",
+            "SAVED_PRE_CTA"
+          ],
+          "added_by": "CENTRAL #589 comment 5859197749",
+          "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other",
+          "kind": "SYNCHRONIZATION"
+        }
+      ],
+      "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. The accepted taxonomy is 1 variance class (CONTINUOUS_CSS_PHASE_VARIANCE), 1 declared transient exact-state class (DECLARED_WAAPI_TRANSIENT_STATE) and 2 synchronization classes (SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION, CSS_TRANSITION_SETTLE_SYNCHRONIZATION). Both synchronization classes are harness conditions that must be resolved BEFORE an exact comparison; neither is a tolerance. Only the variance class permits a screenshot-diff allowance, and even then state semantics must match.",
+      "taxonomy_summary": {
+        "variance_classes": 1,
+        "declared_transient_exact_state_classes": 1,
+        "synchronization_classes": 2,
+        "total_classes": 4,
+        "plain_statement": "1 screenshot-phase variance class, 1 declared transient exact-state class, 2 synchronization classes."
+      }
+    },
+    "frozen_defects": {
+      "count_unique": 8,
+      "count_observations": 8,
+      "policy": "PRESERVE_VERBATIM. S3 must not repair, mitigate, normalize or document away any of these.",
+      "items": [
+        {
+          "id": "SRC051_NO_AUTHORED_FOCUS_AFFORDANCE",
+          "defect": "9 focusable elements, zero authored :focus and :focus-visible rules; focus is browser default outline:auto only.",
+          "kind": "keyboard accessibility gap"
+        },
+        {
+          "id": "SRC051_HOVER_ONLY_NO_TOUCH_EQUIVALENT",
+          "defect": "Six hover-only affordances (.hero-stage lens, .dossier figure, .node, .flow-card, .btn, .topbar nav a) with no authored touch/press activation path on a coarse pointer.",
+          "kind": "touch accessibility gap"
+        },
+        {
+          "id": "SRC051_N5_N6_HIDDEN_LE_900",
+          "defect": ".n5 / .n6 hidden at <=900px by the source's own media query.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_TOPBAR_NAV_HIDDEN_LE_900",
+          "defect": ".topbar nav hidden at <=900px, removing all 5 section anchors on mobile.",
+          "kind": "authored, not a break"
+        },
+        {
+          "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE",
+          "defect": "The source's reduced-motion media query kills CSS animation (computed animation-name:none), but the #pulseBtn pulse is a JavaScript Web Animation never gated on prefers-reduced-motion. One real click raises 2 Animation objects (.heart-core 700ms, .logo-close 900ms) and .heart-core visibly scales none -> 1.23041 -> 1.0398 under reduce.",
+          "kind": "reduced-motion accessibility defect",
+          "accepted_as_source_truth_by": "CENTRAL #589 comment 5859197749",
+          "s3_must_not": "gate, rewrite or suppress this pulse"
+        },
+        {
+          "id": "SRC051_LOGO_CLOSE_PAST_DOCUMENT_MAXIMUM",
+          "defect": ".logo-close cannot be scrolled to its layout centre because it lies past the document scroll maximum.",
+          "kind": "layout reachability"
+        },
+        {
+          "id": "SRC051_SMOOTH_SCROLL_ASYNC_PROGRAMMATIC_SCROLL",
+          "defect": "scroll-behavior:smooth makes programmatic navigation asynchronous; a consumer assuming scrollTo is synchronous reads stale geometry. This invalidated one S2 capture run.",
+          "kind": "automation trap"
+        },
+        {
+          "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_PSEUDO_ELEMENT_CSS_ANIMATIONS",
+          "defect": "prefers-reduced-motion does not silence authored CSS animations on pseudo-elements, because the source rule targets `*` and the universal selector does not match ::before / ::after.",
+          "kind": "reduced-motion accessibility defect",
+          "affected_authored_animations": [
+            ".hero-orbit::before",
+            ".hero-orbit::after",
+            ".radar::after"
+          ],
+          "proven_by": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+          "distinct_from": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE (D5), which is a JavaScript Web Animation; D8 is authored CSS on pseudo-elements.",
+          "s3_must_not": "repair, mitigate, normalize or document away; the Source is preserved verbatim."
+        }
+      ]
+    },
+    "unresolved_observations": [
+      {
+        "id": "SRC051_REDUCED_MOTION_PSEUDO_ELEMENT_CSS_ANIMATION",
+        "supersedes": "SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED",
+        "status": "RESOLVED",
+        "resolution": "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION",
+        "resolved_by": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+        "observation": "Under prefers-reduced-motion: reduce at 1440x900@DPR1, document.getAnimations() reported 3 running CSSAnimation objects against .hero-orbit (x2) and .radar on BOTH the ORIGINAL and the SPLIT, while getComputedStyle(...).animationName on the parent element read \"none\" and element-scoped element.getAnimations() returned [] for those same elements.",
+        "root_cause": "The source authors @keyframes spin on .hero-orbit:before, .hero-orbit:after and .radar:after, but its reduced-motion rule is `* { animation:none!important; scroll-behavior:auto!important }`. The universal selector `*` matches elements, not ::before / ::after pseudo-elements, so those authored pseudo-element animations are never disabled. A parent element reading animation-name:none is therefore consistent with a running animation on its own pseudo-element, which is exactly what S2 could not explain.",
+        "why_previously_unresolved": "S2 could not separate a browser bookkeeping artefact from real residual motion: the parent-scoped queries were empty while the document-scoped query listed animations, and 700ms-separated clips of the orbit and radar regions were not pixel-identical. With the pseudo-element animations identified as the authored source, the apparent inconsistency is explained by query scope rather than by a browser defect.",
+        "consequence": "This is source-native reduced-motion behaviour and a preserved frozen defect (D8), NOT a harness defect and NOT a parity tolerance. It is no longer carried as an open observation.",
+        "must_not": "be used to authorize a source change, a repair, or a parity tolerance. The Source is preserved verbatim; CENTRAL accepted the remaining reduced-motion screenshot differences on this basis."
+      }
+    ]
+  },
+  "stage_gate": {
+    "s4_release": "RELEASED",
+    "parity_capture_authorized": true,
+    "decided_by": "CENTRAL",
+    "decision_ref": "skerishKang/lovetree-limone#589 comment 5862568703 (MST104_S3=ACCEPTED at f4aad4f3a829b29da9be06e71096b25b98732a75, S4_RELEASE=BOUNDED_SRC051_ONLY); #589 comment 5862569127",
+    "previous_decision_ref": "skerishKang/lovetree-limone#589 comment 5859197749 (S4_RELEASE=NO) and #589 comment 5860509930 (HOLD_CORRECTION_REQUIRED, S4_RELEASE=NO)",
+    "original_vs_split_comparison_authorized": true,
+    "note": "S4 is released for SRC051 ONLY (bounded release). The parity harness may now capture original-vs-split paired evidence. This is a CANDIDATE capture: it never writes evidence/parity/accepted-parity.json, never sets source_split_parity_pass=true, and never authorizes the next stage. CENTRAL reviews the exact-head artifacts before any acceptance metadata may exist.",
+    "candidate_stage_invariants": {
+      "source_split_parity_pass": false,
+      "parity_ref": null,
+      "accepted_parity_created": false,
+      "status": "MATERIALIZED_PENDING_PARITY",
+      "central_visual_review": "PENDING",
+      "next_stage_authorized": null
+    }
+  },
+  "s4_parity_claimed": true,
+  "central_s4_release": "S4_EVIDENCE_ACCEPTED",
+  "s4_parity_acceptance": {
+    "ref": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+    "head": "61742068c2a0999ccbfb9b70888916c5bef4cde2",
+    "artifact_id": 10957655770,
+    "artifact_digest": "sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f"
+  }
+}

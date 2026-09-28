@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolveAuthorityMode, validateDualVariantMechanicalSplit } from './dual-variant-mechanical.mjs';
-import { MOTION_AWARE_SCREENSHOT_POLICY, validateMotionAwareParityFields } from './source-capsule-validator.mjs';
+import { MATERIALIZATION_STATUSES, MOTION_AWARE_SCREENSHOT_POLICY, resolveParityCaptureAuthorization, validateMotionAwareParityFields } from './source-capsule-validator.mjs';
 
 const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, 'src', '03_sources');
@@ -55,7 +55,7 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
     validated += 1;
     continue;
   }
-  if (!['MATERIALIZED_PENDING_PARITY', 'ACCEPTED'].includes(record.status)) fail(`${sourceId}: invalid materialization status`);
+  if (!MATERIALIZATION_STATUSES.includes(record.status)) fail(`${sourceId}: invalid materialization status`);
   if (record.generation !== 'MECHANICAL_INLINE_EXTRACTION') fail(`${sourceId}: non-mechanical split generation`);
   if (record.authority?.bytes !== manifest.authority?.bytes || record.authority?.sha256 !== manifest.authority?.sha256) fail(`${sourceId}: materialization authority drift`);
   const scriptBlocks = Array.isArray(record.boundaries?.script_blocks) ? record.boundaries.script_blocks : null;
@@ -155,6 +155,14 @@ for (const sourceId of fs.readdirSync(sourceRoot).filter((id) => /^SRC\d{3}$/.te
     }
     if (parity.authority?.sha256 !== manifest.authority?.sha256 || parity.authority?.bytes !== manifest.authority?.bytes) fail(`${sourceId}: accepted parity authority drift`);
     validateAcceptedParityComparisons(sourceId, parity);
+  } else if (record.status === 'MECHANICAL_MATERIALIZED') {
+    // Split verified, CENTRAL S4 not released. The gate must exist and must withhold parity
+    // authorization, and the record must say why in its parity_status. See
+    // resolveParityCaptureAuthorization in source-capsule-validator.mjs.
+    const verdict = resolveParityCaptureAuthorization(manifest, record);
+    if (!record.stage_gate && !manifest.stage_gate) fail(`${sourceId}: MECHANICAL_MATERIALIZED requires an explicit stage_gate`);
+    if (verdict.authorized) fail(`${sourceId}: MECHANICAL_MATERIALIZED must not authorize parity capture while CENTRAL holds S4`);
+    if (record.parity_status !== 'CENTRAL_S4_RELEASE_PENDING') fail(`${sourceId}: MECHANICAL_MATERIALIZED must declare parity_status=CENTRAL_S4_RELEASE_PENDING`);
   } else if (record.parity_status !== 'PENDING_EXACT_HEAD_CAPTURE') {
     fail(`${sourceId}: pending materialization must declare pending parity`);
   }

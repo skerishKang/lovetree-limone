@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "source_id": "SRC051",
+  "status": "ACCEPTED",
+  "review_method": "CENTRAL_ISSUE_ACCEPTANCE_OF_IMMUTABLE_REPORT_AND_BROWSER_EVIDENCE",
+  "captured_head": "9ff0e7dcedce8582023e88def4ded76d31d5d16d",
+  "central_acceptance": {
+    "issue": 589,
+    "comment_id": 5859197749,
+    "prior_comments": [
+      5854650211,
+      5858710054
+    ]
+  },
+  "authority": {
+    "bytes": 2782365,
+    "sha256": "5b7f084be9de9ca4f5d11044e797c3d2718208a2493d9ccbc9f8b5df07fdf014",
+    "git_blob": "fd7e48b1301abe0f857e9a7bbc06162c088d0abc"
+  },
+  "report": {
+    "repo": "skerishKang/workdiary",
+    "path": "lovetree-reports/2026-09-27/LOCAL1/589-src051-s2-baseline.md",
+    "commit": "9ff0e7dcedce8582023e88def4ded76d31d5d16d",
+    "blob": "24e7452bfd0e1fd8120fb89787cc95d47d5f9c74"
+  },
+  "reviewed_viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "reduced_motion": "no-preference",
+      "states": 18,
+      "repeat_state_identical": "18/18",
+      "repeat_pixel_identical": "1/18",
+      "page_errors": 0,
+      "failed_requests": 0,
+      "broken_images": 0,
+      "horizontal_overflow_px": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "reduced_motion": "reduce",
+      "states": 14,
+      "states_count": 14,
+      "repeat_state_identical": "11/14",
+      "repeat_pixel_identical": "6/14",
+      "page_errors": 0,
+      "failed_requests": 0,
+      "broken_images": 0,
+      "horizontal_overflow_px": 0
+    }
+  ],
+  "preserved_non_authority_lanes": [
+    {
+      "viewport": "390x844 @DPR1 no-preference",
+      "states": 12,
+      "status": "PRESERVED",
+      "re_executed_in_s2_correction_3": false
+    },
+    {
+      "viewport": "320x720 @DPR1 no-preference",
+      "states": 10,
+      "status": "PRESERVED",
+      "re_executed_in_s2_correction_3": false
+    },
+    {
+      "viewport": "1280x800 @DPR1 reduce",
+      "states": 10,
+      "status": "SUPERSEDED",
+      "reason": "not the released authority surface; replaced by the 1440x900 reduce lane"
+    }
+  ],
+  "console_errors_note": "One Chrome automatic /favicon.ico probe 404 in the reduced-motion lane; browser behaviour, not a source dependency.",
+  "evidence_digests": {
+    "normal_lane": "5f212993556d9ff828e1fd3b0bfab6d826162a79423e2aba51bf971f44a21ab6",
+    "reduced_motion_lane": "e305f56f63fdb2ce4c723d5dcec441ce9eeb2269c49ddb0f36dec94835c2ad86",
+    "reduced_motion_full_set": "d3af3bac60a6b4822bc7eac6d4e5c20b849467d4771c59afaa3e1ea82d50b400"
+  },
+  "frozen_defect_ledger": {
+    "count_unique": 8,
+    "count_observations": 8,
+    "policy": "PRESERVE_VERBATIM. S3 must not repair, mitigate, normalize or document away any of these.",
+    "items": [
+      {
+        "id": "SRC051_NO_AUTHORED_FOCUS_AFFORDANCE",
+        "defect": "9 focusable elements, zero authored :focus and :focus-visible rules; focus is browser default outline:auto only.",
+        "kind": "keyboard accessibility gap"
+      },
+      {
+        "id": "SRC051_HOVER_ONLY_NO_TOUCH_EQUIVALENT",
+        "defect": "Six hover-only affordances (.hero-stage lens, .dossier figure, .node, .flow-card, .btn, .topbar nav a) with no authored touch/press activation path on a coarse pointer.",
+        "kind": "touch accessibility gap"
+      },
+      {
+        "id": "SRC051_N5_N6_HIDDEN_LE_900",
+        "defect": ".n5 / .n6 hidden at <=900px by the source's own media query.",
+        "kind": "authored, not a break"
+      },
+      {
+        "id": "SRC051_TOPBAR_NAV_HIDDEN_LE_900",
+        "defect": ".topbar nav hidden at <=900px, removing all 5 section anchors on mobile.",
+        "kind": "authored, not a break"
+      },
+      {
+        "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE",
+        "defect": "The source's reduced-motion media query kills CSS animation (computed animation-name:none), but the #pulseBtn pulse is a JavaScript Web Animation never gated on prefers-reduced-motion. One real click raises 2 Animation objects (.heart-core 700ms, .logo-close 900ms) and .heart-core visibly scales none -> 1.23041 -> 1.0398 under reduce.",
+        "kind": "reduced-motion accessibility defect",
+        "accepted_as_source_truth_by": "CENTRAL #589 comment 5859197749",
+        "s3_must_not": "gate, rewrite or suppress this pulse"
+      },
+      {
+        "id": "SRC051_LOGO_CLOSE_PAST_DOCUMENT_MAXIMUM",
+        "defect": ".logo-close cannot be scrolled to its layout centre because it lies past the document scroll maximum.",
+        "kind": "layout reachability"
+      },
+      {
+        "id": "SRC051_SMOOTH_SCROLL_ASYNC_PROGRAMMATIC_SCROLL",
+        "defect": "scroll-behavior:smooth makes programmatic navigation asynchronous; a consumer assuming scrollTo is synchronous reads stale geometry. This invalidated one S2 capture run.",
+        "kind": "automation trap"
+      },
+      {
+        "id": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_PSEUDO_ELEMENT_CSS_ANIMATIONS",
+        "defect": "prefers-reduced-motion does not silence authored CSS animations on pseudo-elements, because the source rule targets `*` and the universal selector does not match ::before / ::after.",
+        "kind": "reduced-motion accessibility defect",
+        "affected_authored_animations": [
+          ".hero-orbit::before",
+          ".hero-orbit::after",
+          ".radar::after"
+        ],
+        "proven_by": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+        "distinct_from": "SRC051_REDUCED_MOTION_DOES_NOT_SILENCE_WAAPI_PULSE (D5), which is a JavaScript Web Animation; D8 is authored CSS on pseudo-elements.",
+        "s3_must_not": "repair, mitigate, normalize or document away; the Source is preserved verbatim."
+      }
+    ]
+  },
+  "synchronization_contract": {
+    "provenance": "skerishKang/workdiary lovetree-reports/2026-09-27/LOCAL1/589-src051-s2-baseline.md @ 9ff0e7dcedce8582023e88def4ded76d31d5d16d, accepted at skerishKang/lovetree-limone#589 comment 5859197749",
+    "classes": [
+      {
+        "name": "CONTINUOUS_CSS_PHASE_VARIANCE",
+        "s4_rule": "screenshot pixel difference may be necessary; state semantics must still match",
+        "tolerance_permitted": true,
+        "not_a_tolerance_for": "state semantics",
+        "kind": "VARIANCE",
+        "count_bucket": "1 screenshot-phase variance class"
+      },
+      {
+        "name": "DECLARED_WAAPI_TRANSIENT_STATE",
+        "s4_rule": "compare at the exact authored phase/state; never normalize away",
+        "tolerance_permitted": false,
+        "not_a_tolerance_for": "authored phase",
+        "kind": "DECLARED_TRANSIENT_EXACT_STATE",
+        "count_bucket": "1 declared transient exact-state class"
+      },
+      {
+        "name": "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION",
+        "s4_rule": "wait for arrival, then compare exactly",
+        "tolerance_permitted": false,
+        "not_a_tolerance_for": "settled geometry",
+        "note": "the source authors scroll-behavior:smooth",
+        "kind": "SYNCHRONIZATION",
+        "count_bucket": "2 synchronization classes"
+      },
+      {
+        "name": "CSS_TRANSITION_SETTLE_SYNCHRONIZATION",
+        "s4_rule": "for states intended to be resting/settled, wait until the relevant CSSTransition objects finish, then compare exactly",
+        "tolerance_permitted": false,
+        "not_a_tolerance_for": "settled geometry",
+        "states_affected": [
+          "THERMAL_CITY",
+          "CONNECTION",
+          "SAVED_PRE_CTA"
+        ],
+        "added_by": "CENTRAL #589 comment 5859197749",
+        "reason": "these three drove REDUCED_MOTION_REPEAT_STATE_IDENTICAL 11/14, a CSSTransition being mid-flight in one run and settled in the other",
+        "kind": "SYNCHRONIZATION",
+        "count_bucket": "2 synchronization classes"
+      }
+    ],
+    "explicit_non_tolerance_rule": "None of these four classes authorizes accepting a behavioural difference. The accepted taxonomy is 1 variance class (CONTINUOUS_CSS_PHASE_VARIANCE), 1 declared transient exact-state class (DECLARED_WAAPI_TRANSIENT_STATE) and 2 synchronization classes (SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION, CSS_TRANSITION_SETTLE_SYNCHRONIZATION). Both synchronization classes are harness conditions that must be resolved BEFORE an exact comparison; neither is a tolerance. Only the variance class permits a screenshot-diff allowance, and even then state semantics must match.",
+    "taxonomy_summary": {
+      "variance_classes": 1,
+      "declared_transient_exact_state_classes": 1,
+      "synchronization_classes": 2,
+      "total_classes": 4,
+      "plain_statement": "1 screenshot-phase variance class, 1 declared transient exact-state class, 2 synchronization classes."
+    }
+  },
+  "unresolved_observations": [
+    {
+      "id": "SRC051_REDUCED_MOTION_PSEUDO_ELEMENT_CSS_ANIMATION",
+      "supersedes": "SRC051_ANIMATION_BOOKKEEPING_ATTRIBUTION_UNRESOLVED",
+      "status": "RESOLVED",
+      "resolution": "PSEUDO_ELEMENT_CSS_ANIMATIONS_SURVIVE_REDUCED_MOTION",
+      "resolved_by": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",
+      "observation": "Under prefers-reduced-motion: reduce at 1440x900@DPR1, document.getAnimations() reported 3 running CSSAnimation objects against .hero-orbit (x2) and .radar on BOTH the ORIGINAL and the SPLIT, while getComputedStyle(...).animationName on the parent element read \"none\" and element-scoped element.getAnimations() returned [] for those same elements.",
+      "root_cause": "The source authors @keyframes spin on .hero-orbit:before, .hero-orbit:after and .radar:after, but its reduced-motion rule is `* { animation:none!important; scroll-behavior:auto!important }`. The universal selector `*` matches elements, not ::before / ::after pseudo-elements, so those authored pseudo-element animations are never disabled. A parent element reading animation-name:none is therefore consistent with a running animation on its own pseudo-element, which is exactly what S2 could not explain.",
+      "why_previously_unresolved": "S2 could not separate a browser bookkeeping artefact from real residual motion: the parent-scoped queries were empty while the document-scoped query listed animations, and 700ms-separated clips of the orbit and radar regions were not pixel-identical. With the pseudo-element animations identified as the authored source, the apparent inconsistency is explained by query scope rather than by a browser defect.",
+      "consequence": "This is source-native reduced-motion behaviour and a preserved frozen defect (D8), NOT a harness defect and NOT a parity tolerance. It is no longer carried as an open observation.",
+      "must_not": "be used to authorize a source change, a repair, or a parity tolerance. The Source is preserved verbatim; CENTRAL accepted the remaining reduced-motion screenshot differences on this basis."
+    }
+  ],
+  "pass_rule": "The frozen original is byte-identical to the locked authority and every required authored state is captured with a complete mapping."
+}

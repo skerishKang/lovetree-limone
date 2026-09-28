@@ -1,0 +1,95 @@
+{
+  "check": "S3_STRUCTURAL_EXECUTION_SMOKE_SPLIT_SURFACE_ONLY",
+  "not_a_parity_claim": true,
+  "split_index_sha256": "ff9f019c403bb358b06825e162f13ba8814473ceb4300d8ec1acb3eecd1bcaf4",
+  "split_css_sha256": "cb11a6fde09f60fa617143a052cd94daaef08726197895c5acbc5cd26c5c9270",
+  "split_js_sha256": "5d804c7e2352d2a8b393be82c1b976dfc6a374fec49f0e4257cab9992290ee10",
+  "probe": {
+    "sections": [
+      "hero",
+      "analysis",
+      "thermal",
+      "connection",
+      "saved"
+    ],
+    "hasScrollToSection": true,
+    "hasSetProgress": true,
+    "analysisPresent": true,
+    "whiteGatePresent": true,
+    "eyeOverlayPresent": true,
+    "pulseBtnPresent": true,
+    "heroOrbitAnimationName": "none",
+    "heartCoreAnimationName": "pulse",
+    "htmlScrollBehavior": "smooth",
+    "horizontalOverflowPx": 0,
+    "scrollMax": 5355,
+    "imageCount": 19,
+    "brokenImages": 0
+  },
+  "phase": {
+    "analysisTop": 990,
+    "analysisHeight": 1890,
+    "innerHeight": 900,
+    "span": 990
+  },
+  "reduced_motion": {
+    "before": {
+      "mediaMatches": true,
+      "heartCoreAnimationName": "none",
+      "waapiCount": 0
+    },
+    "after": {
+      "waapi": [
+        {
+          "state": "running",
+          "duration": 700
+        },
+        {
+          "state": "running",
+          "duration": 900
+        }
+      ],
+      "heartCoreTransform": "matrix(1.29901, 0, 0, 1.29901, 0, 0)"
+    }
+  },
+  "server_ledger": [
+    {
+      "url": "/index.html",
+      "status": 200
+    },
+    {
+      "url": "/styles.css",
+      "status": 200
+    },
+    {
+      "url": "/script.js",
+      "status": 200
+    },
+    {
+      "url": "/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "/index.html",
+      "status": 200
+    },
+    {
+      "url": "/styles.css",
+      "status": 200
+    },
+    {
+      "url": "/script.js",
+      "status": 200
+    }
+  ],
+  "request_urls": [
+    "http://127.0.0.1:PORT/index.html",
+    "http://127.0.0.1:PORT/styles.css",
+    "http://127.0.0.1:PORT/script.js"
+  ],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "page_errors": [],
+  "failed_requests": []
+}

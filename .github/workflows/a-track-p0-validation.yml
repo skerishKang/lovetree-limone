@@ -130,6 +130,10 @@ jobs:
             tests/track67-v242-browser-qa.test.mjs
             tests/track67-native-inspect-acceptance.test.mjs
           )
+          # Unchanged at 11. tests/src051-baseline-driver.test.mjs was briefly added here, but it is a
+          # no-browser contract test, so neither detector classifies it as browser and it belongs in
+          # the fast non-browser bucket. Its real-browser coverage lives in src-108-harness-gate.yml,
+          # which owns CLEAN-108 exact-head browser proofs and logs SRC_BASELINE_CAPTURE_PASS=SRC051.
           expected_browser_count=11
 
           printf '%s\n' "${expected_browser_tests[@]}" | sort > /tmp/atrack-expected-browser.txt
