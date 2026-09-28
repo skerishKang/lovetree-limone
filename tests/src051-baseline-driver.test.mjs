@@ -67,24 +67,35 @@ test('the SRC051 manifest records the accepted runtime API inventory in full', (
 });
 
 
-test('SRC051 materialization expresses a CENTRAL S4 hold, and no parity artifact exists', () => {
+test('SRC051 materialization expresses the bounded CENTRAL S4 release, with candidate-only invariants', () => {
   const materialization = readJson('split/materialization.json');
-  assert.equal(materialization.status, 'MECHANICAL_MATERIALIZED');
-  assert.equal(materialization.parity_status, 'CENTRAL_S4_RELEASE_PENDING');
-  assert.equal(materialization.stage_gate.s4_release, 'HOLD_CENTRAL');
-  assert.equal(materialization.stage_gate.parity_capture_authorized, false);
-  assert.equal(materialization.stage_gate.skip_reason, 'CENTRAL_S4_NOT_RELEASED');
-  assert.equal(materialization.parity_ref, null);
+  assert.equal(materialization.status, 'MATERIALIZED_PENDING_PARITY');
+  assert.equal(materialization.parity_status, 'PENDING_EXACT_HEAD_CAPTURE');
+  assert.equal(materialization.stage_gate.s4_release, 'RELEASED');
+  assert.equal(materialization.stage_gate.parity_capture_authorized, true);
+  assert.equal(materialization.stage_gate.original_vs_split_comparison_authorized, true);
+  // The release is bounded to SRC051 and cites the CENTRAL decision that granted it.
+  assert.match(materialization.stage_gate.decision_ref, /5862568703/);
+  // Candidate-stage invariants: a released gate must NOT become a verdict.
+  assert.equal(materialization.parity_ref, null, 'no parity reference until CENTRAL reviews the artifacts');
   assert.equal(materialization.parity_claim_made, false);
-  assert.equal(materialization.s4_started, false);
-  assert.equal(fs.existsSync(path.join(capsule, 'evidence', 'parity')), false, 'no evidence/parity artifact while S4 is held');
+  assert.equal(materialization.stage_gate.candidate_stage_invariants.source_split_parity_pass, false);
+  assert.equal(materialization.stage_gate.candidate_stage_invariants.parity_ref, null);
+  assert.equal(materialization.stage_gate.candidate_stage_invariants.accepted_parity_created, false);
+  assert.equal(materialization.stage_gate.candidate_stage_invariants.central_visual_review, 'PENDING');
+  assert.equal(materialization.stage_gate.candidate_stage_invariants.next_stage_authorized, null);
+  // accepted-parity.json is CENTRAL-owned and must still not exist at candidate stage.
+  assert.equal(fs.existsSync(path.join(capsule, 'evidence', 'parity', 'accepted-parity.json')), false, 'accepted parity is never authored locally');
+  assert.equal(readJson('manifest.json').stages.source_split_parity_pass, false, 'a released gate never flips the verdict');
 });
 
-test('the S4 authorization gate withholds SRC051 parity capture for the right reason', () => {
+test('the S4 authorization gate releases SRC051 parity capture, and only because CENTRAL said so', () => {
   const verdict = resolveParityCaptureAuthorization(readJson('manifest.json'), readJson('split/materialization.json'));
-  assert.equal(verdict.authorized, false, 'source_split_parity_pass=false alone must NOT authorize parity capture');
-  assert.equal(verdict.reason, STAGE_GATE_REASONS.S4_HOLD);
-  assert.equal(verdict.reason, 'CENTRAL_S4_NOT_RELEASED');
+  assert.equal(verdict.authorized, true, 'CENTRAL released S4 for SRC051 only');
+  assert.equal(verdict.reason, null);
+  assert.equal(verdict.source, 'CENTRAL_S4_RELEASED');
+  // The release must be traceable to the CENTRAL decision, not to a locally flipped boolean.
+  assert.match(readJson('split/materialization.json').stage_gate.decision_ref, /#589 comment 5862568703/);
 });
 
 test('the S4 authorization gate is fail-closed and preserves existing Source behaviour', () => {

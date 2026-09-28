@@ -42,7 +42,7 @@ const SHA256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('he
 const SMOOTH_SCROLL_SETTLE_TIMEOUT_MS = 15000;
 const CSS_TRANSITION_SETTLE_TIMEOUT_MS = 15000;
 
-function collectSRC051State() {
+export function collectSRC051State() {
   // page.evaluate bodies run in the browser and cannot close over module-scope helpers. The first
   // draft called a module-level round6() and a module-level collectAnimationBookkeeping(); both
   // failed at runtime with "is not defined" inside the page. Everything the page needs is
@@ -116,7 +116,7 @@ function collectSRC051State() {
  * right after a call is stale. Wait until the viewport has actually stopped moving before any
  * geometry is sampled. This is synchronization, not a tolerance, and not a source change.
  */
-async function waitForScrollArrival(page, targetY) {
+export async function waitForScrollArrival(page, targetY) {
   await page.waitForFunction((target) => {
     const y = Math.round(window.scrollY);
     if (Math.abs(y - target) <= 1) return true;
@@ -134,14 +134,14 @@ async function waitForScrollArrival(page, targetY) {
  * THERMAL_CITY, CONNECTION and SAVED_PRE_CTA had a transition mid-flight in one run and settled
  * in the other. Synchronization only ??the source's transitions are never disabled.
  */
-async function waitForTransitionsSettled(page) {
+export async function waitForTransitionsSettled(page) {
   await page.waitForFunction(() => document.getAnimations()
     .filter((a) => a.constructor.name === 'CSSTransition')
     .every((a) => a.playState !== 'running'), null, { timeout: CSS_TRANSITION_SETTLE_TIMEOUT_MS, polling: 50 });
 }
 
 /** Drive the source's own section-local phase formula; never a document-scroll shortcut. */
-async function setAnalysisPhase(page, targetP) {
+export async function setAnalysisPhase(page, targetP) {
   const targetY = await page.evaluate((p) => {
     const analysis = document.getElementById('analysis');
     const top = analysis.getBoundingClientRect().top + window.scrollY;
@@ -164,7 +164,7 @@ async function setAnalysisPhase(page, targetP) {
   });
 }
 
-async function goToSection(page, id) {
+export async function goToSection(page, id) {
   const targetY = await page.evaluate((sectionId) => Math.round(
     document.getElementById(sectionId).getBoundingClientRect().top + window.scrollY,
   ), id);
@@ -173,9 +173,9 @@ async function goToSection(page, id) {
   return Math.round(await page.evaluate(() => window.scrollY));
 }
 
-async function captureState(page, sourceOut, label, stateName, { settleTransitions = false } = {}) {
+export async function captureState(page, sourceOut, label, stateName, { settleTransitions = false, collect = collectSRC051State } = {}) {
   if (settleTransitions) await waitForTransitionsSettled(page);
-  const state = await page.evaluate(collectSRC051State);
+  const state = await page.evaluate(collect);
   const png = await page.screenshot({ path: path.join(sourceOut, `${label}-${stateName.toLowerCase()}.png`) });
   return {
     state,
@@ -185,18 +185,38 @@ async function captureState(page, sourceOut, label, stateName, { settleTransitio
   };
 }
 
-/** The 18 S2-accepted normal-motion authority states, in replay order. */
-const NORMAL_MOTION_STATES = [
+/**
+ * The 18 S2-accepted normal-motion authority states, in replay order.
+ *
+ * S2 ACCEPTED SET IS CANONICAL (skerishKang/workdiary 589-src051-s2-baseline.md, state table 1..18,
+ * at 9ff0e7dcedce8582023e88def4ded76d31d5d16d, accepted at #589 comment 5859197749). This table is
+ * corrected to that set; CENTRAL required the correspondence to be explicit rather than a second
+ * hand-maintained recipe. Three corrections were needed, all recorded in the S4 report:
+ *
+ *   1. HERO_FACE_LENS_ORBIT_HOVER was MISSING here and is now replayed as the S2 state 3 recipe: a real
+ *      CSS :hover on `#hero .hero-stage`, which is the source's own
+ *      `.hero-stage:hover .lens-focus` rule (opacity 1, matrix(1.08,...)).
+ *   2. SCROLL_PROGRESS_SETPROGRESS_API is NOT an S2 accepted state and was removed. The three accepted
+ *      SCROLL_PROGRESS_* states already drive the source's own setProgress(0 / 0.5 / 1), so the
+ *      setProgress API stays covered without inventing a 19th state.
+ *   3. DOSSIER_HOVER targeted `#dossier figure` first(), but S2 state 8 is `:hover` on
+ *      `#dossier figure:nth-child(2)`. CONNECTION_NODE_HOVER targeted `.node` first(), but S2 state 11
+ *      is a real hover on `.n5`, the source's own mouseenter promotion. Both now use the S2 selector.
+ *
+ * No state is invented: the count stays exactly the accepted 18.
+ */
+export const NORMAL_MOTION_STATES = [
   { name: 'HERO_INITIAL', run: async (page) => { await page.evaluate(() => window.scrollTo(0, 0)); await waitForScrollArrival(page, 0); } },
   { name: 'HERO_POINTER_PARALLAX', run: async (page) => { await page.mouse.move(430, 330); await page.mouse.move(455, 355); } },
+  { name: 'HERO_FACE_LENS_ORBIT_HOVER', run: async (page) => { await page.locator('#hero .hero-stage').hover(); } },
   { name: 'ANALYSIS_BIOMETRIC_RADAR', run: (page) => setAnalysisPhase(page, 0.12) },
   { name: 'ANALYSIS_WHITE_EXHIBITION', run: (page) => setAnalysisPhase(page, 0.46) },
   { name: 'ANALYSIS_FACE_EYE', run: (page) => setAnalysisPhase(page, 0.85) },
   { name: 'DOSSIER_DEFAULT', run: (page) => setAnalysisPhase(page, 0.62) },
-  { name: 'DOSSIER_HOVER', run: async (page) => { await page.locator('#dossier figure').first().hover(); } },
+  { name: 'DOSSIER_HOVER', run: async (page) => { await page.locator('#dossier figure:nth-child(2)').hover(); } },
   { name: 'THERMAL_CITY', run: (page) => goToSection(page, 'thermal'), settle: true },
   { name: 'MOMENT_CONNECTION_DEFAULT', run: (page) => goToSection(page, 'connection'), settle: true },
-  { name: 'CONNECTION_NODE_HOVER', run: async (page) => { await goToSection(page, 'connection'); await page.locator('.node').first().hover(); }, settle: true },
+  { name: 'CONNECTION_NODE_HOVER', run: async (page) => { await goToSection(page, 'connection'); await page.locator('.n5').hover(); }, settle: true },
   { name: 'MOMENT_FLOW', run: (page) => scrollElementIntoView(page, '.flow-strip') },
   { name: 'MOMENT_SAVED_PRE_CTA', run: (page) => goToSection(page, 'saved'), settle: true },
   { name: 'MOMENT_SAVED_CTA_ACTIVE', run: async (page) => { await page.locator('#pulseBtn').scrollIntoViewIfNeeded(); await page.click('#pulseBtn'); await page.waitForTimeout(320); return collectWaapiPulseEvidence(page); } },
@@ -204,11 +224,32 @@ const NORMAL_MOTION_STATES = [
   { name: 'SCROLL_PROGRESS_TOP', run: async (page) => { await page.evaluate(() => window.__LT_PROMO.setProgress(0)); await waitForScrollArrival(page, 0); } },
   { name: 'SCROLL_PROGRESS_MID', run: async (page) => { const y = await page.evaluate(() => Math.round((document.documentElement.scrollHeight - window.innerHeight) * 0.5)); await page.evaluate(() => window.__LT_PROMO.setProgress(0.5)); await waitForScrollArrival(page, y); } },
   { name: 'SCROLL_PROGRESS_BOTTOM', run: async (page) => { const y = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight); await page.evaluate(() => window.__LT_PROMO.setProgress(1)); await waitForScrollArrival(page, y); } },
-  { name: 'SCROLL_PROGRESS_SETPROGRESS_API', run: async (page) => { const y = await page.evaluate(() => Math.round((document.documentElement.scrollHeight - window.innerHeight) * 0.25)); await page.evaluate(() => window.__LT_PROMO.setProgress(0.25)); await waitForScrollArrival(page, y); } },
 ];
 
-/** The 14 S2-accepted reduced-motion authority states, in replay order. */
-const REDUCED_MOTION_STATES = [
+/**
+ * The 14 S2-accepted reduced-motion authority states, in replay order.
+ *
+ * The RM_ prefix is a harness-side namespace only: each RM_* name is the S2 accepted state of the
+ * same name without the prefix, 1:1 and in the same order.
+ *
+ *   RM_HERO_READY               -> HERO_READY
+ *   RM_HERO_POINTER_PARALLAX    -> HERO_POINTER_PARALLAX
+ *   RM_ANALYSIS_PHASE1_SCAN     -> ANALYSIS_PHASE1_SCAN
+ *   RM_ANALYSIS_PHASE2_WHITE_GATE -> ANALYSIS_PHASE2_WHITE_GATE
+ *   RM_ANALYSIS_PHASE3_EYE_OVERLAY -> ANALYSIS_PHASE3_EYE_OVERLAY
+ *   RM_DOSSIER                  -> DOSSIER
+ *   RM_DOSSIER_HOVER            -> DOSSIER_HOVER
+ *   RM_THERMAL_CITY             -> THERMAL_CITY
+ *   RM_CONNECTION               -> CONNECTION
+ *   RM_MOMENT_FLOW              -> MOMENT_FLOW
+ *   RM_SAVED_PRE_CTA            -> SAVED_PRE_CTA
+ *   RM_SAVED_CTA_ACTIVE         -> SAVED_CTA_ACTIVE
+ *   RM_BRAND_CLOSE              -> BRAND_CLOSE
+ *   RM_SCROLL_PROGRESS          -> SCROLL_PROGRESS
+ *
+ * The mobile regression lanes reuse these recipes, so the mapping is exported rather than restated.
+ */
+export const REDUCED_MOTION_STATES = [
   { name: 'RM_HERO_READY', run: async (page) => { await page.evaluate(() => window.scrollTo(0, 0)); await waitForScrollArrival(page, 0); } },
   { name: 'RM_HERO_POINTER_PARALLAX', run: async (page) => { await page.mouse.move(430, 330); await page.mouse.move(455, 355); } },
   { name: 'RM_ANALYSIS_PHASE1_SCAN', run: (page) => setAnalysisPhase(page, 0.12) },
@@ -239,7 +280,7 @@ const REDUCED_MOTION_STATES = [
  *
  * Nothing is dropped silently: the untouched list is returned as `rawErrors`.
  */
-function partitionErrors(entries) {
+export function partitionErrors(entries) {
   const errors = [];
   const filtered = [];
   for (const entry of entries) {
@@ -250,7 +291,7 @@ function partitionErrors(entries) {
 }
 
 /** Centre an element and wait for the authored smooth scroll to land there. */
-async function scrollElementIntoView(page, selector) {
+export async function scrollElementIntoView(page, selector) {
   const targetY = await page.evaluate((s) => {
     const box = document.querySelector(s).getBoundingClientRect();
     return Math.round(box.top + window.scrollY + box.height / 2 - window.innerHeight / 2);
@@ -261,21 +302,22 @@ async function scrollElementIntoView(page, selector) {
 }
 
 /**
- * ORIGINAL BASELINE REPLAY ONLY.
+ * THE SHARED SRC051 CAPTURE CORE.
  *
- * Captures `original/original.html` at the two S2-accepted authority surfaces. This function
- * deliberately performs no original-vs-split comparison and produces no parity verdict: S4 is
- * held by CENTRAL for SRC051, and the shared parity harness skips this Source independently.
+ * One recipe, one capture path, two callers. Baseline replay and S4 parity both drive this function,
+ * so the accepted state recipes cannot silently diverge between them: CENTRAL required the parity
+ * route to reuse the already accepted driver rather than keep a second hand-maintained state machine.
+ *
+ * The function is deliberately surface-agnostic. It receives a URL and a plan, captures the states,
+ * and returns the raw observations. It builds NO parity verdict, writes no accepted-parity metadata,
+ * and hard-codes no original-vs-split claim; that judgement belongs to the caller.
  */
-export async function captureSRC051Baseline(browser, baseUrl, viewport, sourceOut, label, sourceId = 'SRC051') {
-  const reducedMotion = viewport.reducedMotion === 'reduce' ? 'reduce' : 'no-preference';
-  const plan = reducedMotion === 'reduce' ? REDUCED_MOTION_STATES : NORMAL_MOTION_STATES;
+export async function captureSRC051Lane(browser, url, viewport, plan, sourceOut, label, { sourceId = 'SRC051', reducedMotion = 'no-preference', ctaStateMatcher = (name) => name.includes('SAVED_CTA_ACTIVE'), collect = collectSRC051State } = {}) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: viewport.dpr ?? 1,
     reducedMotion,
   });
-  const errors = [];
   const failedRequests = [];
   try {
     const page = await context.newPage();
@@ -284,12 +326,12 @@ export async function captureSRC051Baseline(browser, baseUrl, viewport, sourceOu
     page.on('pageerror', (error) => pageErrors.push(`pageerror:${error.message}`));
     page.on('console', (message) => {
       if (message.type() !== 'error') return;
-      let url = null;
-      try { url = message.location()?.url ?? null; } catch { url = null; }
-      consoleEntries.push({ text: `console:${message.text()}`, url });
+      let entryUrl = null;
+      try { entryUrl = message.location()?.url ?? null; } catch { entryUrl = null; }
+      consoleEntries.push({ text: `console:${message.text()}`, url: entryUrl });
     });
     page.on('requestfailed', (request) => failedRequests.push(`${request.method()} ${request.url()} ${request.failure()?.errorText ?? ''}`.trim()));
-    const response = await page.goto(baseUrl, { waitUntil: 'load', timeout: 30000 });
+    const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     if (!response?.ok()) throw new Error(`${sourceId} ${label}: HTTP ${response?.status()}`);
     // SRC051's accepted runtime hook. The generic harness waits for window.__lt / window.__lovetreeStats,
     // which this Source does not implement, so it must never be routed there.
@@ -299,43 +341,74 @@ export async function captureSRC051Baseline(browser, baseUrl, viewport, sourceOu
     const states = {};
     for (const state of plan) {
       const detail = await state.run(page);
-      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true })), action_detail: detail ?? null };
+      states[state.name] = { ...(await captureState(page, sourceOut, label, state.name, { settleTransitions: state.settle === true, collect })), action_detail: detail ?? null };
     }
 
-    // FROZEN DEFECT D5 must remain observable after the split and the baseline replay: the
-    // click-created Web Animations pulse is NOT gated on prefers-reduced-motion. The evidence is
-    // read from the CTA state itself, 320ms after the real click; querying it again at the end of
-    // the run would find nothing, because the authored 700ms/900ms animations have already finished.
-    const ctaStateName = plan.find((s) => s.name.includes('SAVED_CTA_ACTIVE'))?.name;
+    // FROZEN DEFECT D5 must remain observable on every surface: the click-created Web Animations pulse
+    // is NOT gated on prefers-reduced-motion. The evidence is read from the CTA state itself, 320ms
+    // after the real click; querying it again at the end of the run would find nothing, because the
+    // authored 700ms/900ms animations have already finished.
+    const ctaStateName = plan.find((s) => ctaStateMatcher(s.name))?.name;
     const waapi = (ctaStateName ? states[ctaStateName]?.action_detail : null) ?? { after_click_count: 0, after_click: [] };
-    if (waapi.after_click_count <= 0) {
-      throw new Error(`${sourceId} ${label}: FROZEN DEFECT D5 not observable - the authored WAAPI CTA pulse did not run (${reducedMotion})`);
-    }
-
-    const interaction = {
-      reduced_motion: reducedMotion,
+    return {
+      states,
+      waapi,
       state_count: plan.length,
-      accepted_state_source: 'S2 accepted report 9ff0e7dcedce8582023e88def4ded76d31d5d16d',
-      smooth_scroll_arrival_synchronization: 'APPLIED',
-      css_transition_settle_synchronization: 'APPLIED_TO_RESTING_STATES',
-      resting_states: ['THERMAL_CITY', 'CONNECTION', 'MOMENT_SAVED_PRE_CTA'],
-      waapi_pulse_preserved_not_disabled: true,
-      waapi_pulse: waapi,
-      animation_bookkeeping: 'UNRESOLVED_RAW_OBSERVATION_ONLY',
-      original_surface_only: true,
-      original_vs_split_comparison: 'NOT_PERFORMED',
-      parity_capture_authorized: false,
-      central_s4_release: 'HOLD_CENTRAL',
+      cta_state_name: ctaStateName ?? null,
+      errors: partitionErrors([...consoleEntries, ...pageErrors.map((text) => ({ text, url: null }))]).errors,
+      rawErrors: consoleEntries.map((e) => e.text),
+      pageErrors,
+      filteredBrowserProbeNoise: partitionErrors([...consoleEntries, ...pageErrors.map((text) => ({ text, url: null }))]).filtered,
+      failedRequests,
+      reducedMotion,
     };
-
-    const { errors, filtered } = partitionErrors([...consoleEntries, ...pageErrors.map((text) => ({ text, url: null }))]);
-    return { states, interaction, errors, rawErrors: consoleEntries.map((e) => e.text), pageErrors, filteredBrowserProbeNoise: filtered, failedRequests, reducedMotion };
   } finally {
     await context.close();
   }
 }
 
-function collectWaapiPulseEvidence(page) {
+/**
+ * ORIGINAL BASELINE REPLAY ONLY.
+ *
+ * Captures `original/original.html` at the two S2-accepted authority surfaces. This function
+ * deliberately performs no original-vs-split comparison and produces no parity verdict: baseline
+ * replay is independent of S4 and stays a single-surface observation.
+ */
+export async function captureSRC051Baseline(browser, baseUrl, viewport, sourceOut, label, sourceId = 'SRC051') {
+  const reducedMotion = viewport.reducedMotion === 'reduce' ? 'reduce' : 'no-preference';
+  const plan = reducedMotion === 'reduce' ? REDUCED_MOTION_STATES : NORMAL_MOTION_STATES;
+  const lane = await captureSRC051Lane(browser, baseUrl, viewport, plan, sourceOut, label, { sourceId, reducedMotion });
+  if (lane.waapi.after_click_count <= 0) {
+    throw new Error(`${sourceId} ${label}: FROZEN DEFECT D5 not observable - the authored WAAPI CTA pulse did not run (${reducedMotion})`);
+  }
+  const interaction = {
+    reduced_motion: reducedMotion,
+    state_count: plan.length,
+    accepted_state_source: 'S2 accepted report 9ff0e7dcedce8582023e88def4ded76d31d5d16d',
+    smooth_scroll_arrival_synchronization: 'APPLIED',
+    css_transition_settle_synchronization: 'APPLIED_TO_RESTING_STATES',
+    resting_states: ['THERMAL_CITY', 'CONNECTION', 'MOMENT_SAVED_PRE_CTA'],
+    waapi_pulse_preserved_not_disabled: true,
+    waapi_pulse: lane.waapi,
+    animation_bookkeeping: 'UNRESOLVED_RAW_OBSERVATION_ONLY',
+    original_surface_only: true,
+    original_vs_split_comparison: 'NOT_PERFORMED',
+    parity_capture_authorized: false,
+    central_s4_release: 'HOLD_CENTRAL',
+  };
+  return {
+    states: lane.states,
+    interaction,
+    errors: lane.errors,
+    rawErrors: lane.rawErrors,
+    pageErrors: lane.pageErrors,
+    filteredBrowserProbeNoise: lane.filteredBrowserProbeNoise,
+    failedRequests: lane.failedRequests,
+    reducedMotion,
+  };
+}
+
+export function collectWaapiPulseEvidence(page) {
   return page.evaluate(() => {
     const animations = document.getAnimations().filter((a) => a.constructor.name === 'Animation');
     return {

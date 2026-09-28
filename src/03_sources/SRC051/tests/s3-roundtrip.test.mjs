@@ -139,17 +139,26 @@ ok(manifest.stages.mechanical_split_complete === true
   && manifest.tsx_allowed_during_split === false,
   "T18", "S3 asserted, S4 parity explicitly false, mechanical-only policy");
 const mat = JSON.parse(fs.readFileSync(path.join(ROOT, "split/materialization.json"), "utf8"));
-// S3 correction (#589 comment 5860509930): the record must express "mechanically materialized,
-// CENTRAL S4 not released", not "parity capture pending" (which read as if parity were licensed).
+// S3 correction (#589 comment 5860509930) required the record to express "mechanically
+// materialized, CENTRAL S4 not released" rather than "parity capture pending", which read as if
+// parity were already licensed. S4 correction (#589 comment 5862568703) then released S4 for SRC051
+// only, so the record now expresses the bounded release. What must NOT change either way: the record
+// still claims no parity, names no parity ref, and sets no accepted-parity or next-stage field.
 let matOk = mat.source_id === "SRC051"
-  && mat.status === "MECHANICAL_MATERIALIZED"
-  && mat.parity_status === "CENTRAL_S4_RELEASE_PENDING"
-  && mat.stage_gate?.s4_release === "HOLD_CENTRAL"
-  && mat.stage_gate?.parity_capture_authorized === false
-  && mat.stage_gate?.skip_reason === "CENTRAL_S4_NOT_RELEASED"
+  && mat.status === "MATERIALIZED_PENDING_PARITY"
+  && mat.parity_status === "PENDING_EXACT_HEAD_CAPTURE"
+  && mat.stage_gate?.s4_release === "RELEASED"
+  && mat.stage_gate?.parity_capture_authorized === true
+  && mat.stage_gate?.original_vs_split_comparison_authorized === true
+  && /5862568703/.test(mat.stage_gate?.decision_ref ?? "")
+  // Candidate-stage invariants: a released gate is still not a verdict.
+  && mat.stage_gate?.candidate_stage_invariants?.source_split_parity_pass === false
+  && mat.stage_gate?.candidate_stage_invariants?.parity_ref === null
+  && mat.stage_gate?.candidate_stage_invariants?.accepted_parity_created === false
+  && mat.stage_gate?.candidate_stage_invariants?.central_visual_review === "PENDING"
+  && mat.stage_gate?.candidate_stage_invariants?.next_stage_authorized === null
   && mat.parity_ref === null
   && mat.parity_claim_made === false
-  && mat.s4_started === false
   && mat.authority.bytes === LOCK_BYTES && mat.authority.sha256 === LOCK_SHA
   && mat.contracts.round_trip_byte_identity === true
   && mat.contracts.redesign_or_refactor === false
@@ -160,7 +169,11 @@ for (const [rel, meta] of Object.entries(mat.outputs)) {
   const b = fs.readFileSync(path.join(ROOT, rel));
   if (b.length !== meta.bytes || sha256(b) !== meta.sha256) matOk = false;
 }
-ok(matOk, "T19", "materialization record matches files on disk and claims no parity");
+// The four protected runtime blobs must still hash to exactly what the record claims.
+for (const rel of ["original/original.html", "split/index.html", "split/styles.css", "split/script.js"]) {
+  if (!fs.existsSync(path.join(ROOT, rel))) matOk = false;
+}
+ok(matOk, "T19", "materialization record matches files on disk and still claims no parity verdict");
 
 console.log("\nS2 -> S4 metadata preservation:");
 const SYNC = ["CONTINUOUS_CSS_PHASE_VARIANCE", "DECLARED_WAAPI_TRANSIENT_STATE", "SMOOTH_SCROLL_ARRIVAL_SYNCHRONIZATION", "CSS_TRANSITION_SETTLE_SYNCHRONIZATION"];

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "source_id": "SRC051",
-  "status": "MECHANICAL_MATERIALIZED",
+  "status": "MATERIALIZED_PENDING_PARITY",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "authority": {
     "bytes": 2782365,
@@ -75,10 +75,10 @@
     "assets_directory_created": false,
     "reason": "The 15 authored data URIs live inside the extracted script.js in the source's own __LT_ASSETS map and are byte-identical there. The current-main validator does not require an assets/ directory, and the SRC071 precedent records self_contained with no assets/ directory. Decoding, re-encoding, externalizing, renaming or rewriting references was not performed and must not be, because it would change source bytes without a mechanical basis."
   },
-  "parity_status": "CENTRAL_S4_RELEASE_PENDING",
+  "parity_status": "PENDING_EXACT_HEAD_CAPTURE",
   "parity_ref": null,
   "parity_claim_made": false,
-  "s4_started": false,
+  "s4_started": true,
   "source_candidate": {
     "exact_head": null,
     "generation": "MECHANICAL_INLINE_EXTRACTION"
@@ -195,14 +195,22 @@
     ]
   },
   "stage_gate": {
-    "s4_release": "HOLD_CENTRAL",
-    "parity_capture_authorized": false,
+    "s4_release": "RELEASED",
+    "parity_capture_authorized": true,
     "decided_by": "CENTRAL",
-    "decision_ref": "skerishKang/lovetree-limone#589 comment 5859197749 (S3_RELEASE=BOUNDED_SRC051_ONLY, S4_RELEASE=NO) and #589 comment 5860509930 (HOLD_CORRECTION_REQUIRED, S4_RELEASE=NO)",
-    "skip_reason": "CENTRAL_S4_NOT_RELEASED",
-    "original_vs_split_comparison_authorized": false,
-    "note": "mechanical_split_complete=true with source_split_parity_pass=false is a pending state, NOT a parity authorization. The shared parity harness must skip SRC051 with reason CENTRAL_S4_NOT_RELEASED and must not create any evidence/parity/ artifact until CENTRAL releases S4."
+    "decision_ref": "skerishKang/lovetree-limone#589 comment 5862568703 (MST104_S3=ACCEPTED at f4aad4f3a829b29da9be06e71096b25b98732a75, S4_RELEASE=BOUNDED_SRC051_ONLY); #589 comment 5862569127",
+    "previous_decision_ref": "skerishKang/lovetree-limone#589 comment 5859197749 (S4_RELEASE=NO) and #589 comment 5860509930 (HOLD_CORRECTION_REQUIRED, S4_RELEASE=NO)",
+    "original_vs_split_comparison_authorized": true,
+    "note": "S4 is released for SRC051 ONLY (bounded release). The parity harness may now capture original-vs-split paired evidence. This is a CANDIDATE capture: it never writes evidence/parity/accepted-parity.json, never sets source_split_parity_pass=true, and never authorizes the next stage. CENTRAL reviews the exact-head artifacts before any acceptance metadata may exist.",
+    "candidate_stage_invariants": {
+      "source_split_parity_pass": false,
+      "parity_ref": null,
+      "accepted_parity_created": false,
+      "status": "MATERIALIZED_PENDING_PARITY",
+      "central_visual_review": "PENDING",
+      "next_stage_authorized": null
+    }
   },
-  "status_meaning": "The mechanical split exists, is byte-verified and round-trips exactly. It has NOT been judged for parity, and no parity capture is authorized.",
-  "parity_status_meaning": "Parity capture is blocked pending an explicit CENTRAL S4 release, not merely awaiting an exact-head capture run."
+  "status_meaning": "The mechanical split exists, is byte-verified and round-trips exactly. CENTRAL has released S4 for SRC051 only, so a bounded original-vs-split candidate parity capture is now authorized. It is still not judged: source_split_parity_pass remains false and no acceptance metadata may exist until CENTRAL reviews the exact-head artifacts.",
+  "parity_status_meaning": "PENDING_EXACT_HEAD_CAPTURE: S4 is released and the bounded paired capture may run, but the verdict is CENTRAL-owned. The candidate report is evidence, not acceptance."
 }

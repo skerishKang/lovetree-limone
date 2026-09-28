@@ -52,7 +52,11 @@ const EXPECTED_BASELINE_ROUTED_MAIN = [...LEGACY_ROUTED, 'SRC066'].sort();
 const EXPECTED_BASELINE_ROUTED_WORKTREE = [...LEGACY_ROUTED, 'SRC066', 'SRC051'].sort();
 // The parity harness never grew an SRC071 route (SRC071 holds accepted parity,
 // so line-276 skips it before dispatch); its legacy set is the driver six.
-const EXPECTED_PARITY_ROUTED = ['SRC047', 'SRC057', 'SRC058', 'SRC060', 'SRC062', 'SRC064', 'SRC066'].sort();
+// origin/main has never routed SRC051 in the parity harness: S4 was held for it there.
+const EXPECTED_PARITY_ROUTED_MAIN = ['SRC047', 'SRC057', 'SRC058', 'SRC060', 'SRC062', 'SRC064', 'SRC066'].sort();
+// The worktree gains the SRC051 parity route because CENTRAL released S4 for SRC051 only
+// (#589 comment 5862568703). No other Source's routing is touched by that release.
+const EXPECTED_PARITY_ROUTED = ['SRC047', 'SRC051', 'SRC057', 'SRC058', 'SRC060', 'SRC062', 'SRC064', 'SRC066'].sort();
 
 const readWorktree = (rel) => fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
 const gitShowMain = (rel) => {
@@ -81,11 +85,14 @@ test('T2 baseline and parity harness each import the driver exactly once', () =>
   }
 });
 
-test('T3 routing sets are the legacy set plus SRC066, plus exactly the SRC051 baseline route', () => {
+test('T3 routing sets are the legacy set plus SRC066, plus exactly the SRC051 baseline and parity routes', () => {
   assert.deepEqual(routingSet(readWorktree(BASELINE)), EXPECTED_BASELINE_ROUTED_WORKTREE, 'baseline routes legacy set + SRC066 + SRC051');
-  assert.deepEqual(routingSet(readWorktree(PARITY)), EXPECTED_PARITY_ROUTED, 'parity routes driver six + SRC066, and never gains an SRC051 route while S4 is held');
+  assert.deepEqual(routingSet(readWorktree(PARITY)), EXPECTED_PARITY_ROUTED, 'parity routes driver six + SRC066 + SRC051 after the bounded CENTRAL S4 release');
   assert.deepEqual(routingSet(gitShowMain(BASELINE)), EXPECTED_BASELINE_ROUTED_MAIN, 'origin/main baseline routing is the pre-SRC051 set');
-  assert.deepEqual(routingSet(gitShowMain(PARITY)), EXPECTED_PARITY_ROUTED, 'origin/main parity routing set is unchanged by the S4 release');
+  assert.deepEqual(routingSet(gitShowMain(PARITY)), EXPECTED_PARITY_ROUTED_MAIN, 'origin/main parity routing has no SRC051 route: S4 was held there');
+  // The bounded release must add SRC051 and ONLY SRC051. Anything else would be scope creep.
+  const added = routingSet(readWorktree(PARITY)).filter((id) => !EXPECTED_PARITY_ROUTED_MAIN.includes(id));
+  assert.deepEqual(added, ['SRC051'], 'the S4 release adds exactly one parity route');
 });
 
 test('T4 the SRC066 driver is identical to origin/main, and the baseline diff is only the SRC051 route', () => {
