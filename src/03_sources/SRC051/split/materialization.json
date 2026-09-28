@@ -218,12 +218,14 @@
     "decision_ref": "skerishKang/lovetree-limone#589 comment 5862568703 (MST104_S3=ACCEPTED at f4aad4f3a829b29da9be06e71096b25b98732a75, S4_RELEASE=BOUNDED_SRC051_ONLY); #589 comment 5862569127",
     "previous_decision_ref": "skerishKang/lovetree-limone#589 comment 5859197749 (S4_RELEASE=NO) and #589 comment 5860509930 (HOLD_CORRECTION_REQUIRED, S4_RELEASE=NO)",
     "original_vs_split_comparison_authorized": true,
-    "note": "S4 is released for SRC051 ONLY (bounded release). The parity harness may now capture original-vs-split paired evidence. This is a CANDIDATE capture: it never writes evidence/parity/accepted-parity.json, never sets source_split_parity_pass=true, and never authorizes the next stage. CENTRAL reviews the exact-head artifacts before any acceptance metadata may exist.",
-    "candidate_stage_invariants": {
-      "note": "SUPERSEDED: S4 evidence is now CENTRAL-ACCEPTED. source_split_parity_pass is true by CENTRAL acceptance, not by a local claim."
-    },
+    "note": "S4 evidence for SRC051 was directly reviewed and ACCEPTED by CENTRAL at #589 comment 5867690624, on the exact-head paired capture bound to artifact 10957655770 (src-split-parity-61742068c2a0999ccbfb9b70888916c5bef4cde2, digest sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f). The acceptance-metadata promotion was released in the same decision, so source_split_parity_pass=true is CENTRAL-authorized rather than locally claimed, and evidence/parity/accepted-parity.json is the canonical parity record for this capsule. Product adoption and Lineage51 allocation remain NOT authorized and were not part of this acceptance. The release itself is still bounded to SRC051.",
+    "candidate_stage_invariants": null,
     "central_visual_review": "PASS",
-    "s4_metadata_promotion": "RELEASED"
+    "s4_metadata_promotion": "RELEASED",
+    "superseded_candidate_stage_note": "S4 is released for SRC051 ONLY (bounded release). The parity harness may now capture original-vs-split paired evidence. This is a CANDIDATE capture: it never writes evidence/parity/accepted-parity.json, never sets source_split_parity_pass=true, and never authorizes the next stage. CENTRAL reviews the exact-head artifacts before any acceptance metadata may exist.",
+    "superseded_candidate_stage_invariants": {
+      "note": "SUPERSEDED: S4 evidence is now CENTRAL-ACCEPTED. source_split_parity_pass is true by CENTRAL acceptance, not by a local claim."
+    }
   },
   "s4_parity_acceptance": {
     "ref": "skerishKang/lovetree-limone#589 comment 5867690624 (and #659 comment 5867691709)",

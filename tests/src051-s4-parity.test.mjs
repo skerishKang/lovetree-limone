@@ -264,6 +264,54 @@ test('the parity MODULE is a candidate harness: it still cannot author acceptanc
 });
 
 
+test('the accepted capsule cannot contradict itself: no live field may still describe the old state', () => {
+  // CENTRAL's final merge review (#589 comment 5868490513) found the accepted record still carrying
+  // three statements that its own fields contradicted. These assertions exist so that a promotion can
+  // never again leave the canonical metadata internally inconsistent.
+  const manifest = readJson('manifest.json');
+  const materialization = readJson('split/materialization.json');
+  const accepted = readJson('evidence/parity/accepted-parity.json');
+
+  // 1. scope.s4_parity_claimed must not still say false while parity_pass is true.
+  assert.equal(manifest.stages.source_split_parity_pass, true);
+  assert.equal(manifest.scope.s4_parity_claimed, true, 'the scope must not deny the parity claim it records');
+  assert.notEqual(manifest.scope.s4_parity_claimed, false);
+  // Claiming parity is not claiming Product adoption.
+  assert.equal(manifest.scope.product_adoption, false, 'parity acceptance does not authorize Product adoption');
+  assert.equal(manifest.scope.lineage51_allocated, false, 'parity acceptance does not allocate Lineage51');
+
+  // 2. The reduced-motion description must not still claim the query disables all CSS animation while
+  //    D8 records that pseudo-element animations survive. Both facts have to be present together.
+  const reduced = manifest.source_contract.reduced_motion_behavior;
+  assert.ok(!/^the authored CSS media query disables CSS animation/.test(reduced), 'the over-broad S2 reading is gone');
+  assert.match(reduced, /pseudo-element/, 'the surviving pseudo-element animations are stated');
+  assert.match(reduced, /hero-orbit::before/, 'the specific affected authored animation is named');
+  assert.match(reduced, /radar::after/, 'the second affected authored animation is named');
+  assert.match(reduced, /not gated/, 'the JS WAAPI pulse survival is still stated');
+
+  // 3. The CURRENT stage note must not still describe the record as a candidate. The historical
+  //    candidate wording is preserved, but explicitly under a superseded key.
+  assert.equal(materialization.status, 'ACCEPTED');
+  assert.ok(!/this is a CANDIDATE capture/.test(materialization.stage_gate.note), 'the live note no longer calls this a candidate capture');
+  assert.ok(!/never sets source_split_parity_pass=true/.test(materialization.stage_gate.note), 'the live note no longer denies the verdict');
+  assert.match(materialization.stage_gate.note, /5867690624/, 'the live note cites the accepting CENTRAL decision');
+  assert.match(materialization.stage_gate.note, /10957655770/, 'the live note binds the reviewed artifact');
+  assert.match(materialization.stage_gate.note, /Product adoption and Lineage51 allocation remain NOT authorized/);
+  // The history is preserved rather than deleted, so the S3 hold -> S4 candidate -> accepted path
+  // stays auditable.
+  assert.equal(typeof materialization.stage_gate.superseded_candidate_stage_note, 'string', 'the candidate-era note is preserved as history');
+  assert.match(materialization.stage_gate.superseded_candidate_stage_note, /CANDIDATE capture/, 'the preserved history is the original candidate wording');
+  assert.equal(materialization.stage_gate.candidate_stage_invariants, null, 'candidate invariants are not live any more');
+  assert.ok(materialization.stage_gate.superseded_candidate_stage_invariants, 'candidate invariants are preserved as history');
+
+  // The acceptance binding is unchanged by this consistency correction.
+  assert.equal(accepted.artifact.id, 10957655770);
+  assert.equal(accepted.artifact.digest, 'sha256:52737a19098888f6f00799ef305620c68bb191f16ccfe06486a3bf85843e7d1f');
+  assert.equal(accepted.candidate_capture_head, '61742068c2a0999ccbfb9b70888916c5bef4cde2');
+  assert.equal(accepted.frozen_defects.count_unique, 8, 'D1-D8 are untouched by the metadata correction');
+});
+
+
 test('the S4 route is reached because the gate says RELEASED, and no other Source inherited it', () => {
   const manifest = readJson('manifest.json');
   const materialization = readJson('split/materialization.json');

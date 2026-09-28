@@ -79,7 +79,7 @@
       "pulse"
     ],
     "scroll_behavior": "smooth",
-    "reduced_motion_behavior": "the authored CSS media query disables CSS animation, but the JavaScript Web Animations CTA pulse is NOT gated on prefers-reduced-motion and still runs",
+    "reduced_motion_behavior": "The authored prefers-reduced-motion rule disables CSS animations on matched elements via `* { animation:none!important; scroll-behavior:auto!important }`, but the universal selector does not select pseudo-elements, so the authored .hero-orbit::before, .hero-orbit::after and .radar::after CSS animations survive reduced motion. The JavaScript Web Animations CTA pulse is also not gated and survives reduced motion.",
     "interaction_surface": "scroll-driven section phases, pointer parallax, hover affordances, and one #pulseBtn click that raises a declared WAAPI pulse",
     "qa_hook_members": [
       "sections",
@@ -90,13 +90,13 @@
   },
   "scope": {
     "s3_scope": "src/03_sources/SRC051/ only",
-    "s4_parity_claimed": false,
+    "s4_parity_claimed": true,
     "product_adoption": false,
     "lineage51_allocated": false,
     "backend_auth_db_work": false,
     "drive_mutation": false,
     "parity_capture_authorized": true,
-    "central_s4_release": "RELEASED_BOUNDED_SRC051_ONLY"
+    "central_s4_release": "S4_EVIDENCE_ACCEPTED"
   },
   "preserved_metadata": {
     "synchronization_contract": {
