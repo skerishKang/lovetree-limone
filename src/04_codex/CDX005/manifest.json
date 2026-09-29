@@ -25,7 +25,7 @@
     "adjudicated_at_utc": "2026-09-29T09:00:00Z",
     "adjudicated_by": "CENTRAL — skerishKang/lovetree-limone#589 comment 5887518417",
     "closing_step": "step 1 — single candidate for the selected V2 authority",
-    "finding": "The selected V2 authority bytes (27918 B, SHA-256 ac30f2ab…, Drive file id 1iC6IyJBy86UhIANts6nDm414WnBUU66p) have no duplicate object anywhere in the recursive family readback. The 1041 B root 최종본.html is a LAUNCHER_BOOTSTRAP that renders no application and is deliberately NOT vendored as original/original.html. The same-SHA duplicate pair exists only inside the SUPERSEDED V1 revision (개발과정/lovetree-video-figure-atelier-v1.html and its LoveTree_VideoFigure_Atelier_V1 sub-tree copy; both 30604 B, SHA-256 cbb981c2…, file ids 1DbxEQtlHuAgSfrsC_LIhKlUvWmfABkMg and 1eqNaaDsEKSFLIKCddee4rNGyGW6y5v15). That second object is DUPLICATE_COPY_SAME_SHA / NOT_AUTHORITY. Because the duplicate is confined to superseded revision history and never touches the selected authority, the capsule-level status is SINGLE_EXECUTABLE_NO_DUPLICATE and deliberately NOT DUPLICATE_COPY_SAME_SHA, which would wrongly imply the selected V2 authority is itself duplicated. No named runtime selector exists, so this is revision history rather than a dual variant; AUTHORITY_MODE=SINGLE.",
+    "finding": "The selected V2 authority bytes (27918 B, SHA-256 ac30f2ab…, Drive file id 1iC6IyJBy86UhIANts6nDm414WnBUU66p) have no duplicate object anywhere in the recursive family readback. The 1041 B root 최종본.html is a LAUNCHER_BOOTSTRAP that renders no application and is deliberately NOT vendored as original/original.html. The same-SHA duplicate pair exists only inside the SUPERSEDED V1 revision (개발과정/lovetree-video-figure-atelier-v1.html and its LoveTree_VideoFigure_Atelier_V1 sub-tree copy; both 30604 B, SHA-256 cbb981c2…, file ids 1DbxEQtlHuAgSfrsC_LIhKlUvWfmABkMg and 1eqNaaDsEKSFLIKCddee4rNGyGW6y5v15). That second object is DUPLICATE_COPY_SAME_SHA / NOT_AUTHORITY. Because the duplicate is confined to superseded revision history and never touches the selected authority, the capsule-level status is SINGLE_EXECUTABLE_NO_DUPLICATE and deliberately NOT DUPLICATE_COPY_SAME_SHA, which would wrongly imply the selected V2 authority is itself duplicated. No named runtime selector exists, so this is revision history rather than a dual variant; AUTHORITY_MODE=SINGLE.",
     "follow_up_adjudication": {
       "at_utc": "2026-09-29T09:00:00Z",
       "by": "CENTRAL — skerishKang/lovetree-limone#589 comment 5887518417",
@@ -135,5 +135,9 @@
   "product_adoption": false,
   "lineage58_adoption": false,
   "drive_mutation": 0,
-  "repo_mutation_outside_capsule": 0
+  "repo_mutation_outside_capsule": 1,
+  "repo_mutation_outside_capsule_files": [
+    "tests/duplicate-variant-governance-contract.test.mjs"
+  ],
+  "repo_mutation_outside_capsule_note": "Exactly one file outside src/04_codex/CDX005/ is changed by this lane. tests/duplicate-variant-governance-contract.test.mjs carries an exact tree-state assertion ACTIVE_CODEX_COUNT=2; adding the CDX005 lane makes the real count 3, so the count and the real-tree Codex list were bumped in lockstep. That is the maintenance the test's own comment requires ('Each new Codex capsule lane must bump this count'), and it is exactly what CDX017 required when it joined. It is a corpus-wide test count, not Source or Codex runtime, and no shared harness, driver or runtime file was modified."
 }

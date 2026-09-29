@@ -71,7 +71,7 @@
   },
   "superseded_revisions": [
     {
-      "drive_file_id": "1DbxEQtlHuAgSfrsC_LIhKlUvWmfABkMg",
+      "drive_file_id": "1DbxEQtlHuAgSfrsC_LIhKlUvWfmABkMg",
       "path": "개발과정/lovetree-video-figure-atelier-v1.html",
       "bytes": 30604,
       "sha256": "cbb981c2796944b2c8988949ae9bc2249480fe2cd566616ee702cd5363c85953",
@@ -85,7 +85,7 @@
       "bytes": 30604,
       "sha256": "cbb981c2796944b2c8988949ae9bc2249480fe2cd566616ee702cd5363c85953",
       "relation": "DUPLICATE_COPY_SAME_SHA_NOT_AUTHORITY",
-      "duplicate_of_drive_file_id": "1DbxEQtlHuAgSfrsC_LIhKlUvWmfABkMg",
+      "duplicate_of_drive_file_id": "1DbxEQtlHuAgSfrsC_LIhKlUvWfmABkMg",
       "vendored": false
     }
   ],

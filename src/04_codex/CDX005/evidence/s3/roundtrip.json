@@ -625,6 +625,31 @@
       "detail": "no V1 object leaked into the vendored asset set"
     },
     {
+      "id": "T14u",
+      "pass": true,
+      "detail": "the transposed V1 Drive file id appears in none of the scanned capsule files"
+    },
+    {
+      "id": "T14v",
+      "pass": true,
+      "detail": "the pinned V1 Drive file id is the exact S1 authority value"
+    },
+    {
+      "id": "T14w",
+      "pass": true,
+      "detail": "both V1 Drive file ids are well-formed 33-character ids"
+    },
+    {
+      "id": "T14x",
+      "pass": true,
+      "detail": "the derived duplicate_of_drive_file_id field carries the same corrected V1 id"
+    },
+    {
+      "id": "T14y",
+      "pass": true,
+      "detail": "the pinned id and the transposed id are genuinely different strings"
+    },
+    {
       "id": "T15.split/index.html.bytes",
       "pass": true,
       "detail": "split/index.html byte size"
@@ -802,7 +827,22 @@
     {
       "id": "T17j",
       "pass": true,
-      "detail": "no repository mutation outside this capsule"
+      "detail": "exactly one repository mutation outside this capsule"
+    },
+    {
+      "id": "T17j2",
+      "pass": true,
+      "detail": "the declared count matches the declared file list length"
+    },
+    {
+      "id": "T17j3",
+      "pass": true,
+      "detail": "the outside-capsule file is a test file, not Source or Codex runtime"
+    },
+    {
+      "id": "T17j4",
+      "pass": true,
+      "detail": "the named outside-capsule file actually exists in the repository"
     },
     {
       "id": "T17k",
@@ -916,7 +956,7 @@
   "lineage58_adoption": 0,
   "generation_note": "Committed S3 evidence record. Produced by a clean local run of src/04_codex/CDX005/tests/s3-roundtrip.test.mjs on branch feat/589-cdx005-s3-mechanical-capsule from a fresh worktree on origin/main 814f121b00a553753c667dfd8eb3c4c8fbe284c5.",
   "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5887518417",
-  "passed": 156,
+  "passed": 164,
   "failed": 0,
   "result": "PASS",
   "checks_note": "Check list promoted from one clean local run of src/04_codex/CDX005/tests/s3-roundtrip.test.mjs. The test writes its own run evidence to an OS temp directory only and never rewrites this committed record."

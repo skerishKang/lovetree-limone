@@ -59,6 +59,7 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const CAPSULE = path.resolve(HERE, "..");
+const REPO_ROOT = path.resolve(HERE, "..", "..", "..", "..");
 const read = (rel) => fs.readFileSync(path.join(CAPSULE, rel));
 const readJson = (rel) => JSON.parse(read(rel).toString("utf8"));
 const sha256 = (b) => crypto.createHash("sha256").update(b).digest("hex");
@@ -72,7 +73,7 @@ const AUTHORITY_BYTES = 27918;
 const AUTHORITY_SHA256 = "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466";
 const AUTHORITY_DRIVE_FILE_ID = "1iC6IyJBy86UhIANts6nDm414WnBUU66p";
 const LAUNCHER_DRIVE_FILE_ID = "1JlrwZGdsD1oQhzIzSrYYGcOH_Tu61J-K";
-const V1_DRIVE_FILE_ID = "1DbxEQtlHuAgSfrsC_LIhKlUvWmfABkMg";
+const V1_DRIVE_FILE_ID = "1DbxEQtlHuAgSfrsC_LIhKlUvWfmABkMg";
 const V1_COPY_DRIVE_FILE_ID = "1eqNaaDsEKSFLIKCddee4rNGyGW6y5v15";
 const CSS_LINK = '<link rel="stylesheet" href="./styles.css"/>';
 const SCRIPT_SRC = '<script src="./script.js"></script>';
@@ -265,6 +266,18 @@ test("T14 authority-context records the standalone serving contract, the pinned 
   assert.equal(record("T14r", superseded[0].drive_file_id === V1_DRIVE_FILE_ID && superseded[1].drive_file_id === V1_COPY_DRIVE_FILE_ID, "V1 and V1-copy Drive file ids pinned"), true);
   assert.equal(record("T14s", superseded[0].sha256 === superseded[1].sha256 && superseded[1].relation === "DUPLICATE_COPY_SAME_SHA_NOT_AUTHORITY", "the V1 pair is recorded as the same-SHA duplicate copy"), true);
   assert.equal(record("T14t", !fs.existsSync(path.join(CAPSULE, "original", "assets", "turnarounds", "transparent", "V1.png")), "no V1 object leaked into the vendored asset set"), true);
+  // Guard against the transposed-character Drive id regression corrected at
+  // #589 comment 5888330856: the correct V1 id ends ...WfmABkMg, not ...WmfABkMg.
+  // The scan deliberately excludes this test file, which necessarily holds the
+  // wrong literal as the guard constant itself.
+  const V1_ID_TYPO = "1DbxEQtlHuAgSfrsC_LIhKlUvWmfABkMg";
+  const scannedFiles = ["manifest.json", "authority-context.json", "split/materialization.json", "baseline/accepted-baseline.json", "evidence/s3/roundtrip.json", "original/original.html", "split/index.html", "split/styles.css", "split/script.js"];
+  const capsuleText = scannedFiles.map((rel) => read(rel).toString("utf8")).join("\n");
+  assert.equal(record("T14u", !capsuleText.includes(V1_ID_TYPO), "the transposed V1 Drive file id appears in none of the scanned capsule files"), true);
+  assert.equal(record("T14v", V1_DRIVE_FILE_ID === "1DbxEQtlHuAgSfrsC_LIhKlUvWfmABkMg", "the pinned V1 Drive file id is the exact S1 authority value"), true);
+  assert.equal(record("T14w", V1_DRIVE_FILE_ID.length === 33 && V1_COPY_DRIVE_FILE_ID.length === 33, "both V1 Drive file ids are well-formed 33-character ids"), true);
+  assert.equal(record("T14x", superseded[1].duplicate_of_drive_file_id === V1_DRIVE_FILE_ID, "the derived duplicate_of_drive_file_id field carries the same corrected V1 id"), true);
+  assert.equal(record("T14y", V1_DRIVE_FILE_ID !== V1_ID_TYPO, "the pinned id and the transposed id are genuinely different strings"), true);
 });
 
 test("T15 materialization output hashes and git blobs match the on-disk files", () => {
@@ -311,7 +324,11 @@ test("T17 duplicate-variant governance, no Product adoption, no Lineage58 adopti
   assert.equal(record("T17g", manifest.product_adoption === false && context.product_adoption === false, "no Product adoption"), true);
   assert.equal(record("T17h", manifest.lineage58_adoption === false && context.lineage58_adoption === false, "no Lineage58 adoption"), true);
   assert.equal(record("T17i", manifest.drive_mutation === 0, "zero Drive mutation recorded"), true);
-  assert.equal(record("T17j", manifest.repo_mutation_outside_capsule === 0, "no repository mutation outside this capsule"), true);
+  assert.equal(record("T17j", manifest.repo_mutation_outside_capsule === 1, "exactly one repository mutation outside this capsule"), true);
+  assert.deepEqual(manifest.repo_mutation_outside_capsule_files, ["tests/duplicate-variant-governance-contract.test.mjs"], "the single outside-capsule file is the corpus-wide Codex count test");
+  assert.equal(record("T17j2", manifest.repo_mutation_outside_capsule_files.length === manifest.repo_mutation_outside_capsule, "the declared count matches the declared file list length"), true);
+  assert.equal(record("T17j3", manifest.repo_mutation_outside_capsule_files[0].startsWith("tests/") && manifest.repo_mutation_outside_capsule_files[0].endsWith(".test.mjs"), "the outside-capsule file is a test file, not Source or Codex runtime"), true);
+  assert.equal(record("T17j4", fs.existsSync(path.join(REPO_ROOT, manifest.repo_mutation_outside_capsule_files[0])), "the named outside-capsule file actually exists in the repository"), true);
   assert.equal(record("T17k", manifest.master_rows.length === 1 && manifest.master_rows[0] === "MST105", "identity stays in the MST->CDX namespace, no renumbering"), true);
   const forbidden = fs.readdirSync(path.join(CAPSULE), { withFileTypes: true })
     .map((e) => e.name)
