@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LoveTree — 360° Video Figure Archive V2</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+<main class="app" id="app">
+  <div class="scene" id="scene"></div><div class="stars"></div><div class="rings"></div><div class="horizon"></div><div class="grain"></div>
+  <header class="topbar">
+    <div class="brand"><div class="brand-orbit">L</div><div><strong>LOVETREE</strong><small>360° VIDEO FIGURE ARCHIVE</small></div></div>
+    <div class="archive-status"><i class="live"></i><span>10 LOOKS EXTRACTED FROM 100 VIDEO MOMENTS</span></div>
+    <div class="top-actions"><button class="pill" id="autoBtn">Ⅱ&nbsp;&nbsp; AUTO 360°</button><button class="circle" id="openTop">＋</button><button class="circle" id="sound">♬</button></div>
+  </header>
+  <section class="info">
+    <div class="index"><b id="num">01</b><i></i><span id="kind">STAGE · MALE</span></div>
+    <h1 class="title" id="title">CRYSTAL<br>NIGHT</h1>
+    <div class="kicker" id="kicker">검은 무대 위, 은빛으로 남은 순간</div>
+    <p class="description" id="desc">영상 속 의상과 표정을 한 사람의 8방향 디지털 피규어로 다시 만듭니다.</p>
+    <div class="meta"><div><small>IDENTITY</small><strong id="identity">98</strong></div><div><small>OUTFIT</small><strong id="outfit">98</strong></div><div><small>VIEWS</small><strong>08</strong></div></div>
+    <div class="info-actions"><button class="primary" id="save">♡ SAVE LOOK</button><button class="ghost" id="next">NEXT LOOK →</button></div>
+  </section>
+  <div class="chapter">VIDEO LOOK EXTRACTION · 100 → 10</div>
+  <section class="figure-zone" id="figureZone" aria-label="좌우로 드래그하여 360도 회전">
+    <div class="scan"></div><div class="hero-wrap" id="heroWrap"><img class="hero" id="hero" alt="LoveTree 360도 디지털 피규어"></div>
+    <div class="rotate-ui"><span>← DRAG</span><i></i><div class="angle-dots" id="angleDots"></div><strong id="angleText">000°</strong><i></i><span>ROTATE →</span></div>
+  </section>
+  <aside class="panel">
+    <div class="panel-head"><div class="panel-overline">YOUR VIDEO · FIGURE SELECTION</div><div class="panel-row"><div class="panel-title">Moment Figures</div><div class="panel-count">10 / 100</div></div><div class="filters"><button class="filter active" data-filter="all">ALL</button><button class="filter" data-filter="male">MALE</button><button class="filter" data-filter="female">FEMALE</button><button class="filter" data-filter="saved">SAVED</button></div></div>
+    <div class="grid" id="grid"></div>
+    <div class="panel-foot"><div class="foot-copy"><strong>Choose your video look.</strong><span>100 MOMENTS → 10 FIGURES</span></div><button class="upload" id="openUpload">IMPORT VIDEO</button></div>
+  </aside>
+  <div class="source">SOURCE <b id="source">VIDEO 01 · 00:14.8 — 00:17.2</b></div>
+  <div class="burst" id="burst"></div><div class="toast" id="toast">LOOK SAVED TO YOUR LOVETREE</div>
+  <div class="modal" id="modal"><div class="sheet"><div class="sheet-head"><div><div class="panel-overline">NEW 360° COLLECTION</div><h2>Upload your favorite video</h2></div><button class="close" id="close">×</button></div><label class="drop" for="video"><div class="drop-icon">↥</div><strong>영상에서 100개의 모습을 찾습니다.</strong><span>원하는 10개를 고르면 동일 인물·동일 의상 8방향 피규어로 구성합니다.</span><input id="video" type="file" accept="video/*" hidden></label><div class="process" id="process"><div class="process-row"><span id="fileName">VIDEO.MP4</span><b id="percent">0%</b></div><div class="progress"><i id="bar"></i></div><div class="steps"><div class="step">SCENE CUT</div><div class="step">FACE LOCK</div><div class="step">OUTFIT LOCK</div><div class="step">8-VIEW BUILD</div></div></div></div></div>
+</main>
+<script src="./script.js"></script>
+</body>
+</html>

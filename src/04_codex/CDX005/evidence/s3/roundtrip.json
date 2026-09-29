@@ -1,0 +1,923 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX005",
+  "source_id": "CDX005",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "generated_at_utc": "2026-09-29T09:00:00Z",
+  "base_main": "814f121b00a553753c667dfd8eb3c4c8fbe284c5",
+  "branch": "feat/589-cdx005-s3-mechanical-capsule",
+  "authority": {
+    "bytes": 27918,
+    "sha256": "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466"
+  },
+  "round_trip_byte_identity": true,
+  "round_trip_bytes": 27918,
+  "round_trip_sha256": "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466",
+  "boundaries": {
+    "style_open": 194,
+    "style_close": 14164,
+    "script_open": 17690,
+    "script_close": 26688
+  },
+  "glue": {
+    "css_link": "<link rel=\"stylesheet\" href=\"./styles.css\"/>",
+    "script_src": "<script src=\"./script.js\"></script>"
+  },
+  "outputs": {
+    "split/index.html": {
+      "bytes": 4041,
+      "sha256": "67d4d26d185f5544ed51bf0827a0b696b6d3a90aefe164216aed75333e33d172",
+      "git_blob_sha1": "3fd5f6895c604e1e7b9e34f04f2935b54dbedfc8"
+    },
+    "split/styles.css": {
+      "bytes": 13963,
+      "sha256": "8d446c57cbdc911d3d3df163e31d21b761c9ab8a145913f235249cf63f0f0766",
+      "git_blob_sha1": "f0fa2b60aef8a75ea572979c13fd7f88a9280bca"
+    },
+    "split/script.js": {
+      "bytes": 9961,
+      "sha256": "37b19ee9369a40d589eff35540ece741bfe9bff095e64b29111065f63001cafd",
+      "git_blob_sha1": "cca7098156ca3f7c728fb40340e81c16f034939a"
+    }
+  },
+  "local_asset_preservation": {
+    "prefix": "assets/turnarounds/transparent/",
+    "template": "assets/turnarounds/transparent/${id}_${a}.png",
+    "looks": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "angles": [
+      "000",
+      "045",
+      "090",
+      "135",
+      "180",
+      "225",
+      "270",
+      "315"
+    ],
+    "derived_required_count": 80,
+    "authored_ref_occurrences_original": 0,
+    "authored_ref_occurrences_split": 0,
+    "authored_ref_note": "The authority references its assets only through the runtime path() template, so there are no literal per-asset URL strings in the markup. The authored reference count is therefore 0 in both surfaces, and the preservation invariant is proven on the template, the derived 80-path set and the vendored bytes instead.",
+    "distinct_asset_count": 80,
+    "original_equals_split": true,
+    "reencoded": false,
+    "url_rewritten": false,
+    "resized": false,
+    "hash_match": "80/80",
+    "total_bytes": 6363788
+  },
+  "drive_authority_readback": {
+    "mode": "LOCAL_RCLONE_LSJON_READ_ONLY",
+    "remote": "gdriveb64",
+    "root_folder_id": "169jIiX32b19gRy4Wq6SAd3TtiQfuVaW3",
+    "drive_object_count": 80,
+    "drive_mutation": 0,
+    "note": "Read-only enumeration of the 80 asset objects, cross-checked by name and byte count against the vendored bytes. Authority file identity is pinned from the S1 readback; per-asset Drive object IDs are pinned in authority-context.json#/assets/entries."
+  },
+  "motion_inventory": {
+    "keyframes": [
+      "drift",
+      "spin",
+      "scan",
+      "burst"
+    ],
+    "prefers_reduced_motion_occurrences": 0,
+    "math_random_occurrences": 3
+  },
+  "contracts": {
+    "exact_single_style_extraction": true,
+    "exact_single_script_extraction": true,
+    "exact_script_blocks_extraction": true,
+    "round_trip_byte_identity": true,
+    "redesign_or_refactor": false,
+    "framework_conversion": false,
+    "tsx_or_jsx_introduced": false,
+    "ts_or_jsx_file_in_split_surface": false,
+    "product_data_injection": false,
+    "path_rewrite": false,
+    "asset_url_rewritten": false,
+    "asset_reencoded": false,
+    "external_network_dependency_introduced": false,
+    "source_defect_repaired": false,
+    "reduced_motion_behavior_modified": false,
+    "mobile_auto_control_modified": false,
+    "mobile_scroll_modified": false,
+    "math_random_seeded_or_changed": false,
+    "animation_deleted_or_changed": false,
+    "product_adoption": false,
+    "lineage58_adoption": false
+  },
+  "checks": [
+    {
+      "id": "T01",
+      "pass": true,
+      "detail": "authority byte size 27918"
+    },
+    {
+      "id": "T02",
+      "pass": true,
+      "detail": "authority SHA-256 locked"
+    },
+    {
+      "id": "T03",
+      "pass": true,
+      "detail": "frozen original asset directory present"
+    },
+    {
+      "id": "T03b",
+      "pass": true,
+      "detail": "manifest authority lock matches the frozen authority"
+    },
+    {
+      "id": "T04a",
+      "pass": true,
+      "detail": "exactly one style block"
+    },
+    {
+      "id": "T04b",
+      "pass": true,
+      "detail": "exactly one bare inline script block"
+    },
+    {
+      "id": "T04c",
+      "pass": true,
+      "detail": "zero attributed or external script tags"
+    },
+    {
+      "id": "T04d",
+      "pass": true,
+      "detail": "zero stylesheet link tags in the authority"
+    },
+    {
+      "id": "T04e",
+      "pass": true,
+      "detail": "only the SVG XML namespace is http-shaped, and it is not a network request"
+    },
+    {
+      "id": "T04f.fetch(",
+      "pass": true,
+      "detail": "no fetch( in the authority"
+    },
+    {
+      "id": "T04f.XMLHttpRequest",
+      "pass": true,
+      "detail": "no XMLHttpRequest in the authority"
+    },
+    {
+      "id": "T04f.sendBeacon",
+      "pass": true,
+      "detail": "no sendBeacon in the authority"
+    },
+    {
+      "id": "T04f.importScripts(",
+      "pass": true,
+      "detail": "no importScripts( in the authority"
+    },
+    {
+      "id": "T04f.EventSource",
+      "pass": true,
+      "detail": "no EventSource in the authority"
+    },
+    {
+      "id": "T04f.new WebSocket",
+      "pass": true,
+      "detail": "no new WebSocket in the authority"
+    },
+    {
+      "id": "T04f.wss://",
+      "pass": true,
+      "detail": "no wss:// in the authority"
+    },
+    {
+      "id": "T04f.<iframe",
+      "pass": true,
+      "detail": "no <iframe in the authority"
+    },
+    {
+      "id": "T04f.<video",
+      "pass": true,
+      "detail": "no <video in the authority"
+    },
+    {
+      "id": "T04f.<audio",
+      "pass": true,
+      "detail": "no <audio in the authority"
+    },
+    {
+      "id": "T04f.@import",
+      "pass": true,
+      "detail": "no @import in the authority"
+    },
+    {
+      "id": "T04f.@font-face",
+      "pass": true,
+      "detail": "no @font-face in the authority"
+    },
+    {
+      "id": "T04g",
+      "pass": true,
+      "detail": "exactly one inline data:image URI (SVG noise texture)"
+    },
+    {
+      "id": "T05",
+      "pass": true,
+      "detail": "styles.css equals the authority <style> inner bytes"
+    },
+    {
+      "id": "T06",
+      "pass": true,
+      "detail": "script.js equals the authority <script> inner bytes"
+    },
+    {
+      "id": "T05b",
+      "pass": true,
+      "detail": "materialization records the on-disk styles.css digest"
+    },
+    {
+      "id": "T06b",
+      "pass": true,
+      "detail": "materialization records the on-disk script.js digest"
+    },
+    {
+      "id": "T07a",
+      "pass": true,
+      "detail": "exactly one <link rel=\"stylesheet\" href=\"./styles.css\"/>"
+    },
+    {
+      "id": "T07b",
+      "pass": true,
+      "detail": "exactly one <script src=\"./script.js\"></script>"
+    },
+    {
+      "id": "T07c",
+      "pass": true,
+      "detail": "split index carries no inline style block"
+    },
+    {
+      "id": "T07d",
+      "pass": true,
+      "detail": "split index carries no inline script body"
+    },
+    {
+      "id": "T07e",
+      "pass": true,
+      "detail": "split index equals the independently re-derived two-glue shell"
+    },
+    {
+      "id": "T08a",
+      "pass": true,
+      "detail": "style_open=194"
+    },
+    {
+      "id": "T08b",
+      "pass": true,
+      "detail": "style_close=14164"
+    },
+    {
+      "id": "T08c",
+      "pass": true,
+      "detail": "script_open=17690"
+    },
+    {
+      "id": "T08d",
+      "pass": true,
+      "detail": "script_close=26688"
+    },
+    {
+      "id": "T08e",
+      "pass": true,
+      "detail": "single script block with the derived length"
+    },
+    {
+      "id": "T08f",
+      "pass": true,
+      "detail": "no script gaps"
+    },
+    {
+      "id": "T08g",
+      "pass": true,
+      "detail": "materialization records the exact glue strings"
+    },
+    {
+      "id": "T08h",
+      "pass": true,
+      "detail": "generation is a mechanical inline extraction"
+    },
+    {
+      "id": "T09a",
+      "pass": true,
+      "detail": "round-trip reconstruction is byte-identical"
+    },
+    {
+      "id": "T09b",
+      "pass": true,
+      "detail": "reconstructed byte size 27918"
+    },
+    {
+      "id": "T09c",
+      "pass": true,
+      "detail": "reconstructed SHA-256 equals the authority SHA-256"
+    },
+    {
+      "id": "T09d",
+      "pass": true,
+      "detail": "materialization asserts byte identity"
+    },
+    {
+      "id": "T10",
+      "pass": true,
+      "detail": "CSS semantics preserved byte-exact"
+    },
+    {
+      "id": "T11",
+      "pass": true,
+      "detail": "JS semantics preserved byte-exact"
+    },
+    {
+      "id": "T11b",
+      "pass": true,
+      "detail": "markup before the style block is untouched"
+    },
+    {
+      "id": "T11c",
+      "pass": true,
+      "detail": "markup after the script block is untouched"
+    },
+    {
+      "id": "T11d",
+      "pass": true,
+      "detail": "markup between the two blocks is untouched and in order"
+    },
+    {
+      "id": "T11e",
+      "pass": true,
+      "detail": "CSS glue precedes script glue, preserving authored order"
+    },
+    {
+      "id": "T12.import React",
+      "pass": true,
+      "detail": "no import React in the split surface"
+    },
+    {
+      "id": "T12.from 'react'",
+      "pass": true,
+      "detail": "no from 'react' in the split surface"
+    },
+    {
+      "id": "T12.from \"react\"",
+      "pass": true,
+      "detail": "no from \"react\" in the split surface"
+    },
+    {
+      "id": "T12.useState",
+      "pass": true,
+      "detail": "no useState in the split surface"
+    },
+    {
+      "id": "T12.useEffect",
+      "pass": true,
+      "detail": "no useEffect in the split surface"
+    },
+    {
+      "id": "T12.createRoot",
+      "pass": true,
+      "detail": "no createRoot in the split surface"
+    },
+    {
+      "id": "T12.next/",
+      "pass": true,
+      "detail": "no next/ in the split surface"
+    },
+    {
+      "id": "T12.NextPage",
+      "pass": true,
+      "detail": "no NextPage in the split surface"
+    },
+    {
+      "id": "T12.next.config",
+      "pass": true,
+      "detail": "no next.config in the split surface"
+    },
+    {
+      "id": "T12.firebase",
+      "pass": true,
+      "detail": "no firebase in the split surface"
+    },
+    {
+      "id": "T12.getAuth",
+      "pass": true,
+      "detail": "no getAuth in the split surface"
+    },
+    {
+      "id": "T12.signInWith",
+      "pass": true,
+      "detail": "no signInWith in the split surface"
+    },
+    {
+      "id": "T12.drizzle",
+      "pass": true,
+      "detail": "no drizzle in the split surface"
+    },
+    {
+      "id": "T12.neon",
+      "pass": true,
+      "detail": "no neon in the split surface"
+    },
+    {
+      "id": "T12.DATABASE_URL",
+      "pass": true,
+      "detail": "no DATABASE_URL in the split surface"
+    },
+    {
+      "id": "T12.process.env",
+      "pass": true,
+      "detail": "no process.env in the split surface"
+    },
+    {
+      "id": "T12.require(",
+      "pass": true,
+      "detail": "no require( in the split surface"
+    },
+    {
+      "id": "T12.module.exports",
+      "pass": true,
+      "detail": "no module.exports in the split surface"
+    },
+    {
+      "id": "T12.ext",
+      "pass": true,
+      "detail": "no .ts/.tsx/.jsx file in the split surface"
+    },
+    {
+      "id": "T12.closure",
+      "pass": true,
+      "detail": "materialization records no framework conversion"
+    },
+    {
+      "id": "T12.policy",
+      "pass": true,
+      "detail": "manifest keeps the mechanical-only runtime policy"
+    },
+    {
+      "id": "T13a",
+      "pass": true,
+      "detail": "authored relative asset template survives byte-identically in script.js"
+    },
+    {
+      "id": "T13b",
+      "pass": true,
+      "detail": "authored angle table is the expected 8 values"
+    },
+    {
+      "id": "T13c",
+      "pass": true,
+      "detail": "authored look id table is the expected 10 values"
+    },
+    {
+      "id": "T13d",
+      "pass": true,
+      "detail": "original vendored set equals the derived 10x8 required path set"
+    },
+    {
+      "id": "T13e",
+      "pass": true,
+      "detail": "split vendored set equals the derived 10x8 required path set"
+    },
+    {
+      "id": "T13f",
+      "pass": true,
+      "detail": "80 assets vendored on each side"
+    },
+    {
+      "id": "T13g",
+      "pass": true,
+      "detail": "all 80 vendored files match the pinned Drive digest on both sides, each with a Drive object id"
+    },
+    {
+      "id": "T13h",
+      "pass": true,
+      "detail": "the authored relative prefix is preserved verbatim in the authority and is not rebased"
+    },
+    {
+      "id": "T13i",
+      "pass": true,
+      "detail": "split index introduces no path rebasing"
+    },
+    {
+      "id": "T13j",
+      "pass": true,
+      "detail": "no asset URL rewrite and no re-encode"
+    },
+    {
+      "id": "T13k",
+      "pass": true,
+      "detail": "asset policy records zero rewrite, zero re-encode, zero resize"
+    },
+    {
+      "id": "T14a",
+      "pass": true,
+      "detail": "capture surface is STANDALONE_AUTHORITY_SURFACE"
+    },
+    {
+      "id": "T14b",
+      "pass": true,
+      "detail": "authority mode is SINGLE"
+    },
+    {
+      "id": "T14c",
+      "pass": true,
+      "detail": "root launcher relation recorded"
+    },
+    {
+      "id": "T14d",
+      "pass": true,
+      "detail": "V1 relation recorded as superseded revision"
+    },
+    {
+      "id": "T14e",
+      "pass": true,
+      "detail": "V1 sub-tree copy relation recorded as duplicate copy"
+    },
+    {
+      "id": "T14f",
+      "pass": true,
+      "detail": "parity contract recorded"
+    },
+    {
+      "id": "T14g",
+      "pass": true,
+      "detail": "D1-D5 recorded in order"
+    },
+    {
+      "id": "T14h",
+      "pass": true,
+      "detail": "no frozen defect claims a repair"
+    },
+    {
+      "id": "T14i",
+      "pass": true,
+      "detail": "mobile D4 and D5 are recorded as preserved source facts, not fixes"
+    },
+    {
+      "id": "T14j",
+      "pass": true,
+      "detail": "serving contract is standalone and zero-rewrite"
+    },
+    {
+      "id": "T14k",
+      "pass": true,
+      "detail": "no external network dependency"
+    },
+    {
+      "id": "T14l",
+      "pass": true,
+      "detail": "80 assets pinned with an 80/80 hash match"
+    },
+    {
+      "id": "T14m",
+      "pass": true,
+      "detail": "asset Drive folder pinned"
+    },
+    {
+      "id": "T14n",
+      "pass": true,
+      "detail": "authority Drive file id pinned"
+    },
+    {
+      "id": "T14o",
+      "pass": true,
+      "detail": "root launcher is recorded as non-authority and is not vendored"
+    },
+    {
+      "id": "T14p",
+      "pass": true,
+      "detail": "launcher identity preserved in metadata only"
+    },
+    {
+      "id": "T14q",
+      "pass": true,
+      "detail": "both superseded V1 objects are recorded and neither is vendored"
+    },
+    {
+      "id": "T14r",
+      "pass": true,
+      "detail": "V1 and V1-copy Drive file ids pinned"
+    },
+    {
+      "id": "T14s",
+      "pass": true,
+      "detail": "the V1 pair is recorded as the same-SHA duplicate copy"
+    },
+    {
+      "id": "T14t",
+      "pass": true,
+      "detail": "no V1 object leaked into the vendored asset set"
+    },
+    {
+      "id": "T15.split/index.html.bytes",
+      "pass": true,
+      "detail": "split/index.html byte size"
+    },
+    {
+      "id": "T15.split/index.html.sha256",
+      "pass": true,
+      "detail": "split/index.html sha256"
+    },
+    {
+      "id": "T15.split/index.html.blob",
+      "pass": true,
+      "detail": "split/index.html git blob"
+    },
+    {
+      "id": "T15.split/styles.css.bytes",
+      "pass": true,
+      "detail": "split/styles.css byte size"
+    },
+    {
+      "id": "T15.split/styles.css.sha256",
+      "pass": true,
+      "detail": "split/styles.css sha256"
+    },
+    {
+      "id": "T15.split/styles.css.blob",
+      "pass": true,
+      "detail": "split/styles.css git blob"
+    },
+    {
+      "id": "T15.split/script.js.bytes",
+      "pass": true,
+      "detail": "split/script.js byte size"
+    },
+    {
+      "id": "T15.split/script.js.sha256",
+      "pass": true,
+      "detail": "split/script.js sha256"
+    },
+    {
+      "id": "T15.split/script.js.blob",
+      "pass": true,
+      "detail": "split/script.js git blob"
+    },
+    {
+      "id": "T15.authority",
+      "pass": true,
+      "detail": "materialization authority lock"
+    },
+    {
+      "id": "T15.status",
+      "pass": true,
+      "detail": "materialization is pending parity, not accepted"
+    },
+    {
+      "id": "T16a",
+      "pass": true,
+      "detail": "S0 and S1 complete"
+    },
+    {
+      "id": "T16b",
+      "pass": true,
+      "detail": "S2 baseline captured"
+    },
+    {
+      "id": "T16c",
+      "pass": true,
+      "detail": "S3 mechanical split complete"
+    },
+    {
+      "id": "T16d",
+      "pass": true,
+      "detail": "S4 parity NOT passed"
+    },
+    {
+      "id": "T16e",
+      "pass": true,
+      "detail": "S4 release is HOLD_CENTRAL"
+    },
+    {
+      "id": "T16f",
+      "pass": true,
+      "detail": "parity capture is not authorized"
+    },
+    {
+      "id": "T16g",
+      "pass": true,
+      "detail": "no parity reference exists"
+    },
+    {
+      "id": "T16h",
+      "pass": true,
+      "detail": "parity status is NOT_STARTED"
+    },
+    {
+      "id": "T16i",
+      "pass": true,
+      "detail": "no parity evidence directory exists in this capsule"
+    },
+    {
+      "id": "T16j",
+      "pass": true,
+      "detail": "no S4 evidence directory exists in this capsule"
+    },
+    {
+      "id": "T16k",
+      "pass": true,
+      "detail": "manifest capture surface mode"
+    },
+    {
+      "id": "T16l",
+      "pass": true,
+      "detail": "S2 accepted baseline promoted with matching identity"
+    },
+    {
+      "id": "T16m",
+      "pass": true,
+      "detail": "baseline records no screenshot equality claim"
+    },
+    {
+      "id": "T16n",
+      "pass": true,
+      "detail": "baseline references the immutable S2 workdiary report commit"
+    },
+    {
+      "id": "T16o",
+      "pass": true,
+      "detail": "baseline carries the accepted 36-state / 72-capture figures"
+    },
+    {
+      "id": "T17a",
+      "pass": true,
+      "detail": "capsule status is SINGLE_EXECUTABLE_NO_DUPLICATE"
+    },
+    {
+      "id": "T17b",
+      "pass": true,
+      "detail": "duplicate_variant_note records the finding"
+    },
+    {
+      "id": "T17c",
+      "pass": true,
+      "detail": "note records V1 as superseded / not authority"
+    },
+    {
+      "id": "T17d",
+      "pass": true,
+      "detail": "note records the same-SHA duplicate copy classification"
+    },
+    {
+      "id": "T17e",
+      "pass": true,
+      "detail": "structurally valid follow_up_adjudication block"
+    },
+    {
+      "id": "T17f",
+      "pass": true,
+      "detail": "adjudication cites the CENTRAL S3 release comment"
+    },
+    {
+      "id": "T17g",
+      "pass": true,
+      "detail": "no Product adoption"
+    },
+    {
+      "id": "T17h",
+      "pass": true,
+      "detail": "no Lineage58 adoption"
+    },
+    {
+      "id": "T17i",
+      "pass": true,
+      "detail": "zero Drive mutation recorded"
+    },
+    {
+      "id": "T17j",
+      "pass": true,
+      "detail": "no repository mutation outside this capsule"
+    },
+    {
+      "id": "T17k",
+      "pass": true,
+      "detail": "identity stays in the MST->CDX namespace, no renumbering"
+    },
+    {
+      "id": "T17l",
+      "pass": true,
+      "detail": "capsule contains only the canonical S3 entries"
+    },
+    {
+      "id": "T18a",
+      "pass": true,
+      "detail": "evidence identity is CDX005"
+    },
+    {
+      "id": "T18b",
+      "pass": true,
+      "detail": "evidence authority lock"
+    },
+    {
+      "id": "T18c",
+      "pass": true,
+      "detail": "evidence asserts byte-identical round-trip"
+    },
+    {
+      "id": "T18d",
+      "pass": true,
+      "detail": "evidence records 80/80 with identical vendored copies"
+    },
+    {
+      "id": "T18e",
+      "pass": true,
+      "detail": "evidence records no re-encode, no URL rewrite, no resize"
+    },
+    {
+      "id": "T18f",
+      "pass": true,
+      "detail": "derived required count is 80"
+    },
+    {
+      "id": "T18g",
+      "pass": true,
+      "detail": "S4 not started and no executor recorded"
+    },
+    {
+      "id": "T18h",
+      "pass": true,
+      "detail": "no parity claim"
+    },
+    {
+      "id": "T18i",
+      "pass": true,
+      "detail": "evidence stage gate is fail-closed"
+    },
+    {
+      "id": "T18j",
+      "pass": true,
+      "detail": "no source mutation, no Product adoption, no Lineage58 adoption"
+    },
+    {
+      "id": "T18k",
+      "pass": true,
+      "detail": "Drive readback recorded as read-only"
+    },
+    {
+      "id": "T18l",
+      "pass": true,
+      "detail": "frozen D1/D2/D3 motion and randomness inventory preserved"
+    },
+    {
+      "id": "T18m",
+      "pass": true,
+      "detail": "all four authored keyframes preserved"
+    },
+    {
+      "id": "T18n",
+      "pass": true,
+      "detail": "evidence pins the fresh origin/main it was generated from"
+    },
+    {
+      "id": "T18o",
+      "pass": true,
+      "detail": "evidence pins the S3 branch"
+    },
+    {
+      "id": "T18p",
+      "pass": true,
+      "detail": "80 Drive asset objects were read back read-only"
+    },
+    {
+      "id": "T18q",
+      "pass": true,
+      "detail": "no run-scoped fields leak into the committed record"
+    }
+  ],
+  "s4_started": false,
+  "s4_executed_by": null,
+  "stage_gate": {
+    "s4_release": "HOLD_CENTRAL",
+    "parity_capture_authorized": false,
+    "source_split_parity_pass": false,
+    "parity_ref": null
+  },
+  "parity_acceptance_claimed": false,
+  "parity_ref": null,
+  "parity_status": "NOT_STARTED",
+  "source_mutation": 0,
+  "product_adoption": 0,
+  "lineage58_adoption": 0,
+  "generation_note": "Committed S3 evidence record. Produced by a clean local run of src/04_codex/CDX005/tests/s3-roundtrip.test.mjs on branch feat/589-cdx005-s3-mechanical-capsule from a fresh worktree on origin/main 814f121b00a553753c667dfd8eb3c4c8fbe284c5.",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5887518417",
+  "passed": 156,
+  "failed": 0,
+  "result": "PASS",
+  "checks_note": "Check list promoted from one clean local run of src/04_codex/CDX005/tests/s3-roundtrip.test.mjs. The test writes its own run evidence to an OS temp directory only and never rewrites this committed record."
+}
