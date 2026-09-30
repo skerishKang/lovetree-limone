@@ -1,0 +1,322 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX005",
+  "master_id": "MST105",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "CONTRACT_RECORDED_CANDIDATE_PENDING_CENTRAL",
+  "authority": {
+    "s3_acceptance_and_s4_release": "skerishKang/lovetree-limone#589 comment 5889378824",
+    "s4_candidate_hold": "skerishKang/lovetree-limone#589 comment 5904993568",
+    "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
+    "s4_temporal_synchronization_ruling": "skerishKang/lovetree-limone#589 comment 5906458180",
+    "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417",
+    "s4_hard_channel_ledger_ruling": "skerishKang/lovetree-limone#589 comment 5908541198",
+    "s4_classification_correction_ruling": "skerishKang/lovetree-limone#589 comment 5909569578"
+  },
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "parity_contract_fields": {
+    "RAW_PNG_BYTE_EQUALITY_REQUIRED": false,
+    "PIXEL_TOLERANCE": false,
+    "SSIM": false,
+    "PERCEPTUAL_HAMMING_THRESHOLD": false,
+    "SOURCE_RANDOM_SEEDING": false,
+    "SOURCE_CLOCK_PATCH": false,
+    "SOURCE_BYTES_PATCH": false,
+    "DIRECT_CENTRAL_VISUAL_REVIEW_REQUIRED": true
+  },
+  "state_plan": {
+    "total": 36,
+    "D1": {
+      "label": "desktop",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "states": 18
+    },
+    "T1": {
+      "label": "tablet",
+      "width": 900,
+      "height": 900,
+      "dpr": 1,
+      "states": 6
+    },
+    "M1": {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "states": 8
+    },
+    "R1": {
+      "label": "reduce",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "reduced_motion": "reduce",
+      "states": 4
+    }
+  },
+  "hard_channels": [
+    "dom_state_truth",
+    "computed_style",
+    "geometry",
+    "responsive_visibility",
+    "scroll_metrics",
+    "interaction_outcome",
+    "console_errors",
+    "page_errors",
+    "failed_requests",
+    "asset_load_result",
+    "authored_animation_inventory"
+  ],
+  "animation_inventory_gate": {
+    "authored_tracks": [
+      "drift",
+      "scan",
+      "spin",
+      "burst"
+    ],
+    "fields": [
+      "target",
+      "name",
+      "duration",
+      "delay",
+      "iterations",
+      "playState"
+    ],
+    "note": "The authored infinite keyframe tracks are the exact gate. CSSTransition liveness is a capture-timing fact, is recorded under transient_animation_diffs, and is not a parity defect."
+  },
+  "d2_d3_projection": {
+    "policy": "FIELD_LEVEL_ONLY_RANDOM_SCALARS",
+    "D2": [
+      "particle random radius/displacement (x, y)",
+      "particle random animationDelay"
+    ],
+    "D3": [
+      "random upload progress increment",
+      "instantaneous displayed percentage while processing",
+      "step-done signature derived from that same random percentage"
+    ],
+    "still_compared_exactly": [
+      "particle count",
+      "DOM and class structure",
+      "animation name and duration contract",
+      "saved and toast state",
+      "upload process state",
+      "completion transition",
+      "all non-random fields"
+    ],
+    "forbidden": [
+      "Math.random seed",
+      "Math.random monkey-patch",
+      "clock patch",
+      "performance.now patch",
+      "source normalization"
+    ]
+  },
+  "screenshot_stabilization": {
+    "timing": "AFTER all hard channels are collected, screenshot channel only",
+    "desktop_tablet": "authored AUTO 360 control stops the JS auto rotation",
+    "mobile": "D4 proven first (#autoBtn display:none, user_reachable=false, auto_loop_active=true); the harness may then DOM-click the same authored handler for paired stabilization and records HARNESS_ONLY_NOT_USER_REACHABLE",
+    "animations": "after the inventory is recorded, existing CSS/Web Animation objects may be paused and phase-locked identically on both surfaces, browser-side test code only",
+    "runtime_source": "no stabilization is written into any runtime source file"
+  },
+  "d4_assertion": {
+    "viewport": "390x844",
+    "requires": [
+      "computed display of #autoBtn",
+      "user_reachable",
+      "auto_loop_active",
+      "ORIGINAL equals SPLIT"
+    ],
+    "measured_before": "any stabilization"
+  },
+  "d5_assertion": {
+    "viewport": "390x844",
+    "requires": [
+      "documentElement.scrollHeight",
+      "documentElement.clientHeight",
+      "body scroll metrics",
+      "scrollability",
+      "accepted below-fold control bounding boxes and y positions"
+    ],
+    "repair": "forbidden; scrolling is never fixed"
+  },
+  "visual_comparison": {
+    "raw_png_byte_equality_required": false,
+    "pixel_tolerance": false,
+    "ssim": false,
+    "perceptual_hamming_threshold": false,
+    "note": "Screenshots are an EVIDENCE channel. If phase-locked captures happen to be byte-identical that is recorded, never required."
+  },
+  "allowed_s4_files": [
+    "src/04_codex/CDX005/tests/s4-parity.test.mjs",
+    "src/04_codex/CDX005/evidence/s4/contract.json",
+    "src/04_codex/CDX005/evidence/s4/candidate-summary.json",
+    "src/04_codex/CDX005/evidence/s4/review-pack/*.png",
+    "tests/cdx005-s4-parity-contract.test.mjs"
+  ],
+  "forbidden": [
+    "evidence/parity/accepted-parity.json creation",
+    "manifest parity promotion",
+    "materialization ACCEPTED promotion",
+    "Ready transition",
+    "merge",
+    "any change to the four protected runtime blobs",
+    "any change to the 160 vendored PNGs",
+    "source defect repair",
+    "asset rewrite",
+    "framework, Product, backend, Auth or DB change",
+    "Drive mutation"
+  ],
+  "protected_blobs": {
+    "original/original.html": "782e4dbb0de1d1a1d8bbff0b3674a6ec51baa8d3",
+    "split/index.html": "3fd5f6895c604e1e7b9e34f04f2935b54dbedfc8",
+    "split/styles.css": "f0fa2b60aef8a75ea572979c13fd7f88a9280bca",
+    "split/script.js": "cca7098156ca3f7c728fb40340e81c16f034939a"
+  },
+  "candidate_state": {
+    "source_split_parity_pass": false,
+    "parity_status": "CANDIDATE_PENDING_CENTRAL",
+    "parity_ref": null,
+    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "parity_capture_authorized": true,
+    "S4_ACCEPTED": "NO",
+    "MANIFEST_PARITY_PROMOTED": "NO",
+    "READY": "NO",
+    "MERGE": "NO"
+  },
+  "settle_policy": {
+    "basis": "ACCEPTED_S2_STATE_MEANING_NOT_A_PREDICTED_COUNT",
+    "authority": "skerishKang/lovetree-limone#589 comment 5905286796",
+    "state_intents": [
+      "STABLE",
+      "AUTHORED_LIVE",
+      "EXPLICIT_TRANSIENT"
+    ],
+    "non_stable_states": {
+      "D1/01_initial_auto_active": "AUTHORED_LIVE",
+      "D1/16_look_switch_transient_out": "EXPLICIT_TRANSIENT",
+      "D1/17_save_burst_transient": "EXPLICIT_TRANSIENT",
+      "R1/01_initial_source_behavior": "AUTHORED_LIVE",
+      "R1/03_css_drift_spin_scan_observation": "AUTHORED_LIVE",
+      "R1/04_save_burst_observation": "EXPLICIT_TRANSIENT"
+    },
+    "stable_state_count": 30,
+    "capture_order": [
+      "fresh page",
+      "authored driver",
+      "M1: D4 native proof BEFORE stabilization",
+      "intent-driven AUTO handling (real click desktop/tablet, same authored control DOM click on mobile -> HARNESS_ONLY_NOT_USER_REACHABLE)",
+      "finite authored CSS transition settle (STABLE only)",
+      "NATIVE hard channels + animation/liveness inventory",
+      "infinite CSS animation phase-lock -> HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT",
+      "phased geometry/computed-style channel"
+    ],
+    "allowed_residual_classifications": [
+      "D2_RANDOM_SCALAR",
+      "D3_RANDOM_SCALAR",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+    ],
+    "generic_moving_on_either_exclusion": "FORBIDDEN",
+    "stable_state_residual": "REAL PARITY DEFECT",
+    "unclassified_residual": "REAL PARITY DEFECT - never a ledger row",
+    "required_artifacts": [
+      "evidence/s4/contract.json",
+      "evidence/s4/candidate-summary.json",
+      "evidence/s4/residual-ledger.json",
+      "evidence/s4/review-pack/*.png"
+    ],
+    "contact_sheet": "temporary review artifact outside the capsule; never committed; review-pack stays exactly 12 PNGs"
+  },
+  "semantic_reporting": {
+    "SEMANTIC_RAW_EXACT": "measured raw equality, no projection and no exclusion",
+    "SEMANTIC_CONTRACT_EXACT": "exact after ONLY the authorized D2/D3 projection and ledger-backed classes; must be 36/36 for a candidate PASS",
+    "forbidden": "describing a partial raw count as exact across all 36"
+  },
+  "temporal_synchronization": {
+    "authority": "skerishKang/lovetree-limone#589 comment 5906458180",
+    "required_order": [
+      "fresh page load",
+      "wait INITIAL AUTHORED READINESS (heroWrap not .out, hero decoded, no running startup CSSTransition)",
+      "M1 only: prove D4 while the authored AUTO loop is still ACTIVE",
+      "if STABLE: pause AUTO BEFORE the state driver (real user click desktop/tablet; same authored DOM control on mobile -> HARNESS_ONLY_NOT_USER_REACHABLE) and verify PLAY",
+      "run the authored state driver",
+      "wait that state's observable TERMINAL PREDICATE (semantic, not a bare sleep)",
+      "native hard channels + liveness/animation inventory",
+      "phase-lock ONLY the infinite authored CSSAnimation tracks (drift/scan/spin with infinite iterations)",
+      "phased geometry/computed-style"
+    ],
+    "phase_lock_scope": "INFINITE_AUTHORED_CSSANIMATION_ONLY",
+    "no_csstransition_phase_lock": true,
+    "no_finite_burst_phase_lock": true,
+    "source_self_nondeterminism_waiver": "FORBIDDEN_FOR_STABLE_STATES",
+    "acceptance_proof": {
+      "required_consecutive_fresh_full_runs": 3,
+      "per_run_requirements": [
+        "SEMANTIC_CONTRACT_EXACT=36/36",
+        "REAL_PARITY_DEFECTS=0",
+        "UNCLASSIFIED_RESIDUALS=0",
+        "D1_D5_PRESERVED=YES",
+        "NETWORK_ERROR_STATES=0",
+        "MISSING_ASSET_STATES=0",
+        "every STABLE state exact"
+      ],
+      "averaging_or_best_of": "FORBIDDEN",
+      "evidence_file": "evidence/s4/three-run-proof.json"
+    },
+    "angle_determinism": {
+      "finding": "the authored build() ends with autoLoop(850), so the first authored angle tick lands around 800-860 ms and varies between runs; the startup readiness gate cannot complete before roughly 1100 ms, so an AUTO pause alone always lands AFTER that first tick",
+      "resolution": "the harness drives the AUTHORED updateAngle() back to 000 (the same function the authored drag/keyboard/wheel/auto handlers call) so both surfaces are compared at an equal authored angle; an angle-pinned state is rewound BEFORE its drag so the authored drag outcome is deterministic",
+      "source_patch": false,
+      "new_tolerance": false
+    }
+  },
+  "hard_channel_residual_ledger": {
+    "authority": "skerishKang/lovetree-limone#589 comment 5908541198",
+    "rule": "every non-exact geometry/computed-style field on an AUTHORED_LIVE or EXPLICIT_TRANSIENT state is written to evidence/s4/residual-ledger.json with exact state, field path, per-side values, per-side liveness, stabilization action, and one already-authorized classification",
+    "stable_state_residual": "REAL DEFECT - never ledgered",
+    "new_classifications_authorized": false,
+    "allowed_classifications": [
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+    ],
+    "summary_fields": [
+      "GEOMETRY_RAW_EXACT",
+      "GEOMETRY_CONTRACT_EXACT",
+      "COMPUTED_STYLE_RAW_EXACT",
+      "COMPUTED_STYLE_CONTRACT_EXACT"
+    ],
+    "candidate_pass_requires": "geometry_contract_exact=36/36 AND computed_style_contract_exact=36/36",
+    "per_run_proof_requirements": [
+      "semantic_contract_exact=36/36",
+      "geometry_contract_exact=36/36",
+      "computed_style_contract_exact=36/36",
+      "stable_states_exact=30/30",
+      "real_parity_defects=0",
+      "unclassified_residuals=0",
+      "D1_D5_PRESERVED=YES"
+    ],
+    "unchanged_by_this_correction": [
+      "source/runtime",
+      "state intent",
+      "settle policy",
+      "tolerance",
+      "D2/D3 projection",
+      "Product adoption",
+      "allowed classifications"
+    ],
+    "classification_evidence_rule": {
+      "authority": "skerishKang/lovetree-limone#589 comment 5909569578",
+      "bug": "the classifier previously derived the infinite class from geometryMotion === true, which only proves an element moved between samples, not that the motion came from an infinite authored CSSAnimation; the authored .toast has transition .3s and no animation, so its residuals were mislabeled",
+      "fix": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF requires the native animation inventory to show the affected target under a CSSAnimation with animationName in {drift,scan,spin} and iterations Infinity, on BOTH surfaces",
+      "finite_case": "a native CSSTransition on the affected target classifies as AUTHORED_FINITE_TRANSIENT_PHASE; this is the authored .toast case",
+      "both_surfaces_must_agree": "if the two surfaces disagree about which animation covers the target, the residual is unexplained and falls through rather than being guessed",
+      "recorded_per_row": "native_animation_proof on every hard-channel ledger row",
+      "new_classifications_authorized": false
+    }
+  }
+}

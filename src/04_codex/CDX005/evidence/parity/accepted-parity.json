@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX005",
+  "source_id": "CDX005",
+  "master_id": "MST105",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "ACCEPTED",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "identity": {
+    "codex_id": "CDX005",
+    "source_id": "CDX005",
+    "master_id": "MST105",
+    "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE"
+  },
+  "frozen_authority": {
+    "drive_file_id": "1iC6IyJBy86UhIANts6nDm414WnBUU66p",
+    "filename": "lovetree-video-figure-atelier-v2.html",
+    "bytes": 27918,
+    "sha256": "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466",
+    "authority_mode": "SINGLE",
+    "v1_relation": "SUPERSEDED_REVISION_NOT_AUTHORITY"
+  },
+  "protected_runtime": {
+    "blobs": {
+      "original/original.html": {
+        "git_blob_sha1": "782e4dbb0de1d1a1d8bbff0b3674a6ec51baa8d3",
+        "sha256": "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466",
+        "bytes": 27918
+      },
+      "split/index.html": {
+        "git_blob_sha1": "3fd5f6895c604e1e7b9e34f04f2935b54dbedfc8",
+        "sha256": "67d4d26d185f5544ed51bf0827a0b696b6d3a90aefe164216aed75333e33d172",
+        "bytes": 4041
+      },
+      "split/styles.css": {
+        "git_blob_sha1": "f0fa2b60aef8a75ea572979c13fd7f88a9280bca",
+        "sha256": "8d446c57cbdc911d3d3df163e31d21b761c9ab8a145913f235249cf63f0f0766",
+        "bytes": 13963
+      },
+      "split/script.js": {
+        "git_blob_sha1": "cca7098156ca3f7c728fb40340e81c16f034939a",
+        "sha256": "37b19ee9369a40d589eff35540ece741bfe9bff095e64b29111065f63001cafd",
+        "bytes": 9961
+      }
+    },
+    "round_trip_byte_identity": true,
+    "round_trip_bytes": 27918,
+    "split_outputs": {
+      "split/index.html": {
+        "bytes": 4041,
+        "sha256": "67d4d26d185f5544ed51bf0827a0b696b6d3a90aefe164216aed75333e33d172",
+        "git_blob_sha1": "3fd5f6895c604e1e7b9e34f04f2935b54dbedfc8"
+      },
+      "split/styles.css": {
+        "bytes": 13963,
+        "sha256": "8d446c57cbdc911d3d3df163e31d21b761c9ab8a145913f235249cf63f0f0766",
+        "git_blob_sha1": "f0fa2b60aef8a75ea572979c13fd7f88a9280bca"
+      },
+      "split/script.js": {
+        "bytes": 9961,
+        "sha256": "37b19ee9369a40d589eff35540ece741bfe9bff095e64b29111065f63001cafd",
+        "git_blob_sha1": "cca7098156ca3f7c728fb40340e81c16f034939a"
+      }
+    }
+  },
+  "asset_preservation": {
+    "original_png": 80,
+    "split_png": 80,
+    "byte_identical_by_name_and_blob": true,
+    "prefix": "assets/turnarounds/transparent/"
+  },
+  "binding": {
+    "accepted_candidate_head": "35a7a538ce73ac85e4adb71f8d4831633a66f50f",
+    "capture_head": "35a7a538ce73ac85e4adb71f8d4831633a66f50f",
+    "pull_request": 660,
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5920421532",
+    "central_visual_review_ref": "skerishKang/lovetree-limone#589 comment 5920421532 (direct 12-state visual review PASS)",
+    "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5889378824",
+    "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5906458180",
+    "s4_hard_channel_ruling": "skerishKang/lovetree-limone#589 comment 5908541198",
+    "s4_classification_ruling": "skerishKang/lovetree-limone#589 comment 5909569578",
+    "note": "This record binds accepted parity to the reviewed candidate head. It is not self-referential about the promotion commit: the promotion commit that creates this file necessarily has a different head, and CENTRAL verifies that head by exact-head CI after the promotion push."
+  },
+  "three_run_proof": {
+    "required_runs": 3,
+    "runs_recorded": 3,
+    "runs_clean": true,
+    "three_run_proof": true,
+    "averaging_or_best_of": "FORBIDDEN",
+    "carried_over_prior_proof": false,
+    "runs": [
+      {
+        "run_index": 1,
+        "semantic_contract_exact": "36/36",
+        "geometry_contract_exact": "36/36",
+        "computed_style_contract_exact": "36/36",
+        "stable_states_exact": "30/30",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "d1_d5_preserved": "YES",
+        "network_error_states": 0,
+        "missing_asset_states": 0
+      },
+      {
+        "run_index": 2,
+        "semantic_contract_exact": "36/36",
+        "geometry_contract_exact": "36/36",
+        "computed_style_contract_exact": "36/36",
+        "stable_states_exact": "30/30",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "d1_d5_preserved": "YES",
+        "network_error_states": 0,
+        "missing_asset_states": 0
+      },
+      {
+        "run_index": 3,
+        "semantic_contract_exact": "36/36",
+        "geometry_contract_exact": "36/36",
+        "computed_style_contract_exact": "36/36",
+        "stable_states_exact": "30/30",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "d1_d5_preserved": "YES",
+        "network_error_states": 0,
+        "missing_asset_states": 0
+      }
+    ]
+  },
+  "residual_ledger": {
+    "path": "evidence/s4/residual-ledger.json",
+    "entries": 14,
+    "allowed_classifications": [
+      "D2_RANDOM_SCALAR",
+      "D3_RANDOM_SCALAR",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+    ],
+    "stable_state_residual_waived": false,
+    "unclassified_residuals": 0,
+    "note": "Every geometry/computed-style residual on an AUTHORED_LIVE or EXPLICIT_TRANSIENT state is a ledger row carrying native animation identity. A STABLE-state residual is a real defect and was never ledgered."
+  },
+  "frozen_source_defects": {
+    "ids": [
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5"
+    ],
+    "preserved": true,
+    "repaired": false,
+    "d1_d5_preserved_every_run": true
+  },
+  "central_visual_review": {
+    "performed": true,
+    "result": "PASS",
+    "ref": "skerishKang/lovetree-limone#589 comment 5920421532 (direct 12-state visual review PASS)",
+    "states_reviewed": 12,
+    "panel_results": {
+      "D1::AUTO_PAUSED_A_000": "VISUAL_EQUAL",
+      "D1::MANUAL_ROTATE_A_045": "VISUAL_EQUAL",
+      "D1::NEXT_LOOK_B_000_SETTLED": "VISUAL_EQUAL",
+      "D1::SAVE_LOOK_F_STEADY": "VISUAL_EQUAL",
+      "D1::UPLOAD_MODAL_OPEN": "VISUAL_EQUAL",
+      "D1::CARD_HOVER": "VISUAL_EQUAL",
+      "D1::LOOK_SWITCH_TRANSIENT_OUT": "VISUAL_EQUAL_AT_REVIEWED_CAPTURE",
+      "D1::SAVE_BURST_TRANSIENT": "VISUAL_EQUAL_AT_REVIEWED_CAPTURE",
+      "T1::NEXT_LOOK_B_000_SETTLED": "VISUAL_EQUAL",
+      "M1::AUTO_PAUSED_A_000": "VISUAL_EQUAL",
+      "M1::MOBILE_PANEL_AND_GRID_FLOW": "VISUAL_EQUAL",
+      "R1::INITIAL_SOURCE_BEHAVIOR": "VISUAL_EQUAL"
+    },
+    "method": "direct qualitative review of the 12-state ORIGINAL|SPLIT contact sheet; no pixel tolerance, SSIM, perceptual threshold or raw-PNG equality is used",
+    "contact_sheet": "local review artifact outside the capsule; never committed",
+    "review_pack_committed": 12
+  },
+  "visual_comparison_policy": {
+    "raw_png_byte_equality_required": false,
+    "pixel_tolerance": "NONE",
+    "ssim": "NONE",
+    "perceptual_hamming_threshold": "NONE",
+    "raw_png_equal_field": "NOT_COMPUTED_EVIDENCE_ONLY_NOT_A_GATE",
+    "screenshots_are": "EVIDENCE_CHANNEL_ONLY"
+  },
+  "stochastic_projection": {
+    "d2_d3_random_scalar_fields": [
+      "D2.dom.burstAnimationDelays",
+      "D2.dom.burstParticleXsYs"
+    ],
+    "policy": "FIELD_LEVEL_ONLY_RANDOM_SCALARS; the enclosing particle and upload structure is still compared exactly; no Math.random seed, no monkey-patch, no clock patch, no performance.now patch, no source normalization",
+    "math_random_seed_or_monkey_patch": false,
+    "clock_or_performance_now_patch": false,
+    "source_normalization": false
+  },
+  "adoption": {
+    "product_adoption": false,
+    "product_canonical": false,
+    "lineage58_adoption": false,
+    "drive_mutation": 0
+  },
+  "candidate_evidence_refs": {
+    "contract": "evidence/s4/contract.json",
+    "candidate_summary": "evidence/s4/candidate-summary.json",
+    "residual_ledger": "evidence/s4/residual-ledger.json",
+    "three_run_proof": "evidence/s4/three-run-proof.json",
+    "review_pack": "evidence/s4/review-pack/",
+    "s3_roundtrip_historical": "evidence/s3/roundtrip.json"
+  }
+}

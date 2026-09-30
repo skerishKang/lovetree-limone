@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX005",
+  "status": "ACCEPTED",
+  "stage": "S2_BASELINE_ACCEPTED",
+  "accepted_by": "CENTRAL",
+  "acceptance_ref": {
+    "repo": "skerishKang/lovetree-limone",
+    "issue": "#589",
+    "comment": 5887518417
+  },
+  "report": {
+    "repo": "skerishKang/workdiary",
+    "commit": "960fd4ad407d5b996f644064c6ed1a5b7383d7ab",
+    "path": "lovetree-reports/2026-09-29/LOCAL1/589-mst105-cdx005-s2-baseline.md",
+    "acceptance_comment": 5887518417
+  },
+  "authority": {
+    "bytes": 27918,
+    "sha256": "ac30f2abfc88e99e1ce7829f270c4cc76a5eae93b5f1b1e3a56dac1654c5b466",
+    "drive_file_id": "1iC6IyJBy86UhIANts6nDm414WnBUU66p"
+  },
+  "capture": {
+    "surface": "STANDALONE",
+    "contexts": [
+      {
+        "id": "D1",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "states": 18,
+        "repetitions": 2,
+        "semantic_equal": "16/18",
+        "raw_png_equal": "0/18"
+      },
+      {
+        "id": "T1",
+        "width": 900,
+        "height": 900,
+        "dpr": 1,
+        "states": 6,
+        "repetitions": 2,
+        "semantic_equal": "6/6",
+        "raw_png_equal": "0/6"
+      },
+      {
+        "id": "M1",
+        "width": 390,
+        "height": 844,
+        "dpr": 1,
+        "states": 8,
+        "repetitions": 2,
+        "semantic_equal": "5/8",
+        "raw_png_equal": "0/8"
+      },
+      {
+        "id": "R1",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "reduced_motion": "reduce",
+        "states": 4,
+        "repetitions": 2,
+        "semantic_equal": "4/4",
+        "raw_png_equal": "0/4"
+      }
+    ],
+    "states_total": 36,
+    "repetitions_per_context": 2,
+    "total_png": 72,
+    "semantic_repeatability": "31/36",
+    "raw_png_equality": "0/36",
+    "console_errors": 0,
+    "failed_requests": 0,
+    "missing_resources": 0,
+    "assets_required": 80,
+    "assets_found": 80,
+    "settle_ms_approx": 202,
+    "upload_fixture": "SYNTHETIC_16_BYTE_LOCAL_FILE_ONLY"
+  },
+  "nondeterminism_explained": {
+    "continuous_css_motion": "YES — 4 authored @keyframes run unconditionally; 5 screenshots of one frozen DOM state were all distinct while 4 semantic snapshots were identical",
+    "stochastic_math_random": "YES — 3 authored Math.random() sites (D2 save burst, D3 upload progress)",
+    "mobile_hidden_auto_control": "YES — D4 causes the only three M1 semantic divergences, on the angle axis only",
+    "unexplained_drift": 0
+  },
+  "baseline_stable": false,
+  "baseline_stable_note": "BASELINE_STABLE=NO is not an S2 failure. The frozen source is pixel-nondeterministic by authored design; S2 characterized it truthfully and CENTRAL accepted it. Screenshot equality is NOT claimed anywhere in this capsule.",
+  "screenshot_equality_claimed": false,
+  "product_adoption": false,
+  "lineage58_adoption": false
+}
