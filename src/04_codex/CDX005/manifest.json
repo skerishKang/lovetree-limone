@@ -56,7 +56,7 @@
       "detail": "All four shared scripts enumerate only src/03_sources directories matching ^SRC\\d{3}$ and therefore never address src/04_codex/CDX005. The capsule repository path IS a runtime surface for both original and split once served with its own assets/ directory, so no skip disposition is required and none was fabricated. No shared harness file was modified.",
       "s3_evidence_executor": "src/04_codex/CDX005/tests/s3-roundtrip.test.mjs"
     },
-    "note": "S4 parity is NOT released for this capsule. S3 records a mechanical split and a byte round-trip only; no screenshot, no candidate parity artifact and no accepted-parity claim exist at this stage."
+    "note": "S4 parity is ACCEPTED for this capsule by CENTRAL direct visual review and the accepted three-run proof. The protected original/split runtime remains the S3 mechanical materialization; accepted parity is recorded at evidence/parity/accepted-parity.json and does not imply Product adoption."
   },
   "source_contract": {
     "frozen_defects": [
@@ -97,7 +97,7 @@
       }
     ],
     "frozen_defect_count": 5,
-    "frozen_defect_disposition": "PRESERVED_THROUGH_S3; D1-D5 REPAIR IS FORBIDDEN IN THIS STAGE",
+    "frozen_defect_disposition": "PRESERVED_THROUGH_S4; D1-D5 REMAIN UNREPAIRED IN THE ACCEPTED PARITY LANE",
     "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
     "parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5887518417",
     "motion_inventory": {
@@ -131,7 +131,7 @@
     "path": "lovetree-reports/2026-09-29/LOCAL1/589-mst105-cdx005-s2-baseline.md",
     "acceptance_comment": 5887518417
   },
-  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5887518417",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5889378824",
   "product_adoption": false,
   "lineage58_adoption": false,
   "drive_mutation": 0,
