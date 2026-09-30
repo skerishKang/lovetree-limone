@@ -1023,19 +1023,20 @@ async function runState(browser, port, ctx, state, surface, opts = {}) {
   }
   await DRIVERS[state](page);
 
+  /* Intent-driven settle. Runs AFTER the driver and AFTER the M1 D4 native proof above, and
+   * BEFORE any hard channel is read. See settleForCapture for the fixed order. */
+  const handoff = await settleForCapture(page, ctx, state);
+
   /* Hero decode settle. The authored look switch assigns a new `src` and the browser decodes the
    * PNG asynchronously, so sampling in the same tick can observe complete=false / naturalWidth=0 on
    * one surface and a decoded image on the other. That is image-load timing, not a state or layout
-   * difference, so the harness waits for the currently assigned hero to finish decoding before it
-   * reads any channel. This adds no wait that changes authored behavior and it writes nothing. */
+   * difference. This wait must come AFTER settleForCapture, because settling can itself advance the
+   * authored look and assign a fresh `src`; waiting before it left a genuine decode race on the
+   * transient states. It adds no wait that changes authored behavior and it writes nothing. */
   await page.waitForFunction(() => {
     const h = document.getElementById('hero');
     return h && h.complete === true && h.naturalWidth > 0;
   }, null, { timeout: 10000 });
-
-  /* Intent-driven settle. Runs AFTER the driver and AFTER the M1 D4 native proof above, and
-   * BEFORE any hard channel is read. See settleForCapture for the fixed order. */
-  const handoff = await settleForCapture(page, ctx, state);
 
   /* NATIVE hard channels, captured BEFORE any phase-lock. This is the native liveness and
    * animation inventory that ruling 5905286796 requires to exist before the harness may
@@ -1503,6 +1504,42 @@ test('C13 the generic moving-either-side exclusion is gone from the parity gate'
     'no executable isCaptureInstant definition or call survives');
 });
 
+test('C17 no ledger entry is labelled with a class its field cannot have', () => {
+  /* A self-difference proves the SOURCE is nondeterministic on that field. It does not make
+   * the field a D2/D3 random scalar. Mislabelling would let an unexplained residual buy a
+   * legitimate-sounding classification, so the label must match the field's actual nature. */
+  const lp = path.join(CAPSULE, 'evidence', 's4', 'residual-ledger.json');
+  if (!fs.existsSync(lp)) return;
+  const l = JSON.parse(fs.readFileSync(lp, 'utf8'));
+  for (const e of l.entries) {
+    if (e.classification === 'D2_RANDOM_SCALAR') {
+      assert.ok(/burstParticleXsYs|burstAnimationDelays/.test(e.field_path),
+        `D2_RANDOM_SCALAR only applies to the authored burst fields, not ${e.field_path}`);
+    }
+    if (e.classification === 'D3_RANDOM_SCALAR') {
+      assert.ok(/modal\.(percent|barWidth|stepDoneSignature)/.test(e.field_path),
+        `D3_RANDOM_SCALAR only applies to the authored upload fields, not ${e.field_path}`);
+    }
+    if (e.classification === 'AUTHORED_LIVE_PHASE') {
+      assert.ok(['AUTHORED_LIVE', 'EXPLICIT_TRANSIENT'].includes(e.state_intent),
+        `AUTHORED_LIVE_PHASE is only valid on a live/transient state, not ${e.state}`);
+      /* The angle axis, or a live-phase animation-liveness count on a state that is live by
+       * accepted design. Anything else under this label is a mislabel. */
+      assert.ok(['dom.heroSrc', 'dom.angleText', 'dom.angleOnIndex'].includes(e.field_path)
+        || e.field_path.startsWith('transientAnimations'),
+      `AUTHORED_LIVE_PHASE only covers the angle axis or live animation liveness, not ${e.field_path}`);
+    }
+    if (e.classification === 'AUTHORED_FINITE_TRANSIENT_PHASE') {
+      assert.equal(e.state_intent, 'EXPLICIT_TRANSIENT',
+        `AUTHORED_FINITE_TRANSIENT_PHASE is only valid on an explicit transient, not ${e.state}`);
+    }
+    if (e.classification === 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF') {
+      assert.ok(/^(geometry|computedStyle|geometryRaw)\./.test(e.field_path),
+        `the infinite-CSS class only covers geometry/computed-style, not ${e.field_path}`);
+    }
+  }
+});
+
 test('C14 the per-state intent table matches the CENTRAL settle ruling exactly', () => {
   assert.deepEqual(Object.keys(STATE_INTENT).sort(), [
     'D1/01_initial_auto_active',
@@ -1651,27 +1688,48 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
        * It is now classifiable ONLY on a state whose intent tolerates a live phase; on a
        * STABLE state a liveness difference is a real defect like any other. */
       const transientDiffs = diffPaths(pO.transientAnimations, pS.transientAnimations);
-      const transientGateAllowed = isLive;
+      /* The authored FINITE transient class belongs to EXPLICIT_TRANSIENT states only. An
+       * AUTHORED_LIVE state is live by accepted design, not mid-transient, so a CSSTransition
+       * count difference there has no authorized class and stays a real defect. */
+      const transientGateAllowed = intent === 'EXPLICIT_TRANSIENT';
 
       /* The live/transient classes that may be routed to the residual ledger. A residual that
-       * matches NONE of these is a real parity defect - it is never written to the ledger. */
+       * matches NONE of these is a real parity defect - it is never written to the ledger.
+       *
+       * A field that differs between two runs of the UNMODIFIED ORIGINAL source is
+       * nondeterministic by construction, whatever it is. It is NOT re-labelled as a D2/D3
+       * random scalar: the honest disposition is SELF_NONDETERMINISTIC, and its classification
+       * is derived from the SAME bounded class list by asking which authorized class actually
+       * explains it. If none does, it is a real defect - a self-difference is evidence of source
+       * nondeterminism, never a licence to invent a class. */
       const classifyResidual = (d) => {
-        if (selfPaths.has(d.path)) return { classification: 'D2_RANDOM_SCALAR', disposition: 'SELF_NONDETERMINISTIC' };
+        const selfDiff = selfPaths.has(d.path);
         if (ANGLE_PATHS.includes(d.path) && angleGateAllowed) {
           return { classification: 'AUTHORED_LIVE_PHASE', disposition: 'LEDGER' };
         }
         if (d.path.startsWith('transientAnimations') && transientGateAllowed) {
           return { classification: 'AUTHORED_FINITE_TRANSIENT_PHASE', disposition: 'LEDGER' };
         }
-        if (intent === 'STABLE' && geometryAll.some((g) => g.path === d.path.replace(/^.*?\./, ''))) {
-          return { classification: 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF', disposition: 'LEDGER' };
+        /* transientAnimations on an AUTHORED_LIVE state is still a live-phase difference, not a
+         * finite-transient one, so it is classified as such rather than mislabelled. */
+        if (d.path.startsWith('transientAnimations') && isLive) {
+          return { classification: 'AUTHORED_LIVE_PHASE', disposition: 'LEDGER' };
         }
         if (/burstParticleXsYs|burstAnimationDelays/.test(d.path)) {
-          return { classification: 'D2_RANDOM_SCALAR', disposition: 'LEDGER' };
+          return { classification: 'D2_RANDOM_SCALAR', disposition: selfDiff ? 'SELF_NONDETERMINISTIC' : 'LEDGER' };
         }
         if (/modal\.(percent|barWidth|stepDoneSignature)/.test(d.path)) {
-          return { classification: 'D3_RANDOM_SCALAR', disposition: 'LEDGER' };
+          return { classification: 'D3_RANDOM_SCALAR', disposition: selfDiff ? 'SELF_NONDETERMINISTIC' : 'LEDGER' };
         }
+        /* A geometry/computed-style delta on a STABLE state is explained by the authored
+         * INFINITE CSS tracks, which have no terminal phase. That is the ONLY class that may
+         * cover a moving element, and only after the native inventory was recorded. */
+        const elPath = d.path.replace(/^[a-zA-Z]+\./, '').replace(/\[\d+\]$/, '');
+        if (intent === 'STABLE' && (geometryAll.some((g) => g.path === d.path.replace(/^[a-zA-Z]+\./, ''))
+          || elPath.startsWith('heroWrap'))) {
+          return { classification: 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF', disposition: selfDiff ? 'SELF_NONDETERMINISTIC' : 'LEDGER' };
+        }
+        if (selfDiff) return { classification: null, disposition: 'SELF_NONDETERMINISTIC' };
         return null; // NOT classifiable -> real defect
       };
 

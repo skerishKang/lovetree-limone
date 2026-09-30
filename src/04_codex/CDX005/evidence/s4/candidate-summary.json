@@ -15,11 +15,11 @@
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "PAIRED_STATE_COUNT": 36,
-  "SEMANTIC_RAW_EXACT": "18/36",
+  "SEMANTIC_RAW_EXACT": "22/36",
   "SEMANTIC_CONTRACT_EXACT": "31/36",
-  "RESIDUAL_LEDGER_ENTRIES": 33,
+  "RESIDUAL_LEDGER_ENTRIES": 3,
   "RESIDUAL_LEDGER_PATH": "evidence/s4/residual-ledger.json",
-  "GEOMETRY_EXACT": "35/36",
+  "GEOMETRY_EXACT": "34/36",
   "STATE_INTENT_COUNTS": {
     "AUTHORED_LIVE": 3,
     "STABLE": 30,
@@ -33,10 +33,8 @@
     "R1/03_css_drift_spin_scan_observation": "AUTHORED_LIVE",
     "R1/04_save_burst_observation": "EXPLICIT_TRANSIENT"
   },
-  "ANGLE_AXIS_LEDGER_STATES": [
-    "D1/01_initial_auto_active"
-  ],
-  "ANGLE_AXIS_LEDGER_DELTAS": 3,
+  "ANGLE_AXIS_LEDGER_STATES": [],
+  "ANGLE_AXIS_LEDGER_DELTAS": 0,
   "SETTLE_POLICY": "State-semantic, per CENTRAL ruling #589 comment 5905286796. STABLE states stop the authored JS auto loop through the authored AUTO control (real user click on desktop/tablet; DOM click of the SAME authored control on mobile, after D4 is proven and recorded as HARNESS_ONLY_NOT_USER_REACHABLE) and then wait out any authored finite CSS transition. AUTHORED_LIVE and EXPLICIT_TRANSIENT states are never stopped or waited into another semantic state. The authored drift/scan/spin keyframes are infinite by design, so after the NATIVE hard channels and animation/liveness inventory are recorded, the harness phase-locks the existing animation objects identically on both surfaces for geometry/computed-style only, recorded as HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT.",
   "EXCLUSION_POLICY": "NO generic movingOnEither exclusion exists. On a STABLE state a motion-state disagreement, a geometry delta or a computed-style delta is a REAL PARITY DEFECT. A residual is ledgered only when it matches one of the five allowed classifications; anything else is a real defect.",
   "ALLOWED_RESIDUAL_CLASSIFICATIONS": [
@@ -47,14 +45,14 @@
     "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
   ],
   "UNCLASSIFIED_RESIDUALS": 0,
-  "COMPUTED_STYLE_EXACT": "34/36",
+  "COMPUTED_STYLE_EXACT": "33/36",
   "INTERACTION_EXACT": "36/36",
   "ANIMATION_INVENTORY_EXACT": "36/36",
   "NETWORK_ERROR_STATES": 0,
-  "ABORTED_IN_FLIGHT_REQUEST_STATES": 0,
+  "ABORTED_IN_FLIGHT_REQUEST_STATES": 1,
   "ABORTED_REQUEST_NOTE": "net::ERR_ABORTED on a turnaround PNG is the authored source reassigning hero.src during a rapid rotation. It was observed identically on ORIGINAL and SPLIT, carries no 4xx, and the same asset resolves on reload with a non-zero naturalWidth, so it is recorded as load timing and is not counted as a network error or a missing asset.",
   "MISSING_ASSET_STATES": 0,
-  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 8,
+  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 7,
   "ASSET_REQUESTS_OBSERVED_PER_STATE": [
     10,
     11,
@@ -261,110 +259,95 @@
       }
     }
   ],
-  "REAL_PARITY_DEFECTS": 15,
+  "REAL_PARITY_DEFECTS": 12,
   "real_parity_defect_detail": [
     {
       "ctx": "D1",
-      "state": "07_filter_male",
+      "state": "10_filter_saved_after_save",
       "defects": [
         {
           "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/A_045.png",
-          "b": "assets/turnarounds/transparent/A_090.png"
+          "a": "assets/turnarounds/transparent/F_315.png",
+          "b": "assets/turnarounds/transparent/F_000.png"
         },
         {
           "path": "dom.angleText",
-          "a": "045°",
-          "b": "090°"
+          "a": "315°",
+          "b": "000°"
         },
         {
           "path": "dom.angleOnIndex",
-          "a": 1,
-          "b": 2
+          "a": 7,
+          "b": 0
         }
       ]
     },
     {
-      "ctx": "D1",
-      "state": "15_primary_save_hover",
+      "ctx": "T1",
+      "state": "02_manual_rotate_045",
       "defects": [
         {
           "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/A_135.png",
-          "b": "assets/turnarounds/transparent/A_090.png"
-        },
-        {
-          "path": "dom.angleText",
-          "a": "135°",
-          "b": "090°"
-        },
-        {
-          "path": "dom.angleOnIndex",
-          "a": 3,
-          "b": 2
+          "a": "assets/turnarounds/transparent/A_000.png",
+          "b": "assets/turnarounds/transparent/A_045.png"
         }
       ]
     },
     {
-      "ctx": "D1",
-      "state": "16_look_switch_transient_out",
+      "ctx": "T1",
+      "state": "05_save_look_steady",
       "defects": [
         {
-          "path": "geometry.heroWrap.x",
-          "a": 372,
-          "b": 373
+          "path": "dom.heroSrc",
+          "a": "assets/turnarounds/transparent/F_270.png",
+          "b": "assets/turnarounds/transparent/F_225.png"
         },
         {
-          "path": "geometry.heroWrap.y",
-          "a": 113,
-          "b": 114
+          "path": "dom.angleText",
+          "a": "270°",
+          "b": "225°"
         },
         {
-          "path": "geometry.heroWrap.h",
-          "a": 755,
-          "b": 754
+          "path": "dom.angleOnIndex",
+          "a": 6,
+          "b": 5
         }
       ]
     },
     {
       "ctx": "M1",
-      "state": "04_filter_female",
+      "state": "05_save_look_steady",
       "defects": [
         {
-          "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/A_135.png",
-          "b": "assets/turnarounds/transparent/A_180.png"
+          "path": "geometry.toast.y",
+          "a": 1613,
+          "b": 1617
         },
         {
-          "path": "dom.angleText",
-          "a": "135°",
-          "b": "180°"
+          "path": "computedStyle.toast.opacity",
+          "a": "1",
+          "b": "0.771786"
         },
         {
-          "path": "dom.angleOnIndex",
-          "a": 3,
-          "b": 4
+          "path": "computedStyle.toast.transform",
+          "a": "matrix(1, 0, 0, 1, -88.3047, 0)",
+          "b": "matrix(1, 0, 0, 1, -88.3047, 4.10785)"
         }
       ]
     },
     {
       "ctx": "R1",
-      "state": "03_css_drift_spin_scan_observation",
+      "state": "04_save_burst_observation",
       "defects": [
         {
-          "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/A_135.png",
-          "b": "assets/turnarounds/transparent/A_090.png"
+          "path": "geometry.heroWrap.x",
+          "a": 362,
+          "b": 361
         },
         {
-          "path": "dom.angleText",
-          "a": "135°",
-          "b": "090°"
-        },
-        {
-          "path": "dom.angleOnIndex",
-          "a": 3,
-          "b": 2
+          "path": "geometry.heroWrap.h",
+          "a": 779,
+          "b": 782
         }
       ]
     }
