@@ -10,7 +10,8 @@
     "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
     "s4_temporal_synchronization_ruling": "skerishKang/lovetree-limone#589 comment 5906458180",
     "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417",
-    "s4_hard_channel_ledger_ruling": "skerishKang/lovetree-limone#589 comment 5908541198"
+    "s4_hard_channel_ledger_ruling": "skerishKang/lovetree-limone#589 comment 5908541198",
+    "s4_classification_correction_ruling": "skerishKang/lovetree-limone#589 comment 5909569578"
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "parity_contract_fields": {
@@ -300,14 +301,22 @@
       "D1_D5_PRESERVED=YES"
     ],
     "unchanged_by_this_correction": [
-      "runtime source",
-      "protected blobs",
-      "160 PNG",
+      "source/runtime",
       "state intent",
-      "settle protocol",
-      "allowed classifications",
+      "settle policy",
+      "tolerance",
       "D2/D3 projection",
-      "Product adoption"
-    ]
+      "Product adoption",
+      "allowed classifications"
+    ],
+    "classification_evidence_rule": {
+      "authority": "skerishKang/lovetree-limone#589 comment 5909569578",
+      "bug": "the classifier previously derived the infinite class from geometryMotion === true, which only proves an element moved between samples, not that the motion came from an infinite authored CSSAnimation; the authored .toast has transition .3s and no animation, so its residuals were mislabeled",
+      "fix": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF requires the native animation inventory to show the affected target under a CSSAnimation with animationName in {drift,scan,spin} and iterations Infinity, on BOTH surfaces",
+      "finite_case": "a native CSSTransition on the affected target classifies as AUTHORED_FINITE_TRANSIENT_PHASE; this is the authored .toast case",
+      "both_surfaces_must_agree": "if the two surfaces disagree about which animation covers the target, the residual is unexplained and falls through rather than being guessed",
+      "recorded_per_row": "native_animation_proof on every hard-channel ledger row",
+      "new_classifications_authorized": false
+    }
   }
 }

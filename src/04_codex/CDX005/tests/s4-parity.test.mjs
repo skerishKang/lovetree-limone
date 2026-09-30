@@ -605,6 +605,11 @@ function collectChannels() {
     const t = a.effect && a.effect.target;
     return {
       target: String(t ? (t.id || t.className || t.tagName) : 'unknown'),
+      /* Animation CLASS identity, recorded per target. 'CSSAnimation' is an authored keyframe
+       * track; 'CSSTransition' is a finite authored transition. This is what distinguishes an
+       * infinite drift/scan/spin phase from a finite toast phase, and it cannot be inferred from
+       * whether an element merely moved between samples. */
+      kind: a.constructor && a.constructor.name ? a.constructor.name : 'unknown',
       name: a.animationName || 'unknown',
       duration: a.effect && a.effect.getTiming ? String(a.effect.getTiming().duration) : null,
       delay: a.effect && a.effect.getTiming ? String(a.effect.getTiming().delay) : null,
@@ -1946,6 +1951,70 @@ test('C23 the three-run proof gate requires hard-channel contract exactness per 
   }
 });
 
+test('C24 a movement boolean alone can never select the infinite-CSS class', () => {
+  /* Ruling 5909569578: `geometryMotion === true` only proves an element moved between samples. It
+   * does not prove the motion came from an authored infinite CSSAnimation, and a finite
+   * `.toast` CSSTransition moves too. The classifier must key on native animation IDENTITY. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const start = src.indexOf('const classifyStyleChannel');
+  assert.ok(start > 0, 'classifyStyleChannel was located');
+  const body = src.slice(Math.max(0, start - 2200), start + 1200);
+  /* Strip comments and this guard's own body before scanning, so the assertion cannot match the
+   * identifier inside its own message. */
+  const codeOnly = src.replace(/\/\*[\s\S]*?\*\//g, ' ');
+  assert.equal(/nativeInfiniteLanes\s*[=(]/.test(codeOnly), false,
+    'no executable motion-boolean lane set may exist');
+  assert.equal(/geometryMotion\[[^\]]+\] === true/.test(body), false,
+    'the classifier must not infer the infinite class from geometryMotion');
+  // The infinite class must be gated on real identity: CSSAnimation + authored track + Infinity.
+  assert.ok(body.includes("x.kind === 'CSSAnimation'"), 'the infinite class requires a CSSAnimation');
+  assert.ok(body.includes("String(x.iterations) === 'Infinity'"), 'the infinite class requires iterations Infinity');
+  assert.ok(body.includes("INFINITE_TRACKS.indexOf(String(x.name)) >= 0"),
+    'the infinite class requires an authored infinite track name');
+});
+
+test('C25 the authored .toast is a finite transition, never an infinite animation', () => {
+  /* The concrete case CENTRAL flagged. The authored .toast declares `transition: .3s` and no
+   * animation at all, so any residual on it is a finite transient phase. */
+  const css = fs.readFileSync(path.join(CAPSULE, 'split', 'styles.css'), 'utf8');
+  const toast = (css.match(/\.toast\{[^}]*\}/) || [''])[0];
+  assert.ok(toast.includes('transition:'), 'the authored .toast declares a transition');
+  assert.equal(/animation\s*:/.test(toast), false,
+    'the authored .toast declares no animation, so it is never an infinite-CSS target');
+  assert.ok(!/\.toast[^}]*animation\s*:/.test(css), 'no animation property targets .toast');
+  // drift / scan / spin are the only infinite authored tracks.
+  for (const t of ['drift', 'scan', 'spin']) {
+    assert.ok(css.includes(`@keyframes ${t}`), `authored infinite track ${t} exists`);
+  }
+});
+
+test('C26 R1/04 toast residuals classify as a finite transient phase', () => {
+  /* Regression guard for the exact defect CENTRAL reported: these three rows were previously
+   * mislabeled INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF. */
+  const lp = path.join(CAPSULE, 'evidence', 's4', 'residual-ledger.json');
+  if (!fs.existsSync(lp)) return;
+  const l = JSON.parse(fs.readFileSync(lp, 'utf8'));
+  const toastRows = l.entries.filter((e) => e.field_path.includes('toast')
+    && (e.channel === 'geometry' || e.channel === 'computedStyle'));
+  for (const e of toastRows) {
+    assert.equal(e.classification, 'AUTHORED_FINITE_TRANSIENT_PHASE',
+      `${e.state} ${e.field_path} must be a finite transient phase, not ${e.classification}`);
+    assert.ok(e.native_animation_proof,
+      `${e.field_path} records the native animation proof behind its classification`);
+    const proved = e.native_animation_proof.original || [];
+    assert.equal(proved.some((x) => x.kind === 'CSSAnimation'), false,
+      `${e.field_path} native proof shows no CSSAnimation on the toast`);
+  }
+  // No hard-channel row may claim the infinite class without native CSSAnimation proof.
+  for (const e of l.entries.filter((x) => x.classification === 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF')) {
+    const proved = [...((e.native_animation_proof || {}).original || []), ...((e.native_animation_proof || {}).split || [])];
+    assert.ok(proved.some((x) => x.kind === 'CSSAnimation'
+      && ['drift', 'scan', 'spin'].indexOf(String(x.name)) >= 0
+      && String(x.iterations) === 'Infinity'),
+    `${e.field_path} claims the infinite class, so its native proof must show an infinite CSSAnimation`);
+  }
+});
+
 test('C14 the per-state intent table matches the CENTRAL settle ruling exactly', () => {
   assert.deepEqual(Object.keys(STATE_INTENT).sort(), [
     'D1/01_initial_auto_active',
@@ -2179,15 +2248,46 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
        *     AUTHORED_FINITE_TRANSIENT_PHASE residual;
        *   - anything else on a live state is an AUTHORED_LIVE_PHASE residual.
        * A STABLE-state delta is NEVER ledgered. */
-      const nativeInfiniteLanes = new Set(
-        (o.hard.geometryMotion ? Object.keys(o.hard.geometryMotion) : [])
-          .filter((k) => o.hard.geometryMotion[k] === true),
-      );
-      const classifyStyleChannel = (d, channel) => {
+      /* NATIVE ANIMATION IDENTITY, not a movement boolean. `geometryMotion === true` only proves
+       * an element moved between two samples; it does NOT prove the motion came from an infinite
+       * authored CSSAnimation. A finite `.toast` CSSTransition moves too, and inferring "infinite"
+       * from that mislabeled a finite toast phase as an infinite drift/scan/spin residual.
+       *
+       * The infinite class is now selected only when the native inventory, recorded BEFORE the
+       * phase-lock, actually shows the affected target under a CSSAnimation whose name is one of
+       * the authored infinite tracks with iterations === Infinity. A finite CSSTransition on the
+       * affected target yields AUTHORED_FINITE_TRANSIENT_PHASE instead. */
+      const INFINITE_TRACKS = ['drift', 'scan', 'spin'];
+      const nativeInfiniteTargets = (target) => {
+        const all2 = Array.isArray(target.transientAnimations) ? target.transientAnimations : [];
+        return new Set(all2
+          .filter((x) => x.kind === 'CSSAnimation'
+            && INFINITE_TRACKS.indexOf(String(x.name)) >= 0
+            && String(x.iterations) === 'Infinity')
+          .map((x) => String(x.target)));
+      };
+      const nativeFiniteTargets = (target) => {
+        const all2 = Array.isArray(target.transientAnimations) ? target.transientAnimations : [];
+        return new Set(all2
+          .filter((x) => x.kind === 'CSSTransition')
+          .map((x) => String(x.target)));
+      };
+      /* Both surfaces must agree the target is under the same kind of animation, otherwise the
+       * residual is unexplained and falls through to a real defect rather than a guess. */
+      const infiniteBoth = new Set([...nativeInfiniteTargets(o.hard)].filter((t) => nativeInfiniteTargets(s.hard).has(t)));
+      const finiteBoth = new Set([...nativeFiniteTargets(o.hard)].filter((t) => nativeFiniteTargets(s.hard).has(t)));
+      const classifyStyleChannel = (d) => {
         if (intent === 'STABLE') return null; // never ledgered away
-        const elPath = d.path.replace(/^[a-zA-Z]+\./, '').replace(/\[\d+\]$/, '');
-        if (nativeInfiniteLanes.has(elPath) || nativeInfiniteLanes.has(String(d.path).split('.')[0])) {
+        /* Resolve the affected element label from the measured field path. `geometry.toast.y`
+         * and `computedStyle.toast.opacity` both name the `toast` element. */
+        const elLabel = String(d.path).split('.').filter(Boolean)[0];
+        if (infiniteBoth.has(elLabel)) {
           return { classification: 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF', disposition: 'LEDGER' };
+        }
+        /* A finite authored transition on the affected element is a finite phase residual. The
+         * authored `.toast` carries `transition: .3s` and no animation, so this is its class. */
+        if (finiteBoth.has(elLabel)) {
+          return { classification: 'AUTHORED_FINITE_TRANSIENT_PHASE', disposition: 'LEDGER' };
         }
         if (intent === 'EXPLICIT_TRANSIENT') {
           return { classification: 'AUTHORED_FINITE_TRANSIENT_PHASE', disposition: 'LEDGER' };
@@ -2205,7 +2305,13 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
         original_motion_or_liveness: o.hard.geometryMotion || null,
         split_motion_or_liveness: s.hard.geometryMotion || null,
         stabilization_action: (o.phase && o.phase.action) || null,
-        classification: classifyStyleChannel(d, 'geometry').classification,
+        native_animation_proof: {
+          original: (Array.isArray(o.hard.transientAnimations) ? o.hard.transientAnimations : [])
+            .filter((x) => String(x.target) === String(d.path).split('.')[0]),
+          split: (Array.isArray(s.hard.transientAnimations) ? s.hard.transientAnimations : [])
+            .filter((x) => String(x.target) === String(d.path).split('.')[0]),
+        },
+        classification: classifyStyleChannel(d).classification,
         contract_disposition: 'LEDGER',
       }));
       const styleLedgerRows = intent === 'STABLE' ? [] : styleAll.map((d) => ({
@@ -2219,7 +2325,13 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
         original_motion_or_liveness: o.hard.geometryMotion || null,
         split_motion_or_liveness: s.hard.geometryMotion || null,
         stabilization_action: (o.phase && o.phase.action) || null,
-        classification: classifyStyleChannel(d, 'computedStyle').classification,
+        native_animation_proof: {
+          original: (Array.isArray(o.hard.transientAnimations) ? o.hard.transientAnimations : [])
+            .filter((x) => String(x.target) === String(d.path).split('.')[0]),
+          split: (Array.isArray(s.hard.transientAnimations) ? s.hard.transientAnimations : [])
+            .filter((x) => String(x.target) === String(d.path).split('.')[0]),
+        },
+        classification: classifyStyleChannel(d).classification,
         contract_disposition: 'LEDGER',
       }));
       /* Contract-exactness for the hard channels: a state is contract-exact when it has no real

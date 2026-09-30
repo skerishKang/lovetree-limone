@@ -14,15 +14,117 @@
   "note": "Every raw residual that is authorized by an explicitly named class. A residual that is NOT in this file is a real parity defect, counted in REAL_PARITY_DEFECTS.",
   "entries": [
     {
+      "state": "D1/01_initial_auto_active",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.heroSrc",
+      "original_a": "assets/turnarounds/transparent/A_315.png",
+      "original_b": "assets/turnarounds/transparent/A_270.png",
+      "split": "assets/turnarounds/transparent/A_270.png",
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "D1/01_initial_auto_active",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.angleText",
+      "original_a": "315°",
+      "original_b": "270°",
+      "split": "270°",
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "D1/01_initial_auto_active",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.angleOnIndex",
+      "original_a": 7,
+      "original_b": 6,
+      "split": 6,
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
       "state": "D1/16_look_switch_transient_out",
       "state_intent": "EXPLICIT_TRANSIENT",
-      "channel": "transientAnimations[2]",
-      "field_path": "transientAnimations[2].duration",
-      "original_a": "174.70734625954552",
-      "original_b": null,
-      "split": "14.160282583485936",
+      "channel": "transientAnimations",
+      "field_path": "transientAnimations.length",
+      "original_a": 12,
+      "original_b": 19,
+      "split": 19,
       "original_motion_or_liveness": {
-        "heroWrap": true,
+        "heroWrap": false,
         "figureZone": false,
         "grid": false,
         "panel": false,
@@ -48,47 +150,13 @@
       "contract_disposition": "LEDGER"
     },
     {
-      "state": "D1/16_look_switch_transient_out",
-      "state_intent": "EXPLICIT_TRANSIENT",
-      "channel": "transientAnimations[3]",
-      "field_path": "transientAnimations[3].duration",
-      "original_a": "174.70734625954552",
-      "original_b": null,
-      "split": "14.160282583485936",
-      "original_motion_or_liveness": {
-        "heroWrap": true,
-        "figureZone": false,
-        "grid": false,
-        "panel": false,
-        "topbar": false,
-        "filters": false,
-        "toast": false,
-        "modal": false,
-        "burst": false
-      },
-      "split_motion_or_liveness": {
-        "heroWrap": true,
-        "figureZone": false,
-        "grid": false,
-        "panel": false,
-        "topbar": false,
-        "filters": false,
-        "toast": false,
-        "modal": false,
-        "burst": false
-      },
-      "stabilization_action": "NONE_INTENTIONAL",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "R1/04_save_burst_observation",
+      "state": "D1/17_save_burst_transient",
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "dom",
       "field_path": "dom.heroSrc",
-      "original_a": "assets/turnarounds/transparent/A_135.png",
-      "original_b": "assets/turnarounds/transparent/A_090.png",
-      "split": "assets/turnarounds/transparent/A_090.png",
+      "original_a": "assets/turnarounds/transparent/G_045.png",
+      "original_b": null,
+      "split": "assets/turnarounds/transparent/G_090.png",
       "original_motion_or_liveness": {
         "heroWrap": false,
         "figureZone": false,
@@ -116,12 +184,12 @@
       "contract_disposition": "LEDGER"
     },
     {
-      "state": "R1/04_save_burst_observation",
+      "state": "D1/17_save_burst_transient",
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "dom",
       "field_path": "dom.angleText",
-      "original_a": "135°",
-      "original_b": "090°",
+      "original_a": "045°",
+      "original_b": null,
       "split": "090°",
       "original_motion_or_liveness": {
         "heroWrap": false,
@@ -150,12 +218,12 @@
       "contract_disposition": "LEDGER"
     },
     {
-      "state": "R1/04_save_burst_observation",
+      "state": "D1/17_save_burst_transient",
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "dom",
       "field_path": "dom.angleOnIndex",
-      "original_a": 3,
-      "original_b": 2,
+      "original_a": 1,
+      "original_b": null,
       "split": 2,
       "original_motion_or_liveness": {
         "heroWrap": false,
@@ -184,13 +252,149 @@
       "contract_disposition": "LEDGER"
     },
     {
+      "state": "R1/01_initial_source_behavior",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.heroSrc",
+      "original_a": "assets/turnarounds/transparent/A_270.png",
+      "original_b": null,
+      "split": "assets/turnarounds/transparent/A_225.png",
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "R1/01_initial_source_behavior",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.angleText",
+      "original_a": "270°",
+      "original_b": null,
+      "split": "225°",
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "R1/01_initial_source_behavior",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "dom",
+      "field_path": "dom.angleOnIndex",
+      "original_a": 6,
+      "original_b": null,
+      "split": 5,
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "R1/01_initial_source_behavior",
+      "state_intent": "AUTHORED_LIVE",
+      "channel": "transientAnimations",
+      "field_path": "transientAnimations.length",
+      "original_a": 4,
+      "original_b": null,
+      "split": 0,
+      "original_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "split_motion_or_liveness": {
+        "heroWrap": false,
+        "figureZone": false,
+        "grid": false,
+        "panel": false,
+        "topbar": false,
+        "filters": false,
+        "toast": false,
+        "modal": false,
+        "burst": false
+      },
+      "stabilization_action": "NONE_INTENTIONAL",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
       "state": "R1/04_save_burst_observation",
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "geometry",
       "field_path": "geometry.toast.y",
-      "original_a": 830,
+      "original_a": 848,
       "original_b": null,
-      "split": 832,
+      "split": 831,
       "original_motion_or_liveness": {
         "heroWrap": false,
         "figureZone": false,
@@ -214,7 +418,49 @@
         "burst": false
       },
       "stabilization_action": "HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT",
-      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ]
+      },
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "contract_disposition": "LEDGER"
     },
     {
@@ -222,9 +468,9 @@
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "computedStyle",
       "field_path": "computedStyle.toast.opacity",
-      "original_a": "0.98917",
+      "original_a": "0",
       "original_b": null,
-      "split": "0.864964",
+      "split": "0.929064",
       "original_motion_or_liveness": {
         "heroWrap": false,
         "figureZone": false,
@@ -248,7 +494,49 @@
         "burst": false
       },
       "stabilization_action": "HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT",
-      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ]
+      },
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "contract_disposition": "LEDGER"
     },
     {
@@ -256,9 +544,9 @@
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "computedStyle",
       "field_path": "computedStyle.toast.transform",
-      "original_a": "matrix(1, 0, 0, 1, -92.9766, 0.194931)",
+      "original_a": "matrix(1, 0, 0, 1, -92.9766, 18)",
       "original_b": null,
-      "split": "matrix(1, 0, 0, 1, -92.9766, 2.43066)",
+      "split": "matrix(1, 0, 0, 1, -92.9766, 1.27685)",
       "original_motion_or_liveness": {
         "heroWrap": false,
         "figureZone": false,
@@ -282,7 +570,49 @@
         "burst": false
       },
       "stabilization_action": "HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT",
-      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          },
+          {
+            "target": "toast",
+            "kind": "CSSTransition",
+            "name": "unknown",
+            "duration": "300",
+            "delay": "0",
+            "iterations": "1",
+            "playState": "running"
+          }
+        ]
+      },
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "contract_disposition": "LEDGER"
     }
   ]
