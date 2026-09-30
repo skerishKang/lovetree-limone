@@ -952,12 +952,14 @@
     ]
   },
   "stage_gate": {
-    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "s4_release": "ACCEPTED",
     "parity_capture_authorized": true,
-    "source_split_parity_pass": false,
-    "parity_status": "CANDIDATE_PENDING_CENTRAL",
-    "parity_ref": null,
-    "note": "S4 is RELEASED for CANDIDATE capture only, per #589 comment 5889378824 and the settle ruling #589 comment 5905286796. A candidate parity artifact exists under evidence/s4. No accepted-parity.json exists, source_split_parity_pass is false and parity_ref is null, so nothing is promoted: acceptance remains CENTRAL's decision. The S3 historical record evidence/s3/roundtrip.json is unchanged."
+    "source_split_parity_pass": true,
+    "parity_status": "ACCEPTED",
+    "parity_ref": "evidence/parity/accepted-parity.json",
+    "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5920421532",
+    "accepted_candidate_head": "35a7a538ce73ac85e4adb71f8d4831633a66f50f",
+    "note": "S4 parity is ACCEPTED by CENTRAL direct visual review and the accepted three-run proof. The accepted record is evidence/parity/accepted-parity.json, bound to candidate head 35a7a538ce73ac85e4adb71f8d4831633a66f50f. This file records lifecycle metadata only; it does not itself prove acceptance."
   },
   "product_adoption": false,
   "lineage58_adoption": false

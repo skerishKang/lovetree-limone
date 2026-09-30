@@ -116,7 +116,7 @@
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
   "tsx_allowed_during_split": false,
@@ -139,5 +139,10 @@
   "repo_mutation_outside_capsule_files": [
     "tests/duplicate-variant-governance-contract.test.mjs"
   ],
-  "repo_mutation_outside_capsule_note": "Exactly one file outside src/04_codex/CDX005/ is changed by this lane. tests/duplicate-variant-governance-contract.test.mjs carries an exact tree-state assertion ACTIVE_CODEX_COUNT=2; adding the CDX005 lane makes the real count 3, so the count and the real-tree Codex list were bumped in lockstep. That is the maintenance the test's own comment requires ('Each new Codex capsule lane must bump this count'), and it is exactly what CDX017 required when it joined. It is a corpus-wide test count, not Source or Codex runtime, and no shared harness, driver or runtime file was modified."
+  "repo_mutation_outside_capsule_note": "Exactly one file outside src/04_codex/CDX005/ is changed by this lane. tests/duplicate-variant-governance-contract.test.mjs carries an exact tree-state assertion ACTIVE_CODEX_COUNT=2; adding the CDX005 lane makes the real count 3, so the count and the real-tree Codex list were bumped in lockstep. That is the maintenance the test's own comment requires ('Each new Codex capsule lane must bump this count'), and it is exactly what CDX017 required when it joined. It is a corpus-wide test count, not Source or Codex runtime, and no shared harness, driver or runtime file was modified.",
+  "s4_status": "ACCEPTED",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5920421532",
+  "s4_candidate_head": "35a7a538ce73ac85e4adb71f8d4831633a66f50f",
+  "product_canonical": false
 }

@@ -67,18 +67,66 @@ test('the S4 contract records the motion-aware parity rules CENTRAL bound', () =
 test('the S4 lane is candidate-only: nothing is promoted before CENTRAL accepts', () => {
   const manifest = readJson('manifest.json');
   const mat = readJson('split/materialization.json');
-  assert.equal(manifest.stages.source_split_parity_pass, false, 'source_split_parity_pass stays false');
-  assert.equal(manifest.parity_ref ?? null, null, 'the manifest carries no parity ref');
-  assert.equal(mat.parity_ref ?? null, null, 'the materialization carries no parity ref');
-  assert.notEqual(String(mat.status).toUpperCase(), 'ACCEPTED', 'the materialization is not ACCEPTED');
-  assert.equal(
-    exists(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json')), false,
-    'no accepted-parity.json may exist before CENTRAL acceptance',
-  );
-  assert.equal(
-    exists(path.join(CAPSULE, 'evidence', 'parity')), false,
-    'no promoted parity directory may exist before CENTRAL acceptance',
-  );
+  const ctx = readJson('authority-context.json');
+  const acceptedPath = path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json');
+  const accepted = exists(acceptedPath)
+    ? JSON.parse(fs.readFileSync(acceptedPath, 'utf8')) : null;
+
+  /* Three-state lifecycle guard. Before acceptance nothing may be claimed; after acceptance every
+   * claim must be bound to the accepted record and agree with it. A half-promoted state, where the
+   * record exists but the metadata still reads CANDIDATE_PENDING_CENTRAL, fails here. */
+  if (!accepted) {
+    assert.equal(manifest.stages.source_split_parity_pass, false, 'source_split_parity_pass stays false');
+    assert.equal(manifest.parity_ref ?? null, null, 'the manifest carries no parity ref');
+    assert.equal(mat.parity_ref ?? null, null, 'the materialization carries no parity ref');
+    assert.notEqual(String(mat.status).toUpperCase(), 'ACCEPTED', 'the materialization is not ACCEPTED');
+    assert.equal(
+      exists(path.join(CAPSULE, 'evidence', 'parity')), false,
+      'no promoted parity directory may exist before CENTRAL acceptance',
+    );
+  } else {
+    assert.equal(accepted.status, 'ACCEPTED', 'the accepted record is ACCEPTED');
+    assert.equal(accepted.source_id, 'CDX005', 'the accepted record binds CDX005');
+    assert.equal(manifest.stages.source_split_parity_pass, true, 'source_split_parity_pass is true after acceptance');
+    assert.equal(manifest.s4_status, 'ACCEPTED', 'manifest s4_status is ACCEPTED');
+    assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json', 'manifest parity_ref binds the record');
+    assert.equal(mat.status, 'ACCEPTED', 'materialization status is ACCEPTED');
+    assert.equal(mat.parity_status, 'ACCEPTED', 'materialization parity_status is ACCEPTED');
+    assert.equal(mat.next_stage, 'S4_COMPLETE', 'next_stage is S4_COMPLETE');
+    assert.equal(ctx.stage_gate.s4_release, 'ACCEPTED', 'authority-context s4_release is ACCEPTED');
+    assert.equal(ctx.stage_gate.source_split_parity_pass, true, 'authority-context parity pass is true');
+    assert.equal(ctx.stage_gate.parity_ref, 'evidence/parity/accepted-parity.json', 'authority-context parity_ref binds the record');
+    // Every binding must agree across the record and the metadata.
+    assert.equal(accepted.binding.accepted_candidate_head, manifest.s4_candidate_head, 'accepted head matches the manifest');
+    assert.equal(accepted.binding.capture_head, manifest.s4_candidate_head, 'accepted capture head matches the manifest');
+    assert.equal(accepted.binding.pull_request, 660, 'accepted record binds PR 660');
+    assert.equal(accepted.binding.central_acceptance_ref, manifest.s4_acceptance_ref, 'accepted CENTRAL comment matches the manifest');
+    assert.equal(accepted.binding.central_acceptance_ref, ctx.stage_gate.s4_acceptance_ref, 'accepted CENTRAL comment matches authority-context');
+    assert.equal(accepted.three_run_proof.three_run_proof, true, 'accepted record carries the three-run proof');
+    assert.equal(accepted.central_visual_review.result, 'PASS', 'accepted record carries the CENTRAL visual PASS');
+    assert.equal(accepted.frozen_source_defects.d1_d5_preserved_every_run, true, 'D1-D5 preserved in every accepted run');
+    assert.equal(accepted.protected_runtime.round_trip_byte_identity, true, 'byte round-trip identity is bound');
+    assert.equal(accepted.asset_preservation.original_png, 80, '80 original PNGs bound');
+    assert.equal(accepted.asset_preservation.split_png, 80, '80 split PNGs bound');
+    // Acceptance adopts nothing and introduces no pixel gate.
+    assert.equal(manifest.product_adoption, false, 'Product adoption stays false');
+    assert.equal(manifest.product_canonical, false, 'nothing becomes Product-canonical');
+    assert.equal(accepted.adoption.product_adoption, false, 'accepted record adopts no Product');
+    assert.equal(accepted.adoption.lineage58_adoption, false, 'accepted record adopts no Lineage58');
+    assert.equal(accepted.visual_comparison_policy.raw_png_byte_equality_required, false, 'no raw-PNG equality gate');
+    assert.equal(accepted.visual_comparison_policy.pixel_tolerance, 'NONE', 'no pixel tolerance');
+    assert.equal(accepted.visual_comparison_policy.ssim, 'NONE', 'no SSIM gate');
+    // The accepted record must bind every protected blob to its known identity.
+    for (const [rel, blob] of Object.entries({
+      'original/original.html': '782e4dbb0de1d1a1d8bbff0b3674a6ec51baa8d3',
+      'split/index.html': '3fd5f6895c604e1e7b9e34f04f2935b54dbedfc8',
+      'split/styles.css': 'f0fa2b60aef8a75ea572979c13fd7f88a9280bca',
+      'split/script.js': 'cca7098156ca3f7c728fb40340e81c16f034939a',
+    })) {
+      assert.equal(accepted.protected_runtime.blobs[rel].git_blob_sha1, blob,
+        `accepted record binds ${rel} to its protected blob`);
+    }
+  }
 });
 
 test('the four protected runtime files are byte-locked to the accepted S3 blobs', () => {
@@ -151,14 +199,24 @@ test('the S4 lifecycle metadata is current, consistent and never promoted', () =
   const ctx = readJson('authority-context.json');
   const mat = readJson(path.join('split', 'materialization.json'));
   const s4Exists = exists(path.join(CAPSULE, 'evidence', 's4'));
-  // HOLD-2: an existing S4 candidate directory must not coexist with a stale S3-era gate.
-  if (s4Exists) {
+  const acceptedExists = exists(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json'));
+  // HOLD-2, extended across the full lifecycle: an existing S4 directory must never coexist with a
+  // stale S3-era gate. Which non-stale gate is correct depends on whether parity was accepted.
+  if (s4Exists && !acceptedExists) {
     assert.equal(ctx.stage_gate.s4_release, 'RELEASED_CANDIDATE_ONLY',
-      'an S4 candidate exists, so the release gate is RELEASED_CANDIDATE_ONLY');
+      'an unaccepted S4 candidate exists, so the release gate is RELEASED_CANDIDATE_ONLY');
     assert.equal(ctx.stage_gate.parity_capture_authorized, true,
       'an S4 candidate exists, so parity capture is authorized');
     assert.equal(ctx.stage_gate.parity_status, 'CANDIDATE_PENDING_CENTRAL');
     assert.equal(mat.parity_status, 'CANDIDATE_PENDING_CENTRAL');
+  }
+  if (acceptedExists) {
+    assert.equal(ctx.stage_gate.s4_release, 'ACCEPTED',
+      'an accepted parity record exists, so the release gate is ACCEPTED');
+    assert.equal(ctx.stage_gate.parity_capture_authorized, true,
+      'an accepted record exists, so parity capture stays authorized');
+    assert.equal(ctx.stage_gate.parity_status, 'ACCEPTED');
+    assert.equal(mat.parity_status, 'ACCEPTED');
   }
   // The two canonical files must agree with each other, whichever branch we are in.
   assert.equal(ctx.stage_gate.s4_release, mat.stage_gate.s4_release,
@@ -167,13 +225,25 @@ test('the S4 lifecycle metadata is current, consistent and never promoted', () =
     'authority-context and materialization agree on parity_capture_authorized');
   assert.equal(mat.stage_gate.parity_status, mat.parity_status,
     'materialization stage_gate.parity_status matches materialization.parity_status');
-  // Parity is never claimed at candidate stage, in either branch.
-  assert.equal(ctx.stage_gate.source_split_parity_pass, false, 'source_split_parity_pass stays false');
-  assert.equal(mat.stage_gate.source_split_parity_pass, false, 'source_split_parity_pass stays false');
-  assert.equal(ctx.stage_gate.parity_ref, null, 'parity_ref stays null');
-  assert.equal(mat.parity_ref, null, 'parity_ref stays null');
-  assert.equal(exists(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json')), false,
-    'no accepted-parity.json may exist before CENTRAL acceptance');
+  // Whatever the lifecycle state, the accepted record and the claimed parity MUST agree: either
+  // both say "not accepted", or both say "accepted" and both bind the record.
+  const claimed = ctx.stage_gate.source_split_parity_pass === true
+    || mat.stage_gate.source_split_parity_pass === true
+    || ctx.stage_gate.parity_status === 'ACCEPTED'
+    || mat.parity_status === 'ACCEPTED';
+  if (!acceptedExists) {
+    assert.equal(claimed, false, 'no parity may be claimed without the accepted record');
+    assert.equal(ctx.stage_gate.source_split_parity_pass, false, 'source_split_parity_pass stays false');
+    assert.equal(mat.stage_gate.source_split_parity_pass, false, 'materialization parity pass stays false');
+    assert.equal(ctx.stage_gate.parity_ref, null, 'parity_ref stays null');
+    assert.equal(mat.parity_ref, null, 'materialization parity_ref stays null');
+  } else {
+    assert.equal(claimed, true, 'the accepted record exists, so parity must be claimed');
+    assert.equal(ctx.stage_gate.source_split_parity_pass, true, 'source_split_parity_pass is true');
+    assert.equal(mat.stage_gate.source_split_parity_pass, true, 'materialization parity pass is true');
+    assert.equal(ctx.stage_gate.parity_ref, 'evidence/parity/accepted-parity.json', 'parity_ref binds the record');
+    assert.equal(mat.parity_ref, '../evidence/parity/accepted-parity.json', 'materialization parity_ref binds the record');
+  }
 });
 
 test('the three-run proof, when present, records three clean fresh full runs', () => {

@@ -289,57 +289,137 @@ test("T15 materialization output hashes and git blobs match the on-disk files", 
     assert.equal(record(`T15.${rel}.blob`, pin.git_blob_sha1 === gitBlobSha1(b), `${rel} git blob`), true);
   }
   assert.equal(record("T15.authority", materialization.authority.bytes === AUTHORITY_BYTES && materialization.authority.sha256 === AUTHORITY_SHA256, "materialization authority lock"), true);
-  assert.equal(record("T15.status", materialization.status === "MATERIALIZED_PENDING_PARITY", "materialization is pending parity, not accepted"), true);
+  /* Lifecycle-aware: the materialization status tracks the S4 lifecycle, and the invariant that
+   * actually matters is that it is EXACTLY one of the three declared states - never something in
+   * between. Before S4 acceptance it is MATERIALIZED_PENDING_PARITY; after CENTRAL acceptance it
+   * is ACCEPTED. A stale or invented value fails here. */
+  assert.equal(record("T15.status", ["MATERIALIZED_PENDING_PARITY", "ACCEPTED"].includes(materialization.status),
+    `materialization status is a declared lifecycle state (${materialization.status})`), true);
 });
 
-test("T16 stage flags S0-S3 complete, S4 candidate-only and fail-closed, parity never claimed", () => {
-  /* Lifecycle-aware (HOLD-3). The S3-era assertion "no evidence/s4 directory exists" is now
-   * legitimately false, because CENTRAL released S4 for CANDIDATE capture. The guard is NOT
-   * deleted: it is strengthened into a two-branch invariant that still fails closed.
+test("T16 stage flags S0-S3 complete, and S4 lifecycle is internally consistent in any of its three states", () => {
+  /* THREE-STATE lifecycle guard: unreleased -> candidate -> accepted.
    *
-   *   no evidence/s4            -> S4 is unreleased, capture unauthorized, parity NOT_STARTED
-   *   evidence/s4 exists        -> S4 is RELEASED_CANDIDATE_ONLY, capture authorized, parity
-   *                               CANDIDATE_PENDING_CENTRAL, and NOTHING is promoted
+   *   no evidence/s4 and no accepted-parity.json
+   *     -> S4 unreleased:   HOLD_CENTRAL,  capture unauthorized, parity NOT_STARTED, nothing claimed
+   *   evidence/s4 present and no accepted-parity.json
+   *     -> S4 candidate:    RELEASED_CANDIDATE_ONLY, capture authorized, CANDIDATE_PENDING_CENTRAL,
+   *                          nothing claimed
+   *   accepted-parity.json present
+   *     -> S4 accepted:    ACCEPTED, source_split_parity_pass true, parity_ref bound to the
+   *                          accepted record, and the record's own bindings must agree with the
+   *                          metadata that references it.
    *
-   * In BOTH branches parity is never claimed: no accepted-parity.json, no parity_ref, and
-   * source_split_parity_pass stays false. A stale HOLD_CENTRAL alongside an existing evidence/s4
-   * is exactly the inconsistency HOLD-2 reported, and is rejected here. */
+   * The guard fails closed. It rejects, specifically:
+   *   - source_split_parity_pass true WITHOUT the accepted record;
+   *   - an accepted record present while the metadata still says CANDIDATE_PENDING_CENTRAL;
+   *   - a parity_ref that does not resolve to the accepted record;
+   *   - the accepted record binding a different candidate head, PR or CENTRAL comment than the
+   *     metadata claims.
+   * A stale HOLD_CENTRAL alongside an existing evidence/s4 is rejected too, which is the
+   * inconsistency HOLD-2 reported. */
   const s = manifest.stages;
   const s4Exists = fs.existsSync(path.join(CAPSULE, "evidence", "s4"));
   const acceptedParity = path.join(CAPSULE, "evidence", "parity", "accepted-parity.json");
+  const acceptedExists = fs.existsSync(acceptedParity);
+  const accepted = acceptedExists ? readJson(path.join("evidence", "parity", "accepted-parity.json")) : null;
 
   assert.equal(record("T16a", s.identity_verified === true && s.raw_authority_locked === true, "S0 and S1 complete"), true);
   assert.equal(record("T16b", s.baseline_captured === true, "S2 baseline captured"), true);
   assert.equal(record("T16c", s.mechanical_split_complete === true, "S3 mechanical split complete"), true);
-  assert.equal(record("T16d", s.source_split_parity_pass === false, "S4 parity NOT passed"), true);
 
-  if (!s4Exists) {
-    assert.equal(record("T16e", context.stage_gate.s4_release === "HOLD_CENTRAL", "S4 unreleased: release is HOLD_CENTRAL"), true);
-    assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === false, "S4 unreleased: parity capture is not authorized"), true);
-    assert.equal(record("T16h", materialization.parity_status === "NOT_STARTED", "S4 unreleased: parity status is NOT_STARTED"), true);
+  if (!acceptedExists) {
+    /* Unreleased or candidate: parity is NEVER claimed. */
+    assert.equal(record("T16d", s.source_split_parity_pass === false, "S4 parity NOT passed"), true);
+    assert.equal(record("T16g", context.stage_gate.parity_ref === null && materialization.parity_ref === null, "no parity reference exists"), true);
+    assert.equal(record("T16i", !acceptedExists, "no accepted-parity.json exists"), true);
+    if (!s4Exists) {
+      assert.equal(record("T16e", context.stage_gate.s4_release === "HOLD_CENTRAL", "S4 unreleased: release is HOLD_CENTRAL"), true);
+      assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === false, "S4 unreleased: parity capture is not authorized"), true);
+      assert.equal(record("T16h", materialization.parity_status === "NOT_STARTED", "S4 unreleased: parity status is NOT_STARTED"), true);
+    } else {
+      assert.equal(record("T16e", context.stage_gate.s4_release === "RELEASED_CANDIDATE_ONLY", "S4 candidate present: release is RELEASED_CANDIDATE_ONLY"), true);
+      assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === true, "S4 candidate present: parity capture is authorized"), true);
+      assert.equal(record("T16h", materialization.parity_status === "CANDIDATE_PENDING_CENTRAL", "S4 candidate present: parity status is CANDIDATE_PENDING_CENTRAL"), true);
+      assert.equal(record("T16h2", context.stage_gate.s4_release === materialization.stage_gate.s4_release
+        && context.stage_gate.parity_capture_authorized === materialization.stage_gate.parity_capture_authorized,
+      "authority-context and materialization stage_gate agree on the S4 release"), true);
+      assert.equal(record("T16h3", materialization.stage_gate.parity_status === materialization.parity_status,
+        "materialization stage_gate.parity_status matches materialization.parity_status"), true);
+    }
   } else {
-    assert.equal(record("T16e", context.stage_gate.s4_release === "RELEASED_CANDIDATE_ONLY", "S4 candidate present: release is RELEASED_CANDIDATE_ONLY"), true);
-    assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === true, "S4 candidate present: parity capture is authorized"), true);
-    assert.equal(record("T16h", materialization.parity_status === "CANDIDATE_PENDING_CENTRAL", "S4 candidate present: parity status is CANDIDATE_PENDING_CENTRAL"), true);
-    // The two canonical files must agree, or one of them is stale.
+    /* Accepted: parity IS claimed, and every binding must agree. */
+    assert.equal(record("T16d", s.source_split_parity_pass === true, "S4 parity passed"), true);
+    assert.equal(record("T16e", context.stage_gate.s4_release === "ACCEPTED", "S4 accepted: release is ACCEPTED"), true);
+    assert.equal(record("T16e2", materialization.stage_gate.s4_release === "ACCEPTED", "S4 accepted: materialization gate is ACCEPTED"), true);
+    assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === true, "S4 accepted: parity capture remains authorized"), true);
+    assert.equal(record("T16h", materialization.parity_status === "ACCEPTED", "S4 accepted: parity status is ACCEPTED"), true);
     assert.equal(record("T16h2", context.stage_gate.s4_release === materialization.stage_gate.s4_release
-      && context.stage_gate.parity_capture_authorized === materialization.stage_gate.parity_capture_authorized,
-    "authority-context and materialization stage_gate agree on the S4 release"), true);
+      && context.stage_gate.parity_capture_authorized === materialization.stage_gate.parity_capture_authorized
+      && context.stage_gate.parity_status === materialization.stage_gate.parity_status,
+    "authority-context and materialization stage_gate agree in the accepted state"), true);
     assert.equal(record("T16h3", materialization.stage_gate.parity_status === materialization.parity_status,
       "materialization stage_gate.parity_status matches materialization.parity_status"), true);
+    assert.equal(record("T16p", materialization.status === "ACCEPTED", "materialization status is ACCEPTED"), true);
+    assert.equal(record("T16q", materialization.next_stage === "S4_COMPLETE", "next_stage is S4_COMPLETE"), true);
+    assert.equal(record("T16r", manifest.s4_status === "ACCEPTED", "manifest s4_status is ACCEPTED"), true);
+    // parity_ref must resolve to the accepted record. materialization's ref is relative to split/.
+    assert.equal(record("T16g", manifest.parity_ref === "evidence/parity/accepted-parity.json",
+      "manifest parity_ref points at the accepted record"), true);
+    assert.equal(record("T16g2", context.stage_gate.parity_ref === "evidence/parity/accepted-parity.json",
+      "authority-context parity_ref points at the accepted record"), true);
+    assert.equal(record("T16g3", materialization.parity_ref === "../evidence/parity/accepted-parity.json",
+      "materialization parity_ref points at the accepted record, relative to split/"), true);
+    assert.equal(record("T16g4", fs.existsSync(path.join(CAPSULE, "evidence", "parity", "accepted-parity.json")),
+      "the accepted parity_ref resolves to a file that exists"), true);
+    // The record's own bindings must agree with the metadata that points at it.
+    assert.equal(record("T16s1", accepted.status === "ACCEPTED", "accepted record status is ACCEPTED"), true);
+    assert.equal(record("T16s2", accepted.source_id === "CDX005" && accepted.codex_id === "CDX005",
+      "accepted record binds CDX005 identity"), true);
+    assert.equal(record("T16s3", accepted.binding.accepted_candidate_head === manifest.s4_candidate_head
+      && accepted.binding.capture_head === manifest.s4_candidate_head,
+    "accepted record head binding matches the manifest candidate head"), true);
+    assert.equal(record("T16s4", accepted.binding.pull_request === 660, "accepted record binds PR 660"), true);
+    assert.equal(record("T16s5", accepted.binding.central_acceptance_ref === manifest.s4_acceptance_ref
+      && context.stage_gate.s4_acceptance_ref === manifest.s4_acceptance_ref,
+    "the CENTRAL acceptance comment agrees across the record and the metadata"), true);
+    assert.equal(record("T16s6", accepted.three_run_proof.three_run_proof === true
+      && accepted.three_run_proof.runs_clean === true
+      && accepted.three_run_proof.runs_recorded === 3,
+    "accepted record carries a clean three-run proof"), true);
+    assert.equal(record("T16s7", accepted.three_run_proof.runs.every((r) => r.semantic_contract_exact === "36/36"
+      && r.geometry_contract_exact === "36/36" && r.computed_style_contract_exact === "36/36"
+      && r.real_parity_defects === 0 && r.unclassified_residuals === 0 && r.d1_d5_preserved === "YES"),
+    "every accepted run is contract-exact on every channel with zero defects"), true);
+    assert.equal(record("T16s8", accepted.central_visual_review.performed === true
+      && accepted.central_visual_review.result === "PASS"
+      && accepted.central_visual_review.states_reviewed === 12,
+    "accepted record carries the direct 12-state CENTRAL visual review PASS"), true);
+    assert.equal(record("T16s9", accepted.protected_runtime.round_trip_byte_identity === true,
+      "accepted record binds the byte round-trip identity"), true);
+    assert.equal(record("T16s10", accepted.adoption.product_adoption === false
+      && accepted.adoption.product_canonical === false
+      && accepted.adoption.lineage58_adoption === false,
+    "accepted record adopts neither Product nor Lineage58"), true);
+    // No pixel/perceptual gate may be introduced by acceptance.
+    assert.equal(record("T16s11", accepted.visual_comparison_policy.raw_png_byte_equality_required === false
+      && accepted.visual_comparison_policy.pixel_tolerance === "NONE"
+      && accepted.visual_comparison_policy.ssim === "NONE",
+    "acceptance introduces no pixel tolerance, SSIM or raw-PNG gate"), true);
   }
 
-  assert.equal(record("T16g", context.stage_gate.parity_ref === null && materialization.parity_ref === null, "no parity reference exists"), true);
-  assert.equal(record("T16i", !fs.existsSync(acceptedParity), "no accepted-parity.json exists; S4 candidate is never promoted"), true);
   assert.equal(record("T16j", s4Exists
-    ? context.stage_gate.parity_status === "CANDIDATE_PENDING_CENTRAL"
+    ? context.stage_gate.parity_status === "CANDIDATE_PENDING_CENTRAL" || context.stage_gate.parity_status === "ACCEPTED"
     : true,
-  "an S4 candidate directory implies CANDIDATE_PENDING_CENTRAL, never a stale HOLD"), true);
+  "an S4 directory implies a current parity status, never a stale HOLD"), true);
   assert.equal(record("T16k", manifest.capture_surface.mode === "STANDALONE_AUTHORITY_SURFACE", "manifest capture surface mode"), true);
   assert.equal(record("T16l", baseline.status === "ACCEPTED" && baseline.source_id === "CDX005", "S2 accepted baseline promoted with matching identity"), true);
   assert.equal(record("T16m", baseline.screenshot_equality_claimed === false && baseline.baseline_stable === false, "baseline records no screenshot equality claim"), true);
   assert.equal(record("T16n", baseline.report.commit === "960fd4ad407d5b996f644064c6ed1a5b7383d7ab", "baseline references the immutable S2 workdiary report commit"), true);
   assert.equal(record("T16o", baseline.capture.states_total === 36 && baseline.capture.total_png === 72, "baseline carries the accepted 36-state / 72-capture figures"), true);
+  // Product adoption stays false in every lifecycle state.
+  assert.equal(record("T16t", manifest.product_adoption === false && manifest.product_canonical === false,
+    "Product adoption and canonical stay false"), true);
 });
 
 test("T17 duplicate-variant governance, no Product adoption, no Lineage58 adoption", () => {

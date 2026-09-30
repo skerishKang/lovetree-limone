@@ -3,7 +3,7 @@
   "codex_id": "CDX005",
   "source_id": "CDX005",
   "stage": "S3_MECHANICAL_SPLIT",
-  "status": "MATERIALIZED_PENDING_PARITY",
+  "status": "ACCEPTED",
   "generation": "MECHANICAL_INLINE_EXTRACTION",
   "generated_at_utc": "2026-09-29T09:00:00Z",
   "base_main": "814f121b00a553753c667dfd8eb3c4c8fbe284c5",
@@ -941,16 +941,19 @@
     "preservation_invariant": "The single authored relative template path=(id,a)=>`assets/turnarounds/transparent/${id}_${a}.png` with 10 look ids and 8 angles derives exactly 80 required paths. The vendored set must equal that derivation, and every vendored file must be byte-identical in original/assets/ and split/assets/ and match the pinned Drive object bytes.",
     "verification_ref": "../evidence/s3/roundtrip.json"
   },
-  "parity_status": "CANDIDATE_PENDING_CENTRAL",
-  "parity_ref": null,
+  "parity_status": "ACCEPTED",
+  "parity_ref": "../evidence/parity/accepted-parity.json",
   "stage_gate": {
-    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "s4_release": "ACCEPTED",
     "parity_capture_authorized": true,
-    "source_split_parity_pass": false,
-    "parity_status": "CANDIDATE_PENDING_CENTRAL",
-    "parity_ref": null
+    "source_split_parity_pass": true,
+    "parity_status": "ACCEPTED",
+    "parity_ref": "../evidence/parity/accepted-parity.json",
+    "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5920421532",
+    "accepted_candidate_head": "35a7a538ce73ac85e4adb71f8d4831633a66f50f",
+    "note": "Parity is ACCEPTED. materialization.parity_ref is relative to split/, which is why it reads ../evidence/parity/accepted-parity.json. The split bytes themselves are unchanged from the S3 mechanical materialization."
   },
-  "next_stage": "S4_NOT_RELEASED",
+  "next_stage": "S4_COMPLETE",
   "frozen_defect_ids_preserved": [
     "D1",
     "D2",

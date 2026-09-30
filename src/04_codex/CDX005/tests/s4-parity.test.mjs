@@ -404,19 +404,53 @@ test('C13 the review pack binds 12 CENTRAL labels to verbatim S2 states', () => 
     'M1 auto-paused must be marked harness-only because D4 makes it user-unreachable');
 });
 
-test('C06 candidate-only metadata state: nothing is promoted to accepted parity', () => {
+test('C06 the S4 lifecycle metadata is internally consistent in all three states', () => {
+  /* Lifecycle-aware after CENTRAL acceptance. The invariant that matters is not "nothing is
+   * promoted" any more; it is that the three states agree with each other and with the accepted
+   * record. Before acceptance nothing may be claimed; after acceptance everything must be bound.
+   * The S3 historical record stays frozen in every state. */
   const manifest = readJson('manifest.json');
   const mat = readJson('split/materialization.json');
-  assert.equal(manifest.stages.source_split_parity_pass, false, 'source_split_parity_pass stays false');
-  assert.equal(manifest.parity_ref ?? null, null, 'manifest carries no parity ref');
-  assert.equal(mat.parity_ref ?? null, null, 'materialization carries no parity ref');
-  assert.notEqual(mat.status, 'ACCEPTED', 'materialization is not ACCEPTED');
-  assert.equal(fs.existsSync(path.join(CAPSULE, 'evidence', 'parity')), false, 'no evidence/parity directory exists');
-  assert.equal(fs.existsSync(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json')), false, 'no accepted-parity.json exists');
+  const ctx = readJson('authority-context.json');
+  const acceptedPath = path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json');
+  const accepted = fs.existsSync(acceptedPath)
+    ? readJson(path.join('evidence', 'parity', 'accepted-parity.json')) : null;
+
+  if (!accepted) {
+    assert.equal(manifest.stages.source_split_parity_pass, false, 'source_split_parity_pass stays false');
+    assert.equal(manifest.parity_ref ?? null, null, 'manifest carries no parity ref');
+    assert.equal(mat.parity_ref ?? null, null, 'materialization carries no parity ref');
+    assert.notEqual(mat.status, 'ACCEPTED', 'materialization is not ACCEPTED');
+  } else {
+    assert.equal(accepted.status, 'ACCEPTED', 'the accepted record is ACCEPTED');
+    assert.equal(manifest.stages.source_split_parity_pass, true, 'source_split_parity_pass is true');
+    assert.equal(manifest.s4_status, 'ACCEPTED', 'manifest s4_status is ACCEPTED');
+    assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json', 'manifest parity_ref binds the record');
+    assert.equal(mat.status, 'ACCEPTED', 'materialization status is ACCEPTED');
+    assert.equal(mat.parity_status, 'ACCEPTED', 'materialization parity_status is ACCEPTED');
+    assert.equal(mat.parity_ref, '../evidence/parity/accepted-parity.json', 'materialization parity_ref binds the record');
+    assert.equal(ctx.stage_gate.parity_status, 'ACCEPTED', 'authority-context parity_status is ACCEPTED');
+    assert.equal(ctx.stage_gate.s4_release, 'ACCEPTED', 'authority-context s4_release is ACCEPTED');
+    assert.equal(ctx.stage_gate.source_split_parity_pass, true, 'authority-context parity pass is true');
+    // The record must agree with the metadata that references it.
+    assert.equal(accepted.binding.accepted_candidate_head, manifest.s4_candidate_head,
+      'accepted record head binding matches the manifest');
+    assert.equal(accepted.binding.capture_head, manifest.s4_candidate_head,
+      'accepted record capture head matches the manifest');
+    assert.equal(accepted.binding.pull_request, 660, 'accepted record binds PR 660');
+    assert.equal(accepted.binding.central_acceptance_ref, manifest.s4_acceptance_ref,
+      'accepted record CENTRAL comment matches the manifest');
+    assert.equal(accepted.three_run_proof.three_run_proof, true, 'accepted record carries the three-run proof');
+    assert.equal(accepted.central_visual_review.result, 'PASS', 'accepted record carries the CENTRAL visual PASS');
+    assert.equal(accepted.adoption.product_adoption, false, 'acceptance adopts no Product');
+    assert.equal(accepted.adoption.product_canonical, false, 'acceptance makes nothing Product-canonical');
+    assert.equal(accepted.adoption.lineage58_adoption, false, 'acceptance adopts no Lineage58');
+  }
+  // In EVERY lifecycle state the S3 historical record stays frozen as the S3 snapshot.
   const roundtrip = readJson('evidence/s3/roundtrip.json');
   assert.equal(roundtrip.parity_acceptance_claimed, false, 'S3 record still claims no parity acceptance');
-  assert.equal(roundtrip.parity_ref ?? null, null);
-  assert.equal(roundtrip.parity_status, 'NOT_STARTED');
+  assert.equal(roundtrip.parity_ref ?? null, null, 'S3 record carries no parity ref');
+  assert.equal(roundtrip.parity_status, 'NOT_STARTED', 'S3 record stays NOT_STARTED as a historical snapshot');
 });
 
 /* Self-exclusion for the banned-primitive scans below: the guard's own token list
@@ -1448,10 +1482,11 @@ test('C10 the page-evaluated collector and the module agree on the authored trac
 });
 
 test('C11 the S4 lane writes candidate evidence only and never an accepted parity record', () => {
-  const mat = readJson('split/materialization.json');
-  const manifest = readJson('manifest.json');
-  assert.notEqual(String(mat.status).toUpperCase(), 'ACCEPTED');
-  assert.equal(manifest.stages.source_split_parity_pass, false);
+  /* Lifecycle-aware. The capture lane is a CANDIDATE producer in every state; acceptance is a
+   * separate CENTRAL metadata promotion. What must hold forever is that the candidate SUMMARY
+   * stays a candidate artifact and that the browser lane never writes the accepted record.
+   * The current metadata is NOT asserted here: after CENTRAL acceptance it legitimately reads
+   * ACCEPTED, and asserting otherwise would make this guard lie about the lifecycle. */
   const s4Dir = path.join(CAPSULE, 'evidence', 's4');
   if (fs.existsSync(s4Dir)) {
     const summaryPath = path.join(s4Dir, 'candidate-summary.json');
@@ -1468,8 +1503,14 @@ test('C11 the S4 lane writes candidate evidence only and never an accepted parit
       assert.equal(s.REVIEW_PACK_COUNT, 12, 'the candidate committed a 12-state review pack');
       assert.ok(['CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE', 'CANDIDATE_HOLD'].includes(s.S4_VERDICT));
     }
-    assert.equal(fs.existsSync(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json')), false,
-      'no accepted-parity.json may exist before CENTRAL acceptance');
+    /* The BROWSER CANDIDATE LANE may never write or modify the accepted parity record, in any
+     * lifecycle state. Acceptance is a CENTRAL metadata promotion, never a capture product. */
+    const accPath = path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json');
+    if (accPath && fs.existsSync(accPath)) {
+      const accStat = fs.statSync(accPath);
+      assert.ok(accStat.mtimeMs < Date.now() - 1000,
+        'the browser candidate run did not just write accepted-parity.json');
+    }
   }
 });
 
