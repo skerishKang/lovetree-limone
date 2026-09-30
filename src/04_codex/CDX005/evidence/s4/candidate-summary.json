@@ -15,11 +15,15 @@
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "PAIRED_STATE_COUNT": 36,
-  "SEMANTIC_RAW_EXACT": "26/36",
+  "SEMANTIC_RAW_EXACT": "27/36",
   "SEMANTIC_CONTRACT_EXACT": "36/36",
-  "RESIDUAL_LEDGER_ENTRIES": 3,
+  "RESIDUAL_LEDGER_ENTRIES": 8,
   "RESIDUAL_LEDGER_PATH": "evidence/s4/residual-ledger.json",
+  "GEOMETRY_RAW_EXACT": "35/36",
+  "GEOMETRY_CONTRACT_EXACT": "36/36",
   "GEOMETRY_EXACT": "35/36",
+  "COMPUTED_STYLE_RAW_EXACT": "35/36",
+  "COMPUTED_STYLE_CONTRACT_EXACT": "36/36",
   "STATE_INTENT_COUNTS": {
     "AUTHORED_LIVE": 3,
     "STABLE": 30,
@@ -33,8 +37,10 @@
     "R1/03_css_drift_spin_scan_observation": "AUTHORED_LIVE",
     "R1/04_save_burst_observation": "EXPLICIT_TRANSIENT"
   },
-  "ANGLE_AXIS_LEDGER_STATES": [],
-  "ANGLE_AXIS_LEDGER_DELTAS": 0,
+  "ANGLE_AXIS_LEDGER_STATES": [
+    "R1/04_save_burst_observation"
+  ],
+  "ANGLE_AXIS_LEDGER_DELTAS": 3,
   "SETTLE_POLICY": "State-semantic, per CENTRAL ruling #589 comment 5905286796. STABLE states stop the authored JS auto loop through the authored AUTO control (real user click on desktop/tablet; DOM click of the SAME authored control on mobile, after D4 is proven and recorded as HARNESS_ONLY_NOT_USER_REACHABLE) and then wait out any authored finite CSS transition. AUTHORED_LIVE and EXPLICIT_TRANSIENT states are never stopped or waited into another semantic state. The authored drift/scan/spin keyframes are infinite by design, so after the NATIVE hard channels and animation/liveness inventory are recorded, the harness phase-locks the existing animation objects identically on both surfaces for geometry/computed-style only, recorded as HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT.",
   "EXCLUSION_POLICY": "NO generic movingOnEither exclusion exists. On a STABLE state a motion-state disagreement, a geometry delta or a computed-style delta is a REAL PARITY DEFECT. A residual is ledgered only when it matches one of the five allowed classifications; anything else is a real defect.",
   "ALLOWED_RESIDUAL_CLASSIFICATIONS": [
@@ -52,13 +58,13 @@
   "ABORTED_IN_FLIGHT_REQUEST_STATES": 0,
   "ABORTED_REQUEST_NOTE": "net::ERR_ABORTED on a turnaround PNG is the authored source reassigning hero.src during a rapid rotation. It was observed identically on ORIGINAL and SPLIT, carries no 4xx, and the same asset resolves on reload with a non-zero naturalWidth, so it is recorded as load timing and is not counted as a network error or a missing asset.",
   "MISSING_ASSET_STATES": 0,
-  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 7,
+  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 8,
   "ASSET_REQUESTS_OBSERVED_PER_STATE": [
-    10,
+    11,
     12,
     13,
-    16,
-    17
+    14,
+    16
   ],
   "ASSET_NOTE": "The capsule vendors 80 turnaround PNGs on each side and contract mode proves all 160 are byte-identical. The authored page does not request all 80 on a single load: it renders one look hero plus the grid thumbnails, so 10-18 requests per state is the expected range. A request-count difference between surfaces is reported here and is a defect only when a request actually failed or returned 4xx, which is 0/36.",
   "EXTERNAL_REQUEST_STATES": 0,

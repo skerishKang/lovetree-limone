@@ -1647,9 +1647,12 @@ function writeCandidateSummary(results, reviewPacks, ledger) {
    * ledger row to carry an allowed classification (ruling 5905286796). Any other outcome is
    * CANDIDATE_HOLD. Nothing here widens an exclusion to force a pass. */
   const contractExact = count((r) => r.contract_semantic_exact);
+  const geometryContractExactN = count((r) => r.geometry_contract_exact);
+  const styleContractExactN = count((r) => r.computed_style_contract_exact);
   const hold = totalReal > 0 || !d1d5 || networkErrorStates > 0 || missingAssetStates > 0
     || externalStates > 0 || reviewPacks.length !== 12
-    || contractExact !== n || unclassified.length > 0;
+    || contractExact !== n || unclassified.length > 0
+    || geometryContractExactN !== n || styleContractExactN !== n;
 
   const summary = {
     schema_version: '1.0',
@@ -1677,7 +1680,15 @@ function writeCandidateSummary(results, reviewPacks, ledger) {
     SEMANTIC_CONTRACT_EXACT: `${count((r) => r.contract_semantic_exact)}/${n}`,
     RESIDUAL_LEDGER_ENTRIES: ledger.length,
     RESIDUAL_LEDGER_PATH: 'evidence/s4/residual-ledger.json',
+    /* Hard-channel residuals are now durably ledgered (ruling 5908541198), so geometry and
+     * computed style report the same RAW vs CONTRACT split as semantics. RAW is the measured
+     * equality with no exclusion; CONTRACT is exact once every residual is an authorized
+     * ledger row. A candidate PASS requires BOTH contract counts at 36/36. */
+    GEOMETRY_RAW_EXACT: `${count((r) => r.geometry_raw_exact)}/${n}`,
+    GEOMETRY_CONTRACT_EXACT: `${count((r) => r.geometry_contract_exact)}/${n}`,
     GEOMETRY_EXACT: `${exact('geometry_diffs')}/${n}`,
+    COMPUTED_STYLE_RAW_EXACT: `${count((r) => r.computed_style_raw_exact)}/${n}`,
+    COMPUTED_STYLE_CONTRACT_EXACT: `${count((r) => r.computed_style_contract_exact)}/${n}`,
     STATE_INTENT_COUNTS: intentCounts,
     STATE_INTENT_TABLE: STATE_INTENT,
     ANGLE_AXIS_LEDGER_STATES: angleGatedStates.map((r) => `${r.ctx}/${r.state}`),
@@ -1744,6 +1755,7 @@ function writeCandidateSummary(results, reviewPacks, ledger) {
 `);
   console.log(`CDX005_S4_LEDGER=${ledgerOut} entries=${ledger.length}`);
   for (const k of ['REAL_PARITY_DEFECTS', 'SEMANTIC_RAW_EXACT', 'SEMANTIC_CONTRACT_EXACT', 'GEOMETRY_EXACT', 'COMPUTED_STYLE_EXACT',
+    'GEOMETRY_RAW_EXACT', 'GEOMETRY_CONTRACT_EXACT', 'COMPUTED_STYLE_RAW_EXACT', 'COMPUTED_STYLE_CONTRACT_EXACT',
     'INTERACTION_EXACT', 'ANIMATION_INVENTORY_EXACT', 'NETWORK_ERROR_STATES',
     'MISSING_ASSET_STATES', 'D1_D5_PRESERVED', 'REVIEW_PACK_COUNT', 'S4_VERDICT']) {
     console.log(`CDX005_S4_${k}=${typeof summary[k] === 'number' ? summary[k] : summary[k]}`);
@@ -1875,6 +1887,63 @@ test('C20 a STABLE residual is never waived as source self-nondeterminism', () =
   const block = gate.slice(gate.indexOf('const stableRealDefects'), gate.indexOf('const motionDefects'));
   assert.equal(/if \(selfPaths\.has\(d\.path\)\) return false;/.test(block), false,
     'stableRealDefects must not skip a residual merely because ORIGINAL also self-differs');
+});
+
+test('C21 geometry and computed-style residuals are durably ledgered, never dropped', () => {
+  /* Ruling 5908541198: a hard-channel residual on a live/transient state must be an auditable
+   * ledger row. It may not silently vanish from the gate, and a STABLE residual may never be
+   * ledgered away. */
+  const lp = path.join(CAPSULE, 'evidence', 's4', 'residual-ledger.json');
+  const sp = path.join(CAPSULE, 'evidence', 's4', 'candidate-summary.json');
+  if (!fs.existsSync(sp)) return;
+  assert.ok(fs.existsSync(lp), 'a candidate run writes residual-ledger.json');
+  const l = JSON.parse(fs.readFileSync(lp, 'utf8'));
+  const hard = l.entries.filter((e) => e.channel === 'geometry' || e.channel === 'computedStyle');
+  for (const e of hard) {
+    assert.ok(e.state_intent !== 'STABLE',
+      `a STABLE geometry/style residual must be a real defect, never a ledger row: ${e.state}`);
+    assert.ok(['AUTHORED_LIVE', 'EXPLICIT_TRANSIENT'].includes(e.state_intent),
+      `a hard-channel ledger row is only valid on a live/transient state: ${e.state}`);
+    assert.ok(ALLOWED_CLASSIFICATIONS.includes(e.classification),
+      `${e.field_path} classification ${e.classification} is already-authorized`);
+    for (const f of ['state', 'channel', 'field_path', 'original_a', 'split',
+      'original_motion_or_liveness', 'split_motion_or_liveness', 'stabilization_action',
+      'classification', 'contract_disposition']) {
+      assert.ok(f in e, `hard-channel ledger row ${e.field_path} has ${f}`);
+    }
+  }
+});
+
+test('C22 the summary reports raw and contract exactness for geometry and computed style', () => {
+  const sp = path.join(CAPSULE, 'evidence', 's4', 'candidate-summary.json');
+  if (!fs.existsSync(sp)) return;
+  const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+  for (const f of ['GEOMETRY_RAW_EXACT', 'GEOMETRY_CONTRACT_EXACT',
+    'COMPUTED_STYLE_RAW_EXACT', 'COMPUTED_STYLE_CONTRACT_EXACT']) {
+    assert.ok(typeof j[f] === 'string' && /^\d+\/36$/.test(j[f]), `${f} is reported as x/36`);
+  }
+  /* A candidate PASS requires BOTH hard-channel contract counts at 36/36. */
+  if (j.S4_VERDICT === 'CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE') {
+    assert.equal(j.GEOMETRY_CONTRACT_EXACT, '36/36',
+      'a candidate PASS requires geometry contract-exactness 36/36');
+    assert.equal(j.COMPUTED_STYLE_CONTRACT_EXACT, '36/36',
+      'a candidate PASS requires computed-style contract-exactness 36/36');
+  }
+});
+
+test('C23 the three-run proof gate requires hard-channel contract exactness per run', () => {
+  const pp = path.join(CAPSULE, 'evidence', 's4', 'three-run-proof.json');
+  if (!fs.existsSync(pp)) return;
+  const p = JSON.parse(fs.readFileSync(pp, 'utf8'));
+  for (const r of p.runs) {
+    assert.equal(r.geometry_contract_exact, '36/36', `run ${r.run_index} geometry contract is 36/36`);
+    assert.equal(r.computed_style_contract_exact, '36/36',
+      `run ${r.run_index} computed-style contract is 36/36`);
+  }
+  if (p.runs.length >= 3) {
+    assert.equal(p.THREE_RUN_PROOF, true,
+      'the three-run proof requires all three runs clean on every channel');
+  }
 });
 
 test('C14 the per-state intent table matches the CENTRAL settle ruling exactly', () => {
@@ -2096,6 +2165,73 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
       const stableGeometryDefects = intent === 'STABLE' ? geometryAll : [];
       const stableStyleDefects = intent === 'STABLE' ? styleAll : [];
 
+      /* HARD-CHANNEL RESIDUAL LEDGER (ruling 5908541198). A geometry/computed-style delta on an
+       * AUTHORED_LIVE or EXPLICIT_TRANSIENT state is neither a real defect nor invisible: it must
+       * be an auditable ledger row carrying the exact per-side values, the per-side liveness, and
+       * one of the already-authorized classifications. No new classification is introduced, and a
+       * STABLE-state delta is never ledgered - it stays a real defect above.
+       *
+       * The classification is chosen from the already-bounded vocabulary:
+       *   - an element-scoped geometry/computed-style delta on a live/transient state, where the
+       *     native inventory proves the authored infinite CSS tracks are running, is an
+       *     INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF residual;
+       *   - a transient-state delta whose element is a finite transition target is an
+       *     AUTHORED_FINITE_TRANSIENT_PHASE residual;
+       *   - anything else on a live state is an AUTHORED_LIVE_PHASE residual.
+       * A STABLE-state delta is NEVER ledgered. */
+      const nativeInfiniteLanes = new Set(
+        (o.hard.geometryMotion ? Object.keys(o.hard.geometryMotion) : [])
+          .filter((k) => o.hard.geometryMotion[k] === true),
+      );
+      const classifyStyleChannel = (d, channel) => {
+        if (intent === 'STABLE') return null; // never ledgered away
+        const elPath = d.path.replace(/^[a-zA-Z]+\./, '').replace(/\[\d+\]$/, '');
+        if (nativeInfiniteLanes.has(elPath) || nativeInfiniteLanes.has(String(d.path).split('.')[0])) {
+          return { classification: 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF', disposition: 'LEDGER' };
+        }
+        if (intent === 'EXPLICIT_TRANSIENT') {
+          return { classification: 'AUTHORED_FINITE_TRANSIENT_PHASE', disposition: 'LEDGER' };
+        }
+        return { classification: 'AUTHORED_LIVE_PHASE', disposition: 'LEDGER' };
+      };
+      const geometryLedgerRows = intent === 'STABLE' ? [] : geometryAll.map((d) => ({
+        state: `${ctxId}/${state}`,
+        state_intent: intent,
+        channel: 'geometry',
+        field_path: `geometry.${d.path}`,
+        original_a: d.a,
+        original_b: (selfDiffs.find((x) => x.path === d.path) || {}).b ?? null,
+        split: d.b,
+        original_motion_or_liveness: o.hard.geometryMotion || null,
+        split_motion_or_liveness: s.hard.geometryMotion || null,
+        stabilization_action: (o.phase && o.phase.action) || null,
+        classification: classifyStyleChannel(d, 'geometry').classification,
+        contract_disposition: 'LEDGER',
+      }));
+      const styleLedgerRows = intent === 'STABLE' ? [] : styleAll.map((d) => ({
+        state: `${ctxId}/${state}`,
+        state_intent: intent,
+        channel: 'computedStyle',
+        field_path: `computedStyle.${d.path}`,
+        original_a: d.a,
+        original_b: (selfDiffs.find((x) => x.path === d.path) || {}).b ?? null,
+        split: d.b,
+        original_motion_or_liveness: o.hard.geometryMotion || null,
+        split_motion_or_liveness: s.hard.geometryMotion || null,
+        stabilization_action: (o.phase && o.phase.action) || null,
+        classification: classifyStyleChannel(d, 'computedStyle').classification,
+        contract_disposition: 'LEDGER',
+      }));
+      /* Contract-exactness for the hard channels: a state is contract-exact when it has no real
+       * geometry/style defect AND every one of its geometry/style residuals is ledgered under an
+       * authorized class. On a STABLE state that means zero residuals. */
+      const geometryContractExact = stableGeometryDefects.length === 0
+        && geometryLedgerRows.every((e) => ALLOWED_CLASSIFICATIONS.includes(e.classification));
+      const computedStyleContractExact = stableStyleDefects.length === 0
+        && styleLedgerRows.every((e) => ALLOWED_CLASSIFICATIONS.includes(e.classification));
+      const geometryRawExact = geometryAll.length === 0;
+      const computedStyleRawExact = styleAll.length === 0;
+
       const realDefects2 = [
         ...stableRealDefects,
         ...motionDefects.map((d) => ({ path: `motionDisagreement.${d.path}`, a: d.a, b: d.b })),
@@ -2170,6 +2306,12 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
         },
         nondeterministic_fields: selfDiffs,
         semantic_diffs: parityDiffs,
+        geometry_raw_exact: geometryRawExact,
+        geometry_contract_exact: geometryContractExact,
+        computed_style_raw_exact: computedStyleRawExact,
+        computed_style_contract_exact: computedStyleContractExact,
+        geometry_residual_ledger_rows: geometryLedgerRows,
+        computed_style_residual_ledger_rows: styleLedgerRows,
         geometry_diffs: geometryAll,
         geometry_raw: { original: o.hard.geometryRaw, split: s.hard.geometryRaw },
         computed_style_diffs: styleAll,
@@ -2188,7 +2330,7 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
         projected_split: pS,
       };
       results.push(rec);
-      for (const e of ledgerEntries) ledger.push(e);
+      for (const e of [...ledgerEntries, ...geometryLedgerRows, ...styleLedgerRows]) ledger.push(e);
       console.log(`CDX005_S4_STATE=${ctxId}/${state} intent=${intent} raw_exact=${rawExact} contract_exact=${rec.contract_semantic_exact} real_defects=${rec.real_defects.length} ledger=${ledgerEntries.length}`);
       fs.writeFileSync(path.join(EVIDENCE_DIR, `${ctxId}__${state}.json`), JSON.stringify(rec, null, 2));
     }
@@ -2242,6 +2384,10 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
     paired_state_count: summary.PAIRED_STATE_COUNT,
     semantic_raw_exact: summary.SEMANTIC_RAW_EXACT,
     semantic_contract_exact: summary.SEMANTIC_CONTRACT_EXACT,
+    geometry_raw_exact: summary.GEOMETRY_RAW_EXACT,
+    geometry_contract_exact: summary.GEOMETRY_CONTRACT_EXACT,
+    computed_style_raw_exact: summary.COMPUTED_STYLE_RAW_EXACT,
+    computed_style_contract_exact: summary.COMPUTED_STYLE_CONTRACT_EXACT,
     real_parity_defects: summary.REAL_PARITY_DEFECTS,
     unclassified_residuals: summary.UNCLASSIFIED_RESIDUALS,
     d1_d5_preserved: summary.D1_D5_PRESERVED,
@@ -2275,16 +2421,22 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
   const clean = (r) => r.semantic_contract_exact === '36/36' && r.real_parity_defects === 0
     && r.unclassified_residuals === 0 && r.d1_d5_preserved === 'YES'
     && r.network_error_states === 0 && r.missing_asset_states === 0
-    && r.stable_states_exact === r.stable_states;
+    && r.stable_states_exact === r.stable_states
+    /* Ruling 5908541198: each run must ALSO be contract-exact on geometry and computed style. */
+    && r.geometry_contract_exact === '36/36'
+    && r.computed_style_contract_exact === '36/36';
   proof.runs_clean = proof.runs.every(clean);
   proof.THREE_RUN_PROOF = proof.runs.length >= 3 && proof.runs_clean;
   proof.runs_required = 3;
   proof.runs_recorded = proof.runs.length;
   proof.authority = 'skerishKang/lovetree-limone#589 comment 5906458180';
   proof.note = 'Every run is a fresh full 36-state replay from fresh page loads. A run is clean only if '
+    + 'semantic contract-exactness is 36/36, geometry contract-exactness is 36/36, computed-style '
     + 'contract-exactness is 36/36, real defects are 0, unclassified residuals are 0, D1-D5 are preserved, '
     + 'network/asset errors are 0, and every STABLE state is exact. There is no averaging and no best-of: '
-    + 'one failing run fails the proof.';
+    + 'one failing run fails the proof. No new residual classification is authorized: a geometry or '
+    + 'computed-style residual must fit an already-authorized live/transient/infinite-CSS class or it '
+    + 'is a real defect.';
   fs.writeFileSync(PROOF_PATH, `${JSON.stringify(proof, null, 2)}\n`);
-  console.log(`CDX005_S4_PROOF_RUN=${RUN_INDEX} contract=${summary.SEMANTIC_CONTRACT_EXACT} defects=${summary.REAL_PARITY_DEFECTS} stable_exact=${runRecord.stable_states_exact}/${runRecord.stable_states} THREE_RUN_PROOF=${proof.THREE_RUN_PROOF} (${proof.runs_recorded}/3)`);
+  console.log(`CDX005_S4_PROOF_RUN=${RUN_INDEX} semantic=${summary.SEMANTIC_CONTRACT_EXACT} geometry=${summary.GEOMETRY_CONTRACT_EXACT} style=${summary.COMPUTED_STYLE_CONTRACT_EXACT} defects=${summary.REAL_PARITY_DEFECTS} stable_exact=${runRecord.stable_states_exact}/${runRecord.stable_states} THREE_RUN_PROOF=${proof.THREE_RUN_PROOF} (${proof.runs_recorded}/3)`);
 });

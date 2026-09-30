@@ -9,7 +9,8 @@
     "s4_candidate_hold": "skerishKang/lovetree-limone#589 comment 5904993568",
     "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
     "s4_temporal_synchronization_ruling": "skerishKang/lovetree-limone#589 comment 5906458180",
-    "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417"
+    "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417",
+    "s4_hard_channel_ledger_ruling": "skerishKang/lovetree-limone#589 comment 5908541198"
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "parity_contract_fields": {
@@ -271,5 +272,42 @@
       "source_patch": false,
       "new_tolerance": false
     }
+  },
+  "hard_channel_residual_ledger": {
+    "authority": "skerishKang/lovetree-limone#589 comment 5908541198",
+    "rule": "every non-exact geometry/computed-style field on an AUTHORED_LIVE or EXPLICIT_TRANSIENT state is written to evidence/s4/residual-ledger.json with exact state, field path, per-side values, per-side liveness, stabilization action, and one already-authorized classification",
+    "stable_state_residual": "REAL DEFECT - never ledgered",
+    "new_classifications_authorized": false,
+    "allowed_classifications": [
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+    ],
+    "summary_fields": [
+      "GEOMETRY_RAW_EXACT",
+      "GEOMETRY_CONTRACT_EXACT",
+      "COMPUTED_STYLE_RAW_EXACT",
+      "COMPUTED_STYLE_CONTRACT_EXACT"
+    ],
+    "candidate_pass_requires": "geometry_contract_exact=36/36 AND computed_style_contract_exact=36/36",
+    "per_run_proof_requirements": [
+      "semantic_contract_exact=36/36",
+      "geometry_contract_exact=36/36",
+      "computed_style_contract_exact=36/36",
+      "stable_states_exact=30/30",
+      "real_parity_defects=0",
+      "unclassified_residuals=0",
+      "D1_D5_PRESERVED=YES"
+    ],
+    "unchanged_by_this_correction": [
+      "runtime source",
+      "protected blobs",
+      "160 PNG",
+      "state intent",
+      "settle protocol",
+      "allowed classifications",
+      "D2/D3 projection",
+      "Product adoption"
+    ]
   }
 }

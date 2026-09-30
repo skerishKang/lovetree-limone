@@ -186,7 +186,11 @@ test('the three-run proof, when present, records three clean fresh full runs', (
     // Per-run acceptance requirements from the ruling. A run that fails any of these is not
     // clean, and the proof then fails: there is no averaging and no best-of.
     assert.equal(r.semantic_contract_exact, '36/36',
-      `run ${r.run_index} contract-exactness is 36/36`);
+      `run ${r.run_index} semantic contract-exactness is 36/36`);
+    assert.equal(r.geometry_contract_exact, '36/36',
+      `run ${r.run_index} geometry contract-exactness is 36/36`);
+    assert.equal(r.computed_style_contract_exact, '36/36',
+      `run ${r.run_index} computed-style contract-exactness is 36/36`);
     assert.equal(r.real_parity_defects, 0, `run ${r.run_index} has no real parity defect`);
     assert.equal(r.unclassified_residuals, 0, `run ${r.run_index} has no unclassified residual`);
     assert.equal(r.d1_d5_preserved, 'YES', `run ${r.run_index} preserves D1-D5`);
