@@ -8,35 +8,59 @@
   "generated_by": "src/04_codex/CDX005/tests/s4-parity.test.mjs (browser candidate mode)",
   "authority": {
     "s3_acceptance_and_s4_release": "skerishKang/lovetree-limone#589 comment 5889378824",
+    "s4_candidate_hold": "skerishKang/lovetree-limone#589 comment 5904993568",
+    "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
     "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417",
     "s2_report": "skerishKang/workdiary 960fd4ad407d5b996f644064c6ed1a5b7383d7ab"
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "PAIRED_STATE_COUNT": 36,
-  "SEMANTIC_EXACT": "17/36",
-  "GEOMETRY_EXACT": "36/36",
-  "GEOMETRY_MID_TRANSITION_DELTAS": 19,
-  "COMPUTED_STYLE_CAPTURE_INSTANT_DELTAS": 19,
-  "ANGLE_AXIS_CAPTURE_INSTANT_STATES": [
-    "D1/10_filter_saved_after_save",
-    "T1/05_save_look_steady"
+  "SEMANTIC_RAW_EXACT": "18/36",
+  "SEMANTIC_CONTRACT_EXACT": "31/36",
+  "RESIDUAL_LEDGER_ENTRIES": 33,
+  "RESIDUAL_LEDGER_PATH": "evidence/s4/residual-ledger.json",
+  "GEOMETRY_EXACT": "35/36",
+  "STATE_INTENT_COUNTS": {
+    "AUTHORED_LIVE": 3,
+    "STABLE": 30,
+    "EXPLICIT_TRANSIENT": 3
+  },
+  "STATE_INTENT_TABLE": {
+    "D1/01_initial_auto_active": "AUTHORED_LIVE",
+    "D1/16_look_switch_transient_out": "EXPLICIT_TRANSIENT",
+    "D1/17_save_burst_transient": "EXPLICIT_TRANSIENT",
+    "R1/01_initial_source_behavior": "AUTHORED_LIVE",
+    "R1/03_css_drift_spin_scan_observation": "AUTHORED_LIVE",
+    "R1/04_save_burst_observation": "EXPLICIT_TRANSIENT"
+  },
+  "ANGLE_AXIS_LEDGER_STATES": [
+    "D1/01_initial_auto_active"
   ],
-  "ANGLE_AXIS_CAPTURE_INSTANT_DELTAS": 6,
-  "CAPTURE_INSTANT_POLICY": "Three declared capture-instant classes, each measured per instant rather than assumed, and each reported with its own count. (1) An element still running an authored CSS transition: its rounded box and interpolated computed style differ between any two samples of the SAME frozen source. (2) The angle axis while the authored auto-rotation loop is still running, detected from the authored AUTO/PLAY label on each surface; with the loop stopped the angle is compared exactly. (3) CSSTransition liveness presence. No pixel, SSIM, perceptual, sub-pixel or numeric tolerance is applied anywhere, and no seeded randomness, clock patch or source normalization is used. CENTRAL owns the decision on whether these three classes are acceptable for S4 acceptance.",
-  "GEOMETRY_MID_TRANSITION_NOTE": "A #heroWrap rounded-box delta observed only while the authored look-switch transition was still running, proven by that same field already differing between two ORIGINAL runs of the unmodified source. Reported as a declared capture-instant nondeterminism class, never as a parity defect. No numeric tolerance is applied; sub-pixel values are retained under geometry_mid_transition_diffs and geometry_raw per state.",
-  "COMPUTED_STYLE_EXACT": "36/36",
+  "ANGLE_AXIS_LEDGER_DELTAS": 3,
+  "SETTLE_POLICY": "State-semantic, per CENTRAL ruling #589 comment 5905286796. STABLE states stop the authored JS auto loop through the authored AUTO control (real user click on desktop/tablet; DOM click of the SAME authored control on mobile, after D4 is proven and recorded as HARNESS_ONLY_NOT_USER_REACHABLE) and then wait out any authored finite CSS transition. AUTHORED_LIVE and EXPLICIT_TRANSIENT states are never stopped or waited into another semantic state. The authored drift/scan/spin keyframes are infinite by design, so after the NATIVE hard channels and animation/liveness inventory are recorded, the harness phase-locks the existing animation objects identically on both surfaces for geometry/computed-style only, recorded as HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT.",
+  "EXCLUSION_POLICY": "NO generic movingOnEither exclusion exists. On a STABLE state a motion-state disagreement, a geometry delta or a computed-style delta is a REAL PARITY DEFECT. A residual is ledgered only when it matches one of the five allowed classifications; anything else is a real defect.",
+  "ALLOWED_RESIDUAL_CLASSIFICATIONS": [
+    "D2_RANDOM_SCALAR",
+    "D3_RANDOM_SCALAR",
+    "AUTHORED_LIVE_PHASE",
+    "AUTHORED_FINITE_TRANSIENT_PHASE",
+    "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+  ],
+  "UNCLASSIFIED_RESIDUALS": 0,
+  "COMPUTED_STYLE_EXACT": "34/36",
   "INTERACTION_EXACT": "36/36",
   "ANIMATION_INVENTORY_EXACT": "36/36",
   "NETWORK_ERROR_STATES": 0,
-  "ABORTED_IN_FLIGHT_REQUEST_STATES": 1,
+  "ABORTED_IN_FLIGHT_REQUEST_STATES": 0,
   "ABORTED_REQUEST_NOTE": "net::ERR_ABORTED on a turnaround PNG is the authored source reassigning hero.src during a rapid rotation. It was observed identically on ORIGINAL and SPLIT, carries no 4xx, and the same asset resolves on reload with a non-zero naturalWidth, so it is recorded as load timing and is not counted as a network error or a missing asset.",
   "MISSING_ASSET_STATES": 0,
-  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 4,
+  "ASSET_REQUEST_COUNT_MISMATCH_STATES": 8,
   "ASSET_REQUESTS_OBSERVED_PER_STATE": [
     10,
     11,
     12,
     13,
+    14,
     15,
     16,
     17,
@@ -49,7 +73,8 @@
     "D2.dom.burstAnimationDelays",
     "D2.dom.burstParticleXsYs",
     "D3.dom.modal.barWidth",
-    "D3.dom.modal.percent"
+    "D3.dom.modal.percent",
+    "D3.dom.modal.stepDoneSignature"
   ],
   "D2_D3_PROJECTION_POLICY": "FIELD_LEVEL_ONLY_RANDOM_SCALARS; the enclosing particle and upload structure is still compared exactly; no Math.random seed, no monkey-patch, no clock patch, no performance.now patch, no source normalization",
   "RAW_PNG_EQUAL": "NOT_COMPUTED_EVIDENCE_ONLY_NOT_A_GATE",
@@ -155,8 +180,8 @@
       "stabilization": {
         "declared": "AUTHORED_AUTO_CONTROL",
         "applied": {
-          "original": "AUTHORED_AUTO_CONTROL",
-          "split": "AUTHORED_AUTO_CONTROL"
+          "original": "NONE_INTENTIONAL",
+          "split": "NONE_INTENTIONAL"
         }
       }
     },
@@ -170,8 +195,8 @@
       "stabilization": {
         "declared": "AUTHORED_AUTO_CONTROL",
         "applied": {
-          "original": "AUTHORED_AUTO_CONTROL",
-          "split": "AUTHORED_AUTO_CONTROL"
+          "original": "NONE_INTENTIONAL",
+          "split": "NONE_INTENTIONAL"
         }
       }
     },
@@ -230,15 +255,121 @@
       "stabilization": {
         "declared": "AUTHORED_AUTO_CONTROL",
         "applied": {
-          "original": "AUTHORED_AUTO_CONTROL",
-          "split": "AUTHORED_AUTO_CONTROL"
+          "original": "NONE_INTENTIONAL",
+          "split": "NONE_INTENTIONAL"
         }
       }
     }
   ],
-  "REAL_PARITY_DEFECTS": 0,
-  "real_parity_defect_detail": [],
-  "S4_VERDICT": "CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE",
+  "REAL_PARITY_DEFECTS": 15,
+  "real_parity_defect_detail": [
+    {
+      "ctx": "D1",
+      "state": "07_filter_male",
+      "defects": [
+        {
+          "path": "dom.heroSrc",
+          "a": "assets/turnarounds/transparent/A_045.png",
+          "b": "assets/turnarounds/transparent/A_090.png"
+        },
+        {
+          "path": "dom.angleText",
+          "a": "045°",
+          "b": "090°"
+        },
+        {
+          "path": "dom.angleOnIndex",
+          "a": 1,
+          "b": 2
+        }
+      ]
+    },
+    {
+      "ctx": "D1",
+      "state": "15_primary_save_hover",
+      "defects": [
+        {
+          "path": "dom.heroSrc",
+          "a": "assets/turnarounds/transparent/A_135.png",
+          "b": "assets/turnarounds/transparent/A_090.png"
+        },
+        {
+          "path": "dom.angleText",
+          "a": "135°",
+          "b": "090°"
+        },
+        {
+          "path": "dom.angleOnIndex",
+          "a": 3,
+          "b": 2
+        }
+      ]
+    },
+    {
+      "ctx": "D1",
+      "state": "16_look_switch_transient_out",
+      "defects": [
+        {
+          "path": "geometry.heroWrap.x",
+          "a": 372,
+          "b": 373
+        },
+        {
+          "path": "geometry.heroWrap.y",
+          "a": 113,
+          "b": 114
+        },
+        {
+          "path": "geometry.heroWrap.h",
+          "a": 755,
+          "b": 754
+        }
+      ]
+    },
+    {
+      "ctx": "M1",
+      "state": "04_filter_female",
+      "defects": [
+        {
+          "path": "dom.heroSrc",
+          "a": "assets/turnarounds/transparent/A_135.png",
+          "b": "assets/turnarounds/transparent/A_180.png"
+        },
+        {
+          "path": "dom.angleText",
+          "a": "135°",
+          "b": "180°"
+        },
+        {
+          "path": "dom.angleOnIndex",
+          "a": 3,
+          "b": 4
+        }
+      ]
+    },
+    {
+      "ctx": "R1",
+      "state": "03_css_drift_spin_scan_observation",
+      "defects": [
+        {
+          "path": "dom.heroSrc",
+          "a": "assets/turnarounds/transparent/A_135.png",
+          "b": "assets/turnarounds/transparent/A_090.png"
+        },
+        {
+          "path": "dom.angleText",
+          "a": "135°",
+          "b": "090°"
+        },
+        {
+          "path": "dom.angleOnIndex",
+          "a": 3,
+          "b": 2
+        }
+      ]
+    }
+  ],
+  "S4_VERDICT": "CANDIDATE_HOLD",
   "candidate_state": {
     "source_split_parity_pass": false,
     "parity_status": "CANDIDATE_PENDING_CENTRAL",
@@ -249,15 +380,18 @@
     "MERGE": "NO"
   },
   "nondeterminism_declaration": {
-    "method": "two ORIGINAL repetitions per state; a field that differs original-vs-original is nondeterministic by construction, exactly the method S2 used to reach 31/36",
-    "transient_transitions": "CSSTransition liveness is a capture-timing fact, reported under transient_animation_diffs and not gated; the authored keyframe inventory is gated exactly",
+    "method": "two ORIGINAL repetitions per state; a field that differs original-vs-original is nondeterministic by construction, exactly the method S2 used",
+    "settle_policy": "state-semantic per CENTRAL #589 comment 5905286796; see SETTLE_POLICY",
+    "transient_transitions": "an authored finite transition is waited out on a STABLE state; on an intentionally transient state the phase is recorded in residual-ledger.json under AUTHORED_FINITE_TRANSIENT_PHASE",
+    "infinite_css": "the authored drift/scan/spin keyframes have no terminal state; the NATIVE inventory is recorded first, then both surfaces are phase-locked identically for geometry/computed-style only",
+    "motion_disagreement": "a REAL PARITY DEFECT on a STABLE state; there is no generic movingOnEither exclusion",
     "authored_tracks": [
       "drift",
       "scan",
       "spin",
       "burst"
     ],
-    "D4": "at <=720px #autoBtn is display:none, so the authored auto loop is user-unstoppable; proven on both surfaces before any stabilization and recorded as HARNESS_ONLY_NOT_USER_REACHABLE when the harness clicks it for screenshots",
+    "D4": "at <=720px #autoBtn is display:none, so the authored auto loop is user-unstoppable; proven on both surfaces BEFORE any stabilization, then the same authored control is DOM-clicked for measurement only and recorded as HARNESS_ONLY_NOT_USER_REACHABLE",
     "D5": "at 390x844 the document does not scroll while authored controls sit below the fold; recorded on both surfaces, never repaired"
   }
 }

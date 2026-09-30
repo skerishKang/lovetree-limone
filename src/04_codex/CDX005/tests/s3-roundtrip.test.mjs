@@ -39,8 +39,8 @@
  *  - T14      authority-context.json records the standalone serving contract,
  *             the 80 pinned assets and the D1-D5 frozen defects
  *  - T15      materialization output hashes + git blobs match on-disk files
- *  - T16      stage flags S0-S3 complete, S4 fail-closed, parity not claimed,
- *             capture_surface STANDALONE_AUTHORITY_SURFACE
+ *  - T16      stage flags S0-S3 complete, S4 candidate-only and fail-closed,
+ *             parity never claimed, capture_surface STANDALONE_AUTHORITY_SURFACE
  *  - T17      duplicate-variant governance: SINGLE_EXECUTABLE_NO_DUPLICATE
  *             with the V1 superseded / duplicate-copy note, launcher not
  *             vendored, no Product or Lineage58 adoption
@@ -292,18 +292,49 @@ test("T15 materialization output hashes and git blobs match the on-disk files", 
   assert.equal(record("T15.status", materialization.status === "MATERIALIZED_PENDING_PARITY", "materialization is pending parity, not accepted"), true);
 });
 
-test("T16 stage flags S0-S3 complete, S4 fail-closed, parity not claimed", () => {
+test("T16 stage flags S0-S3 complete, S4 candidate-only and fail-closed, parity never claimed", () => {
+  /* Lifecycle-aware (HOLD-3). The S3-era assertion "no evidence/s4 directory exists" is now
+   * legitimately false, because CENTRAL released S4 for CANDIDATE capture. The guard is NOT
+   * deleted: it is strengthened into a two-branch invariant that still fails closed.
+   *
+   *   no evidence/s4            -> S4 is unreleased, capture unauthorized, parity NOT_STARTED
+   *   evidence/s4 exists        -> S4 is RELEASED_CANDIDATE_ONLY, capture authorized, parity
+   *                               CANDIDATE_PENDING_CENTRAL, and NOTHING is promoted
+   *
+   * In BOTH branches parity is never claimed: no accepted-parity.json, no parity_ref, and
+   * source_split_parity_pass stays false. A stale HOLD_CENTRAL alongside an existing evidence/s4
+   * is exactly the inconsistency HOLD-2 reported, and is rejected here. */
   const s = manifest.stages;
+  const s4Exists = fs.existsSync(path.join(CAPSULE, "evidence", "s4"));
+  const acceptedParity = path.join(CAPSULE, "evidence", "parity", "accepted-parity.json");
+
   assert.equal(record("T16a", s.identity_verified === true && s.raw_authority_locked === true, "S0 and S1 complete"), true);
   assert.equal(record("T16b", s.baseline_captured === true, "S2 baseline captured"), true);
   assert.equal(record("T16c", s.mechanical_split_complete === true, "S3 mechanical split complete"), true);
   assert.equal(record("T16d", s.source_split_parity_pass === false, "S4 parity NOT passed"), true);
-  assert.equal(record("T16e", context.stage_gate.s4_release === "HOLD_CENTRAL", "S4 release is HOLD_CENTRAL"), true);
-  assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === false, "parity capture is not authorized"), true);
+
+  if (!s4Exists) {
+    assert.equal(record("T16e", context.stage_gate.s4_release === "HOLD_CENTRAL", "S4 unreleased: release is HOLD_CENTRAL"), true);
+    assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === false, "S4 unreleased: parity capture is not authorized"), true);
+    assert.equal(record("T16h", materialization.parity_status === "NOT_STARTED", "S4 unreleased: parity status is NOT_STARTED"), true);
+  } else {
+    assert.equal(record("T16e", context.stage_gate.s4_release === "RELEASED_CANDIDATE_ONLY", "S4 candidate present: release is RELEASED_CANDIDATE_ONLY"), true);
+    assert.equal(record("T16f", context.stage_gate.parity_capture_authorized === true, "S4 candidate present: parity capture is authorized"), true);
+    assert.equal(record("T16h", materialization.parity_status === "CANDIDATE_PENDING_CENTRAL", "S4 candidate present: parity status is CANDIDATE_PENDING_CENTRAL"), true);
+    // The two canonical files must agree, or one of them is stale.
+    assert.equal(record("T16h2", context.stage_gate.s4_release === materialization.stage_gate.s4_release
+      && context.stage_gate.parity_capture_authorized === materialization.stage_gate.parity_capture_authorized,
+    "authority-context and materialization stage_gate agree on the S4 release"), true);
+    assert.equal(record("T16h3", materialization.stage_gate.parity_status === materialization.parity_status,
+      "materialization stage_gate.parity_status matches materialization.parity_status"), true);
+  }
+
   assert.equal(record("T16g", context.stage_gate.parity_ref === null && materialization.parity_ref === null, "no parity reference exists"), true);
-  assert.equal(record("T16h", materialization.parity_status === "NOT_STARTED", "parity status is NOT_STARTED"), true);
-  assert.equal(record("T16i", !fs.existsSync(path.join(CAPSULE, "evidence", "parity")), "no parity evidence directory exists in this capsule"), true);
-  assert.equal(record("T16j", !fs.existsSync(path.join(CAPSULE, "evidence", "s4")), "no S4 evidence directory exists in this capsule"), true);
+  assert.equal(record("T16i", !fs.existsSync(acceptedParity), "no accepted-parity.json exists; S4 candidate is never promoted"), true);
+  assert.equal(record("T16j", s4Exists
+    ? context.stage_gate.parity_status === "CANDIDATE_PENDING_CENTRAL"
+    : true,
+  "an S4 candidate directory implies CANDIDATE_PENDING_CENTRAL, never a stale HOLD"), true);
   assert.equal(record("T16k", manifest.capture_surface.mode === "STANDALONE_AUTHORITY_SURFACE", "manifest capture surface mode"), true);
   assert.equal(record("T16l", baseline.status === "ACCEPTED" && baseline.source_id === "CDX005", "S2 accepted baseline promoted with matching identity"), true);
   assert.equal(record("T16m", baseline.screenshot_equality_claimed === false && baseline.baseline_stable === false, "baseline records no screenshot equality claim"), true);

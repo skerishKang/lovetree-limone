@@ -147,6 +147,35 @@ test('the S4 candidate summary, when present, is candidate-only and complete', (
   }
 });
 
+test('the S4 lifecycle metadata is current, consistent and never promoted', () => {
+  const ctx = readJson('authority-context.json');
+  const mat = readJson(path.join('split', 'materialization.json'));
+  const s4Exists = exists(path.join(CAPSULE, 'evidence', 's4'));
+  // HOLD-2: an existing S4 candidate directory must not coexist with a stale S3-era gate.
+  if (s4Exists) {
+    assert.equal(ctx.stage_gate.s4_release, 'RELEASED_CANDIDATE_ONLY',
+      'an S4 candidate exists, so the release gate is RELEASED_CANDIDATE_ONLY');
+    assert.equal(ctx.stage_gate.parity_capture_authorized, true,
+      'an S4 candidate exists, so parity capture is authorized');
+    assert.equal(ctx.stage_gate.parity_status, 'CANDIDATE_PENDING_CENTRAL');
+    assert.equal(mat.parity_status, 'CANDIDATE_PENDING_CENTRAL');
+  }
+  // The two canonical files must agree with each other, whichever branch we are in.
+  assert.equal(ctx.stage_gate.s4_release, mat.stage_gate.s4_release,
+    'authority-context and materialization agree on s4_release');
+  assert.equal(ctx.stage_gate.parity_capture_authorized, mat.stage_gate.parity_capture_authorized,
+    'authority-context and materialization agree on parity_capture_authorized');
+  assert.equal(mat.stage_gate.parity_status, mat.parity_status,
+    'materialization stage_gate.parity_status matches materialization.parity_status');
+  // Parity is never claimed at candidate stage, in either branch.
+  assert.equal(ctx.stage_gate.source_split_parity_pass, false, 'source_split_parity_pass stays false');
+  assert.equal(mat.stage_gate.source_split_parity_pass, false, 'source_split_parity_pass stays false');
+  assert.equal(ctx.stage_gate.parity_ref, null, 'parity_ref stays null');
+  assert.equal(mat.parity_ref, null, 'parity_ref stays null');
+  assert.equal(exists(path.join(CAPSULE, 'evidence', 'parity', 'accepted-parity.json')), false,
+    'no accepted-parity.json may exist before CENTRAL acceptance');
+});
+
 test('the committed review pack holds exactly the 12 bounded CENTRAL review states', () => {
   const pack = path.join(S4_DIR, 'review-pack');
   if (!exists(pack)) return;

@@ -952,11 +952,12 @@
     ]
   },
   "stage_gate": {
-    "s4_release": "HOLD_CENTRAL",
-    "parity_capture_authorized": false,
+    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "parity_capture_authorized": true,
     "source_split_parity_pass": false,
+    "parity_status": "CANDIDATE_PENDING_CENTRAL",
     "parity_ref": null,
-    "note": "Fail-closed. S4 browser parity was not run, no candidate parity artifact exists, and no accepted-parity.json exists in this capsule."
+    "note": "S4 is RELEASED for CANDIDATE capture only, per #589 comment 5889378824 and the settle ruling #589 comment 5905286796. A candidate parity artifact exists under evidence/s4. No accepted-parity.json exists, source_split_parity_pass is false and parity_ref is null, so nothing is promoted: acceptance remains CENTRAL's decision. The S3 historical record evidence/s3/roundtrip.json is unchanged."
   },
   "product_adoption": false,
   "lineage58_adoption": false

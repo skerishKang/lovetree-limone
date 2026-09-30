@@ -941,12 +941,13 @@
     "preservation_invariant": "The single authored relative template path=(id,a)=>`assets/turnarounds/transparent/${id}_${a}.png` with 10 look ids and 8 angles derives exactly 80 required paths. The vendored set must equal that derivation, and every vendored file must be byte-identical in original/assets/ and split/assets/ and match the pinned Drive object bytes.",
     "verification_ref": "../evidence/s3/roundtrip.json"
   },
-  "parity_status": "NOT_STARTED",
+  "parity_status": "CANDIDATE_PENDING_CENTRAL",
   "parity_ref": null,
   "stage_gate": {
-    "s4_release": "HOLD_CENTRAL",
-    "parity_capture_authorized": false,
+    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "parity_capture_authorized": true,
     "source_split_parity_pass": false,
+    "parity_status": "CANDIDATE_PENDING_CENTRAL",
     "parity_ref": null
   },
   "next_stage": "S4_NOT_RELEASED",

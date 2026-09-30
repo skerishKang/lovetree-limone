@@ -145,6 +145,45 @@ const REVIEW_PACK = [
 ];
 
 /**
+ * Per-state capture intent, per CENTRAL's settle ruling (#589 comment 5905286796).
+ *
+ * The intent is decided by the ACCEPTED S2 STATE MEANING, not by any predicted count. Six
+ * accepted states are semantically live or intentionally transient and must NOT be
+ * converted into a paused stable state; every other state is STABLE. On a STABLE state a
+ * residual after the required settle/phase procedure is a REAL parity defect.
+ *
+ *   STABLE            -> stop the authored JS auto loop through the authored AUTO control,
+ *                        wait out any authored finite CSS transition, then capture.
+ *   AUTHORED_LIVE     -> stopping it would falsify the accepted state. Keep it live and
+ *                        record the phase in residual-ledger.json.
+ *   EXPLICIT_TRANSIENT-> do not wait it into a different semantic state. Keep the transient.
+ */
+const STATE_INTENT = {
+  'D1/01_initial_auto_active': 'AUTHORED_LIVE',
+  'D1/16_look_switch_transient_out': 'EXPLICIT_TRANSIENT',
+  'D1/17_save_burst_transient': 'EXPLICIT_TRANSIENT',
+  'R1/01_initial_source_behavior': 'AUTHORED_LIVE',
+  'R1/03_css_drift_spin_scan_observation': 'AUTHORED_LIVE',
+  'R1/04_save_burst_observation': 'EXPLICIT_TRANSIENT',
+};
+/* R1/03 exists to observe the CONTINUOUS authored CSS tracks (drift/spin/scan). The JS auto
+ * loop may be paused there, because that does not falsify the CSS-motion observation, but the
+ * CSS tracks themselves stay live for the native evidence. It is the one AUTHORED_LIVE state
+ * that still permits an authored-control stop. */
+const INTENT_PERMITS_JS_PAUSE = new Set(['R1/03_css_drift_spin_scan_observation']);
+const intentOf = (ctx, state) => STATE_INTENT[`${ctx}/${state}`] || 'STABLE';
+
+/** The bounded, exhaustive set of residual classifications (ruling 5905286796). A residual
+ * that cannot be assigned one of these is a REAL PARITY DEFECT, never a ledger row. */
+const ALLOWED_CLASSIFICATIONS = [
+  'D2_RANDOM_SCALAR',
+  'D3_RANDOM_SCALAR',
+  'AUTHORED_LIVE_PHASE',
+  'AUTHORED_FINITE_TRANSIENT_PHASE',
+  'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF',
+];
+
+/**
  * The bounded stochastic projection. Field-level only, and only for the authored
  * Math.random() sites. Nothing here widens a semantic, geometry, style or runtime
  * comparison: these are the exact random scalars CENTRAL declared, plus the fields
@@ -690,6 +729,108 @@ async function dragOnce(page, dir) {
   await page.waitForTimeout(180);
 }
 
+/**
+ * Settle the page to the accepted state's authored terminal condition BEFORE any hard channel
+ * is read. Order is fixed by ruling 5905286796 and must not be reordered:
+ *
+ *   fresh page -> driver -> (M1: D4 native proof, already done in runState)
+ *              -> intent-driven AUTO handling -> finite CSS transition settle
+ *              -> [native hard channels + animation/liveness inventory]
+ *              -> [infinite CSS phase-lock] -> [phased geometry/computed-style]
+ *
+ * The native inventory is taken in runState AFTER this returns, so the phase-lock in
+ * phaseLockForCapture always has native liveness evidence in front of it.
+ */
+async function settleForCapture(page, ctx, state) {
+  const intent = intentOf(ctx.id, state);
+  const handoff = { intent, action: 'NONE_INTENTIONAL', jsPaused: false, transitionSettled: false };
+
+  const mustPause = intent === 'STABLE' || INTENT_PERMITS_JS_PAUSE.has(`${ctx.id}/${state}`);
+  if (!mustPause) {
+    // AUTHORED_LIVE / EXPLICIT_TRANSIENT: stopping the loop would falsify the state.
+    await page.waitForTimeout(120);
+    return handoff;
+  }
+
+  const label = await page.$eval('#autoBtn', (e) => e.textContent);
+  const autoRunning = /AUTO/.test(label);
+  if (autoRunning) {
+    if (ctx.width <= 720) {
+      /* D4: the control is display:none here, so a real user click is impossible. CENTRAL
+       * authorizes measurement-only DOM invocation of the SAME authored control, after D4 has
+       * already been proven on this fresh page in runState. No internal-function call, no source
+       * patch, no repair: the authored defect stays exactly as authored. */
+      await page.evaluate(() => { document.getElementById('autoBtn').click(); });
+      handoff.action = 'HARNESS_ONLY_NOT_USER_REACHABLE';
+    } else {
+      /* Desktop/tablet: a real user click on the authored control, through the real hit test. */
+      const reachable = await page.evaluate(() => {
+        const b = document.getElementById('autoBtn');
+        if (!b) return false;
+        const r = b.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return false;
+        const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return !!top && (b === top || b.contains(top));
+      });
+      if (reachable) {
+        await page.click('#autoBtn');
+        handoff.action = 'AUTHORED_AUTO_CONTROL';
+      } else {
+        /* An authored overlay (e.g. the open upload modal) legitimately covers the control.
+         * The author already stops the loop in openModal(), so this is recorded, not forced. */
+        handoff.action = 'AUTO_CONTROL_OCCLUDED_BY_AUTHORED_OVERLAY';
+      }
+    }
+    /* Verify the authored paused condition from the authored label, on BOTH surfaces. */
+    const after = await page.$eval('#autoBtn', (e) => e.textContent);
+    handoff.jsPaused = /PLAY/.test(after);
+    handoff.labelAfter = after.replace(/\s+/g, ' ').trim();
+  } else {
+    handoff.action = 'AUTO_ALREADY_PAUSED';
+    handoff.jsPaused = true;
+  }
+
+  /* Finite authored CSS transition settle. Only STABLE states wait; an intentional transient is
+   * never waited into a different semantic state. CSS TRANSITIONS only - the authored drift /
+   * spin / scan keyframes are infinite by design (D1) and are handled by phase-locking, not by
+   * waiting. */
+  if (intent === 'STABLE') {
+    try {
+      await page.waitForFunction(() => {
+        const live = (document.getAnimations ? document.getAnimations() : [])
+          .filter((a) => a.constructor && a.constructor.name === 'CSSTransition')
+          .filter((a) => a.playState === 'running');
+        return live.length === 0;
+      }, null, { timeout: 2500, polling: 60 });
+      handoff.transitionSettled = true;
+    } catch (e) {
+      handoff.transitionSettled = false;
+      handoff.transitionSettleTimedOut = true;
+    }
+  }
+  return handoff;
+}
+
+/**
+ * INFINITE_CSS_KEYFRAME handling. The authored drift/scan/spin keyframes run forever, so a
+ * "settled" #heroWrap is still moving. Per ruling 5905286796 the harness MAY phase-lock the
+ * existing animation objects identically on both surfaces for GEOMETRY/COMPUTED-STYLE parity
+ * ONLY, and only AFTER the native liveness and animation inventory have been recorded.
+ * Nothing is created, removed or retimed; the harness only pauses and rewinds what the author
+ * already started.
+ */
+async function phaseLockForCapture(page) {
+  const locked = await page.evaluate(() => {
+    let n = 0;
+    for (const a of document.getAnimations()) {
+      try { a.pause(); a.currentTime = 0; n += 1; } catch (e) { /* ignore */ }
+    }
+    return n;
+  });
+  await page.waitForTimeout(120);
+  return { lockedAnimations: locked, action: 'HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT' };
+}
+
 /** D4: prove the AUTO control is hidden / user-unreachable BEFORE any stabilization. */
 async function proveD4(page) {
   return page.evaluate(() => {
@@ -892,45 +1033,45 @@ async function runState(browser, port, ctx, state, surface, opts = {}) {
     return h && h.complete === true && h.naturalWidth > 0;
   }, null, { timeout: 10000 });
 
+  /* Intent-driven settle. Runs AFTER the driver and AFTER the M1 D4 native proof above, and
+   * BEFORE any hard channel is read. See settleForCapture for the fixed order. */
+  const handoff = await settleForCapture(page, ctx, state);
+
+  /* NATIVE hard channels, captured BEFORE any phase-lock. This is the native liveness and
+   * animation inventory that ruling 5905286796 requires to exist before the harness may
+   * phase-lock the authored infinite CSS tracks. */
   const hard = await page.evaluate(collectChannels);
+
+  /* Phased geometry/computed-style. Only the infinite authored CSS keyframes are phase-locked,
+   * and only after the native capture above. The phase-lock is applied identically on both
+   * surfaces, so it never favours ORIGINAL over SPLIT. */
+  const phase = await phaseLockForCapture(page);
+  const phased = await page.evaluate(collectChannels);
+  /* Gate geometry/computedStyle on the PHASED capture; everything else stays on the NATIVE one,
+   * because a phase-lock would flatten exactly the liveness facts those channels measure. */
+  const hardPhased = {
+    ...phased,
+    geometry: phased.geometry,
+    geometryRaw: phased.geometryRaw,
+    geometryMotion: phased.geometryMotion,
+    computedStyle: phased.computedStyle,
+  };
+  hardPhased.dom = hard.dom;
+  hardPhased.animationInventory = hard.animationInventory;
+  hardPhased.transientAnimations = hard.transientAnimations;
+  hardPhased.responsive = hard.responsive;
+  hardPhased.scroll = hard.scroll;
+  hardPhased.domNative = hard.dom;
+  hardPhased.motionNative = hard.geometryMotion;
 
   let png = null;
   let stabilized = null;
   if (opts.screenshot) {
-    // Screenshot channel only, after all hard channels are collected.
-    if (ctx.width <= 720) {
-      // D4 already proven above. Harness may DOM-click the same authored handler
-      // for paired stabilization. This is NOT user reachable and is recorded as such.
-      await page.evaluate(() => { document.getElementById('autoBtn').click(); });
-      await page.waitForTimeout(700);
-      stabilized = 'HARNESS_ONLY_NOT_USER_REACHABLE';
-    } else {
-      // The authored AUTO control is used through a real user click, exactly as a user would.
-      // If an authored overlay (for example the open upload modal) is covering it, the click is
-      // legitimately unreachable, so the AUTO loop is left running and that is recorded rather
-      // than forced through. The author already stops the loop in openModal().
-      const reachable = await page.evaluate(() => {
-        const b = document.getElementById('autoBtn');
-        if (!b) return false;
-        const r = b.getBoundingClientRect();
-        if (r.width === 0 || r.height === 0) return false;
-        const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-        return !!top && (b === top || b.contains(top));
-      });
-      const label = await page.$eval('#autoBtn', (e) => e.textContent);
-      if (reachable && /AUTO/.test(label)) {
-        await page.click('#autoBtn');
-        await page.waitForTimeout(700);
-        stabilized = 'AUTHORED_AUTO_CONTROL';
-      } else {
-        stabilized = reachable ? 'AUTO_ALREADY_PAUSED' : 'AUTO_CONTROL_OCCLUDED_BY_AUTHORED_OVERLAY';
-      }
-    }
-    // Phase-lock the existing animations identically on both surfaces, screenshot channel only.
-    await page.evaluate(() => {
-      for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = 0; } catch (e) { /* ignore */ } }
-    });
-    await page.waitForTimeout(120);
+    /* Screenshot channel only, and AFTER every hard channel above was collected. The page is
+     * already settled and already phase-locked by the hard-capture path, so this block must NOT
+     * toggle the authored AUTO control again: that would restart the loop and undo the settle.
+     * It only records which stabilization the paired screenshot was taken under. */
+    stabilized = handoff.action;
     png = await page.screenshot();
   }
 
@@ -943,7 +1084,7 @@ async function runState(browser, port, ctx, state, surface, opts = {}) {
     externalRequests: [...new Set(net.externalRequests)],
   };
   await context.close();
-  return { hard, net: netOut, d4, d5, d4RotationContinues, png, stabilized };
+  return { hard, hardPhased, handoff, phase, net: netOut, d4, d5, d4RotationContinues, png, stabilized };
 }
 
 /**
@@ -1080,6 +1221,45 @@ async function sideBySide(browser, port, ctx, state) {
   return { buf, stabilization };
 }
 
+/**
+ * Build the 12-state contact sheet for CENTRAL's direct visual review, from the already
+ * committed review-pack PNGs. Each panel is one ORIGINAL|SPLIT pair, labelled with its state
+ * and viewport, so CENTRAL can review all 12 states in a single image. This is a temporary
+ * review artifact: it is written outside the capsule and never committed.
+ */
+async function buildContactSheet(browser, reviewPacks) {
+  const panels = [];
+  for (const r of reviewPacks) {
+    const file = path.join(CAPSULE, r.file);
+    if (!fs.existsSync(file)) return null;
+    const buf = fs.readFileSync(file);
+    panels.push({
+      label: r.label,
+      viewport: r.viewport,
+      b64: buf.toString('base64'),
+    });
+  }
+  const cols = 2;
+  const cell = (p) => `<figure class="cell">
+      <figcaption><b>${p.label}</b><span>${p.viewport} &middot; ORIGINAL | SPLIT</span></figcaption>
+      <img src="data:image/png;base64,${p.b64}">
+    </figure>`;
+  const c = await browser.newContext({ viewport: { width: 2200, height: 1400 }, deviceScaleFactor: 1 });
+  const page = await c.newPage();
+  await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>
+    html,body{margin:0;background:#0e1014;font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;color:#c8d0da}
+    .grid{display:grid;grid-template-columns:repeat(${cols},1fr);gap:14px;padding:14px}
+    .cell{margin:0;background:#151922;border:1px solid #262c38;border-radius:6px;padding:8px}
+    figcaption{display:flex;justify-content:space-between;gap:10px;padding:0 0 7px;color:#8d97a6}
+    figcaption b{color:#e6ecf4;font-size:12px}
+    img{display:block;width:100%;border:1px solid #262c38;border-radius:3px}
+  </style></head><body><div class="grid">${panels.map(cell).join('')}</div></body></html>`, { waitUntil: 'load' });
+  await page.waitForTimeout(400);
+  const out = await page.screenshot({ fullPage: true });
+  await c.close();
+  return out;
+}
+
 /** The interaction channel, compared exactly. Random scalars are not part of it. */
 function interactionChannel(h) {
   return {
@@ -1144,7 +1324,7 @@ function d5Gate(o, s) {
  * source_split_parity_pass, never writes an accepted-parity record and never promotes the
  * manifest or the materialization. CENTRAL alone decides S4 acceptance.
  */
-function writeCandidateSummary(results, reviewPacks) {
+function writeCandidateSummary(results, reviewPacks, ledger) {
   const n = results.length;
   const count = (pred) => results.filter(pred).length;
   const totalReal = results.reduce((sum, r) => sum + r.real_defects.length, 0);
@@ -1178,13 +1358,21 @@ function writeCandidateSummary(results, reviewPacks) {
   const externalStates = count((r) => r.network.original.externalRequests.length > 0
     || r.network.split.externalRequests.length > 0);
   const d1d5 = results.every((r) => r.d1_d5_preserved);
-  const midTransition = results.reduce((n, r) => n + r.geometry_mid_transition_diffs.length, 0);
-  const styleCaptureInstant = results.reduce((n, r) => n + r.computed_style_capture_instant_diffs.length, 0);
+  const intentCounts = results.reduce((acc, r) => {
+    acc[r.state_intent] = (acc[r.state_intent] || 0) + 1;
+    return acc;
+  }, {});
   const angleGatedStates = results.filter((r) => r.angle_axis && r.angle_axis.gated);
   const angleGatedDiffs = angleGatedStates.reduce((n, r) => n + r.angle_axis.diffs.length, 0);
+  const unclassified = ledger.filter((e) => !ALLOWED_CLASSIFICATIONS.includes(e.classification));
   const randomProjected = [...new Set(results.flatMap((r) => r.random_fields_observed))].sort();
+  /* A candidate PASS additionally requires SEMANTIC_CONTRACT_EXACT to be 36/36 and every
+   * ledger row to carry an allowed classification (ruling 5905286796). Any other outcome is
+   * CANDIDATE_HOLD. Nothing here widens an exclusion to force a pass. */
+  const contractExact = count((r) => r.contract_semantic_exact);
   const hold = totalReal > 0 || !d1d5 || networkErrorStates > 0 || missingAssetStates > 0
-    || externalStates > 0 || reviewPacks.length !== 12;
+    || externalStates > 0 || reviewPacks.length !== 12
+    || contractExact !== n || unclassified.length > 0;
 
   const summary = {
     schema_version: '1.0',
@@ -1196,19 +1384,31 @@ function writeCandidateSummary(results, reviewPacks) {
     generated_by: 'src/04_codex/CDX005/tests/s4-parity.test.mjs (browser candidate mode)',
     authority: {
       s3_acceptance_and_s4_release: 'skerishKang/lovetree-limone#589 comment 5889378824',
+      s4_candidate_hold: 'skerishKang/lovetree-limone#589 comment 5904993568',
+      s4_settle_ruling: 'skerishKang/lovetree-limone#589 comment 5905286796',
       s2_acceptance: 'skerishKang/lovetree-limone#589 comment 5887518417',
       s2_report: 'skerishKang/workdiary 960fd4ad407d5b996f644064c6ed1a5b7383d7ab',
     },
     parity_contract: 'SOURCE_SPECIFIC_MOTION_AWARE',
     PAIRED_STATE_COUNT: n,
-    SEMANTIC_EXACT: `${exact('semantic_diffs')}/${n}`,
+    /* Two SEPARATE numbers, per ruling 5905286796. SEMANTIC_RAW_EXACT is the measured raw
+     * equality with no projection and no exclusion. SEMANTIC_CONTRACT_EXACT is exact after
+     * ONLY the authorized D2/D3 random-scalar projection plus ledger-backed classes, and must
+     * be 36/36 for a candidate PASS. Reporting 17/36 raw equality as "exact across all 36" is
+     * exactly what HOLD-1 rejected, so the two are never merged and never described that way. */
+    SEMANTIC_RAW_EXACT: `${count((r) => r.raw_semantic_exact)}/${n}`,
+    SEMANTIC_CONTRACT_EXACT: `${count((r) => r.contract_semantic_exact)}/${n}`,
+    RESIDUAL_LEDGER_ENTRIES: ledger.length,
+    RESIDUAL_LEDGER_PATH: 'evidence/s4/residual-ledger.json',
     GEOMETRY_EXACT: `${exact('geometry_diffs')}/${n}`,
-    GEOMETRY_MID_TRANSITION_DELTAS: midTransition,
-    COMPUTED_STYLE_CAPTURE_INSTANT_DELTAS: styleCaptureInstant,
-    ANGLE_AXIS_CAPTURE_INSTANT_STATES: angleGatedStates.map((r) => `${r.ctx}/${r.state}`),
-    ANGLE_AXIS_CAPTURE_INSTANT_DELTAS: angleGatedDiffs,
-    CAPTURE_INSTANT_POLICY: 'Three declared capture-instant classes, each measured per instant rather than assumed, and each reported with its own count. (1) An element still running an authored CSS transition: its rounded box and interpolated computed style differ between any two samples of the SAME frozen source. (2) The angle axis while the authored auto-rotation loop is still running, detected from the authored AUTO/PLAY label on each surface; with the loop stopped the angle is compared exactly. (3) CSSTransition liveness presence. No pixel, SSIM, perceptual, sub-pixel or numeric tolerance is applied anywhere, and no seeded randomness, clock patch or source normalization is used. CENTRAL owns the decision on whether these three classes are acceptable for S4 acceptance.',
-    GEOMETRY_MID_TRANSITION_NOTE: 'A #heroWrap rounded-box delta observed only while the authored look-switch transition was still running, proven by that same field already differing between two ORIGINAL runs of the unmodified source. Reported as a declared capture-instant nondeterminism class, never as a parity defect. No numeric tolerance is applied; sub-pixel values are retained under geometry_mid_transition_diffs and geometry_raw per state.',
+    STATE_INTENT_COUNTS: intentCounts,
+    STATE_INTENT_TABLE: STATE_INTENT,
+    ANGLE_AXIS_LEDGER_STATES: angleGatedStates.map((r) => `${r.ctx}/${r.state}`),
+    ANGLE_AXIS_LEDGER_DELTAS: angleGatedDiffs,
+    SETTLE_POLICY: 'State-semantic, per CENTRAL ruling #589 comment 5905286796. STABLE states stop the authored JS auto loop through the authored AUTO control (real user click on desktop/tablet; DOM click of the SAME authored control on mobile, after D4 is proven and recorded as HARNESS_ONLY_NOT_USER_REACHABLE) and then wait out any authored finite CSS transition. AUTHORED_LIVE and EXPLICIT_TRANSIENT states are never stopped or waited into another semantic state. The authored drift/scan/spin keyframes are infinite by design, so after the NATIVE hard channels and animation/liveness inventory are recorded, the harness phase-locks the existing animation objects identically on both surfaces for geometry/computed-style only, recorded as HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT.',
+    EXCLUSION_POLICY: 'NO generic movingOnEither exclusion exists. On a STABLE state a motion-state disagreement, a geometry delta or a computed-style delta is a REAL PARITY DEFECT. A residual is ledgered only when it matches one of the five allowed classifications; anything else is a real defect.',
+    ALLOWED_RESIDUAL_CLASSIFICATIONS: ALLOWED_CLASSIFICATIONS,
+    UNCLASSIFIED_RESIDUALS: unclassified.length,
     COMPUTED_STYLE_EXACT: `${exact('computed_style_diffs')}/${n}`,
     INTERACTION_EXACT: `${exact('interaction_diffs')}/${n}`,
     ANIMATION_INVENTORY_EXACT: `${exact('animation_inventory_diffs')}/${n}`,
@@ -1240,17 +1440,33 @@ function writeCandidateSummary(results, reviewPacks) {
       MERGE: 'NO',
     },
     nondeterminism_declaration: {
-      method: 'two ORIGINAL repetitions per state; a field that differs original-vs-original is nondeterministic by construction, exactly the method S2 used to reach 31/36',
-      transient_transitions: 'CSSTransition liveness is a capture-timing fact, reported under transient_animation_diffs and not gated; the authored keyframe inventory is gated exactly',
+      method: 'two ORIGINAL repetitions per state; a field that differs original-vs-original is nondeterministic by construction, exactly the method S2 used',
+      settle_policy: 'state-semantic per CENTRAL #589 comment 5905286796; see SETTLE_POLICY',
+      transient_transitions: 'an authored finite transition is waited out on a STABLE state; on an intentionally transient state the phase is recorded in residual-ledger.json under AUTHORED_FINITE_TRANSIENT_PHASE',
+      infinite_css: 'the authored drift/scan/spin keyframes have no terminal state; the NATIVE inventory is recorded first, then both surfaces are phase-locked identically for geometry/computed-style only',
+      motion_disagreement: 'a REAL PARITY DEFECT on a STABLE state; there is no generic movingOnEither exclusion',
       authored_tracks: AUTHORED_TRACKS,
-      D4: 'at <=720px #autoBtn is display:none, so the authored auto loop is user-unstoppable; proven on both surfaces before any stabilization and recorded as HARNESS_ONLY_NOT_USER_REACHABLE when the harness clicks it for screenshots',
+      D4: 'at <=720px #autoBtn is display:none, so the authored auto loop is user-unstoppable; proven on both surfaces BEFORE any stabilization, then the same authored control is DOM-clicked for measurement only and recorded as HARNESS_ONLY_NOT_USER_REACHABLE',
       D5: 'at 390x844 the document does not scroll while authored controls sit below the fold; recorded on both surfaces, never repaired',
     },
   };
   const out = path.join(CAPSULE, 'evidence', 's4', 'candidate-summary.json');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, `${JSON.stringify(summary, null, 2)}\n`);
-  for (const k of ['REAL_PARITY_DEFECTS', 'SEMANTIC_EXACT', 'GEOMETRY_EXACT', 'COMPUTED_STYLE_EXACT',
+  const ledgerOut = path.join(CAPSULE, 'evidence', 's4', 'residual-ledger.json');
+  fs.writeFileSync(ledgerOut, `${JSON.stringify({
+    schema_version: '1.0',
+    source_id: 'CDX005',
+    stage: 'S4_SOURCE_SPLIT_PARITY',
+    status: 'CANDIDATE_PENDING_CENTRAL',
+    authority: 'skerishKang/lovetree-limone#589 comment 5905286796',
+    allowed_classifications: ALLOWED_CLASSIFICATIONS,
+    note: 'Every raw residual that is authorized by an explicitly named class. A residual that is NOT in this file is a real parity defect, counted in REAL_PARITY_DEFECTS.',
+    entries: ledger,
+  }, null, 2)}
+`);
+  console.log(`CDX005_S4_LEDGER=${ledgerOut} entries=${ledger.length}`);
+  for (const k of ['REAL_PARITY_DEFECTS', 'SEMANTIC_RAW_EXACT', 'SEMANTIC_CONTRACT_EXACT', 'GEOMETRY_EXACT', 'COMPUTED_STYLE_EXACT',
     'INTERACTION_EXACT', 'ANIMATION_INVENTORY_EXACT', 'NETWORK_ERROR_STATES',
     'MISSING_ASSET_STATES', 'D1_D5_PRESERVED', 'REVIEW_PACK_COUNT', 'S4_VERDICT']) {
     console.log(`CDX005_S4_${k}=${typeof summary[k] === 'number' ? summary[k] : summary[k]}`);
@@ -1260,6 +1476,96 @@ function writeCandidateSummary(results, reviewPacks) {
 }
 
 /* ------------------------------ browser mode tests ----------------------------- */
+
+test('C13 the generic moving-either-side exclusion is gone from the parity gate', () => {
+  /* HOLD-1: a blanket "moving on either side" exclusion hid the case where ORIGINAL was
+   * settled and SPLIT was still transitioning. The gate must be intent-driven instead. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  /* The block is delimited by sentinels, so this guard cannot match the summary string that
+   * merely DESCRIBES the removed policy. This guard also quotes the sentinel text, so the real
+   * pair is the LAST occurrence in the file - hence lastIndexOf for both ends. */
+  const start = src.lastIndexOf('/* GATE_BLOCK_START */');
+  const end = src.lastIndexOf('/* GATE_BLOCK_END */');
+  assert.ok(start > 0 && end > start, 'the comparison block sentinels are present');
+  const gate = src.slice(start, end);
+  assert.equal(/movingOnEither\s*[=(]/.test(gate), false,
+    'no executable movingOnEither gate may remain in the comparison block');
+  assert.equal(/isCaptureInstant\s*[=(]/.test(gate), false,
+    'no executable isCaptureInstant helper may remain in the comparison block');
+  assert.ok(gate.includes('motionDisagreement'), 'motion disagreement is still measured');
+  assert.ok(/intent === 'STABLE' \? motionDisagreement/.test(gate),
+    'motion disagreement is a REAL defect on a STABLE state');
+  /* Nothing executable survives anywhere in the file either. */
+  const code = src.replace(/\/\*[\s\S]*?\*\//g, ' ');
+  assert.equal(/movingOnEither\s*[=(]/.test(code), false,
+    'no executable movingOnEither definition or call survives');
+  assert.equal(/isCaptureInstant\s*[=(]/.test(code), false,
+    'no executable isCaptureInstant definition or call survives');
+});
+
+test('C14 the per-state intent table matches the CENTRAL settle ruling exactly', () => {
+  assert.deepEqual(Object.keys(STATE_INTENT).sort(), [
+    'D1/01_initial_auto_active',
+    'D1/16_look_switch_transient_out',
+    'D1/17_save_burst_transient',
+    'R1/01_initial_source_behavior',
+    'R1/03_css_drift_spin_scan_observation',
+    'R1/04_save_burst_observation',
+  ], 'exactly the six states CENTRAL named are non-STABLE');
+  for (const [k, v] of Object.entries(STATE_INTENT)) {
+    assert.ok(['AUTHORED_LIVE', 'EXPLICIT_TRANSIENT'].includes(v), `${k} has a valid intent`);
+  }
+  // Everything not named is STABLE, and the names must be verbatim S2 state names.
+  for (const { ctx, state } of ALL_STATES) {
+    const i = intentOf(ctx, state);
+    assert.ok(['STABLE', 'AUTHORED_LIVE', 'EXPLICIT_TRANSIENT'].includes(i), `${ctx}/${state} intent is valid`);
+  }
+  assert.equal(ALL_STATES.filter((s) => intentOf(s.ctx, s.state) === 'STABLE').length, 30,
+    'the other 30 accepted states are STABLE');
+  assert.deepEqual(ALLOWED_CLASSIFICATIONS, [
+    'D2_RANDOM_SCALAR', 'D3_RANDOM_SCALAR', 'AUTHORED_LIVE_PHASE',
+    'AUTHORED_FINITE_TRANSIENT_PHASE', 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF',
+  ], 'the allowed classification set is exactly the bounded list');
+});
+
+test('C15 the summary separates raw from contract semantic exactness', () => {
+  const s = path.join(CAPSULE, 'evidence', 's4', 'candidate-summary.json');
+  if (!fs.existsSync(s)) return; // browser candidate has not been run yet
+  const j = JSON.parse(fs.readFileSync(s, 'utf8'));
+  assert.ok(typeof j.SEMANTIC_RAW_EXACT === 'string', 'SEMANTIC_RAW_EXACT is reported');
+  assert.ok(typeof j.SEMANTIC_CONTRACT_EXACT === 'string', 'SEMANTIC_CONTRACT_EXACT is reported');
+  assert.equal(j.SEMANTIC_EXACT, undefined,
+    'the ambiguous single SEMANTIC_EXACT field is gone');
+  // A candidate PASS may only be claimed when contract-exactness is 36/36.
+  if (j.S4_VERDICT === 'CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE') {
+    assert.equal(j.SEMANTIC_CONTRACT_EXACT, '36/36',
+      'a candidate PASS requires SEMANTIC_CONTRACT_EXACT 36/36');
+    assert.equal(j.UNCLASSIFIED_RESIDUALS, 0, 'a candidate PASS has no unclassified residual');
+  }
+});
+
+test('C16 the residual ledger exists and every entry is classified', () => {
+  const lp = path.join(CAPSULE, 'evidence', 's4', 'residual-ledger.json');
+  const sp = path.join(CAPSULE, 'evidence', 's4', 'candidate-summary.json');
+  if (!fs.existsSync(sp)) return;
+  assert.ok(fs.existsSync(lp), 'a candidate run must write residual-ledger.json');
+  const l = JSON.parse(fs.readFileSync(lp, 'utf8'));
+  assert.deepEqual(l.allowed_classifications, ALLOWED_CLASSIFICATIONS);
+  for (const e of l.entries) {
+    for (const f of ['state', 'state_intent', 'channel', 'field_path', 'original_a', 'split',
+      'original_motion_or_liveness', 'split_motion_or_liveness', 'stabilization_action',
+      'classification', 'contract_disposition']) {
+      assert.ok(f in e, `ledger entry ${e.field_path} has ${f}`);
+    }
+    assert.ok(ALLOWED_CLASSIFICATIONS.includes(e.classification),
+      `ledger entry ${e.field_path} classification ${e.classification} is allowed`);
+    assert.ok(['STABLE', 'AUTHORED_LIVE', 'EXPLICIT_TRANSIENT'].includes(e.state_intent));
+  }
+  // The review pack stays exactly the 12 individual PNGs; the contact sheet is never committed.
+  const pack = path.join(CAPSULE, 'evidence', 's4', 'review-pack');
+  const pngs = fs.readdirSync(pack).filter((f) => f.endsWith('.png'));
+  assert.equal(pngs.length, 12, 'review-pack holds exactly the 12 bounded review images');
+});
 
 test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { timeout: 1800000 }, async () => {
   if (!BROWSER_MODE) {
@@ -1278,6 +1584,7 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
   const browser = await chromium.launch({ headless: true });
   const results = [];
   const reviewPacks = [];
+  const ledger = [];
   try {
   const only = process.env.CDX005_S4_STATES;
   const plan = only
@@ -1294,84 +1601,125 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
       // REAL parity defect.
       const o2 = await runState(browser, port, ctx, state, 'original');
 
+      const intent = intentOf(ctxId, state);
+      const isLive = intent === 'AUTHORED_LIVE' || intent === 'EXPLICIT_TRANSIENT';
+
+      /* GATE_BLOCK_START */
+      /* RAW parity: no projection, no exclusion, no phase-lock tolerance. This is the number
+       * CENTRAL asked to see reported separately from the contract-exact number. */
+      const rawDiffs = diffPaths(o.hard, s.hard);
+      const rawExact = rawDiffs.length === 0;
+
+      /* CONTRACT parity: the D2/D3 random-scalar projection, plus the intent-driven classes
+       * below. On a STABLE state NOTHING is excluded - a residual there is a real defect. */
       const pO = project(o.hard);
       const pS = project(s.hard);
       const pO2 = project(o2.hard);
       const parityDiffs = diffPaths(pO, pS);
       const selfDiffs = diffPaths(pO, pO2);
       const selfPaths = new Set(selfDiffs.map((d) => d.path));
-      // Transition liveness is a capture-timing fact, not a state fact: the authored 190 ms
-      // look-switch transition may still be live in one sample and finished in the other. Such
-      // a difference is reported but is not a parity defect. The authored keyframe inventory
-      // is always exact.
-      const realDefects = parityDiffs.filter((d) => !selfPaths.has(d.path)
-        && !d.path.startsWith('transientAnimations'));
 
-      /* Mid-transition geometry. A rounded box delta on an element that was still running an
-       * authored CSS transition AT THE MOMENT OF SAMPLING is a capture-instant artifact of the
-       * frozen source, not a split defect. This is a direct per-element measurement taken in the
-       * same evaluate that read the boxes, so it needs no statistical inference and applies no
-       * numeric tolerance. A delta on a settled element IS a real defect, and so is any
-       * disagreement about whether an element was moving. */
-      /* Capture-instant gating. An element that was still running an authored CSS transition at the
-       * moment of sampling is genuinely moving, so both its rounded box and its interpolated
-       * computed style differ between any two samples of the SAME frozen source. The source
-       * declares `transition: opacity .3s, transform .55s` on #heroWrap and a 1.1 s background
-       * transition on #toast, so both qualify. Motion state is a per-instant measurement taken in
-       * the same evaluate that read the values, so no statistical inference is involved and no
-       * numeric tolerance is applied. A difference on a settled element is a real defect, and so is
-       * any difference in a field that is not element-scoped (semantics, filters, cards, labels,
-       * modal/process state, scroll, responsive, runtime). */
-      const motionKeys = new Set(Object.keys(o.hard.geometryMotion || {}));
-      const movingOnEither = (k) => (o.hard.geometryMotion ? o.hard.geometryMotion[k] : null) === true
-        || (s.hard.geometryMotion ? s.hard.geometryMotion[k] : null) === true;
-      /* The element key is the path segment that names a measured motion target, with any array
-       * index stripped. Paths arrive both channel-scoped (`geometry.heroWrap.y`,
-       * `computedStyle.toast.opacity`, `geometryRaw.heroWrap[0]`) and already element-scoped
-       * (`heroWrap.y`, `toast.y`), because each channel is diffed separately, so the leading
-       * channel name must be detected rather than blindly dropped. */
-      const CHANNEL_PREFIXES = new Set(['geometry', 'geometryRaw', 'computedStyle', 'responsive']);
-      const elementKeyOf = (p) => {
-        const segs = String(p).split('.');
-        const first = segs[0];
-        const key = CHANNEL_PREFIXES.has(first) ? segs[1] : first;
-        return String(key === undefined ? '' : key).replace(/\[\d+\]$/, '');
-      };
-      const isCaptureInstant = (p) => {
-        const k = elementKeyOf(p);
-        return motionKeys.has(k) && movingOnEither(k);
-      };
-      const geometryAll = diffPaths(pO.geometry, pS.geometry);
-      const geometryStable = geometryAll.filter((d) => !isCaptureInstant(d.path));
-      const geometryMidTransition = geometryAll.filter((d) => isCaptureInstant(d.path));
-      const styleAll = diffPaths(pO.computedStyle, pS.computedStyle);
-      const computedStyleStable = styleAll.filter((d) => !isCaptureInstant(d.path));
-      const computedStyleMidTransition = styleAll.filter((d) => isCaptureInstant(d.path));
-      /* Motion state itself is a per-instant observation, so the two surfaces may legitimately
-       * report it differently. It is recorded as evidence and is never itself a parity defect. */
+      /* Geometry and computed style are compared on the PHASED capture, taken after the native
+       * inventory and after an identical phase-lock on both surfaces. Everything else - DOM
+       * semantics, labels, modal/process state, responsive, scroll, the animation inventory - is
+       * compared on the NATIVE capture, because a phase-lock would flatten exactly the liveness
+       * facts those channels exist to measure. */
+      const pOPh = project(o.hardPhased);
+      const pSPh = project(s.hardPhased);
+      const geometryAll = diffPaths(pOPh.geometry, pSPh.geometry);
+      const styleAll = diffPaths(pOPh.computedStyle, pSPh.computedStyle);
+
+      /* Motion disagreement. Under ruling 5905286796 a disagreement about whether an element is
+       * moving is a REAL PARITY DEFECT on a STABLE state. This is the case the previous
+       * `movingOnEither` gate silently swallowed: ORIGINAL settled while SPLIT still
+       * transitioning. There is no blanket moving-on-either exclusion any more. */
       const motionDisagreement = diffPaths(o.hard.geometryMotion, s.hard.geometryMotion);
+      const motionDisagreementPaths = new Set(motionDisagreement.map((d) => `motionDisagreement.${d.path}`));
 
-      /* Angle-axis capture-instant handling. The authored auto loop advances #heroWrap's angle on
-       * its own timer, so a state sampled while the loop is still running can land on an adjacent
-       * angle depending on where the sample falls. This is measured, never assumed: the loop state
-       * is read from the authored AUTO/PLAY label on each surface, and the angle axis is gated only
-       * while that loop is still running. With the loop stopped the angle is compared exactly. Look
-       * identity, hero asset, card set, filters, labels, modal/process state and every other field
-       * are still compared in full. No tolerance and no seeded randomness is applied. */
-      const oAngle = o.hard.dom;
-      const sAngle = s.hard.dom;
-      const oAuto = /AUTO/.test(oAngle.autoLabel || '');
-      const sAuto = /AUTO/.test(sAngle.autoLabel || '');
-      const angleIsLive = oAuto || sAuto;
+      /* Angle axis. Gated only on states whose ACCEPTED S2 MEANING leaves the authored JS auto
+       * loop running (AUTHORED_LIVE). On a STABLE state the loop was stopped through the
+       * authored control before capture, so the angle axis is compared EXACTLY. */
       const ANGLE_PATHS = ['dom.heroSrc', 'dom.angleText', 'dom.angleOnIndex'];
-      const angleExcluded = (p) => angleIsLive && ANGLE_PATHS.includes(p);
+      const oAuto = /AUTO/.test((o.hard.dom && o.hard.dom.autoLabel) || '');
+      const sAuto = /AUTO/.test((s.hard.dom && s.hard.dom.autoLabel) || '');
+      const angleIsLive = oAuto || sAuto;
+      const angleGateAllowed = isLive && angleIsLive;
       const angleDiffs = parityDiffs.filter((d) => ANGLE_PATHS.includes(d.path));
-      const angleCaptureInstant = angleDiffs.filter((d) => angleExcluded(d.path));
+      const angleLedger = angleGateAllowed ? angleDiffs : [];
 
-      const realDefects2 = parityDiffs.filter((d) => !selfPaths.has(d.path)
-        && !isCaptureInstant(d.path)
-        && !angleExcluded(d.path)
-        && !d.path.startsWith('transientAnimations'));
+      /* Transient CSSTransition liveness. Previously blanket-excluded from the defect count.
+       * It is now classifiable ONLY on a state whose intent tolerates a live phase; on a
+       * STABLE state a liveness difference is a real defect like any other. */
+      const transientDiffs = diffPaths(pO.transientAnimations, pS.transientAnimations);
+      const transientGateAllowed = isLive;
+
+      /* The live/transient classes that may be routed to the residual ledger. A residual that
+       * matches NONE of these is a real parity defect - it is never written to the ledger. */
+      const classifyResidual = (d) => {
+        if (selfPaths.has(d.path)) return { classification: 'D2_RANDOM_SCALAR', disposition: 'SELF_NONDETERMINISTIC' };
+        if (ANGLE_PATHS.includes(d.path) && angleGateAllowed) {
+          return { classification: 'AUTHORED_LIVE_PHASE', disposition: 'LEDGER' };
+        }
+        if (d.path.startsWith('transientAnimations') && transientGateAllowed) {
+          return { classification: 'AUTHORED_FINITE_TRANSIENT_PHASE', disposition: 'LEDGER' };
+        }
+        if (intent === 'STABLE' && geometryAll.some((g) => g.path === d.path.replace(/^.*?\./, ''))) {
+          return { classification: 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF', disposition: 'LEDGER' };
+        }
+        if (/burstParticleXsYs|burstAnimationDelays/.test(d.path)) {
+          return { classification: 'D2_RANDOM_SCALAR', disposition: 'LEDGER' };
+        }
+        if (/modal\.(percent|barWidth|stepDoneSignature)/.test(d.path)) {
+          return { classification: 'D3_RANDOM_SCALAR', disposition: 'LEDGER' };
+        }
+        return null; // NOT classifiable -> real defect
+      };
+
+      /* Stable-state residuals: intent is STABLE and no authorized class applies -> real defect. */
+      const stableRealDefects = parityDiffs.filter((d) => {
+        if (selfPaths.has(d.path)) return false;
+        if (ANGLE_PATHS.includes(d.path) && angleGateAllowed) return false;
+        if (d.path.startsWith('transientAnimations') && transientGateAllowed) return false;
+        return !classifyResidual(d);
+      });
+      /* Motion disagreement is a real defect on STABLE states (HOLD-1 core requirement). */
+      const motionDefects = intent === 'STABLE' ? motionDisagreement : [];
+      /* On STABLE states geometry/style come from the phased channel and a diff is a real
+       * defect; the STABLE settle already waited out any finite transition. */
+      const stableGeometryDefects = intent === 'STABLE' ? geometryAll : [];
+      const stableStyleDefects = intent === 'STABLE' ? styleAll : [];
+
+      const realDefects2 = [
+        ...stableRealDefects,
+        ...motionDefects.map((d) => ({ path: `motionDisagreement.${d.path}`, a: d.a, b: d.b })),
+        ...stableGeometryDefects.map((d) => ({ path: `geometry.${d.path}`, a: d.a, b: d.b })),
+        ...stableStyleDefects.map((d) => ({ path: `computedStyle.${d.path}`, a: d.a, b: d.b })),
+      ];
+
+      /* The residual ledger: every raw residual that IS authorized by a class, with the exact
+       * per-field values, per-side liveness, and the stabilization actually applied. */
+      const ledgerEntries = parityDiffs
+        .filter((d) => !stableRealDefects.some((r) => r.path === d.path))
+        .map((d) => {
+          const c = classifyResidual(d) || { classification: null, disposition: 'REAL_DEFECT' };
+          return {
+            state: `${ctxId}/${state}`,
+            state_intent: intent,
+            channel: d.path.split('.')[0],
+            field_path: d.path,
+            original_a: d.a,
+            original_b: (selfDiffs.find((x) => x.path === d.path) || {}).b ?? null,
+            split: d.b,
+            original_motion_or_liveness: o.hard.geometryMotion || null,
+            split_motion_or_liveness: s.hard.geometryMotion || null,
+            stabilization_action: (o.handoff && o.handoff.action) || null,
+            classification: c.classification,
+            contract_disposition: c.disposition,
+          };
+        })
+        .filter((e) => e.classification !== null && ALLOWED_CLASSIFICATIONS.includes(e.classification));
+
+      /* GATE_BLOCK_END */
       const d4g = d4Gate(o, s);
       const d5g = d5Gate(o, s);
       const d4Diffs = d4g.diffs.map((d) => ({ ...d, path: `D4.${d.path}` }));
@@ -1388,40 +1736,38 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
 
       const rec = {
         ctx: ctxId, state,
+        state_intent: intent,
+        handoff: { original: o.handoff, split: s.handoff, phase: o.phase },
+        raw_semantic_diffs: rawDiffs,
+        raw_semantic_exact: rawExact,
+        contract_semantic_exact: realDefects2.length === 0,
+        residual_ledger_entries: ledgerEntries,
         real_defects: [
           ...realDefects2,
           ...d4Diffs,
           ...d5Diffs,
         ],
-        capture_instant_diffs: {
-          geometry: geometryMidTransition,
-          computed_style: computedStyleMidTransition,
-          angle: angleCaptureInstant,
-          note: 'differences observed on an element that was still running an authored CSS transition, or on the angle axis while the authored auto loop was still running, at the sampling instant; not parity defects',
-        },
         angle_axis: {
           original_auto_running: oAuto,
           split_auto_running: sAuto,
-          original: { heroSrc: oAngle.heroSrc, angleText: oAngle.angleText, onIndex: oAngle.angleOnIndex },
-          split: { heroSrc: sAngle.heroSrc, angleText: sAngle.angleText, onIndex: sAngle.angleOnIndex },
+          gated: angleLedger.length > 0,
           diffs: angleDiffs,
-          gated: angleCaptureInstant.length > 0,
-          note: 'the angle axis is gated only while the authored auto loop is still running; with the loop stopped it is compared exactly',
+          note: 'the angle axis is compared exactly on a STABLE state (the loop was stopped through the authored control before capture); it is ledgered only on a state whose accepted S2 meaning leaves the auto loop running',
         },
         geometry_motion: {
-          original: o.hard.geometryMotion, split: s.hard.geometryMotion,
+          original: o.hard.geometryMotion,
+          split: s.hard.geometryMotion,
           disagreement: motionDisagreement,
-          note: 'per-instant observation, recorded as evidence and never gated',
+          gated: intent === 'STABLE',
+          note: 'a motion-state disagreement on a STABLE state is a REAL parity defect; there is no blanket moving-on-either exclusion',
         },
         nondeterministic_fields: selfDiffs,
         semantic_diffs: parityDiffs,
-        geometry_diffs: geometryStable,
-        geometry_mid_transition_diffs: geometryMidTransition,
+        geometry_diffs: geometryAll,
         geometry_raw: { original: o.hard.geometryRaw, split: s.hard.geometryRaw },
-        computed_style_diffs: computedStyleStable,
-        computed_style_capture_instant_diffs: computedStyleMidTransition,
+        computed_style_diffs: styleAll,
         animation_inventory_diffs: diffPaths(pO.animationInventory, pS.animationInventory),
-        transient_animation_diffs: diffPaths(pO.transientAnimations, pS.transientAnimations),
+        transient_animation_diffs: transientDiffs,
         network_diffs: diffPaths(o.net, s.net),
         scroll_diffs: diffPaths(pO.scroll, pS.scroll),
         responsive_diffs: diffPaths(pO.responsive, pS.responsive),
@@ -1435,7 +1781,8 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
         projected_split: pS,
       };
       results.push(rec);
-      console.log(`CDX005_S4_STATE=${ctxId}/${state} real_defects=${rec.real_defects.length} nondet_fields=${selfDiffs.length} random=${randomFields.length} d1d5_preserved=${d1d5Preserved}`);
+      for (const e of ledgerEntries) ledger.push(e);
+      console.log(`CDX005_S4_STATE=${ctxId}/${state} intent=${intent} raw_exact=${rawExact} contract_exact=${rec.contract_semantic_exact} real_defects=${rec.real_defects.length} ledger=${ledgerEntries.length}`);
       fs.writeFileSync(path.join(EVIDENCE_DIR, `${ctxId}__${state}.json`), JSON.stringify(rec, null, 2));
     }
 
@@ -1460,10 +1807,21 @@ test('S4-CANDIDATE original/split parity over the 36 accepted S2 states', { time
       });
       console.log(`CDX005_S4_REVIEW_PACK=${r.label} bytes=${buf.length} stabilization=${JSON.stringify(stabilization)}`);
     }
+    /* 12-state contact sheet for CENTRAL's direct visual review. It is a TEMPORARY review
+     * artifact and is deliberately NOT written into evidence/s4/review-pack/, because that
+     * directory is contractually exactly the 12 individual ORIGINAL|SPLIT PNGs. It is also
+     * never committed. */
+    const CONTACT_SHEET = process.env.CDX005_S4_CONTACT_SHEET
+      || path.join(os.tmpdir(), 'cdx005-s4-contact-sheet-12.png');
+    const sheet = await buildContactSheet(browser, reviewPacks);
+    if (sheet) {
+      fs.writeFileSync(CONTACT_SHEET, sheet);
+      console.log(`CDX005_S4_CONTACT_SHEET=${CONTACT_SHEET} bytes=${sheet.length} states=${reviewPacks.length}`);
+    }
   } finally {
     await browser.close();
     server.close();
   }
   fs.writeFileSync(path.join(EVIDENCE_DIR, 'all-results.json'), JSON.stringify(results, null, 2));
-  writeCandidateSummary(results, reviewPacks);
+  writeCandidateSummary(results, reviewPacks, ledger);
 });

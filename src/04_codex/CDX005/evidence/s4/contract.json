@@ -6,8 +6,9 @@
   "status": "CONTRACT_RECORDED_CANDIDATE_PENDING_CENTRAL",
   "authority": {
     "s3_acceptance_and_s4_release": "skerishKang/lovetree-limone#589 comment 5889378824",
-    "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417",
-    "s2_report_commit": "960fd4ad407d5b996f644064c6ed1a5b7383d7ab"
+    "s4_candidate_hold": "skerishKang/lovetree-limone#589 comment 5904993568",
+    "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
+    "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417"
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "parity_contract_fields": {
@@ -22,10 +23,35 @@
   },
   "state_plan": {
     "total": 36,
-    "D1": { "label": "desktop", "width": 1440, "height": 900, "dpr": 1, "states": 18 },
-    "T1": { "label": "tablet", "width": 900, "height": 900, "dpr": 1, "states": 6 },
-    "M1": { "label": "mobile", "width": 390, "height": 844, "dpr": 1, "states": 8 },
-    "R1": { "label": "reduce", "width": 1440, "height": 900, "dpr": 1, "reduced_motion": "reduce", "states": 4 }
+    "D1": {
+      "label": "desktop",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "states": 18
+    },
+    "T1": {
+      "label": "tablet",
+      "width": 900,
+      "height": 900,
+      "dpr": 1,
+      "states": 6
+    },
+    "M1": {
+      "label": "mobile",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "states": 8
+    },
+    "R1": {
+      "label": "reduce",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "reduced_motion": "reduce",
+      "states": 4
+    }
   },
   "hard_channels": [
     "dom_state_truth",
@@ -41,8 +67,20 @@
     "authored_animation_inventory"
   ],
   "animation_inventory_gate": {
-    "authored_tracks": ["drift", "scan", "spin", "burst"],
-    "fields": ["target", "name", "duration", "delay", "iterations", "playState"],
+    "authored_tracks": [
+      "drift",
+      "scan",
+      "spin",
+      "burst"
+    ],
+    "fields": [
+      "target",
+      "name",
+      "duration",
+      "delay",
+      "iterations",
+      "playState"
+    ],
     "note": "The authored infinite keyframe tracks are the exact gate. CSSTransition liveness is a capture-timing fact, is recorded under transient_animation_diffs, and is not a parity defect."
   },
   "d2_d3_projection": {
@@ -82,7 +120,12 @@
   },
   "d4_assertion": {
     "viewport": "390x844",
-    "requires": ["computed display of #autoBtn", "user_reachable", "auto_loop_active", "ORIGINAL equals SPLIT"],
+    "requires": [
+      "computed display of #autoBtn",
+      "user_reachable",
+      "auto_loop_active",
+      "ORIGINAL equals SPLIT"
+    ],
     "measured_before": "any stabilization"
   },
   "d5_assertion": {
@@ -103,7 +146,6 @@
     "perceptual_hamming_threshold": false,
     "note": "Screenshots are an EVIDENCE channel. If phase-locked captures happen to be byte-identical that is recorded, never required."
   },
-  "nondeterminism_method": "Two ORIGINAL repetitions per state. A field that differs original-vs-original is nondeterministic by construction, exactly the method S2 used to reach 31/36. A field stable across ORIGINAL runs but differing from SPLIT is a REAL parity defect.",
   "allowed_s4_files": [
     "src/04_codex/CDX005/tests/s4-parity.test.mjs",
     "src/04_codex/CDX005/evidence/s4/contract.json",
@@ -134,9 +176,61 @@
     "source_split_parity_pass": false,
     "parity_status": "CANDIDATE_PENDING_CENTRAL",
     "parity_ref": null,
+    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "parity_capture_authorized": true,
     "S4_ACCEPTED": "NO",
     "MANIFEST_PARITY_PROMOTED": "NO",
     "READY": "NO",
     "MERGE": "NO"
+  },
+  "settle_policy": {
+    "basis": "ACCEPTED_S2_STATE_MEANING_NOT_A_PREDICTED_COUNT",
+    "authority": "skerishKang/lovetree-limone#589 comment 5905286796",
+    "state_intents": [
+      "STABLE",
+      "AUTHORED_LIVE",
+      "EXPLICIT_TRANSIENT"
+    ],
+    "non_stable_states": {
+      "D1/01_initial_auto_active": "AUTHORED_LIVE",
+      "D1/16_look_switch_transient_out": "EXPLICIT_TRANSIENT",
+      "D1/17_save_burst_transient": "EXPLICIT_TRANSIENT",
+      "R1/01_initial_source_behavior": "AUTHORED_LIVE",
+      "R1/03_css_drift_spin_scan_observation": "AUTHORED_LIVE",
+      "R1/04_save_burst_observation": "EXPLICIT_TRANSIENT"
+    },
+    "stable_state_count": 30,
+    "capture_order": [
+      "fresh page",
+      "authored driver",
+      "M1: D4 native proof BEFORE stabilization",
+      "intent-driven AUTO handling (real click desktop/tablet, same authored control DOM click on mobile -> HARNESS_ONLY_NOT_USER_REACHABLE)",
+      "finite authored CSS transition settle (STABLE only)",
+      "NATIVE hard channels + animation/liveness inventory",
+      "infinite CSS animation phase-lock -> HARNESS_PHASE_LOCK_AFTER_NATIVE_MEASUREMENT",
+      "phased geometry/computed-style channel"
+    ],
+    "allowed_residual_classifications": [
+      "D2_RANDOM_SCALAR",
+      "D3_RANDOM_SCALAR",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+    ],
+    "generic_moving_on_either_exclusion": "FORBIDDEN",
+    "stable_state_residual": "REAL PARITY DEFECT",
+    "unclassified_residual": "REAL PARITY DEFECT - never a ledger row",
+    "required_artifacts": [
+      "evidence/s4/contract.json",
+      "evidence/s4/candidate-summary.json",
+      "evidence/s4/residual-ledger.json",
+      "evidence/s4/review-pack/*.png"
+    ],
+    "contact_sheet": "temporary review artifact outside the capsule; never committed; review-pack stays exactly 12 PNGs"
+  },
+  "semantic_reporting": {
+    "SEMANTIC_RAW_EXACT": "measured raw equality, no projection and no exclusion",
+    "SEMANTIC_CONTRACT_EXACT": "exact after ONLY the authorized D2/D3 projection and ledger-backed classes; must be 36/36 for a candidate PASS",
+    "forbidden": "describing a partial raw count as exact across all 36"
   }
 }
