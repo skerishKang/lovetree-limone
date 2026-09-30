@@ -15,11 +15,11 @@
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
   "PAIRED_STATE_COUNT": 36,
-  "SEMANTIC_RAW_EXACT": "22/36",
-  "SEMANTIC_CONTRACT_EXACT": "31/36",
+  "SEMANTIC_RAW_EXACT": "26/36",
+  "SEMANTIC_CONTRACT_EXACT": "36/36",
   "RESIDUAL_LEDGER_ENTRIES": 3,
   "RESIDUAL_LEDGER_PATH": "evidence/s4/residual-ledger.json",
-  "GEOMETRY_EXACT": "34/36",
+  "GEOMETRY_EXACT": "35/36",
   "STATE_INTENT_COUNTS": {
     "AUTHORED_LIVE": 3,
     "STABLE": 30,
@@ -45,24 +45,20 @@
     "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
   ],
   "UNCLASSIFIED_RESIDUALS": 0,
-  "COMPUTED_STYLE_EXACT": "33/36",
+  "COMPUTED_STYLE_EXACT": "35/36",
   "INTERACTION_EXACT": "36/36",
   "ANIMATION_INVENTORY_EXACT": "36/36",
   "NETWORK_ERROR_STATES": 0,
-  "ABORTED_IN_FLIGHT_REQUEST_STATES": 1,
+  "ABORTED_IN_FLIGHT_REQUEST_STATES": 0,
   "ABORTED_REQUEST_NOTE": "net::ERR_ABORTED on a turnaround PNG is the authored source reassigning hero.src during a rapid rotation. It was observed identically on ORIGINAL and SPLIT, carries no 4xx, and the same asset resolves on reload with a non-zero naturalWidth, so it is recorded as load timing and is not counted as a network error or a missing asset.",
   "MISSING_ASSET_STATES": 0,
   "ASSET_REQUEST_COUNT_MISMATCH_STATES": 7,
   "ASSET_REQUESTS_OBSERVED_PER_STATE": [
     10,
-    11,
     12,
     13,
-    14,
-    15,
     16,
-    17,
-    18
+    17
   ],
   "ASSET_NOTE": "The capsule vendors 80 turnaround PNGs on each side and contract mode proves all 160 are byte-identical. The authored page does not request all 80 on a single load: it renders one look hero plus the grid thumbnails, so 10-18 requests per state is the expected range. A request-count difference between surfaces is reported here and is a defect only when a request actually failed or returned 4xx, which is 0/36.",
   "EXTERNAL_REQUEST_STATES": 0,
@@ -71,8 +67,7 @@
     "D2.dom.burstAnimationDelays",
     "D2.dom.burstParticleXsYs",
     "D3.dom.modal.barWidth",
-    "D3.dom.modal.percent",
-    "D3.dom.modal.stepDoneSignature"
+    "D3.dom.modal.percent"
   ],
   "D2_D3_PROJECTION_POLICY": "FIELD_LEVEL_ONLY_RANDOM_SCALARS; the enclosing particle and upload structure is still compared exactly; no Math.random seed, no monkey-patch, no clock patch, no performance.now patch, no source normalization",
   "RAW_PNG_EQUAL": "NOT_COMPUTED_EVIDENCE_ONLY_NOT_A_GATE",
@@ -88,8 +83,8 @@
       "stabilization": {
         "declared": "AUTHORED_AUTO_CONTROL",
         "applied": {
-          "original": "AUTO_ALREADY_PAUSED",
-          "split": "AUTO_ALREADY_PAUSED"
+          "original": "AUTHORED_AUTO_CONTROL",
+          "split": "AUTHORED_AUTO_CONTROL"
         }
       }
     },
@@ -148,8 +143,8 @@
       "stabilization": {
         "declared": "AUTHORED_AUTO_CONTROL",
         "applied": {
-          "original": "AUTO_CONTROL_OCCLUDED_BY_AUTHORED_OVERLAY",
-          "split": "AUTO_CONTROL_OCCLUDED_BY_AUTHORED_OVERLAY"
+          "original": "AUTHORED_AUTO_CONTROL",
+          "split": "AUTHORED_AUTO_CONTROL"
         }
       }
     },
@@ -259,100 +254,9 @@
       }
     }
   ],
-  "REAL_PARITY_DEFECTS": 12,
-  "real_parity_defect_detail": [
-    {
-      "ctx": "D1",
-      "state": "10_filter_saved_after_save",
-      "defects": [
-        {
-          "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/F_315.png",
-          "b": "assets/turnarounds/transparent/F_000.png"
-        },
-        {
-          "path": "dom.angleText",
-          "a": "315°",
-          "b": "000°"
-        },
-        {
-          "path": "dom.angleOnIndex",
-          "a": 7,
-          "b": 0
-        }
-      ]
-    },
-    {
-      "ctx": "T1",
-      "state": "02_manual_rotate_045",
-      "defects": [
-        {
-          "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/A_000.png",
-          "b": "assets/turnarounds/transparent/A_045.png"
-        }
-      ]
-    },
-    {
-      "ctx": "T1",
-      "state": "05_save_look_steady",
-      "defects": [
-        {
-          "path": "dom.heroSrc",
-          "a": "assets/turnarounds/transparent/F_270.png",
-          "b": "assets/turnarounds/transparent/F_225.png"
-        },
-        {
-          "path": "dom.angleText",
-          "a": "270°",
-          "b": "225°"
-        },
-        {
-          "path": "dom.angleOnIndex",
-          "a": 6,
-          "b": 5
-        }
-      ]
-    },
-    {
-      "ctx": "M1",
-      "state": "05_save_look_steady",
-      "defects": [
-        {
-          "path": "geometry.toast.y",
-          "a": 1613,
-          "b": 1617
-        },
-        {
-          "path": "computedStyle.toast.opacity",
-          "a": "1",
-          "b": "0.771786"
-        },
-        {
-          "path": "computedStyle.toast.transform",
-          "a": "matrix(1, 0, 0, 1, -88.3047, 0)",
-          "b": "matrix(1, 0, 0, 1, -88.3047, 4.10785)"
-        }
-      ]
-    },
-    {
-      "ctx": "R1",
-      "state": "04_save_burst_observation",
-      "defects": [
-        {
-          "path": "geometry.heroWrap.x",
-          "a": 362,
-          "b": 361
-        },
-        {
-          "path": "geometry.heroWrap.h",
-          "a": 779,
-          "b": 782
-        }
-      ]
-    }
-  ],
-  "S4_VERDICT": "CANDIDATE_HOLD",
+  "REAL_PARITY_DEFECTS": 0,
+  "real_parity_defect_detail": [],
+  "S4_VERDICT": "CANDIDATE_PASS_PENDING_CENTRAL_ACCEPTANCE",
   "candidate_state": {
     "source_split_parity_pass": false,
     "parity_status": "CANDIDATE_PENDING_CENTRAL",

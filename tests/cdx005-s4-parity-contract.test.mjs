@@ -176,6 +176,30 @@ test('the S4 lifecycle metadata is current, consistent and never promoted', () =
     'no accepted-parity.json may exist before CENTRAL acceptance');
 });
 
+test('the three-run proof, when present, records three clean fresh full runs', () => {
+  const proofPath = path.join(S4_DIR, 'three-run-proof.json');
+  if (!exists(proofPath)) return; // the browser candidate has not been run yet
+  const p = JSON.parse(fs.readFileSync(proofPath, 'utf8'));
+  assert.equal(p.required_runs, 3, 'the proof requires three runs');
+  for (const r of p.runs) {
+    assert.equal(r.paired_state_count, 36, `run ${r.run_index} is a full 36-state replay`);
+    // Per-run acceptance requirements from the ruling. A run that fails any of these is not
+    // clean, and the proof then fails: there is no averaging and no best-of.
+    assert.equal(r.semantic_contract_exact, '36/36',
+      `run ${r.run_index} contract-exactness is 36/36`);
+    assert.equal(r.real_parity_defects, 0, `run ${r.run_index} has no real parity defect`);
+    assert.equal(r.unclassified_residuals, 0, `run ${r.run_index} has no unclassified residual`);
+    assert.equal(r.d1_d5_preserved, 'YES', `run ${r.run_index} preserves D1-D5`);
+    assert.equal(r.network_error_states, 0, `run ${r.run_index} has no network error state`);
+    assert.equal(r.missing_asset_states, 0, `run ${r.run_index} has no missing asset state`);
+    assert.equal(r.stable_states_exact, r.stable_states,
+      `run ${r.run_index} is exact on every STABLE state`);
+    assert.deepEqual(r.stable_state_defects, [], `run ${r.run_index} records no stable defect`);
+  }
+  assert.equal(p.runs_clean, true, 'every recorded run is clean');
+  assert.equal(p.THREE_RUN_PROOF, true, 'the three-run proof is satisfied');
+});
+
 test('the committed review pack holds exactly the 12 bounded CENTRAL review states', () => {
   const pack = path.join(S4_DIR, 'review-pack');
   if (!exists(pack)) return;

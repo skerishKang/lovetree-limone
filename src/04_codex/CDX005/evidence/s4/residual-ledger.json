@@ -18,9 +18,9 @@
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "transientAnimations",
       "field_path": "transientAnimations.length",
-      "original_a": 15,
-      "original_b": 13,
-      "split": 13,
+      "original_a": 17,
+      "original_b": 19,
+      "split": 19,
       "original_motion_or_liveness": {
         "heroWrap": true,
         "figureZone": false,
@@ -48,13 +48,13 @@
       "contract_disposition": "LEDGER"
     },
     {
-      "state": "R1/03_css_drift_spin_scan_observation",
+      "state": "R1/01_initial_source_behavior",
       "state_intent": "AUTHORED_LIVE",
       "channel": "transientAnimations",
       "field_path": "transientAnimations.length",
-      "original_a": 5,
-      "original_b": 9,
-      "split": 9,
+      "original_a": 0,
+      "original_b": 4,
+      "split": 4,
       "original_motion_or_liveness": {
         "heroWrap": false,
         "figureZone": false,
@@ -77,7 +77,7 @@
         "modal": false,
         "burst": false
       },
-      "stabilization_action": "AUTHORED_AUTO_CONTROL",
+      "stabilization_action": "NONE_INTENTIONAL",
       "classification": "AUTHORED_LIVE_PHASE",
       "contract_disposition": "LEDGER"
     },
@@ -86,11 +86,11 @@
       "state_intent": "EXPLICIT_TRANSIENT",
       "channel": "transientAnimations",
       "field_path": "transientAnimations.length",
-      "original_a": 7,
+      "original_a": 2,
       "original_b": null,
-      "split": 5,
+      "split": 6,
       "original_motion_or_liveness": {
-        "heroWrap": true,
+        "heroWrap": false,
         "figureZone": false,
         "grid": false,
         "panel": false,
@@ -101,7 +101,7 @@
         "burst": false
       },
       "split_motion_or_liveness": {
-        "heroWrap": true,
+        "heroWrap": false,
         "figureZone": false,
         "grid": false,
         "panel": false,

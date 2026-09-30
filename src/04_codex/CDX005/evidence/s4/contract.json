@@ -8,6 +8,7 @@
     "s3_acceptance_and_s4_release": "skerishKang/lovetree-limone#589 comment 5889378824",
     "s4_candidate_hold": "skerishKang/lovetree-limone#589 comment 5904993568",
     "s4_settle_ruling": "skerishKang/lovetree-limone#589 comment 5905286796",
+    "s4_temporal_synchronization_ruling": "skerishKang/lovetree-limone#589 comment 5906458180",
     "s2_acceptance": "skerishKang/lovetree-limone#589 comment 5887518417"
   },
   "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
@@ -232,5 +233,43 @@
     "SEMANTIC_RAW_EXACT": "measured raw equality, no projection and no exclusion",
     "SEMANTIC_CONTRACT_EXACT": "exact after ONLY the authorized D2/D3 projection and ledger-backed classes; must be 36/36 for a candidate PASS",
     "forbidden": "describing a partial raw count as exact across all 36"
+  },
+  "temporal_synchronization": {
+    "authority": "skerishKang/lovetree-limone#589 comment 5906458180",
+    "required_order": [
+      "fresh page load",
+      "wait INITIAL AUTHORED READINESS (heroWrap not .out, hero decoded, no running startup CSSTransition)",
+      "M1 only: prove D4 while the authored AUTO loop is still ACTIVE",
+      "if STABLE: pause AUTO BEFORE the state driver (real user click desktop/tablet; same authored DOM control on mobile -> HARNESS_ONLY_NOT_USER_REACHABLE) and verify PLAY",
+      "run the authored state driver",
+      "wait that state's observable TERMINAL PREDICATE (semantic, not a bare sleep)",
+      "native hard channels + liveness/animation inventory",
+      "phase-lock ONLY the infinite authored CSSAnimation tracks (drift/scan/spin with infinite iterations)",
+      "phased geometry/computed-style"
+    ],
+    "phase_lock_scope": "INFINITE_AUTHORED_CSSANIMATION_ONLY",
+    "no_csstransition_phase_lock": true,
+    "no_finite_burst_phase_lock": true,
+    "source_self_nondeterminism_waiver": "FORBIDDEN_FOR_STABLE_STATES",
+    "acceptance_proof": {
+      "required_consecutive_fresh_full_runs": 3,
+      "per_run_requirements": [
+        "SEMANTIC_CONTRACT_EXACT=36/36",
+        "REAL_PARITY_DEFECTS=0",
+        "UNCLASSIFIED_RESIDUALS=0",
+        "D1_D5_PRESERVED=YES",
+        "NETWORK_ERROR_STATES=0",
+        "MISSING_ASSET_STATES=0",
+        "every STABLE state exact"
+      ],
+      "averaging_or_best_of": "FORBIDDEN",
+      "evidence_file": "evidence/s4/three-run-proof.json"
+    },
+    "angle_determinism": {
+      "finding": "the authored build() ends with autoLoop(850), so the first authored angle tick lands around 800-860 ms and varies between runs; the startup readiness gate cannot complete before roughly 1100 ms, so an AUTO pause alone always lands AFTER that first tick",
+      "resolution": "the harness drives the AUTHORED updateAngle() back to 000 (the same function the authored drag/keyboard/wheel/auto handlers call) so both surfaces are compared at an equal authored angle; an angle-pinned state is rewound BEFORE its drag so the authored drag outcome is deterministic",
+      "source_patch": false,
+      "new_tolerance": false
+    }
   }
 }
