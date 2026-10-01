@@ -156,16 +156,18 @@ test('the SRC 108 harness gate passes with the §7 check wired in', () => {
   assert.match(result.stdout, /ACTIVE_SOURCE_COUNT=15/);
   // Tree-state assertion: CDX014 (2026-09-06) + CDX017 (2026-09-26, S3
   // mechanical capsule under #589 comment 5845654192) + CDX005 (2026-09-29, S3
-  // mechanical capsule under #589 comment 5887518417). Each new Codex capsule
-  // lane must bump this count, exactly as the batch-pass expectation list above
-  // is bumped when a capsule joins that batch. The 12-capsule BATCH_CAPSULES
-  // list stays frozen: CDX017 and CDX005 were each adjudicated individually,
-  // not through the batch-pass ruling table.
-  assert.match(result.stdout, /ACTIVE_CODEX_COUNT=3/);
+  // mechanical capsule under #589 comment 5887518417) + CDX007 (2026-10-01, S3
+  // mechanical capsule under #589 comment 5924890181 and shape clarification
+  // 5924918679). Each new Codex capsule lane must bump this count, exactly as
+  // the batch-pass expectation list above is bumped when a capsule joins that
+  // batch. The 12-capsule BATCH_CAPSULES list stays frozen: CDX017, CDX005 and
+  // CDX007 were each adjudicated individually, not through the batch-pass
+  // ruling table.
+  assert.match(result.stdout, /ACTIVE_CODEX_COUNT=4/);
 });
 
 test('the Codex governance gate passes on the real tree', () => {
-  assert.deepEqual(validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs: ['CDX014', 'CDX017', 'CDX005'] }), []);
+  assert.deepEqual(validateCodexDuplicateVariantGovernance({ repoRoot, codexDirs: ['CDX014', 'CDX017', 'CDX005', 'CDX007'] }), []);
 });
 
 test('both template defaults keep UNRESOLVED and still validate', () => {

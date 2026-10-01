@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX007",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "master_id": "MST106",
+  "namespace": "CDX",
+  "identity": {
+    "namespace": "CDX",
+    "id": "CDX007",
+    "semantic_identity": "Codex-07 Living Character World V2",
+    "master_filename": "Codex-07 Living Character World V2",
+    "basis": "skerishKang/lovetree-limone#589 comment 5922885731; Drive authority object; exact bytes/hash; S2 accepted skerishKang/lovetree-limone#589 comment 5924890181"
+  },
+  "authority": {
+    "drive_folder_id": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
+    "drive_file_id": "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
+    "authority_path": "개발과정/index.html",
+    "filename": "index.html",
+    "bytes": 22310,
+    "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+    "git_blob_sha1": "af1d19d92ba85abb22171be82c9b55a0eb182997",
+    "utf8_bom": false,
+    "crlf_count": 0,
+    "authority_mode": "SINGLE"
+  },
+  "relations": {
+    "launcher": {
+      "file": "최종본.html",
+      "bytes": 958,
+      "relation": "LAUNCHER_BOOTSTRAP_ONLY",
+      "mechanism": [
+        "meta refresh",
+        "location.replace",
+        "anchor"
+      ],
+      "target": "개발과정/index.html",
+      "is_authority": false
+    },
+    "superseded_revision": {
+      "path": "개발과정/LoveTree_Living_Character_World_V1/index.html",
+      "relation": "SUPERSEDED_V1_REVISION",
+      "difference": "V2 adds living-world-v2.css and living-world-v2.js links",
+      "is_authority": false
+    },
+    "codex_shape_clarification_ref": "skerishKang/lovetree-limone#589 comment 5924918679"
+  },
+  "runtime_local_code_dependencies": [
+    {
+      "file": "living-world-v2.css",
+      "bytes": 2736,
+      "sha256": "b8c3a829ebeef1432ef01edf633bb6b2da184bf0147eed0047489cfe9b0f2214",
+      "side": "preserved_both"
+    },
+    {
+      "file": "living-world-v2.js",
+      "bytes": 14449,
+      "sha256": "6c0d33c96fc507d2732bb92d4d0b0a65e66014fb5ede159d5862e359b51e1838",
+      "side": "preserved_both"
+    }
+  ],
+  "runtime_asset_dependencies": {
+    "runtime_asset_files": 54,
+    "reference_only_files": 7,
+    "total_files_in_source_asset_tree": 61,
+    "reference_only_detail": [
+      "characters/M01/M01-expression-sheet.png",
+      "characters/M02/M02-expression-sheet.png",
+      "characters/F01/F01-expression-sheet.png",
+      "characters/F02/F02-expression-sheet.png",
+      "characters/references/F01-reference.png",
+      "characters/references/F02-reference.png",
+      "characters/references/F03-reference.png"
+    ],
+    "inventory_deviation_note": "The accepted S1/S2 inventory recorded 58 runtime files as 4 character folders x 13. Fresh source inspection shows each character folder holds 13 files but only 12 are the emotion webp frames the runtime actually loads; the 13th is an expression sheet. The expression-sheet and references paths occur zero times in index.html, living-world-v2.js and living-world-v2.css. The runtime set is therefore 4x12=48 character frames + 6 lubt poses = 54. 54 + 7 non-runtime = 61, which matches the accepted total. The four expression sheets and three references are recorded as reference-only and are NOT forced into the runtime capsule.",
+    "url_rewrites": 0,
+    "reencode": 0,
+    "resize": 0,
+    "format_change": 0
+  },
+  "reference_only_evidence": [
+    "characters/M01/M01-expression-sheet.png",
+    "characters/M02/M02-expression-sheet.png",
+    "characters/F01/F01-expression-sheet.png",
+    "characters/F02/F02-expression-sheet.png",
+    "characters/references/F01-reference.png",
+    "characters/references/F02-reference.png",
+    "characters/references/F03-reference.png"
+  ],
+  "serving_contract": {
+    "mode": "LOOPBACK_HTTP",
+    "required": true,
+    "reason": "authored README warns browsers can block local file:// images"
+  },
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+  "frozen_source_defects": [
+    {
+      "id": "MOBILE_ELEMENT_REMOVED",
+      "preserved": false,
+      "title": ".lubt-drag-hint is hidden by authored CSS, not removed from the DOM",
+      "repaired": false
+    },
+    {
+      "id": "NO_AUTHORED_REDUCED_MOTION",
+      "preserved": true,
+      "title": "no authored prefers-reduced-motion; motion stays live",
+      "repaired": false
+    },
+    {
+      "id": "MATH_RANDOM_RUNTIME",
+      "preserved": true,
+      "title": "runtime uses Math.random() for emotion, notes, petals, Lubt position",
+      "repaired": false
+    }
+  ],
+  "stage_gate": {
+    "s3_release": "RELEASED",
+    "s4_release": "NOT_RELEASED",
+    "source_split_parity_pass": false,
+    "parity_ref": null,
+    "note": "S3 candidate only. S4 parity is not claimed and no accepted-parity record exists."
+  },
+  "authority_refs": {
+    "s0_s1": "skerishKang/lovetree-limone#589 comment 5922885731",
+    "s2": "skerishKang/lovetree-limone#589 comment 5924890181",
+    "workboard": "skerishKang/lovetree-limone#589 comment 5922886891",
+    "shape": "skerishKang/lovetree-limone#589 comment 5924918679",
+    "s0_s1_report": "d9b9b52e58de364a440bd42ea1f7135af598a2c3",
+    "s2_report": "af5d04b8c38ea2b932b42fa08e9674c9c65df834"
+  },
+  "product_adoption": false,
+  "lineage58_adoption": false,
+  "drive_mutation": 0
+}
