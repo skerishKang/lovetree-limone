@@ -1,18 +1,24 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "required_runs": 3,
   "runs": [
     {
       "run_index": 1,
-      "semantic_contract_exact": "21/36",
-      "geometry_contract_exact": "34/36",
-      "computed_style_contract_exact": "34/36",
-      "real_parity_defects": 23,
-      "unclassified_residuals": 23,
-      "console_error_states": 0,
-      "page_error_states": 0,
-      "network_error_states": 0,
+      "semantic_raw_exact": "1/37",
+      "semantic_contract_exact": "30/37",
+      "geometry_raw_exact": "32/37",
+      "geometry_contract_exact": "32/37",
+      "computed_style_raw_exact": "36/37",
+      "computed_style_contract_exact": "37/37",
+      "animation_inventory_contract_exact": "31/37",
+      "real_parity_defects": 35,
+      "unclassified_residuals": 35,
+      "stable_ledger_entries": 0,
+      "console_error_states": 1,
+      "page_error_states": 1,
+      "network_error_states": 1,
       "missing_asset_states": 0,
+      "readiness_timeout_states": 0,
       "runtime_asset_sweep": "54/54",
       "frozen_behavior_preserved": "YES"
     }
@@ -21,5 +27,5 @@
   "THREE_RUN_PROOF": false,
   "runs_required": 3,
   "runs_recorded": 1,
-  "note": "Each run is a fresh full parity replay from fresh page loads. No averaging, no best-of, no discarded run. One failing run fails the proof."
+  "note": "Fresh full parity replay per run. No averaging, no best-of, no discarded run. One failing run fails the proof."
 }

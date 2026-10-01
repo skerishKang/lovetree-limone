@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "source_id": "CDX007",
   "stage": "S4_SOURCE_SPLIT_PARITY",
   "status": "CANDIDATE_PENDING_CENTRAL",
@@ -9,128 +9,54 @@
     "AUTHORED_FINITE_TRANSIENT_PHASE",
     "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
   ],
-  "note": "Every residual authorized by a bounded class with concrete native/source proof. A residual absent here is a real parity defect.",
+  "note": "Every residual authorized by a bounded class with concrete field/target proof. A STABLE state contributes ZERO ledger rows by contract. A residual absent here is a real parity defect.",
+  "stable_ledger_entries": 0,
   "entries": [
     {
-      "state": "D1/06_emotion_sing",
-      "state_intent": "STABLE",
+      "state": "D1/21_face_click_random",
+      "state_intent": "AUTHORED_RANDOM",
       "channel": "semantic",
-      "field_path": "animations.length",
-      "original_a": 32,
+      "field_path": "dom.particleCount",
+      "original_a": 10,
       "original_b": null,
-      "split": 34,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/13_emotion_touched",
-      "state_intent": "STABLE",
-      "channel": "semantic",
-      "field_path": "animations.length",
-      "original_a": 52,
-      "original_b": null,
-      "split": 54,
+      "split": 12,
       "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "contract_disposition": "LEDGER"
     },
     {
       "state": "D1/21_face_click_random",
       "state_intent": "AUTHORED_RANDOM",
-      "channel": "semantic",
-      "field_path": "images[5].src",
-      "original_a": "assets/characters/M01/M01-surprise.webp",
+      "channel": "computedStyle",
+      "field_path": "portraitWrap.transform",
+      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 2.49461e-07, 0, 0, -2.49461e-07, 1, 0, 0, -5.1455e-05, 0, 1)",
       "original_b": null,
-      "split": "assets/characters/M01/M01-smile.webp",
-      "classification": "AUTHORED_RANDOM_SCALAR",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/21_face_click_random",
-      "state_intent": "AUTHORED_RANDOM",
-      "channel": "semantic",
-      "field_path": "animations.length",
-      "original_a": 24,
-      "original_b": null,
-      "split": 20,
-      "classification": "AUTHORED_RANDOM_SCALAR",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/22_face_special_moment",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "animations.length",
-      "original_a": 109,
-      "original_b": null,
-      "split": 110,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/23_face_hold_special",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "geometry.lubtSize.w",
-      "original_a": 160,
-      "original_b": null,
-      "split": 150,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/23_face_hold_special",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "geometry.lubtSize.h",
-      "original_a": 160,
-      "original_b": null,
-      "split": 150,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/23_face_hold_special",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "computedStyle.lubt.transform",
-      "original_a": "matrix(1.06421, 0, 0, 1.06421, 0, 0)",
-      "original_b": null,
-      "split": "none",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/23_face_hold_special",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "animations.length",
-      "original_a": 111,
-      "original_b": null,
-      "split": 110,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/25_lubt_drag",
-      "state_intent": "STABLE",
-      "channel": "semantic",
-      "field_path": "dom.lubt_img",
-      "original_a": "assets/lubt/lubt-idle.png",
-      "original_b": null,
-      "split": "assets/lubt/lubt-guide.png",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/27_sing_mode",
-      "state_intent": "AUTHORED_FINITE_TRANSIENT",
-      "channel": "semantic",
-      "field_path": "geometry.portraitWrap.y",
-      "original_a": 229,
-      "original_b": null,
-      "split": 230,
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "contract_disposition": "LEDGER"
+      "split": "matrix(1, 0, 0, 1, 0, 0)",
+      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "contract_disposition": "LEDGER",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ]
+      }
     }
   ]
 }
