@@ -55,8 +55,8 @@
     "note": "only the new mechanical glue; the authored external CSS/JS tags are untouched"
   },
   "layer_order": [
-    "authored external <link href=\"living-world-v2.css\">",
     "extracted ./styles.css (authored inline layer)",
+    "authored external <link href=\"living-world-v2.css\">",
     "extracted ./script.js (authored inline layer)",
     "authored external <script src=\"living-world-v2.js\">"
   ],
@@ -86,6 +86,6 @@
   },
   "product_adoption": false,
   "drive_mutation": 0,
-  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5922885731",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
   "s4_status": "NOT_RELEASED"
 }
