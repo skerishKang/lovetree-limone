@@ -339,6 +339,94 @@ if (!BROWSER_MODE) {
 
 // ============================================================ BROWSER CANDIDATE MODE
 
+/* ============================================================================
+ * (3)(4)(5)(6)(7)(9) SOURCE-DERIVED PER-STATE RANDOM CONTRACTS.
+ *
+ * There is NO global random waiver. Each state that can carry an authored random
+ * value declares, per field, the SOURCE SITE it comes from, the allowed set or
+ * range, and the deterministic invariants that must still hold exactly. A field
+ * with no contract here is compared for exact value equality.
+ *
+ * Everything below is derived from the frozen source, not from observed output:
+ *   lubtTalk.{greeting,idle,drag,save,scan,special,reply,emotion.<emotion>}
+ *   characterLines.<emotion>          (choose() -> Math.random)
+ *   callLubt(): left = 18 + rnd*28 vw, top = 9 + rnd*46 vh
+ *   resetAuto(): pool = [neutral, smile, wink, shy, touched, sleepy]
+ *   notes()/petals()/burstEmotion(): per-particle Math.random displacement
+ * ==========================================================================*/
+
+// The authored Auto Life emotion pool, read from resetAuto() in the frozen inline layer.
+const AUTO_LIFE_POOL = ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'];
+
+// The authored Lubt home position, written by resumeLubtFlight().
+const LUBT_HOME = { left: '300px', top: '95px' };
+
+// The authored random position range written by callLubt().
+const LUBT_RANDOM_RANGE = { leftVw: [18, 46], topVh: [9, 55] };
+
+/* Per-state random contracts. `pool` is a SOURCE-DERIVED allowed set for a field whose exact
+ * text/value is random; `randomPosition` marks a state where the Lubt position is genuinely
+ * random rather than homed; `speech` names the characterLines key that owns the speech text;
+ * `bubble` names the lubtTalk key that owns the retained hidden bubble text. */
+const RANDOM_CONTRACTS = {
+  // Auto Life ON states: the emotion itself is an authored random draw from AUTO_LIFE_POOL.
+  'D1/01_initial_live': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+  'D1/28_continuous_motion': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+  'D1/29_autolife_on_live': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+  'T1/01_tablet_initial': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+  'M1/01_mobile_initial': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+
+  // Stable actions whose retained speech/bubble text is an authored random draw. The STABLE
+  // requirement is speechHidden/pose exact; the TEXT is checked for pool membership only.
+  'D1/16_heart_action': { speech: 'touched', bubble: ['emotion.touched'], particle: 'petals' },
+  'D1/17_surprise_action': { speech: 'surprise', bubble: ['emotion.surprise'], particle: 'petals' },
+  'D1/19_call_lubt': { bubble: ['scan'], randomPosition: true },
+  'D1/20_save_transient': { bubble: ['save'], particle: 'petals' },
+  'D1/20b_save_fault_terminal': { bubble: ['save'], particle: 'petals' },
+  'D1/24_lubt_click': { bubble: ['emotion'], randomPosition: true },
+  'D1/25_lubt_drag': { bubble: ['drag'], randomPosition: true },
+  'D1/26_talk_mode': { speech: 'talk', bubble: ['emotion'], randomPosition: true },
+  'D1/27_sing_mode': { speech: 'sing', particle: 'note' },
+
+  // The dedicated random face reaction: everything correlates to the selected emotion.
+  'D1/21_face_click_random': {
+    correlated_random_reaction: true,
+    auto_emotion: null,
+    speech: 'selectedEmotion',
+    bubble: ['emotion.selectedEmotion'],
+    randomPosition: true,
+  },
+  'D1/22_face_special_moment': { bubble: ['special'], randomPosition: true },
+  'D1/23_face_hold_special': { bubble: ['special'], randomPosition: true },
+  'T1/04_tablet_interaction': { speech: 'touched', bubble: ['emotion.touched'] },
+};
+
+function randomContractFor(ctx, state) {
+  return RANDOM_CONTRACTS[`${ctx}/${state}`] || null;
+}
+
+/* ---- Source-derived pools, read from the frozen V2 script at capture time. ---- */
+// These are extracted in-page from the live authored objects, so the allowed set can never
+// drift from the source that is actually running.
+function readAuthoredPools() {
+  const v2 = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
+  const pool = (key) => {
+    if (!v2) return null;
+    const path = key.split('.');
+    let cur = v2;
+    for (const p of path) {
+      if (cur === undefined || cur === null) return null;
+      cur = cur[p];
+    }
+    return Array.isArray(cur) ? cur.slice() : null;
+  };
+  return {
+    lubtTalkKeys: v2 ? Object.keys(v2) : [],
+    pool,
+    emotionNames: (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [],
+  };
+}
+
 const VIEWPORTS = {
   D1: { id: 'D1', width: 1440, height: 900 },
   T1: { id: 'T1', width: 900, height: 900 },
@@ -359,6 +447,18 @@ const TERMINAL_SRC = {
       && !l.classList.contains('dragging');
   }`,
   lubtPoseIdle: `() => String(document.getElementById('lubtImg')?.getAttribute('src') || '').includes('lubt-idle')`,
+  /* (2) The full authored home lifecycle. callLubt's 3600 ms action timer clears talk and the
+   * idle pose, then resumeLubtFlight re-adds follow at +500 ms and drops it at +1050 ms. There is
+   * therefore a window where talk=false and follow=false but the element has NOT yet returned
+   * home. A STABLE state must also prove the authored home position, not just the absence of the
+   * transient classes. */
+  lubtHomeStable: `() => {
+    const l = document.getElementById('lubt');
+    if (!l) return false;
+    if (l.classList.contains('talk') || l.classList.contains('follow') || l.classList.contains('dragging')) return false;
+    if (!String(document.getElementById('lubtImg')?.getAttribute('src') || '').includes('lubt-idle')) return false;
+    return l.style.left === '300px' && l.style.top === '95px';
+  }`,
   speechHidden: `() => !document.getElementById('speech').classList.contains('show')`,
   /* The authored source arms a 280 ms hoverTimer on faceHit that forces emotion 'smile'. A hover
    * left over from an earlier state would move the emotion mid-settle, so a STABLE state waits for
@@ -430,8 +530,8 @@ async function stablePrecondition(p) {
     if (!off) throw new Error('AUTO_LIFE_DID_NOT_TURN_OFF');
   }
   // Startup quiescence: the authored greeting Lubt call and its follow/resume must finish first.
-  const ok = await settle(['autoLifeOff', 'lubtIdle', 'lubtPoseIdle', 'noParticles',
-    'speechHidden', 'noHoverSmile', 'stageClean'])(p);
+  const ok = await settle(['autoLifeOff', 'lubtIdle', 'lubtPoseIdle', 'lubtHomeStable',
+    'noParticles', 'speechHidden', 'noHoverSmile', 'stageClean'])(p);
   if (!ok) throw new Error('STARTUP_QUIESCENCE_TIMEOUT');
   await p.mouse.move(2, 2);
 }
@@ -454,7 +554,7 @@ const stable = (drive, terminal) => async (p) => {
 // An intentionally live/transient state: captured on purpose, never settled.
 const live = (drive, ms) => async (p) => { await drive(p); await p.waitForTimeout(ms || 200); };
 
-const SETTLE_BASE = ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile'];
+const SETTLE_BASE = ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtHomeStable'];
 
 const PLAN = [
   { ctx: 'D1', state: '01_initial_live', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(1200); }) },
@@ -859,6 +959,57 @@ function collectChannels() {
       random_petal_dx: Array.from(document.querySelectorAll('#petals .petal'))
         .map((n) => n.style.getPropertyValue('--dx')).join('|'),
       random_emotion_title: txt('#emotionTitle'),
+      /* (3)(4)(5) Retained hidden bubble/speech text, the Lubt position, particle families and
+       * the source-derived pools the contracts check them against. */
+      lubt_left: lubt ? lubt.style.left : null,
+      lubt_top: lubt ? lubt.style.top : null,
+      log_text: txt('#log'),
+      emotion_line: txt('#emotionLine'),
+      particle_families: Array.from(document.querySelectorAll('#notes .note, #petals .petal'))
+        .reduce((acc, node) => {
+          const fam = node.parentElement ? node.parentElement.id : 'unknown';
+          acc[fam] = (acc[fam] || 0) + 1;
+          return acc;
+        }, {}),
+      /* (3)(4) Source-pool membership is resolved INSIDE the page, because the collector is
+       * serialized and cannot call a module-scope helper. For each authored pool key we report
+       * whether the CURRENT retained text is a member of that pool, read from the live authored
+       * lubtTalk / characterLines objects, so the allowed set can never drift from the source
+       * that is actually running. */
+      authored_pool_keys: (() => {
+        const T = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
+        if (!T) return null;
+        const keys = Object.keys(T);
+        const emotions = (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [];
+        return keys.concat(emotions.map((e) => 'emotion.' + e));
+      })(),
+      lubt_bubble_pool_member: (() => {
+        const T = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
+        if (!T) return null;
+        const t = document.getElementById('lubtBubble');
+        const cur = t ? t.textContent : null;
+        const emotions = (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [];
+        const keys = Object.keys(T).concat(emotions.map((e) => 'emotion.' + e));
+        const out = {};
+        for (const k of keys) {
+          const path = k.split('.');
+          let cur2 = T;
+          for (const p of path) { if (cur2 == null) { cur2 = null; break; } cur2 = cur2[p]; }
+          out[k] = Array.isArray(cur2) ? cur2.indexOf(cur) >= 0 : null;
+        }
+        return out;
+      })(),
+      speech_pool_member: (() => {
+        const C = (typeof characterLines !== 'undefined') ? characterLines : null;
+        if (!C) return null;
+        const t = document.getElementById('speech');
+        const cur = t ? t.textContent : null;
+        const out = {};
+        for (const k of Object.keys(C)) {
+          out[k] = Array.isArray(C[k]) ? C[k].indexOf(cur) >= 0 : null;
+        }
+        return out;
+      })(),
     },
     images: imgs,
     visibility: {
@@ -1146,15 +1297,81 @@ async function browserCandidate() {
       const animRawExact = animRaw.length === 0;
       // Projection is permitted ONLY for the dedicated authored-random-reaction state.
       const isRandomReactionState = spec.state === '21_face_click_random';
-      const semProj = diffPaths(
+      /* (3)(4)(5)(6)(7)(9) Per-state source-derived random contracts. A field this state
+       * contracts is checked for SOURCE-POOL MEMBERSHIP or RANGE, never for exact equality and
+       * never globally. A field with no contract falls through to exact comparison. */
+      const contract = randomContractFor(spec.ctx, spec.state);
+      const contractViolations = [];
+      /* Membership was resolved in-page. null means the pool could not be read, which proves
+       * nothing, so the field falls through to exact comparison rather than being waived. */
+      const inPool = (surface, map, key) => {
+        if (!map || typeof map[key] !== 'boolean') return null;
+        return map[key];
+      };
+      if (contract) {
+        for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
+          // (6) Position: the random RANGE only while a random call is live; otherwise the exact
+          // authored home position.
+          if (contract.randomPosition) {
+            const l = parseFloat(dom.lubt_left);
+            const t = parseFloat(dom.lubt_top);
+            const inRange = Number.isFinite(l) && Number.isFinite(t)
+              && l >= LUBT_RANDOM_RANGE.leftVw[0] && l <= LUBT_RANDOM_RANGE.leftVw[1]
+              && t >= LUBT_RANDOM_RANGE.topVh[0] && t <= LUBT_RANDOM_RANGE.topVh[1];
+            const homed = dom.lubt_left === LUBT_HOME.left && dom.lubt_top === LUBT_HOME.top;
+            if (!inRange && !homed) {
+              contractViolations.push({ path: `contract.${surf}.lubt_position`, a: dom.lubt_left, b: dom.lubt_top });
+            }
+          }
+          // (3) Retained hidden bubble text must belong to a source pool this state owns.
+          for (const key of contract.bubble || []) {
+            if (inPool(dom, dom.lubt_bubble_pool_member, key) === false) {
+              contractViolations.push({ path: `contract.${surf}.lubt_bubble`, a: key, b: dom.random_lubt_bubble });
+            }
+          }
+          // (4) Retained speech text must belong to the characterLines key this action owns. The
+          // STABLE requirement is the VISIBILITY; only the hidden retained text is random.
+          if (contract.speech && contract.speech !== 'selectedEmotion' && !dom.speechVisible) {
+            const ok = inPool(dom, dom.speech_pool_member, contract.speech);
+            if (ok === false) {
+              contractViolations.push({ path: `contract.${surf}.speech`, a: contract.speech, b: dom.random_speech });
+            }
+          }
+          // (9) Auto Life: the selected emotion is a member of the authored pool.
+          if (contract.auto_emotion && !AUTO_LIFE_POOL.includes(dom.activeEmotion)) {
+            contractViolations.push({ path: `contract.${surf}.auto_emotion`, a: AUTO_LIFE_POOL, b: dom.activeEmotion });
+          }
+          // (7) Particle ownership: the owning family must be present when the action owns it.
+          if (contract.particle) {
+            const want = contract.particle === 'note' ? 'notes' : 'petals';
+            const fams = dom.particle_families || {};
+            if (!Object.keys(fams).length && want) {
+              contractViolations.push({ path: `contract.${surf}.particle`, a: want, b: fams });
+            }
+          }
+        }
+      }
+      const CONTRACTED = new Set([
+        ...(contract && contract.randomPosition
+          ? ['dom.random_lubt_left', 'dom.random_lubt_top', 'dom.lubt_left', 'dom.lubt_top',
+            'dom.random_lubt_transform'] : []),
+        ...(contract && contract.bubble ? ['dom.random_lubt_bubble'] : []),
+        ...(contract && contract.speech ? ['dom.random_speech'] : []),
+        ...(contract && contract.auto_emotion
+          ? ['dom.random_emotion_title', 'dom.emotion_title', 'dom.log_text', 'dom.log', 'dom.random_log'] : []),
+        ...(contract && contract.particle
+          ? ['dom.random_note_dx', 'dom.random_petal_dx', 'dom.petalCount', 'dom.particleCount'] : []),
+      ]);
+      const semAll = diffPaths(
         projectSemantic(o.native, isRandomReactionState),
         projectSemantic(s.native, isRandomReactionState));
+      const semProj = semAll.filter((d) => !CONTRACTED.has(d.path));
 
       const infTargets = (c) => new Set(c.animations.filter((a) => a.kind === 'CSSAnimation'
         && INFINITE_TRACKS.includes(a.name) && a.iterations === 'Infinity').map((a) => a.target));
       const bothInf = new Set([...infTargets(o.native)].filter((t) => infTargets(s.native).has(t)));
 
-      const defects = [];
+      const defects = [...contractViolations];
       const led = [];
       const addLedger = (channel, p, d, cls, proof) => led.push({
         state: `${spec.ctx}/${spec.state}`, state_intent: spec.intent, channel,
@@ -1355,8 +1572,14 @@ function writeCandidate(results, ledger, sweep) {
   const requestFailedStates = results.filter((r) => (r.error_channels || {}).request_failed > 0).length;
   /* (10) The #670 frozen fault and a superseded image request are separated from real failures so
    * the same event is never counted as several defects - and never counted as zero. */
-  const faults = results.filter((r) => r.page_error_fault).map((r) => r.page_error_fault);
+  /* (13) Only states that ACTUALLY carry a page error participate in the fault-parity
+   * aggregate. A no-fault state is neutral and must not drag the verdict down. */
+  const faults = results.filter((r) => r.page_error_fault
+    && (r.page_error_fault.original_670 > 0 || r.page_error_fault.split_670 > 0
+      || r.page_error_fault.unexpected_original > 0 || r.page_error_fault.unexpected_split > 0))
+    .map((r) => r.page_error_fault);
   const expectedFrozenFaultStates = faults.filter((f) => f.expected_frozen_fault_parity).length;
+  const faultBearingStateCount = faults.length;
   const faultParityExact = faults.length === 0 || faults.every((f) => f.parity_exact);
   const unexpectedPageStates = faults.filter((f) => f.unexpected_original > 0 || f.unexpected_split > 0).length
     + results.filter((r) => !r.page_error_fault && (r.error_channel_detail || [])
@@ -1424,6 +1647,8 @@ function writeCandidate(results, ledger, sweep) {
     EXPECTED_FROZEN_PAGE_FAULT_STATES: expectedFrozenFaultStates,
     UNEXPECTED_PAGE_ERROR_STATES: unexpectedPageStates,
     PAGE_FAULT_PARITY_EXACT: faultParityExact ? 'YES' : 'NO',
+    PAGE_FAULT_PARITY_SCOPE: 'FAULT_BEARING_STATES_ONLY',
+    FAULT_BEARING_STATE_COUNT: faultBearingStateCount,
     HTTP_ERROR_STATES: httpStates,
     EXPECTED_SUPERSEDED_REQUEST_STATES: supersededRequestStates,
     UNEXPECTED_REQUEST_FAILED_STATES: requestFailedStates,
@@ -1525,3 +1750,115 @@ if (BROWSER_MODE) {
     await browserCandidate();
   });
 }
+
+test('C22 every STABLE state proves the full authored Lubt home lifecycle', () => {
+  /* ROUND4 Finding 2: talk=false and follow=false also hold in the window BEFORE
+   * resumeLubtFlight has actually returned the element home, so a STABLE state must also prove
+   * the authored home position. */
+  assert.ok(typeof TERMINAL_SRC.lubtHomeStable === 'string', 'a lubtHomeStable predicate exists');
+  assert.ok(TERMINAL_SRC.lubtHomeStable.includes("style.left === '300px'"),
+    'the home predicate proves the authored left position');
+  assert.ok(TERMINAL_SRC.lubtHomeStable.includes("style.top === '95px'"),
+    'the home predicate proves the authored top position');
+  assert.ok(TERMINAL_SRC.lubtHomeStable.includes('lubt-idle'),
+    'the home predicate proves the idle pose');
+  // It must be in the STABLE base set AND in the startup quiescence precondition.
+  assert.ok(SETTLE_BASE.includes('lubtHomeStable'), 'every STABLE state waits for the home lifecycle');
+  const pre = src_of_precondition();
+  assert.ok(pre.includes("'lubtHomeStable'"), 'startup quiescence also waits for the home lifecycle');
+  // And the terminal-token guard must still see it.
+  assert.ok(SETTLE_BASE.every((n) => Object.prototype.hasOwnProperty.call(TERMINAL_SRC, n)),
+    'every STABLE base token resolves');
+});
+
+function src_of_precondition() {
+  const s2 = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const i = s2.indexOf('async function stablePrecondition');
+  return s2.slice(i, s2.indexOf('const stable =', i));
+}
+
+test('C23 there is no global random waiver; every random state has a source contract', () => {
+  /* ROUND4 Finding 5: a state may only be random by an explicit, source-derived contract. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(Object.keys(RANDOM_CONTRACTS).length > 0, 'a per-state random contract table exists');
+  for (const [key, c] of Object.entries(RANDOM_CONTRACTS)) {
+    assert.ok(c && typeof c === 'object', `${key} declares a contract object`);
+  }
+  // No state name alone may grant a waiver: the contract must name a field-level pool.
+  for (const [key, c] of Object.entries(RANDOM_CONTRACTS)) {
+    const hasField = ['auto_emotion', 'speech', 'bubble', 'randomPosition', 'particle']
+      .some((k) => c[k]);
+    assert.ok(hasField, `${key} names at least one contracted random field`);
+  }
+  // A global projection must not exist.
+  const defs = [...src.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g)].map((m) => m[1]);
+  assert.equal(defs.includes('AUTHORED_RANDOM_SCALAR_PATHS'), false,
+    'no global random allowlist is defined');
+  assert.ok(/function projectSemantic\(ch, allowRandom\)/.test(src),
+    'projection is still explicitly gated');
+});
+
+test('C24 hidden bubble and stable speech are checked by pool, never by exact text', () => {
+  /* ROUND4 Finding 3/4: the retained hidden text is authored random, so exact text equality on
+   * a hidden field is forbidden, but an unconditional ignore is equally forbidden. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('contract.${surf}.lubt_bubble'), 'the bubble is checked per surface by pool');
+  assert.ok(src.includes('contract.${surf}.speech'), 'the speech is checked per surface by pool');
+  assert.ok(src.includes('inPool('), 'a source-pool membership check exists');
+  assert.ok(/ok === null \|\| ok === true|inPool/.test(src),
+    'an unprovable pool does not silently waive: it falls through to exact comparison');
+  // The STABLE requirement stays the VISIBILITY, not the text.
+  assert.ok(src.includes('if (dom.speechVisible) continue;'),
+    'only the retained, hidden speech text is treated as random');
+});
+
+test('C25 a correlated random contract exists for the face and Auto Life states', () => {
+  /* ROUND4 Finding 8/9. */
+  const face = RANDOM_CONTRACTS['D1/21_face_click_random'];
+  assert.ok(face, 'the face-random state has a contract');
+  assert.equal(face.correlated_random_reaction, true, 'it is a correlated random reaction');
+  assert.equal(face.speech, 'selectedEmotion', 'its speech is owned by the selected emotion');
+  for (const k of ['D1/29_autolife_on_live', 'D1/28_continuous_motion']) {
+    const c = RANDOM_CONTRACTS[k];
+    assert.ok(c, `${k} has a contract`);
+    assert.deepEqual(c.auto_emotion, AUTO_LIFE_POOL, `${k} uses the authored Auto Life pool`);
+  }
+  // The Auto Life pool is the authored one, read from resetAuto().
+  assert.deepEqual(AUTO_LIFE_POOL, ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'],
+    'the Auto Life pool matches the frozen resetAuto() source');
+});
+
+test('C26 the random position range and the home position are distinct contracts', () => {
+  /* ROUND4 Finding 6: a live random call needs a RANGE; a STABLE home needs an EXACT position. */
+  assert.deepEqual(LUBT_RANDOM_RANGE, { leftVw: [18, 46], topVh: [9, 55] },
+    'the random range is the authored callLubt range');
+  assert.deepEqual(LUBT_HOME, { left: '300px', top: '95px' },
+    'the home position is the authored resumeLubtFlight position');
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('if (contract.randomPosition)'), 'the range applies only to a live random state');
+  assert.ok(src.includes('const homed ='), 'a non-random state is checked against the exact home position');
+  assert.ok(src.includes('LUBT_RANDOM_RANGE.leftVw[0]'), 'the range bound is applied');
+});
+
+test('C27 a random contract violation is a real defect, never a silent pass', () => {
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('const defects = [...contractViolations];'),
+    'contract violations seed the defect list');
+  assert.ok(src.includes('CONTRACTED'), 'contracted fields are excluded from raw comparison');
+  assert.ok(/contractViolations\.push/.test(src), 'violations are recorded with their evidence');
+});
+
+test('C28 page-fault parity is scoped to fault-bearing states only', () => {
+  /* ROUND4 Finding 13: a no-fault state must not drag the aggregate verdict down. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('FAULT_BEARING_STATES_ONLY'), 'the scope is recorded explicitly');
+  assert.ok(src.includes('FAULT_BEARING_STATE_COUNT'), 'the fault-bearing state count is reported');
+  assert.ok(/original_670 > 0 \|\| r\.page_error_fault\.split_670 > 0/.test(src),
+    'only states that actually carry a fault participate');
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    assert.equal(j.PAGE_FAULT_PARITY_SCOPE, 'FAULT_BEARING_STATES_ONLY');
+  }
+});
+

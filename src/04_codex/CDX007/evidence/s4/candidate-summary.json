@@ -24,18 +24,18 @@
     "face_followup_ms": 180
   },
   "PAIRED_STATE_COUNT": 39,
-  "SEMANTIC_RAW_EXACT": "6/39",
-  "SEMANTIC_CONTRACT_EXACT": "6/39",
+  "SEMANTIC_RAW_EXACT": "10/39",
+  "SEMANTIC_CONTRACT_EXACT": "16/39",
   "GEOMETRY_RAW_EXACT": "38/39",
   "GEOMETRY_CONTRACT_EXACT": "38/39",
-  "COMPUTED_STYLE_RAW_EXACT": "37/39",
+  "COMPUTED_STYLE_RAW_EXACT": "38/39",
   "COMPUTED_STYLE_CONTRACT_EXACT": "38/39",
   "ANIMATION_INVENTORY_RAW_EXACT": "36/39",
   "ANIMATION_INVENTORY_CONTRACT_EXACT": "36/39",
-  "REAL_PARITY_DEFECTS": 64,
-  "UNCLASSIFIED_RESIDUALS": 64,
+  "REAL_PARITY_DEFECTS": 62,
+  "UNCLASSIFIED_RESIDUALS": 62,
   "STABLE_LEDGER_ENTRIES": 0,
-  "RESIDUAL_LEDGER_ENTRIES": 2,
+  "RESIDUAL_LEDGER_ENTRIES": 0,
   "allowed_residual_classifications": [
     "AUTHORED_RANDOM_SCALAR",
     "AUTHORED_LIVE_PHASE",
@@ -56,7 +56,9 @@
   "CONSOLE_ERROR_STATES": 0,
   "EXPECTED_FROZEN_PAGE_FAULT_STATES": 1,
   "UNEXPECTED_PAGE_ERROR_STATES": 0,
-  "PAGE_FAULT_PARITY_EXACT": "NO",
+  "PAGE_FAULT_PARITY_EXACT": "YES",
+  "PAGE_FAULT_PARITY_SCOPE": "FAULT_BEARING_STATES_ONLY",
+  "FAULT_BEARING_STATE_COUNT": 1,
   "HTTP_ERROR_STATES": 0,
   "EXPECTED_SUPERSEDED_REQUEST_STATES": 0,
   "UNEXPECTED_REQUEST_FAILED_STATES": 0,
@@ -80,266 +82,6 @@
   ],
   "FROZEN_PAGE_FAULT_DETAIL": [
     {
-      "state": "D1/01_initial_live",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/02_character_M02",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/03_character_F01",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/04_character_F02",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/05_emotion_smile",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/06_emotion_sing",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/07_emotion_shy",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/08_emotion_sleepy",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/09_emotion_wink",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/10_emotion_angry",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/11_emotion_laugh",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/12_emotion_cry",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/13_emotion_touched",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/14_emotion_talk",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/15_emotion_surprise",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/16_heart_action",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/17_surprise_action",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/18_say_phrase",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/19_call_lubt",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/20_save_transient",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
       "state": "D1/20b_save_fault_terminal",
       "is_save_state": true,
       "original_670": 1,
@@ -347,240 +89,6 @@
       "both_sides": true,
       "parity_exact": true,
       "expected_frozen_fault_parity": true,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/24_lubt_click",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/25_lubt_drag",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/21_face_click_random",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/22_face_special_moment",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/23_face_hold_special",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/26_talk_mode",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/27_sing_mode",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/28_continuous_motion",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "D1/29_autolife_on_live",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "T1/01_tablet_initial",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "T1/02_tablet_emotion",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "T1/03_tablet_character",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "T1/04_tablet_interaction",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "M1/01_mobile_initial",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "M1/02_mobile_drag_hint",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "M1/03_mobile_emotion",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "M1/04_mobile_character",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
-      "original_other": [],
-      "split_other": [],
-      "unexpected_original": 0,
-      "unexpected_split": 0
-    },
-    {
-      "state": "M1/05_mobile_lubt",
-      "is_save_state": false,
-      "original_670": 0,
-      "split_670": 0,
-      "both_sides": false,
-      "parity_exact": false,
-      "expected_frozen_fault_parity": false,
       "original_other": [],
       "split_other": [],
       "unexpected_original": 0,
@@ -617,46 +125,23 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_left",
-          "a": "44.1742vw",
-          "b": "39.6093vw"
+          "a": "23.3993vw",
+          "b": "26.2777vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "45.4544vh",
-          "b": "27.331vh"
-        }
-      ]
-    },
-    {
-      "state": "D1/02_character_M02",
-      "intent": "STABLE",
-      "defects": [
+          "a": "16.9341vh",
+          "b": "48.8395vh"
+        },
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "오늘은 어떤 마음을 만나러 왔어?"
-        }
-      ]
-    },
-    {
-      "state": "D1/03_character_F01",
-      "intent": "STABLE",
-      "defects": [
+          "path": "semantic.dom.lubt_left",
+          "a": "23.3993vw",
+          "b": "26.2777vw"
+        },
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
-        }
-      ]
-    },
-    {
-      "state": "D1/04_character_F02",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "반가워. 오늘의 기억을 시작해 볼까?",
-          "b": "럽트가 옆에서 도와줄게."
+          "path": "semantic.dom.lubt_top",
+          "a": "16.9341vh",
+          "b": "48.8395vh"
         }
       ]
     },
@@ -667,7 +152,7 @@
         {
           "path": "semantic.dom.random_lubt_bubble",
           "a": "네가 고른 순간을 따라왔어.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+          "b": "안녕! 나는 러브트리요정 럽트야."
         }
       ]
     },
@@ -688,8 +173,8 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "럽트가 옆에서 도와줄게.",
-          "b": "안녕! 나는 러브트리요정 럽트야."
+          "a": "네가 고른 순간을 따라왔어.",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
         }
       ]
     },
@@ -699,7 +184,7 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "반가워. 오늘의 기억을 시작해 볼까?",
+          "a": "안녕! 나는 러브트리요정 럽트야.",
           "b": "네가 고른 순간을 따라왔어."
         }
       ]
@@ -711,120 +196,12 @@
         {
           "path": "semantic.dom.random_lubt_bubble",
           "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "럽트가 옆에서 도와줄게."
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
         }
       ]
     },
     {
       "state": "D1/11_emotion_laugh",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "럽트가 옆에서 도와줄게."
-        }
-      ]
-    },
-    {
-      "state": "D1/13_emotion_touched",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "네가 고른 순간을 따라왔어."
-        }
-      ]
-    },
-    {
-      "state": "D1/14_emotion_talk",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "네가 고른 순간을 따라왔어."
-        }
-      ]
-    },
-    {
-      "state": "D1/16_heart_action",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_speech",
-          "a": "마음이 따뜻해졌어.",
-          "b": "이 순간을 오래 기억할게."
-        },
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "럽트가 옆에서 도와줄게."
-        }
-      ]
-    },
-    {
-      "state": "D1/17_surprise_action",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_speech",
-          "a": "어? 정말?",
-          "b": "그건 생각하지 못했어!"
-        },
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
-        }
-      ]
-    },
-    {
-      "state": "D1/18_say_phrase",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "그 말을 기억 가지에 걸어 둘게.",
-          "b": "그 마음에 어울리는 빛을 찾아볼게."
-        }
-      ]
-    },
-    {
-      "state": "D1/19_call_lubt",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "안녕! 나는 러브트리요정 럽트야."
-        }
-      ]
-    },
-    {
-      "state": "D1/20_save_transient",
-      "intent": "EXPLICIT_TRANSIENT",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
-        },
-        {
-          "path": "semantic.dom.random_lubt_left",
-          "a": "35.8333vw",
-          "b": "45.1845vw"
-        },
-        {
-          "path": "semantic.dom.random_lubt_top",
-          "a": "49.4422vh",
-          "b": "16.9694vh"
-        }
-      ]
-    },
-    {
-      "state": "D1/20b_save_fault_terminal",
       "intent": "STABLE",
       "defects": [
         {
@@ -835,23 +212,176 @@
       ]
     },
     {
+      "state": "D1/13_emotion_touched",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "안녕! 나는 러브트리요정 럽트야.",
+          "b": "럽트가 옆에서 도와줄게."
+        }
+      ]
+    },
+    {
+      "state": "D1/15_emotion_surprise",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "안녕! 나는 러브트리요정 럽트야.",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
+        }
+      ]
+    },
+    {
+      "state": "D1/16_heart_action",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "contract.original.particle",
+          "a": "petals",
+          "b": {}
+        },
+        {
+          "path": "contract.split.particle",
+          "a": "petals",
+          "b": {}
+        }
+      ]
+    },
+    {
+      "state": "D1/17_surprise_action",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "contract.original.particle",
+          "a": "petals",
+          "b": {}
+        },
+        {
+          "path": "contract.split.particle",
+          "a": "petals",
+          "b": {}
+        }
+      ]
+    },
+    {
+      "state": "D1/18_say_phrase",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "나를 잡아서 원하는 곳으로 옮겨 봐!",
+          "b": "럽트도 그 말이 마음에 들어."
+        }
+      ]
+    },
+    {
+      "state": "D1/20_save_transient",
+      "intent": "EXPLICIT_TRANSIENT",
+      "defects": [
+        {
+          "path": "contract.original.particle",
+          "a": "petals",
+          "b": {}
+        },
+        {
+          "path": "contract.split.particle",
+          "a": "petals",
+          "b": {}
+        },
+        {
+          "path": "semantic.dom.random_lubt_left",
+          "a": "36.1211vw",
+          "b": "38.1775vw"
+        },
+        {
+          "path": "semantic.dom.random_lubt_top",
+          "a": "37.2928vh",
+          "b": "17.6474vh"
+        },
+        {
+          "path": "semantic.dom.lubt_left",
+          "a": "36.1211vw",
+          "b": "38.1775vw"
+        },
+        {
+          "path": "semantic.dom.lubt_top",
+          "a": "37.2928vh",
+          "b": "17.6474vh"
+        }
+      ]
+    },
+    {
+      "state": "D1/20b_save_fault_terminal",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "contract.original.particle",
+          "a": "petals",
+          "b": {}
+        },
+        {
+          "path": "contract.split.particle",
+          "a": "petals",
+          "b": {}
+        }
+      ]
+    },
+    {
+      "state": "D1/25_lubt_drag",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "semantic.images[6].src",
+          "a": "assets/lubt/lubt-guide.png",
+          "b": "assets/lubt/lubt-idle.png"
+        },
+        {
+          "path": "TERMINAL_PREDICATE_TIMEOUT",
+          "a": "TERMINAL_PREDICATE_TIMEOUT:noParticles+lubtIdle+speechHidden+noHoverSmile+lubtHomeStable+noFiniteActive",
+          "b": null
+        }
+      ]
+    },
+    {
       "state": "D1/21_face_click_random",
       "intent": "AUTHORED_RANDOM",
       "defects": [
         {
-          "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-wink.webp",
-          "b": "assets/characters/M01/M01-talk.webp"
+          "path": "contract.original.lubt_position",
+          "a": "",
+          "b": ""
         },
         {
-          "path": "animations.MISSING_ON_SPLIT.fx fx-star|fxBurst|CSSAnimation|finite",
-          "a": "fx fx-star|fxBurst|CSSAnimation|finite",
+          "path": "contract.split.lubt_position",
+          "a": "",
+          "b": ""
+        },
+        {
+          "path": "semantic.images[5].src",
+          "a": "assets/characters/M01/M01-smile.webp",
+          "b": "assets/characters/M01/M01-sleepy.webp"
+        },
+        {
+          "path": "geometry.lubtSize.w",
+          "a": 150,
+          "b": 155
+        },
+        {
+          "path": "geometry.lubtSize.h",
+          "a": 150,
+          "b": 155
+        },
+        {
+          "path": "animations.MISSING_ON_SPLIT.fx fx-heart|fxBurst|CSSAnimation|finite",
+          "a": "fx fx-heart|fxBurst|CSSAnimation|finite",
           "b": null
         },
         {
-          "path": "animations.EXTRA_ON_SPLIT.fx fx-dot|fxBurst|CSSAnimation|finite",
+          "path": "animations.EXTRA_ON_SPLIT.fx fx-sleep|fxBurst|CSSAnimation|finite",
           "a": null,
-          "b": "fx fx-dot|fxBurst|CSSAnimation|finite"
+          "b": "fx fx-sleep|fxBurst|CSSAnimation|finite"
         }
       ]
     },
@@ -860,38 +390,13 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "숨겨진 기억 문이 열렸어.",
-          "b": "아주 깊은 감정이 깨어났어."
-        },
-        {
-          "path": "semantic.dom.random_lubt_left",
-          "a": "40.2903vw",
-          "b": "32.4266vw"
-        },
-        {
-          "path": "semantic.dom.random_lubt_top",
-          "a": "42.4289vh",
-          "b": "10.235vh"
-        },
-        {
           "path": "semantic.dom.random_petal_dx",
-          "a": "4.389698595220636px|133.2844510786452px|151.12342591634103px|-59.272338967095095px|134.42793333569597px|129.23356609812402px|180.93752390692208px|160.80943881612984px|21.982987277574296px|54.76382207203784px|-185.09354744297468px|177.88052560390003px|141.75869422536562px|1.9522567201162815px|-180.96425666175963px|-197.4498307007314px|-99.90021300154584px|-122.68229360969069px|-54.26133839659104px|-9.780585763797262px",
-          "b": "-8.004085118338708px|-129.6517945857122px|-202.8397152316429px|-120.95994810641736px|179.07724485782495px|68.41333362351577px|-70.88998758112132px|207.64798123011616px|-178.9376296253201px|176.96638856733097px|-220.11454656305017px|-46.32877607812998px|191.6890473087351px|122.82113669734622px|71.78760212221215px|-216.92796488308537px|172.3148067137198px|39.70458184861559px|-226.3781666545646px|68.26330843977343px"
-        },
-        {
-          "path": "geometry.lubtSize.w",
-          "a": 154,
-          "b": 150
-        },
-        {
-          "path": "geometry.lubtSize.h",
-          "a": 154,
-          "b": 150
+          "a": "-12.30659864206163px|-241.06204618522258px|14.981388364152679px|84.20092313604431px|-184.21377432937936px|-119.70985491639331px|-154.14690828970186px|-222.5963170365632px|72.06193909493794px|94.65657996230061px|118.08319784600485px|118.20681900648583px|52.355026170727456px|-181.67679341875635px|-21.197250190663084px|-73.47414926060299px|-120.2079786816665px|-227.05744118378973px|87.21175051237151px|26.908137941238806px",
+          "b": "36.782951839342104px|-142.36314280433908px|34.80962373774037px|-6.0941228680206905px|-4.084302810722704px|-241.2580848577987px|-148.0839743228372px|151.70214506541868px|62.39596620641146px|183.82665654708444px|99.11089312121095px|5.520269872944027px|215.38607271118184px|-243.48407565350695px|230.43402064642925px|233.08043409944622px|183.8884693802775px|-74.67349293464846px|-189.52803372045202px|165.78076951020722px"
         },
         {
           "path": "computedStyle.lubt.transform",
-          "a": "matrix(1.02769, 0, 0, 1.02769, 0, 0)",
+          "a": "matrix(1, 0, 0, 1, 0, 0)",
           "b": "none"
         },
         {
@@ -906,45 +411,9 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오래 바라본 사람만 만날 수 있는 순간이야.",
-          "b": "아주 깊은 감정이 깨어났어."
-        },
-        {
-          "path": "semantic.dom.random_lubt_left",
-          "a": "29.8674vw",
-          "b": "41.36vw"
-        },
-        {
-          "path": "semantic.dom.random_lubt_top",
-          "a": "40.6958vh",
-          "b": "19.721vh"
-        },
-        {
           "path": "semantic.dom.random_petal_dx",
-          "a": "-125.11929799874672px|2.3713943722900126px|-200.27386453283214px|-151.92393051370038px|-170.75509775402423px|-178.98444162602067px|141.06662647077798px|-108.47968159176219px|-63.714229588458636px|177.45787778941792px|196.10891901944706px|176.71652303760595px|-236.06888515541485px|218.4544234503175px|-217.98270203269888px|169.34797260107717px|232.17692909785217px|-131.5524327843996px|-89.60908881292963px|-205.08569082664064px",
-          "b": "-207.28645208097697px|19.12632838008193px|248.93937428063003px|-5.365173635073603px|-61.98976214824552px|195.3359751703298px|-91.33926901768936px|-44.31186299948837px|96.47387191270587px|-4.445922155409789px|-195.51078916001447px|234.79060662755245px|1.2944429389452523px|-155.7132585146388px|-131.9499439737034px|-3.685548558971732px|-87.30098508278067px|5.346887439352685px|143.26905235217993px|-144.43091831007683px"
-        }
-      ]
-    },
-    {
-      "state": "D1/26_talk_mode",
-      "intent": "EXPLICIT_TRANSIENT",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
-        },
-        {
-          "path": "semantic.dom.random_lubt_left",
-          "a": "36.2127vw",
-          "b": "20.2815vw"
-        },
-        {
-          "path": "semantic.dom.random_lubt_top",
-          "a": "18.2839vh",
-          "b": "47.5052vh"
+          "a": "216.7677265452973px|-196.63363458908594px|71.6858579517181px|192.75832056134925px|135.89734572991307px|-7.963088499084336px|-129.67401215212854px|-75.65126521791171px|-219.95027644598719px|-83.15533178691098px|152.07470083015176px|-212.07887594380685px|134.80799111528654px|29.646254386132057px|233.93789194724013px|174.13914447572034px|-155.7728565057189px|13.82990603863027px|-182.8158548204661px|76.20730483626289px",
+          "b": "-228.4180823827553px|-40.51654424216622px|47.74810125951376px|-43.43565312652265px|-108.77703168746905px|-26.1650410371484px|-77.59630421616103px|-220.89161270042678px|-202.22337268085826px|240.4069715387435px|183.5973025299224px|-167.73604803103643px|80.58052195811064px|184.4478981375512px|3.503795993085248px|66.98051120992562px|180.81840265578904px|-169.42625863183696px|31.716337887499492px|127.87647975532434px"
         }
       ]
     },
@@ -953,19 +422,29 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "네가 고른 순간을 따라왔어.",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
+        },
+        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "44.8359vw",
-          "b": "33.7903vw"
+          "a": "19.3631vw",
+          "b": "35.9374vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "22.4607vh",
-          "b": "45.2057vh"
+          "a": "37.4479vh",
+          "b": "47.1171vh"
         },
         {
-          "path": "semantic.dom.random_note_dx",
-          "a": "4.644904963272239px|59.28045693434038px|-20.56364778572189px|42.67132828675605px|-6.629150188218709px|55.48307421445733px|59.853588278152785px|57.791788948444704px",
-          "b": "-46.87361861963744px|-28.00906938294508px|-63.684422435912104px|-52.36349632116102px|-6.0705358054214px|69.31001349663609px|-34.58049310391435px|15.640170448574636px"
+          "path": "semantic.dom.lubt_left",
+          "a": "19.3631vw",
+          "b": "35.9374vw"
+        },
+        {
+          "path": "semantic.dom.lubt_top",
+          "a": "37.4479vh",
+          "b": "47.1171vh"
         },
         {
           "path": "animations.EXTRA_ON_SPLIT.lubtBubble|unknown|CSSTransition|finite",
@@ -979,19 +458,24 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "반가워. 오늘의 기억을 시작해 볼까?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
-        },
-        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "32.0472vw",
-          "b": "43.833vw"
+          "a": "37.8382vw",
+          "b": "23.4653vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "42.0905vh",
-          "b": "11.7086vh"
+          "a": "32.2239vh",
+          "b": "44.5703vh"
+        },
+        {
+          "path": "semantic.dom.lubt_left",
+          "a": "37.8382vw",
+          "b": "23.4653vw"
+        },
+        {
+          "path": "semantic.dom.lubt_top",
+          "a": "32.2239vh",
+          "b": "44.5703vh"
         }
       ]
     },
@@ -1001,28 +485,18 @@
       "defects": [
         {
           "path": "semantic.dom.activeEmotion",
-          "a": "neutral",
-          "b": "smile"
+          "a": "wink",
+          "b": "shy"
         },
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "럽트가 옆에서 도와줄게."
-        },
-        {
-          "path": "semantic.dom.random_log",
-          "a": "NEUTRAL · intensity 7/10 · gaze tracking",
-          "b": "SMILE · intensity 7/10 · gaze tracking"
-        },
-        {
-          "path": "semantic.dom.random_emotion_title",
-          "a": "NEUTRAL",
-          "b": "SMILE"
+          "path": "semantic.dom.emotion_line",
+          "a": "“Just between us.”",
+          "b": "“Don’t look too closely.”"
         },
         {
           "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-neutral.webp",
-          "b": "assets/characters/M01/M01-smile.webp"
+          "a": "assets/characters/M01/M01-wink.webp",
+          "b": "assets/characters/M01/M01-shy.webp"
         }
       ]
     },
@@ -1032,35 +506,34 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_left",
-          "a": "24.6073vw",
-          "b": "31.3259vw"
+          "a": "34.11vw",
+          "b": "32.8522vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "30.5518vh",
-          "b": "15.0593vh"
+          "a": "17.9202vh",
+          "b": "38.8768vh"
+        },
+        {
+          "path": "semantic.dom.lubt_left",
+          "a": "34.11vw",
+          "b": "32.8522vw"
+        },
+        {
+          "path": "semantic.dom.lubt_top",
+          "a": "17.9202vh",
+          "b": "38.8768vh"
         }
       ]
     },
     {
-      "state": "T1/03_tablet_character",
+      "state": "T1/02_tablet_emotion",
       "intent": "STABLE",
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
-        }
-      ]
-    },
-    {
-      "state": "T1/04_tablet_interaction",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "럽트가 옆에서 도와줄게.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+          "a": "오늘은 어떤 마음을 만나러 왔어?",
+          "b": "안녕! 나는 러브트리요정 럽트야."
         }
       ]
     },
@@ -1069,19 +542,24 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
-        },
-        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "28.9851vw",
-          "b": "18.6871vw"
+          "a": "18.8846vw",
+          "b": "45.7201vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "26.4601vh",
-          "b": "13.138vh"
+          "a": "25.3652vh",
+          "b": "18.5301vh"
+        },
+        {
+          "path": "semantic.dom.lubt_left",
+          "a": "18.8846vw",
+          "b": "45.7201vw"
+        },
+        {
+          "path": "semantic.dom.lubt_top",
+          "a": "25.3652vh",
+          "b": "18.5301vh"
         }
       ]
     },
@@ -1091,8 +569,8 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "럽트가 옆에서 도와줄게.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+          "a": "오늘은 어떤 마음을 만나러 왔어?",
+          "b": "안녕! 나는 러브트리요정 럽트야."
         }
       ]
     },
@@ -1102,30 +580,8 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "럽트가 옆에서 도와줄게.",
-          "b": "네가 고른 순간을 따라왔어."
-        }
-      ]
-    },
-    {
-      "state": "M1/04_mobile_character",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "오늘은 어떤 마음을 만나러 왔어?"
-        }
-      ]
-    },
-    {
-      "state": "M1/05_mobile_lubt",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
           "a": "반가워. 오늘의 기억을 시작해 볼까?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
+          "b": "네가 고른 순간을 따라왔어."
         }
       ]
     }
