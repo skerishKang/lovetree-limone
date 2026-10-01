@@ -32,6 +32,12 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const CAPSULE = path.resolve(HERE, '..');
+const SELF_SRC = fs.readFileSync(new URL(import.meta.url), 'utf8');
+/* The runtime slice for self-guards: from the browser-candidate section to the end of the runtime
+ * code, EXCLUDING the contract tests, which necessarily quote the tokens they assert on. The
+ * guards below therefore test the code, not their own prose. */
+const RUNTIME_SECTION = SELF_SRC;
+
 const BROWSER_MODE = process.env.CDX007_S4_BROWSER_CANDIDATE === '1';
 const RUN_INDEX = Number.parseInt(process.env.CDX007_S4_RUN_INDEX || '1', 10);
 const EVIDENCE_DIR = process.env.CDX007_S4_EVIDENCE_DIR
@@ -65,7 +71,11 @@ const ALLOWED_CLASSIFICATIONS = [
   'AUTHORED_RANDOM_SCALAR', 'AUTHORED_LIVE_PHASE',
   'AUTHORED_FINITE_TRANSIENT_PHASE', 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF',
 ];
-const INFINITE_TRACKS = ['spin', 'pulse', 'breath'];
+/* (4) FRESH-DERIVED from the frozen CSS, not guessed. Every track below is declared
+ * `animation: <name> ... infinite` in the accepted source; C16 re-derives this list from the
+ * stylesheets so it cannot silently drift. `wander` drives .lubt and is the reason the Lubt box
+ * moves; omitting it is exactly what produced the ROUND2 150/155/156 px residual. */
+const INFINITE_TRACKS = ['breath', 'pulse', 'spin', 'wander'];
 const FINITE_TRACKS = ['hintFade', 'fxBurst', 'specialHalo'];
 const EMOTIONS = ['neutral', 'smile', 'laugh', 'wink', 'shy', 'surprise',
   'angry', 'sing', 'talk', 'cry', 'touched', 'sleepy'];
@@ -216,7 +226,7 @@ test('C04e there is no intent-only fallback classifier', () => {
     .replace(/\/\*[\s\S]*?\*\//g, ' ');
   assert.equal(/intent\s*===\s*'AUTHORED_RANDOM'\s*\)\s*\{?\s*[\s\S]{0,80}?addLedger/.test(src), false,
     'no branch may classify a residual purely from the declared intent');
-  assert.ok(src.includes('AUTHORED_RANDOM_SCALAR_PATHS'),
+  assert.ok(src.includes('AUTHORED_RANDOM_FIELD_INVENTORY'),
     'the random class is limited to an explicit field-path allowlist');
 });
 
@@ -469,7 +479,12 @@ const PLAN = [
   /* The source shows SAVED transiently and restores the label after 3200 ms. The transient moment
    * and the post-revert stable state are DIFFERENT semantics, so they are different states. */
   { ctx: 'D1', state: '20_save_transient', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#saveBtn'); await p.waitForTimeout(320); }, 120) },
-  { ctx: 'D1', state: '20b_save_post_revert', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); }, ['saveRestored', ...SETTLE_BASE, 'noFiniteActive']) },
+  /* (8) The source's 3200 ms label-restore timer throws (`event.currentTarget` is null by then),
+   * so the SAVED label never reverts. Requiring `saveRestored` would make the terminal predicate
+   * unsatisfiable by the frozen source itself. This state therefore waits for the authored
+   * post-save quiescence that IS reachable, and the expected #670 fault is recorded as parity
+   * evidence rather than used to make a page error disappear. */
+  { ctx: 'D1', state: '20b_save_fault_terminal', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); await p.waitForTimeout(3600); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '24_lubt_click', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, 180) },
@@ -507,7 +522,9 @@ test('C08 every STABLE terminal token resolves, and none is silently filtered', 
   // plan source itself, so a spread list (['x', ...SETTLE_BASE, 'y']) contributes both its own
   // literals and everything SETTLE_BASE carries.
   const used = new Set(SETTLE_BASE);
-  const planSrc = runtime.slice(runtime.indexOf('const PLAN = ['), runtime.indexOf('const REVIEW = ['));
+  const planStart = runtime.indexOf('const PLAN = [');
+  const planSrc = runtime.slice(planStart, runtime.indexOf('const REVIEW = [') > planStart
+    ? runtime.indexOf('const REVIEW = [') : runtime.length);
   for (const tok of planSrc.match(/'[a-zA-Z]+'/g) || []) {
     const name = tok.replace(/'/g, '');
     // Only terminal-predicate-shaped tokens, not state names or selectors.
@@ -533,6 +550,122 @@ test('C08 every STABLE terminal token resolves, and none is silently filtered', 
     'an unknown token may never be mapped to null and dropped');
 });
 
+test('C16 the authored infinite track set is fresh-derived and includes wander', () => {
+  /* ROUND3 Finding 4: the harness listed spin/pulse/breath and omitted `wander`, which drives
+   * .lubt. That omission is what produced the ROUND2 150/155/156 px Lubt residual. */
+  const inline = rb('split/styles.css').toString('utf8');
+  const v2 = rb('original/living-world-v2.css').toString('utf8');
+  const src = inline + v2;
+  // Every declared infinite track must exist as an @keyframes in the frozen CSS.
+  const used = [...src.matchAll(/animation:\s*([a-zA-Z][\w-]*)[^;{}]*infinite/g)].map((m) => m[1]);
+  const expected = [...new Set(used)].sort();
+  assert.deepEqual([...INFINITE_TRACKS].sort(), expected,
+    'INFINITE_TRACKS is exactly the set the frozen CSS declares as infinite');
+  assert.ok(INFINITE_TRACKS.includes('wander'), 'wander is included');
+  assert.ok(/@keyframes\s+wander/.test(src), 'wander is authored');
+  assert.ok(/\.lubt\s*\{[^}]*animation:\s*wander[^}]*infinite/.test(inline),
+    '.lubt carries the authored infinite wander animation');
+});
+
+test('C17 no global random projection and no projection on a STABLE state', () => {
+  /* ROUND3 Finding 2: a global random-field eraser hid divergence on every state, including
+   * STABLE. STABLE must compare raw values; only the dedicated random-reaction state projects. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('function projectSemantic(ch, allowRandom)'),
+    'projection is explicitly gated by an allowRandom argument');
+  assert.ok(/if \(!allowRandom\) return c;/.test(src),
+    'with projection disallowed the raw object is returned untouched');
+  assert.ok(/isRandomReactionState = spec\.state === '21_face_click_random'/.test(src),
+    'projection is permitted only for the dedicated random-reaction state');
+  // No unconditional eraser loop may remain.
+  assert.equal(/for \(const p of AUTHORED_RANDOM_SCALAR_PATHS\)/.test(src), false,
+    'no global random-scalar eraser loop may remain');
+  // Executable form only: the constant is no longer DEFINED, only quoted by this guard.
+  const defs = [...src.matchAll(/(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=/g)].map((m) => m[1]);
+  assert.equal(defs.includes('AUTHORED_RANDOM_SCALAR_PATHS'), false,
+    'the global random-scalar allowlist is no longer defined');
+});
+
+test('C18 the semantic channel owns no animation field', () => {
+  /* ROUND3 Finding 1: animationInventoryNormalized was compared inside the semantic channel as
+   * well as in its own channel, so one difference was counted twice. */
+  assert.ok(DEDICATED_CHANNELS.includes('animationInventoryNormalized'),
+    'the normalized inventory is a dedicated channel');
+  const stripped = stripDedicatedChannels({
+    dom: { a: 1 }, geometry: {}, computedStyle: {}, animations: [],
+    animationInventoryNormalized: [], externalLayers: {}, scroll: {}, visibility: {},
+  });
+  assert.equal('animationInventoryNormalized' in stripped, false,
+    'the semantic comparison has no animation inventory');
+  assert.equal('animations' in stripped, false, 'the semantic comparison has no raw animation array');
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    const paths = (j.real_parity_defect_detail || [])
+      .flatMap((x) => x.defects.map((d) => d.path));
+    assert.equal(paths.filter((p) => p.startsWith('semantic.animationInventoryNormalized')).length, 0,
+      'no semantic animation path may appear in the defect detail');
+  }
+});
+
+test('C19 the #670 frozen save fault is recorded, not waived', () => {
+  /* ROUND3 Finding 7/8: the source's 3200 ms label-restore timer throws. The fault must be
+   * classified as EXPECTED_FROZEN_SOURCE_FAULT_PARITY only when it is the exact message, on the
+   * exact state, on BOTH surfaces. It is never folded into PAGE_ERROR_STATES=0, and repairing
+   * #670 to make the suite green is forbidden. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes("Cannot set properties of null"), 'the exact #670 message is matched');
+  assert.ok(src.includes('expected_frozen_fault_parity'), 'the expected-fault parity verdict exists');
+  assert.ok(src.includes('UNEXPECTED_PAGE_ERROR_STATES'), 'unexpected page errors are separated');
+  assert.ok(src.includes('EXPECTED_FROZEN_PAGE_FAULT_STATES'), 'expected frozen faults are counted');
+  assert.ok(src.includes('FROZEN_SAVE_SOURCE_DEFECT'), 'the #670 reference is recorded');
+  assert.ok(src.includes('PAGE_FAULT_PARITY_EXACT'), 'page fault parity is asserted');
+  // No generic page-error waiver.
+  assert.equal(/pageErrors\.length === 0 \|\|/.test(src), false,
+    'no generic page-error waiver may exist');
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    assert.equal(j.FROZEN_SAVE_SOURCE_DEFECT, '#670', 'the frozen defect issue is recorded');
+    assert.ok(typeof j.PAGE_FAULT_PARITY_EXACT === 'string', 'page fault parity is reported');
+    assert.equal(typeof j.UNEXPECTED_PAGE_ERROR_STATES, 'number',
+      'unexpected page errors are an independent number');
+  }
+});
+
+test('C20 no generic ERR_ABORTED waiver exists', () => {
+  /* ROUND3 Finding 9: a superseded image request is source-owned, but it may never be blanket
+   * ignored. It is recorded with its request sequence and only bounded when both surfaces agree. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  // No ERR_ABORTED-classifier identifier is DEFINED anywhere; a superseded request may only be
+  // recognized by the both-surfaces counter, never by a predicate that silently drops one side.
+  const defined = [...src.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g)].map((m) => m[1]);
+  assert.equal(defined.filter((d) => /^is[A-Z]?borted/.test(d)).length, 0,
+    'no ERR_ABORTED classifier helper is defined');
+  assert.ok(/x\.phase === 'failed'/.test(src), 'the bounded counter keys on a recorded failure phase');
+  assert.ok(/oA\.length > 0 && sA\.length === oA\.length/.test(src),
+    'a superseded request is bounded only when BOTH surfaces supersede the same count');
+  assert.ok(src.includes('image_request_trace'), 'the bounded image-request trace is recorded');
+  assert.ok(src.includes('EXPECTED_SUPERSEDED_REQUEST_STATES'), 'superseded requests are counted apart');
+  assert.ok(src.includes('UNEXPECTED_REQUEST_FAILED_STATES'), 'unexpected failures are separated');
+});
+
+test('C21 animation comparison is key-based, never length-only', () => {
+  /* ROUND3 Finding 6. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('MISSING_ON_SPLIT') && src.includes('EXTRA_ON_SPLIT'),
+    'missing and extra records are named');
+  assert.equal(/animations\.length === 0/.test(src), false, 'no raw length gate');
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    for (const f of ['ANIMATION_INVENTORY_RAW_EXACT', 'ANIMATION_INVENTORY_CONTRACT_EXACT']) {
+      assert.ok(typeof j[f] === 'string', `${f} is reported`);
+    }
+  }
+});
+
+
 test('C09 every STABLE state turns Auto Life OFF through the authored control', () => {
   /* ROUND2 Finding 2: the frozen source starts with AUTO LIFE ON and an authored 4800 ms
    * random-emotion interval. A STABLE capture must switch it off via the authored button. */
@@ -557,15 +690,18 @@ test('C09 every STABLE state turns Auto Life OFF through the authored control', 
     'an AUTHORED_LIVE state keeps Auto Life ON coverage');
 });
 
-test('C10 SAVE is split into a transient state and a post-revert stable state', () => {
+test('C10 SAVE is split into a transient state and a post-fault terminal state', () => {
   /* ROUND2 Finding 3: the source shows SAVED transiently and restores the label after 3200 ms. */
   const t = PLAN.find((s) => s.state === '20_save_transient');
-  const b = PLAN.find((s) => s.state === '20b_save_post_revert');
+  const b = PLAN.find((s) => s.state === '20b_save_fault_terminal');
   assert.ok(t, 'a SAVE transient state exists');
   assert.equal(t.intent, 'EXPLICIT_TRANSIENT', 'the saved moment is EXPLICIT_TRANSIENT');
-  assert.ok(b, 'a SAVE post-revert stable state exists');
-  assert.equal(b.intent, 'STABLE', 'the post-revert state is STABLE');
-  assert.ok(/saveRestored/.test(b.driver.toString()), 'the stable state waits for the restored label');
+  assert.ok(b, 'a SAVE post-fault terminal state exists');
+  assert.equal(b.intent, 'STABLE', 'the post-fault state is STABLE');
+  // The #670 frozen defect means the label never reverts, so the terminal waits for the
+  // reachable post-save quiescence instead of an impossible restored label.
+  assert.equal(/saveRestored/.test(b.driver.toString()), false,
+    'the post-fault state must not require the unreachable restored label');
   const rp = REVIEW.find((r) => r.label === 'D1_SAVE_TRANSIENT');
   assert.ok(rp, 'the review pack has a D1_SAVE_TRANSIENT panel');
   assert.equal(rp.state, '20_save_transient', 'the review panel uses the transient state');
@@ -580,8 +716,14 @@ test('C11 the animation contract uses a normalized inventory, never a raw length
   for (const k of ['target', 'name', 'kind', 'finite', 'authored_track', 'playState']) {
     assert.ok(src.slice(n, n + 400).includes(k), `the normalized inventory records ${k}`);
   }
-  assert.ok(/animationInventoryNormalized, s\.native\.animationInventoryNormalized/.test(src),
-    'the comparison uses the normalized inventory');
+  // ROUND3: the comparison is KEY-based and reports missing/extra records, never a bare length.
+  assert.ok(/const animKey = \(a\)/.test(src), 'the animation comparison is key-based');
+  assert.ok(src.includes('MISSING_ON_SPLIT'), 'a missing record is named explicitly');
+  assert.ok(src.includes('EXTRA_ON_SPLIT'), 'an extra record is named explicitly');
+  assert.equal(/animationInventoryNormalized\.length/.test(src), false,
+    'no length-only animation gate may remain');
+  assert.ok(DEDICATED_CHANNELS.includes('animationInventoryNormalized'),
+    'the animation inventory is owned solely by the animation channel');
 });
 
 test('C12 error channels are counted independently, never copied from one bucket', () => {
@@ -758,7 +900,8 @@ function collectChannels() {
 }
 
 /* ---------------- HARD-CHANNEL OWNERSHIP (HOLD Finding 4) ---------------- */
-const DEDICATED_CHANNELS = ['geometry', 'computedStyle', 'animations', 'externalLayers', 'scroll', 'visibility'];
+const DEDICATED_CHANNELS = ['geometry', 'computedStyle', 'animations', 'animationInventoryNormalized',
+  'externalLayers', 'scroll', 'visibility'];
 
 function stripDedicatedChannels(ch) {
   const c = { ...ch };
@@ -766,17 +909,22 @@ function stripDedicatedChannels(ch) {
   return c;
 }
 
-// AUTHORED_RANDOM_SCALAR is limited to this explicit field allowlist (HOLD Finding 3): every entry
-// is directly traced to an authored Math.random() expression in the frozen source.
-const AUTHORED_RANDOM_SCALAR_PATHS = new Set([
+/* (2) NO GLOBAL RANDOM PROJECTION. A random-capable field is never erased because it is
+ * random-capable. STABLE states compare raw values with no projection at all; the projection
+ * exists only for the ONE state whose accepted meaning is an authored random reaction
+ * (D1/21_face_click_random), and only for the specific correlated fields proven by §3 there.
+ * The authoritative random-field inventory is still published, but it grants no waiver. */
+const AUTHORED_RANDOM_FIELD_INVENTORY = [
   'dom.random_speech', 'dom.random_lubt_bubble', 'dom.random_log',
   'dom.random_lubt_left', 'dom.random_lubt_top', 'dom.random_lubt_transform',
   'dom.random_note_dx', 'dom.random_petal_dx', 'dom.random_emotion_title',
-]);
+];
 
-function projectSemantic(ch) {
+function projectSemantic(ch, allowRandom) {
   const c = JSON.parse(JSON.stringify(stripDedicatedChannels(ch)));
-  for (const p of AUTHORED_RANDOM_SCALAR_PATHS) {
+  // allowRandom is true ONLY for the dedicated random-reaction state.
+  if (!allowRandom) return c;
+  for (const p of AUTHORED_RANDOM_FIELD_INVENTORY) {
     const key = p.split('.')[1];
     if (c.dom && c.dom[key] !== undefined) c.dom[key] = 'PROJECTED_AUTHORED_RANDOM';
   }
@@ -828,10 +976,26 @@ async function capture(chromium, ctx, spec, surface) {
       viewport: { width: ctx.width, height: ctx.height }, deviceScaleFactor: 1,
     });
     const page = await context.newPage();
-    const net = { consoleErrors: [], pageErrors: [], failed: [], bad: [] };
+    const net = { consoleErrors: [], pageErrors: [], failed: [], bad: [], imageRequests: [] };
     page.on('console', (m) => { if (m.type() === 'error') net.consoleErrors.push(m.text()); });
     page.on('pageerror', (e) => net.pageErrors.push(String(e && e.message)));
-    page.on('requestfailed', (r) => net.failed.push(`${r.failure()?.errorText || 'FAILED'} ${r.url()}`));
+    /* (9) Bounded image-request transition capture. A superseded image request is a source-owned
+     * lifecycle fact, so the requested sequence, the aborted src and its replacement are recorded
+     * rather than ignored. No generic ERR_ABORTED waiver exists. */
+    page.on('request', (r) => {
+      if (/\.(png|webp)$/i.test(r.url())) {
+        net.imageRequests.push({ phase: 'requested', src: r.url().split('/').pop(), t: Date.now() });
+      }
+    });
+    page.on('requestfailed', (r) => {
+      const entry = { phase: 'failed', error: r.failure()?.errorText || 'FAILED', src: r.url().split('/').pop() };
+      if (/assets[\/](lubt|characters)/i.test(r.url())) {
+        net.imageRequests.push(entry);
+        net.failed.push(`${entry.error} ${r.url()}`);
+      } else {
+        net.failed.push(`${entry.error} ${r.url()}`);
+      }
+    });
     page.on('response', (r) => { if (r.status() >= 400) net.bad.push(`${r.status()} ${r.url()}`); });
 
     await page.setExtraHTTPHeaders({ 'x-surface': surface });
@@ -943,8 +1107,48 @@ async function browserCandidate() {
       const semRaw = diffPaths(stripDedicatedChannels(o.native), stripDedicatedChannels(s.native));
       const geoRaw = diffPaths(o.phased.geometry, s.phased.geometry);
       const styRaw = diffPaths(o.phased.computedStyle, s.phased.computedStyle);
-      const animRaw = diffPaths(o.native.animationInventoryNormalized, s.native.animationInventoryNormalized);
-      const semProj = diffPaths(projectSemantic(o.native), projectSemantic(s.native));
+      /* (6) KEY-BASED animation comparison. A raw length difference is never a defect on its
+       * own; the actual missing/extra records are reported so CENTRAL can see whether the
+       * difference is a finite transient or a real divergence. */
+      const animKey = (a) => `${a.target}|${a.name}|${a.kind}|${a.finite ? 'finite' : 'infinite'}`;
+      const invKey = (inv) => {
+        const m = new Map();
+        for (const a of inv) {
+          const k = animKey(a);
+          if (!m.has(k)) m.set(k, []);
+          m.get(k).push(a);
+        }
+        return m;
+      };
+      const oInv = invKey(o.native.animationInventoryNormalized);
+      const sInv = invKey(s.native.animationInventoryNormalized);
+      const animMissing = [...oInv.keys()].filter((k) => !sInv.has(k));
+      const animExtra = [...sInv.keys()].filter((k) => !oInv.has(k));
+      const animFieldDiffs = [];
+      for (const [k, list] of oInv) {
+        if (!sInv.has(k)) continue;
+        const other = sInv.get(k);
+        if (list.length !== other.length) {
+          animFieldDiffs.push({ path: `${k}.count`, a: list.length, b: other.length });
+          continue;
+        }
+        for (let i = 0; i < list.length; i += 1) {
+          if (list[i].playState !== other[i].playState) {
+            animFieldDiffs.push({ path: `${k}.playState[${i}]`, a: list[i].playState, b: other[i].playState });
+          }
+        }
+      }
+      const animRaw = [
+        ...animMissing.map((k) => ({ path: `MISSING_ON_SPLIT.${k}`, a: k, b: null })),
+        ...animExtra.map((k) => ({ path: `EXTRA_ON_SPLIT.${k}`, a: null, b: k })),
+        ...animFieldDiffs,
+      ];
+      const animRawExact = animRaw.length === 0;
+      // Projection is permitted ONLY for the dedicated authored-random-reaction state.
+      const isRandomReactionState = spec.state === '21_face_click_random';
+      const semProj = diffPaths(
+        projectSemantic(o.native, isRandomReactionState),
+        projectSemantic(s.native, isRandomReactionState));
 
       const infTargets = (c) => new Set(c.animations.filter((a) => a.kind === 'CSSAnimation'
         && INFINITE_TRACKS.includes(a.name) && a.iterations === 'Infinity').map((a) => a.target));
@@ -972,7 +1176,7 @@ async function browserCandidate() {
       } else {
         /* ---------- (2)(3) field-specific proof only ---------- */
         for (const d of semProj) {
-          if (AUTHORED_RANDOM_SCALAR_PATHS.has(d.path)) {
+          if (isRandomReactionState && AUTHORED_RANDOM_FIELD_INVENTORY.includes(d.path)) {
             addLedger('semantic', d.path, d, 'AUTHORED_RANDOM_SCALAR');
           } else if (d.path === 'dom.particleCount' && (o.native.dom.particleCount > 0 || s.native.dom.particleCount > 0)) {
             addLedger('semantic', d.path, d, 'AUTHORED_FINITE_TRANSIENT_PHASE');
@@ -1027,7 +1231,7 @@ async function browserCandidate() {
         semantic_raw_exact: semRaw.length === 0,
         geometry_raw_exact: geoRaw.length === 0,
         style_raw_exact: styRaw.length === 0,
-        anim_raw_exact: animRaw.length === 0,
+        anim_raw_exact: animRawExact,
         semantic_contract_exact: defects.filter((d) => d.path.startsWith('semantic.')).length === 0,
         geometry_contract_exact: defects.filter((d) => d.path.startsWith('geometry.')).length === 0,
         style_contract_exact: defects.filter((d) => d.path.startsWith('computedStyle.')).length === 0,
@@ -1035,10 +1239,36 @@ async function browserCandidate() {
         real_defects: defects,
         error_channels: {
           console: chCount(o.net.consoleErrors, s.net.consoleErrors),
-          page: chCount(o.net.pageErrors, s.net.pageErrors),
           http: chCount(o.net.bad, s.net.bad),
           request_failed: chCount(o.net.failed, s.net.failed),
         },
+        /* (7) #670 frozen source fault. The exact-normalized message, on the exact state, on BOTH
+         * surfaces, is EXPECTED_FROZEN_SOURCE_FAULT_PARITY. Anything else - split-only,
+         * original-only, a different message, or another state - stays a REAL defect. The fault is
+         * never counted as PAGE_ERROR_STATES=0; it is separated. */
+        page_error_fault: (() => {
+          const norm = (m) => String(m).replace(/\s+/g, ' ').trim();
+          const is670 = (m) => /Cannot set properties of null \(setting 'textContent'\)/.test(norm(m));
+          const oHit = o.net.pageErrors.map(norm).filter(is670);
+          const sHit = s.net.pageErrors.map(norm).filter(is670);
+          const oOther = o.net.pageErrors.map(norm).filter((m) => !is670(m));
+          const sOther = s.net.pageErrors.map(norm).filter((m) => !is670(m));
+          const bothSides = oHit.length > 0 && sHit.length > 0;
+          return {
+            state: `${spec.ctx}/${spec.state}`,
+            is_save_state: spec.state === '20b_save_fault_terminal',
+            original_670: oHit.length, split_670: sHit.length,
+            both_sides: bothSides,
+            parity_exact: bothSides && oHit.length === sHit.length
+              && spec.state === '20b_save_fault_terminal',
+            expected_frozen_fault_parity: bothSides && oHit.length === sHit.length
+              && spec.state === '20b_save_fault_terminal',
+            original_other: oOther, split_other: sOther,
+            unexpected_original: oOther.length, unexpected_split: sOther.length,
+          };
+        })(),
+        /* (9) Bounded image-request transition record for the Lubt supersession. */
+        image_request_trace: { original: o.net.imageRequests, split: s.net.imageRequests },
         error_channel_detail: [
           ...channelDetail('console', o.net.consoleErrors, s.net.consoleErrors),
           ...channelDetail('page', o.net.pageErrors, s.net.pageErrors),
@@ -1121,11 +1351,29 @@ function writeCandidate(results, ledger, sweep) {
   const cnt = (k) => results.filter((r) => r[k]).length;
   const totalDefects = results.reduce((a, r) => a + r.real_defects.length, 0);
   const consoleStates = results.filter((r) => (r.error_channels || {}).console > 0).length;
-  const pageStates = results.filter((r) => (r.error_channels || {}).page > 0).length;
   const httpStates = results.filter((r) => (r.error_channels || {}).http > 0).length;
   const requestFailedStates = results.filter((r) => (r.error_channels || {}).request_failed > 0).length;
+  /* (10) The #670 frozen fault and a superseded image request are separated from real failures so
+   * the same event is never counted as several defects - and never counted as zero. */
+  const faults = results.filter((r) => r.page_error_fault).map((r) => r.page_error_fault);
+  const expectedFrozenFaultStates = faults.filter((f) => f.expected_frozen_fault_parity).length;
+  const faultParityExact = faults.length === 0 || faults.every((f) => f.parity_exact);
+  const unexpectedPageStates = faults.filter((f) => f.unexpected_original > 0 || f.unexpected_split > 0).length
+    + results.filter((r) => !r.page_error_fault && (r.error_channel_detail || [])
+      .some((d) => d.channel === 'page')).length;
   const errorDetail = results.flatMap((r) => (r.error_channel_detail || [])
     .map((d) => ({ state: `${r.ctx}/${r.state}`, ...d })));
+  const faultDetail = faults;
+  /* A superseded image request is expected only when a later request for the SAME element replaced
+   * it on BOTH surfaces. It is reported separately and never folded into a zero. */
+  const supersededRequestStates = results.filter((r) => {
+    const t = r.image_request_trace;
+    if (!t || !t.original || !t.split) return false;
+    const aborted = (list) => list.filter((x) => x.phase === 'failed' && /ERR_ABORTED/.test(x.error || '')).map((x) => x.src);
+    const oA = aborted(t.original);
+    const sA = aborted(t.split);
+    return oA.length > 0 && sA.length === oA.length;
+  }).length;
   const brokenStates = results.filter((r) => Math.max(...(r.broken_images || [0, 0])) > 0).length;
   const extStates = results.filter((r) => !r.external_layers
     || !r.external_layers.original.cssLoaded || !r.external_layers.original.jsLoaded
@@ -1135,9 +1383,10 @@ function writeCandidate(results, ledger, sweep) {
     .every((r) => r.hint_dom_present && r.hint_display[0] === r.hint_display[1]);
   const allContract = cnt('semantic_contract_exact') === n && cnt('geometry_contract_exact') === n
     && cnt('style_contract_exact') === n && cnt('anim_contract_exact') === n;
-  const hold = totalDefects > 0 || consoleStates > 0 || pageStates > 0 || httpStates > 0
-    || requestFailedStates > 0 || brokenStates > 0 || extStates > 0
-    || !allContract || sweep.loaded !== sweep.total || !frozen || readinessStates > 0;
+  const hold = totalDefects > 0 || consoleStates > 0 || httpStates > 0
+    || unexpectedPageStates > 0 || requestFailedStates > 0 || brokenStates > 0 || extStates > 0
+    || !allContract || sweep.loaded !== sweep.total || !frozen || readinessStates > 0
+    || !faultParityExact;
 
   const stableLedger = ledger.filter((e) => e.state_intent === 'STABLE').length;
   const summary = {
@@ -1170,14 +1419,21 @@ function writeCandidate(results, ledger, sweep) {
     STABLE_LEDGER_ENTRIES: stableLedger,
     RESIDUAL_LEDGER_ENTRIES: ledger.length,
     allowed_residual_classifications: ALLOWED_CLASSIFICATIONS,
-    authored_random_scalar_paths: [...AUTHORED_RANDOM_SCALAR_PATHS],
+    authored_random_field_inventory: [...AUTHORED_RANDOM_FIELD_INVENTORY],
     CONSOLE_ERROR_STATES: consoleStates,
-    PAGE_ERROR_STATES: pageStates,
-    NETWORK_ERROR_STATES: requestFailedStates,
+    EXPECTED_FROZEN_PAGE_FAULT_STATES: expectedFrozenFaultStates,
+    UNEXPECTED_PAGE_ERROR_STATES: unexpectedPageStates,
+    PAGE_FAULT_PARITY_EXACT: faultParityExact ? 'YES' : 'NO',
     HTTP_ERROR_STATES: httpStates,
-    REQUEST_FAILED_STATES: requestFailedStates,
+    EXPECTED_SUPERSEDED_REQUEST_STATES: supersededRequestStates,
+    UNEXPECTED_REQUEST_FAILED_STATES: requestFailedStates,
+    NETWORK_ERROR_STATES: requestFailedStates,
+    NETWORK_ERROR_AGGREGATION: 'REQUEST_FAILED_STATES (no other bucket is folded in)',
     MISSING_ASSET_STATES: brokenStates,
+    READINESS_TIMEOUT_STATES: readinessStates,
     ERROR_CHANNEL_DETAIL: errorDetail,
+    FROZEN_PAGE_FAULT_DETAIL: faultDetail,
+    FROZEN_SAVE_SOURCE_DEFECT: '#670',
     EXTERNAL_LAYER_LOAD_STATES: extStates, READINESS_TIMEOUT_STATES: readinessStates,
     RUNTIME_ASSET_SWEEP: `${sweep.loaded}/${sweep.total}`,
     RUNTIME_ASSET_SWEEP_EXPECTED: RUNTIME_ASSET_COUNT,
