@@ -87,5 +87,9 @@
   "product_adoption": false,
   "drive_mutation": 0,
   "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
-  "s4_status": "NOT_RELEASED"
+  "s4_status": "RELEASED_CANDIDATE_ONLY",
+  "parity_status": "CANDIDATE_PENDING_CENTRAL",
+  "parity_ref": null,
+  "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
+  "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260"
 }

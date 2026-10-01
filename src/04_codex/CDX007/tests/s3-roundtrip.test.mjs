@@ -191,13 +191,19 @@ check("T20 the MST106 identity is bound to CDX007, never to Lineage57", () => {
 });
 
 // ---------------------------------------------------------------- T21 lifecycle
-check("T21 the capsule is an S3 candidate and claims no S4 parity", () => {
+check("T21 S3 is accepted and no S4 parity is claimed at any lifecycle stage", () => {
+  /* Lifecycle-aware. S3 is ACCEPTED by CENTRAL (#589 5925877072). S4 has since been released for
+   * CANDIDATE capture, so the release gate legitimately reads RELEASED_CANDIDATE_ONLY. What must
+   * hold in EVERY stage is the fail-closed part: no parity pass, no parity ref, no accepted record. */
   const m = rj("manifest.json");
   assert.equal(m.stages.mechanical_split_complete, true, "mechanical split complete");
-  assert.equal(m.central_s3_accepted, false, "CENTRAL S3 acceptance is NOT claimed");
-  assert.equal(m.s3_status, "IMPLEMENTED_CANDIDATE", "S3 is an implemented candidate");
+  assert.equal(m.s3_status, "ACCEPTED", "S3 is CENTRAL-accepted");
+  assert.equal(m.s3_acceptance_ref, "skerishKang/lovetree-limone#589 comment 5925877072",
+    "S3 acceptance is bound to the CENTRAL release comment");
   assert.equal(m.stages.source_split_parity_pass, false, "S4 parity pass is false");
-  assert.equal(m.s4_status, "NOT_RELEASED", "S4 is not released");
+  assert.ok(["NOT_RELEASED", "RELEASED_CANDIDATE_ONLY"].includes(m.s4_status),
+    `S4 is unreleased or candidate-only (${m.s4_status})`);
+  assert.equal(m.central_s4_accepted, false, "CENTRAL S4 acceptance is NOT claimed");
   assert.equal(m.parity_ref, null, "parity_ref stays null");
   assert.equal(m.product_adoption, false, "no Product adoption");
   assert.equal(m.drive_mutation, 0, "zero Drive mutation");

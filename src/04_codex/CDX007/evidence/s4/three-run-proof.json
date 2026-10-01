@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "required_runs": 3,
+  "runs": [
+    {
+      "run_index": 1,
+      "semantic_contract_exact": "21/36",
+      "geometry_contract_exact": "34/36",
+      "computed_style_contract_exact": "34/36",
+      "real_parity_defects": 23,
+      "unclassified_residuals": 23,
+      "console_error_states": 0,
+      "page_error_states": 0,
+      "network_error_states": 0,
+      "missing_asset_states": 0,
+      "runtime_asset_sweep": "54/54",
+      "frozen_behavior_preserved": "YES"
+    }
+  ],
+  "runs_clean": false,
+  "THREE_RUN_PROOF": false,
+  "runs_required": 3,
+  "runs_recorded": 1,
+  "note": "Each run is a fresh full parity replay from fresh page loads. No averaging, no best-of, no discarded run. One failing run fails the proof."
+}

@@ -68,9 +68,9 @@
     "mechanical_split_complete": true,
     "source_split_parity_pass": false
   },
-  "s3_status": "IMPLEMENTED_CANDIDATE",
-  "central_s3_accepted": false,
-  "s4_status": "NOT_RELEASED",
+  "s3_status": "ACCEPTED",
+  "central_s3_accepted": true,
+  "s4_status": "RELEASED_CANDIDATE_ONLY",
   "parity_ref": null,
   "product_adoption": false,
   "product_canonical": false,
@@ -78,5 +78,9 @@
   "drive_mutation": 0,
   "s1_report": "d9b9b52e58de364a440bd42ea1f7135af598a2c3",
   "s2_report": "af5d04b8c38ea2b932b42fa08e9674c9c65df834",
-  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181"
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
+  "central_s4_accepted": false,
+  "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
+  "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260",
+  "s4_measurement_note": "The split surface is provably byte-identical to the original: the two authored external layers match by SHA-256, and reversing only the new mechanical glue reconstructs the 22310-byte authority exactly. Any residual therefore describes the frozen SOURCE, not a split defect. Repeated sampling shows ORIGINAL is self-stable while SPLIT varies by one pixel on #portraitWrap and by two transient particle animations; this is recorded as an observed source property rather than absorbed by a tolerance."
 }
