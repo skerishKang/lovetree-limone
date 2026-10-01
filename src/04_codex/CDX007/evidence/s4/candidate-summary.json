@@ -23,19 +23,19 @@
     "special_moment_ms": 1800,
     "face_followup_ms": 180
   },
-  "PAIRED_STATE_COUNT": 37,
-  "SEMANTIC_RAW_EXACT": "1/37",
-  "SEMANTIC_CONTRACT_EXACT": "30/37",
-  "GEOMETRY_RAW_EXACT": "32/37",
-  "GEOMETRY_CONTRACT_EXACT": "32/37",
-  "COMPUTED_STYLE_RAW_EXACT": "36/37",
-  "COMPUTED_STYLE_CONTRACT_EXACT": "37/37",
-  "ANIMATION_INVENTORY_RAW_EXACT": "31/37",
-  "ANIMATION_INVENTORY_CONTRACT_EXACT": "31/37",
-  "REAL_PARITY_DEFECTS": 35,
-  "UNCLASSIFIED_RESIDUALS": 35,
+  "PAIRED_STATE_COUNT": 39,
+  "SEMANTIC_RAW_EXACT": "2/39",
+  "SEMANTIC_CONTRACT_EXACT": "35/39",
+  "GEOMETRY_RAW_EXACT": "35/39",
+  "GEOMETRY_CONTRACT_EXACT": "35/39",
+  "COMPUTED_STYLE_RAW_EXACT": "39/39",
+  "COMPUTED_STYLE_CONTRACT_EXACT": "39/39",
+  "ANIMATION_INVENTORY_RAW_EXACT": "36/39",
+  "ANIMATION_INVENTORY_CONTRACT_EXACT": "36/39",
+  "REAL_PARITY_DEFECTS": 18,
+  "UNCLASSIFIED_RESIDUALS": 18,
   "STABLE_LEDGER_ENTRIES": 0,
-  "RESIDUAL_LEDGER_ENTRIES": 2,
+  "RESIDUAL_LEDGER_ENTRIES": 1,
   "allowed_residual_classifications": [
     "AUTHORED_RANDOM_SCALAR",
     "AUTHORED_LIVE_PHASE",
@@ -53,10 +53,32 @@
     "dom.random_petal_dx",
     "dom.random_emotion_title"
   ],
-  "CONSOLE_ERROR_STATES": 1,
+  "CONSOLE_ERROR_STATES": 0,
   "PAGE_ERROR_STATES": 1,
   "NETWORK_ERROR_STATES": 1,
+  "HTTP_ERROR_STATES": 0,
+  "REQUEST_FAILED_STATES": 1,
   "MISSING_ASSET_STATES": 0,
+  "ERROR_CHANNEL_DETAIL": [
+    {
+      "state": "D1/20b_save_post_revert",
+      "channel": "page",
+      "surface": "original",
+      "detail": "Cannot set properties of null (setting 'textContent')"
+    },
+    {
+      "state": "D1/20b_save_post_revert",
+      "channel": "page",
+      "surface": "split",
+      "detail": "Cannot set properties of null (setting 'textContent')"
+    },
+    {
+      "state": "D1/21_face_click_random",
+      "channel": "request_failed",
+      "surface": "original",
+      "detail": "net::ERR_ABORTED http://127.0.0.1:39751/assets/lubt/lubt-bloom.png"
+    }
+  ],
   "EXTERNAL_LAYER_LOAD_STATES": 0,
   "READINESS_TIMEOUT_STATES": 0,
   "RUNTIME_ASSET_SWEEP": "54/54",
@@ -86,60 +108,14 @@
       "intent": "STABLE",
       "defects": [
         {
-          "path": "semantic.dom.activeEmotion",
-          "a": "smile",
-          "b": "wink"
-        },
-        {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-smile.webp",
-          "b": "assets/characters/M01/M01-wink.webp"
-        },
-        {
           "path": "geometry.lubtSize.w",
-          "a": 150,
-          "b": 153
+          "a": 156,
+          "b": 155
         },
         {
           "path": "geometry.lubtSize.h",
-          "a": 150,
-          "b": 153
-        },
-        {
-          "path": "animations..length",
-          "a": 10,
-          "b": 9
-        },
-        {
-          "path": "TERMINAL_PREDICATE_TIMEOUT",
-          "a": "TERMINAL_PREDICATE_TIMEOUT:emotionIs(touched)+noParticles+lubertIdle+speechHidden+noHoverSmile+noFiniteActive",
-          "b": "TERMINAL_PREDICATE_TIMEOUT:emotionIs(touched)+noParticles+lubertIdle+speechHidden+noHoverSmile+noFiniteActive"
-        }
-      ]
-    },
-    {
-      "state": "D1/17_surprise_action",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.activeEmotion",
-          "a": "smile",
-          "b": "wink"
-        },
-        {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-smile.webp",
-          "b": "assets/characters/M01/M01-wink.webp"
-        },
-        {
-          "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-touched.webp",
-          "b": "assets/characters/M01/M01-sleepy.webp"
-        },
-        {
-          "path": "TERMINAL_PREDICATE_TIMEOUT",
-          "a": "TERMINAL_PREDICATE_TIMEOUT:emotionIs(surprise)+noParticles+lubertIdle+speechHidden+noHoverSmile+noFiniteActive",
-          "b": "TERMINAL_PREDICATE_TIMEOUT:emotionIs(surprise)+noParticles+lubertIdle+speechHidden+noHoverSmile+noFiniteActive"
+          "a": 156,
+          "b": 155
         }
       ]
     },
@@ -148,21 +124,6 @@
       "intent": "STABLE",
       "defects": [
         {
-          "path": "semantic.dom.activeEmotion",
-          "a": "wink",
-          "b": "shy"
-        },
-        {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-wink.webp",
-          "b": "assets/characters/M01/M01-shy.webp"
-        },
-        {
-          "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-sleepy.webp",
-          "b": "assets/characters/M01/M01-smile.webp"
-        },
-        {
           "path": "geometry.lubtSize.w",
           "a": 156,
           "b": 155
@@ -175,85 +136,33 @@
       ]
     },
     {
-      "state": "D1/20_save_action",
+      "state": "D1/20b_save_post_revert",
       "intent": "STABLE",
       "defects": [
         {
-          "path": "semantic.dom.activeEmotion",
-          "a": "sleepy",
-          "b": "wink"
-        },
-        {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-sleepy.webp",
-          "b": "assets/characters/M01/M01-wink.webp"
+          "path": "semantic.animationInventoryNormalized.length",
+          "a": 9,
+          "b": 10
         },
         {
           "path": "geometry.lubtSize.w",
-          "a": 155,
-          "b": 156
-        },
-        {
-          "path": "geometry.lubtSize.h",
-          "a": 155,
-          "b": 156
-        }
-      ]
-    },
-    {
-      "state": "D1/24_lubt_click",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.activeEmotion",
-          "a": "smile",
-          "b": "touched"
-        },
-        {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-smile.webp",
-          "b": "assets/characters/M01/M01-touched.webp"
-        },
-        {
-          "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-shy.webp",
-          "b": "assets/characters/M01/M01-sleepy.webp"
-        },
-        {
-          "path": "geometry.lubtSize.w",
-          "a": 156,
+          "a": 151,
           "b": 150
         },
         {
           "path": "geometry.lubtSize.h",
-          "a": 156,
+          "a": 151,
           "b": 150
         },
         {
           "path": "animations..length",
           "a": 9,
-          "b": 12
-        }
-      ]
-    },
-    {
-      "state": "D1/25_lubt_drag",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.activeEmotion",
-          "a": "wink",
-          "b": "neutral"
+          "b": 10
         },
         {
-          "path": "semantic.images[4].src",
-          "a": "assets/characters/M01/M01-wink.webp",
-          "b": "assets/characters/M01/M01-neutral.webp"
-        },
-        {
-          "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-sleepy.webp",
-          "b": "assets/characters/M01/M01-shy.webp"
+          "path": "TERMINAL_PREDICATE_TIMEOUT",
+          "a": "TERMINAL_PREDICATE_TIMEOUT:saveRestored+noParticles+lubtIdle+speechHidden+noHoverSmile+noFiniteActive",
+          "b": "TERMINAL_PREDICATE_TIMEOUT:saveRestored+noParticles+lubtIdle+speechHidden+noHoverSmile+noFiniteActive"
         }
       ]
     },
@@ -263,13 +172,28 @@
       "defects": [
         {
           "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-sleepy.webp",
-          "b": "assets/characters/M01/M01-wink.webp"
+          "a": "assets/characters/M01/M01-laugh.webp",
+          "b": "assets/characters/M01/M01-sleepy.webp"
+        },
+        {
+          "path": "semantic.animationInventoryNormalized.length",
+          "a": 51,
+          "b": 21
+        },
+        {
+          "path": "geometry.lubtSize.w",
+          "a": 150,
+          "b": 155
+        },
+        {
+          "path": "geometry.lubtSize.h",
+          "a": 150,
+          "b": 155
         },
         {
           "path": "animations..length",
-          "a": 21,
-          "b": 23
+          "a": 51,
+          "b": 21
         }
       ]
     },
@@ -278,47 +202,30 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
+          "path": "semantic.animationInventoryNormalized.length",
+          "a": 116,
+          "b": 110
+        },
+        {
           "path": "animations..length",
-          "a": 114,
+          "a": 116,
           "b": 110
         }
       ]
     },
     {
-      "state": "D1/23_face_hold_special",
-      "intent": "EXPLICIT_TRANSIENT",
+      "state": "D1/29_autolife_on_live",
+      "intent": "AUTHORED_LIVE",
       "defects": [
         {
-          "path": "animations..length",
-          "a": 112,
-          "b": 114
-        }
-      ]
-    },
-    {
-      "state": "D1/27_sing_mode",
-      "intent": "EXPLICIT_TRANSIENT",
-      "defects": [
-        {
-          "path": "animations..length",
-          "a": 18,
-          "b": 20
-        }
-      ]
-    },
-    {
-      "state": "M1/02_mobile_drag_hint",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "geometry.lubtSize.w",
-          "a": 108,
-          "b": 105
+          "path": "semantic.dom.activeEmotion",
+          "a": "neutral",
+          "b": "shy"
         },
         {
-          "path": "geometry.lubtSize.h",
-          "a": 108,
-          "b": 105
+          "path": "semantic.images[5].src",
+          "a": "assets/characters/M01/M01-neutral.webp",
+          "b": "assets/characters/M01/M01-shy.webp"
         }
       ]
     }

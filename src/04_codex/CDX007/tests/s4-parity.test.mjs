@@ -274,7 +274,7 @@ test('C04i STABLE states wait on semantic terminal predicates, not a bare sleep'
   const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
   assert.ok(src.includes('settleAll'), 'a terminal-predicate waiter exists');
   assert.ok(src.includes('TERMINAL'), 'terminal predicates are declared');
-  for (const cond of ['noParticles', 'lubertIdle', 'speechHidden']) {
+  for (const cond of ['noParticles', 'lubtIdle', 'speechHidden']) {
     assert.ok(src.includes(cond), `terminal condition ${cond} exists`);
   }
   // Every STABLE plan entry must pass a non-empty terminal list.
@@ -359,6 +359,11 @@ const TERMINAL_SRC = {
     .filter((a) => a.animationName && ['hintFade','fxBurst','specialHalo'].includes(a.animationName))
     .every((a) => a.playState !== 'running')`,
   saved: `() => /SAVED/.test(String(document.getElementById('saveBtn').textContent))`,
+  saveRestored: `() => !/SAVED/.test(String(document.getElementById('saveBtn').textContent))`,
+  /* Auto Life must be OFF for a STABLE capture. This reads the AUTHORED control's own state
+   * after the harness has clicked it; the click is the authored user action, not a patch. */
+  autoLifeOff: `() => /OFF/.test(String(document.getElementById('autoLife').textContent))`,
+  autoLifeOn: `() => /ON/.test(String(document.getElementById('autoLife').textContent))`,
 };
 
 // Resolve terminal-condition names to self-contained in-page source and wait for ALL of them.
@@ -371,8 +376,22 @@ function settle(names) {
     if (m && m[1] === 'characterIs') {
       return `() => Array.from(document.querySelectorAll('#cast button')).findIndex((c) => c.classList.contains('active')) === ${Number(m[2])}`;
     }
-    return TERMINAL_SRC[n] || null;
-  }).filter(Boolean);
+    // Fail closed: an unknown name returns a THROWING stub, never a silent null that
+    // .filter(Boolean) would drop.
+    if (!Object.prototype.hasOwnProperty.call(TERMINAL_SRC, n)) {
+      throw new Error(`UNKNOWN_TERMINAL_PREDICATE:${n}`);
+    }
+    return TERMINAL_SRC[n];
+  });
+  // (2) Fail closed: an unknown terminal name is a harness defect, never a silent drop.
+  const unknown = names.filter((n) => {
+    const m = /^(\w+)\((.*)\)$/.exec(n);
+    if (m) return !['emotionIs', 'characterIs'].includes(m[1]);
+    return !Object.prototype.hasOwnProperty.call(TERMINAL_SRC, n);
+  });
+  if (unknown.length) {
+    throw new Error(`UNKNOWN_TERMINAL_PREDICATE:${unknown.join(',')}`);
+  }
   return async (page) => {
     if (!srcs.length) return true;
     try {
@@ -386,7 +405,29 @@ function settle(names) {
 }
 
 // A STABLE state: drive, then WAIT for the authored terminal condition.
+/* The frozen source starts with AUTO LIFE ON and runs an authored 4800 ms interval that picks a
+ * random emotion. Several STABLE states wait through source-owned multi-second windows, so Auto
+ * Life must be OFF before the state is driven. The harness clicks the AUTHORED #autoLife button
+ * and verifies the authored label reports OFF. That is a real user action through the authored
+ * control - not a timer patch, not window.auto=false, not a Math.random or clock patch, and no
+ * source modification. A separate AUTHORED_LIVE state keeps Auto Life ON coverage. */
+async function stablePrecondition(p) {
+  await p.mouse.move(2, 2);
+  const isOn = await p.evaluate(() => /ON/.test(String(document.getElementById('autoLife').textContent)));
+  if (isOn) {
+    await p.click('#autoLife');
+    const off = await p.evaluate(() => /OFF/.test(String(document.getElementById('autoLife').textContent)));
+    if (!off) throw new Error('AUTO_LIFE_DID_NOT_TURN_OFF');
+  }
+  // Startup quiescence: the authored greeting Lubt call and its follow/resume must finish first.
+  const ok = await settle(['autoLifeOff', 'lubtIdle', 'lubtPoseIdle', 'noParticles',
+    'speechHidden', 'noHoverSmile', 'stageClean'])(p);
+  if (!ok) throw new Error('STARTUP_QUIESCENCE_TIMEOUT');
+  await p.mouse.move(2, 2);
+}
+
 const stable = (drive, terminal) => async (p) => {
+  await stablePrecondition(p);
   await drive(p);
   /* Park the pointer off the portrait. The authored faceHit.onmouseenter arms a 280 ms hoverTimer
    * that forces emotion 'smile', and faceHit.onclick arms a 220 ms randomFaceReaction that calls
@@ -403,7 +444,7 @@ const stable = (drive, terminal) => async (p) => {
 // An intentionally live/transient state: captured on purpose, never settled.
 const live = (drive, ms) => async (p) => { await drive(p); await p.waitForTimeout(ms || 200); };
 
-const SETTLE_BASE = ['noParticles', 'lubertIdle', 'speechHidden', 'noHoverSmile'];
+const SETTLE_BASE = ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile'];
 
 const PLAN = [
   { ctx: 'D1', state: '01_initial_live', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(1200); }) },
@@ -424,8 +465,11 @@ const PLAN = [
   { ctx: 'D1', state: '16_heart_action', intent: 'STABLE', driver: stable(async (p) => { await p.click('#heartBtn'); }, ['emotionIs(touched)', ...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '17_surprise_action', intent: 'STABLE', driver: stable(async (p) => { await p.click('#surpriseBtn'); }, ['emotionIs(surprise)', ...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '18_say_phrase', intent: 'STABLE', driver: stable(async (p) => { await p.fill('#phrase', '오늘도 손을 잡아줘.'); await p.click('#sayBtn'); }, SETTLE_BASE) },
-  { ctx: 'D1', state: '19_call_lubt', intent: 'STABLE', driver: stable(async (p) => { await p.click('#lubtBtn'); }, [...SETTLE_BASE, 'lubertPoseIdle', 'noFiniteActive']) },
-  { ctx: 'D1', state: '20_save_action', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); }, ['saved', ...SETTLE_BASE, 'noFiniteActive']) },
+  { ctx: 'D1', state: '19_call_lubt', intent: 'STABLE', driver: stable(async (p) => { await p.click('#lubtBtn'); }, [...SETTLE_BASE, 'lubtPoseIdle', 'noFiniteActive']) },
+  /* The source shows SAVED transiently and restores the label after 3200 ms. The transient moment
+   * and the post-revert stable state are DIFFERENT semantics, so they are different states. */
+  { ctx: 'D1', state: '20_save_transient', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#saveBtn'); await p.waitForTimeout(320); }, 120) },
+  { ctx: 'D1', state: '20b_save_post_revert', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); }, ['saveRestored', ...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '24_lubt_click', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, 180) },
@@ -434,6 +478,8 @@ const PLAN = [
   { ctx: 'D1', state: '26_talk_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await p.click('#talkBtn'); }, 600) },
   { ctx: 'D1', state: '27_sing_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await p.click('#singBtn'); }, 600) },
   { ctx: 'D1', state: '28_continuous_motion', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(900); }) },
+  /* Auto Life ON is preserved here: the authored 4800 ms random-emotion interval stays covered. */
+  { ctx: 'D1', state: '29_autolife_on_live', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(5200); }, 200) },
   { ctx: 'T1', state: '01_tablet_initial', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(1200); }) },
   { ctx: 'T1', state: '02_tablet_emotion', intent: 'STABLE', driver: stable(async (p) => { await p.click(emoBtn('smile')); }, ['emotionIs(smile)', ...SETTLE_BASE]) },
   { ctx: 'T1', state: '03_tablet_character', intent: 'STABLE', driver: stable(async (p) => { await p.click(castBtn(2)); }, ['characterIs(1)', ...SETTLE_BASE]) },
@@ -445,6 +491,150 @@ const PLAN = [
   { ctx: 'M1', state: '05_mobile_lubt', intent: 'STABLE', driver: stable(async (p) => { await p.click(emoBtn('smile')); }, ['emotionIs(smile)', ...SETTLE_BASE]) },
 ];
 
+test('C08 every STABLE terminal token resolves, and none is silently filtered', () => {
+  /* ROUND2 Finding 1: the misspelled `lubertIdle` / `lubertPoseIdle` tokens resolved to null and
+   * were dropped by .filter(Boolean), so the harness silently stopped proving Lubt stability.
+   * settle() now throws on an unknown name, and this test enumerates every token. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  // Scan the runtime plan/settle section only, ending before any contract test, so this guard
+  // cannot match its own prose.
+  const runtime = src.slice(
+    src.indexOf('const VIEWPORTS = {'),
+    src.indexOf("test('C08"));
+  assert.equal(/\blubert/.test(runtime), false, 'no misspelled lubert token may survive');
+
+  // Enumerate every terminal token the STABLE plan actually references. Tokens are read from the
+  // plan source itself, so a spread list (['x', ...SETTLE_BASE, 'y']) contributes both its own
+  // literals and everything SETTLE_BASE carries.
+  const used = new Set(SETTLE_BASE);
+  const planSrc = runtime.slice(runtime.indexOf('const PLAN = ['), runtime.indexOf('const REVIEW = ['));
+  for (const tok of planSrc.match(/'[a-zA-Z]+'/g) || []) {
+    const name = tok.replace(/'/g, '');
+    // Only terminal-predicate-shaped tokens, not state names or selectors.
+    if (/^(?:[a-z]+[A-Z][a-zA-Z]*|[a-z]+Idle|[a-z]+Hidden|[a-z]+Off|[a-z]+On|saved|saveRestored|noParticles|noHoverSmile|stageClean|noFiniteActive|autoLifeOff|autoLifeOn)$/.test(name)) {
+      used.add(name);
+    }
+  }
+  // Any dynamic predicate call is resolved too.
+  for (const tok of planSrc.match(/'(emotionIs|characterIs)\([^']*\)'/g) || []) {
+    used.add(tok.replace(/'/g, ''));
+  }
+  const unknown = [...used].filter((n) => {
+    const d = /^(\w+)\(.*\)$/.exec(n);
+    if (d) return !['emotionIs', 'characterIs'].includes(d[1]);
+    return !Object.prototype.hasOwnProperty.call(TERMINAL_SRC, n);
+  });
+  assert.deepEqual(unknown, [], 'every terminal token used by a STABLE state resolves');
+  assert.ok(used.has('lubtIdle'), 'the Lubt terminal gate is actually used');
+  assert.ok(used.has('lubtPoseIdle'), 'the Lubt pose terminal gate is actually used');
+  // And settle() must throw rather than filter.
+  assert.ok(src.includes('UNKNOWN_TERMINAL_PREDICATE'), 'settle() throws on an unknown token');
+  assert.equal(/return TERMINAL_SRC\[n\] \|\| null/.test(src), false,
+    'an unknown token may never be mapped to null and dropped');
+});
+
+test('C09 every STABLE state turns Auto Life OFF through the authored control', () => {
+  /* ROUND2 Finding 2: the frozen source starts with AUTO LIFE ON and an authored 4800 ms
+   * random-emotion interval. A STABLE capture must switch it off via the authored button. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes("await p.click('#autoLife')"), 'the authored #autoLife control is clicked');
+  assert.ok(src.includes('AUTO_LIFE_DID_NOT_TURN_OFF'), 'the OFF transition is verified, not assumed');
+  assert.ok(src.includes('STARTUP_QUIESCENCE_TIMEOUT'), 'startup quiescence is awaited');
+  // Forbidden injection styles.
+  const runtime2 = src.slice(src.indexOf('const VIEWPORTS ='), src.indexOf('test(', src.indexOf('const VIEWPORTS =')));
+  for (const banned of ['clearInterval(autoTimer)', 'window.auto', 'Math.random =', 'Date.now =']) {
+    assert.equal(runtime2.includes(banned), false, `${banned} must never appear in the harness`);
+  }
+  // stable() itself runs the precondition, so every STABLE state inherits it.
+  assert.ok(/const stable =[\s\S]{0,120}await stablePrecondition\(p\)/.test(src),
+    'stable() runs the Auto Life precondition before its driver');
+  const stableStates = PLAN.filter((x) => x.intent === 'STABLE');
+  assert.ok(stableStates.length > 0, 'the plan has STABLE states');
+  // And the terminal set includes the OFF proof.
+  assert.ok(src.includes("'autoLifeOff'"), 'autoLifeOff is a declared terminal predicate');
+  // Live behavior stays covered with Auto Life ON.
+  assert.ok(PLAN.some((s) => s.state === '29_autolife_on_live' && s.intent === 'AUTHORED_LIVE'),
+    'an AUTHORED_LIVE state keeps Auto Life ON coverage');
+});
+
+test('C10 SAVE is split into a transient state and a post-revert stable state', () => {
+  /* ROUND2 Finding 3: the source shows SAVED transiently and restores the label after 3200 ms. */
+  const t = PLAN.find((s) => s.state === '20_save_transient');
+  const b = PLAN.find((s) => s.state === '20b_save_post_revert');
+  assert.ok(t, 'a SAVE transient state exists');
+  assert.equal(t.intent, 'EXPLICIT_TRANSIENT', 'the saved moment is EXPLICIT_TRANSIENT');
+  assert.ok(b, 'a SAVE post-revert stable state exists');
+  assert.equal(b.intent, 'STABLE', 'the post-revert state is STABLE');
+  assert.ok(/saveRestored/.test(b.driver.toString()), 'the stable state waits for the restored label');
+  const rp = REVIEW.find((r) => r.label === 'D1_SAVE_TRANSIENT');
+  assert.ok(rp, 'the review pack has a D1_SAVE_TRANSIENT panel');
+  assert.equal(rp.state, '20_save_transient', 'the review panel uses the transient state');
+});
+
+test('C11 the animation contract uses a normalized inventory, never a raw length', () => {
+  /* ROUND2 Finding 10: `animations.length` alone must never decide the contract. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('animationInventoryNormalized'), 'a normalized inventory is captured');
+  const n = src.indexOf('animationInventoryNormalized: all.map');
+  assert.ok(n > 0, 'the normalized inventory maps each animation');
+  for (const k of ['target', 'name', 'kind', 'finite', 'authored_track', 'playState']) {
+    assert.ok(src.slice(n, n + 400).includes(k), `the normalized inventory records ${k}`);
+  }
+  assert.ok(/animationInventoryNormalized, s\.native\.animationInventoryNormalized/.test(src),
+    'the comparison uses the normalized inventory');
+});
+
+test('C12 error channels are counted independently, never copied from one bucket', () => {
+  /* ROUND2 Finding 4: one netStates boolean was written into three fields. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  for (const f of ['CONSOLE_ERROR_STATES', 'PAGE_ERROR_STATES', 'HTTP_ERROR_STATES',
+    'REQUEST_FAILED_STATES', 'NETWORK_ERROR_STATES', 'ERROR_CHANNEL_DETAIL']) {
+    assert.ok(src.includes(f), `${f} is recorded`);
+  }
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    for (const f of ['CONSOLE_ERROR_STATES', 'PAGE_ERROR_STATES', 'HTTP_ERROR_STATES',
+      'REQUEST_FAILED_STATES']) {
+      assert.equal(typeof j[f], 'number', `${f} is an independent number`);
+    }
+  }
+});
+
+test('C13 the review pack fails closed instead of padding to twelve', () => {
+  /* ROUND2 Finding 9: a driver failure must not produce a review image. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const runtime3 = src.slice(src.indexOf('const VIEWPORTS ='), src.indexOf('test(', src.indexOf('const VIEWPORTS =')));
+  assert.equal(/catch \(e\) \{\s*\/\*[^*]*\*\/\s*\}/.test(runtime3), false,
+    'no driver exception may be swallowed with an empty catch');
+  assert.ok(src.includes('REVIEW_PACK_DRIVER_FAILED'), 'a driver failure fails the pack');
+  assert.ok(src.includes('REVIEW_PACK_READINESS_FAILED'), 'a readiness failure fails the pack');
+});
+
+test('C14 the accepted S2 baseline bytes are locked and never rewritten', () => {
+  const blob = gitBlobSha1(rb('baseline/accepted-baseline.json'));
+  assert.equal(blob, 'f3687fe911fa791ae7a1f89065aff3cb8fcb3933',
+    'the CENTRAL-accepted S2 baseline blob is unchanged');
+});
+
+test('C15 the round-2 harness never mutates protected runtime or assets', () => {
+  for (const [rel, want] of Object.entries(PROTECTED)) {
+    assert.equal(gitBlobSha1(rb(rel)), want, `${rel} is byte-locked at S4 round 2`);
+  }
+  const walk = (rel) => {
+    const out = [];
+    const rec = (d, r) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) => {
+      const rr = r ? `${r}/${e.name}` : e.name;
+      if (e.isDirectory()) rec(path.join(d, e.name), rr); else out.push(rr);
+    });
+    rec(path.join(CAPSULE, rel), '');
+    return out.sort();
+  };
+  assert.equal(walk('original/assets').length, 54, '54 original assets');
+  assert.equal(walk('split/assets').length, 54, '54 split assets');
+});
+
+
 const REVIEW = [
   { label: 'D1_INITIAL', ctx: 'D1', state: '01_initial_live' },
   { label: 'D1_CHARACTER_SWITCH', ctx: 'D1', state: '04_character_F02' },
@@ -453,7 +643,7 @@ const REVIEW = [
   { label: 'D1_SPECIAL_MOMENT', ctx: 'D1', state: '22_face_special_moment' },
   { label: 'D1_LUBT_DRAG', ctx: 'D1', state: '25_lubt_drag' },
   { label: 'D1_SAY', ctx: 'D1', state: '18_say_phrase' },
-  { label: 'D1_SAVE_TRANSIENT', ctx: 'D1', state: '20_save_action' },
+  { label: 'D1_SAVE_TRANSIENT', ctx: 'D1', state: '20_save_transient' },
   { label: 'T1_STABLE', ctx: 'T1', state: '02_tablet_emotion' },
   { label: 'T1_INTERACTION', ctx: 'T1', state: '04_tablet_interaction' },
   { label: 'M1_INITIAL', ctx: 'M1', state: '01_mobile_initial' },
@@ -554,6 +744,12 @@ function collectChannels() {
       scrollable: root.scrollHeight > root.clientHeight + 1,
     },
     animations: all,
+    /* (10) Normalized inventory: identity only. A raw `animations.length` is never a contract
+     * signal, because the count alone says nothing about WHICH animation differs. */
+    animationInventoryNormalized: all.map((a) => ({
+      target: a.target, name: a.name, kind: a.kind,
+      finite: a.finite, authored_track: a.authored_track, playState: a.playState,
+    })),
     externalLayers: {
       cssLoaded: Array.from(document.styleSheets).some((s) => (s.href || '').includes('living-world-v2.css')),
       jsLoaded: !!document.querySelector('script[src="living-world-v2.js"]'),
@@ -747,7 +943,7 @@ async function browserCandidate() {
       const semRaw = diffPaths(stripDedicatedChannels(o.native), stripDedicatedChannels(s.native));
       const geoRaw = diffPaths(o.phased.geometry, s.phased.geometry);
       const styRaw = diffPaths(o.phased.computedStyle, s.phased.computedStyle);
-      const animRaw = diffPaths(o.native.animations, s.native.animations);
+      const animRaw = diffPaths(o.native.animationInventoryNormalized, s.native.animationInventoryNormalized);
       const semProj = diffPaths(projectSemantic(o.native), projectSemantic(s.native));
 
       const infTargets = (c) => new Set(c.animations.filter((a) => a.kind === 'CSSAnimation'
@@ -819,8 +1015,13 @@ async function browserCandidate() {
         }
       }
 
-      const fault = (n) => n.consoleErrors.length > 0 || n.pageErrors.length > 0
-        || n.bad.length > 0 || n.failed.length > 0;
+      /* (8) Every error channel is counted INDEPENDENTLY. They are never collapsed into one
+       * bucket and copied across fields, and a nonzero channel keeps bounded detail. */
+      const chCount = (a, b) => (a.length > 0 ? 1 : 0) + (b.length > 0 ? 1 : 0);
+      const channelDetail = (label, arrO, arrS) => [
+        ...arrO.map((m) => ({ channel: label, surface: 'original', detail: String(m).slice(0, 200) })),
+        ...arrS.map((m) => ({ channel: label, surface: 'split', detail: String(m).slice(0, 200) })),
+      ];
       results.push({
         ctx: spec.ctx, state: spec.state, intent: spec.intent,
         semantic_raw_exact: semRaw.length === 0,
@@ -832,7 +1033,18 @@ async function browserCandidate() {
         style_contract_exact: defects.filter((d) => d.path.startsWith('computedStyle.')).length === 0,
         anim_contract_exact: defects.filter((d) => d.path.startsWith('animations.')).length === 0,
         real_defects: defects,
-        net: { original: o.net, split: s.net }, net_fault: fault(o.net) || fault(s.net),
+        error_channels: {
+          console: chCount(o.net.consoleErrors, s.net.consoleErrors),
+          page: chCount(o.net.pageErrors, s.net.pageErrors),
+          http: chCount(o.net.bad, s.net.bad),
+          request_failed: chCount(o.net.failed, s.net.failed),
+        },
+        error_channel_detail: [
+          ...channelDetail('console', o.net.consoleErrors, s.net.consoleErrors),
+          ...channelDetail('page', o.net.pageErrors, s.net.pageErrors),
+          ...channelDetail('http', o.net.bad, s.net.bad),
+          ...channelDetail('request_failed', o.net.failed, s.net.failed),
+        ],
         hint_dom_present: o.native.visibility.hintDomPresent && s.native.visibility.hintDomPresent,
         hint_display: [o.native.visibility.hintDisplay, s.native.visibility.hintDisplay],
         external_layers: { original: o.native.externalLayers, split: s.native.externalLayers },
@@ -862,7 +1074,23 @@ async function browserCandidate() {
         const p = await c.newPage();
         await p.setExtraHTTPHeaders({ 'x-surface': surface });
         await p.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'load' });
-        try { await spec.driver(p); } catch (e) { /* transient state, capture anyway */ }
+        /* (9) Fail closed. A driver failure, a terminal timeout or a readiness failure must NOT
+         * yield a review image. The pack is not padded to twelve; a failed state fails the pack. */
+        try {
+          await p.waitForFunction(() => {
+            const i = Array.from(document.images);
+            return i.length > 0 && i.every((x) => x.complete && x.naturalWidth > 0);
+          }, null, { timeout: 20000, polling: 50 });
+        } catch (e) {
+          await c.close();
+          throw new Error(`REVIEW_PACK_READINESS_FAILED:${r.label}:${surface}`);
+        }
+        try {
+          await spec.driver(p);
+        } catch (e) {
+          await c.close();
+          throw new Error(`REVIEW_PACK_DRIVER_FAILED:${r.label}:${surface}:${String(e && e.message).slice(0, 120)}`);
+        }
         await p.waitForTimeout(200);
         shots[surface] = await p.screenshot();
         await c.close();
@@ -892,7 +1120,12 @@ function writeCandidate(results, ledger, sweep) {
   const n = results.length;
   const cnt = (k) => results.filter((r) => r[k]).length;
   const totalDefects = results.reduce((a, r) => a + r.real_defects.length, 0);
-  const netStates = results.filter((r) => r.net_fault).length;
+  const consoleStates = results.filter((r) => (r.error_channels || {}).console > 0).length;
+  const pageStates = results.filter((r) => (r.error_channels || {}).page > 0).length;
+  const httpStates = results.filter((r) => (r.error_channels || {}).http > 0).length;
+  const requestFailedStates = results.filter((r) => (r.error_channels || {}).request_failed > 0).length;
+  const errorDetail = results.flatMap((r) => (r.error_channel_detail || [])
+    .map((d) => ({ state: `${r.ctx}/${r.state}`, ...d })));
   const brokenStates = results.filter((r) => Math.max(...(r.broken_images || [0, 0])) > 0).length;
   const extStates = results.filter((r) => !r.external_layers
     || !r.external_layers.original.cssLoaded || !r.external_layers.original.jsLoaded
@@ -902,7 +1135,8 @@ function writeCandidate(results, ledger, sweep) {
     .every((r) => r.hint_dom_present && r.hint_display[0] === r.hint_display[1]);
   const allContract = cnt('semantic_contract_exact') === n && cnt('geometry_contract_exact') === n
     && cnt('style_contract_exact') === n && cnt('anim_contract_exact') === n;
-  const hold = totalDefects > 0 || netStates > 0 || brokenStates > 0 || extStates > 0
+  const hold = totalDefects > 0 || consoleStates > 0 || pageStates > 0 || httpStates > 0
+    || requestFailedStates > 0 || brokenStates > 0 || extStates > 0
     || !allContract || sweep.loaded !== sweep.total || !frozen || readinessStates > 0;
 
   const stableLedger = ledger.filter((e) => e.state_intent === 'STABLE').length;
@@ -937,8 +1171,13 @@ function writeCandidate(results, ledger, sweep) {
     RESIDUAL_LEDGER_ENTRIES: ledger.length,
     allowed_residual_classifications: ALLOWED_CLASSIFICATIONS,
     authored_random_scalar_paths: [...AUTHORED_RANDOM_SCALAR_PATHS],
-    CONSOLE_ERROR_STATES: netStates, PAGE_ERROR_STATES: netStates,
-    NETWORK_ERROR_STATES: netStates, MISSING_ASSET_STATES: brokenStates,
+    CONSOLE_ERROR_STATES: consoleStates,
+    PAGE_ERROR_STATES: pageStates,
+    NETWORK_ERROR_STATES: requestFailedStates,
+    HTTP_ERROR_STATES: httpStates,
+    REQUEST_FAILED_STATES: requestFailedStates,
+    MISSING_ASSET_STATES: brokenStates,
+    ERROR_CHANNEL_DETAIL: errorDetail,
     EXTERNAL_LAYER_LOAD_STATES: extStates, READINESS_TIMEOUT_STATES: readinessStates,
     RUNTIME_ASSET_SWEEP: `${sweep.loaded}/${sweep.total}`,
     RUNTIME_ASSET_SWEEP_EXPECTED: RUNTIME_ASSET_COUNT,
@@ -988,6 +1227,8 @@ function writeCandidate(results, ledger, sweep) {
     console_error_states: summary.CONSOLE_ERROR_STATES,
     page_error_states: summary.PAGE_ERROR_STATES,
     network_error_states: summary.NETWORK_ERROR_STATES,
+    http_error_states: summary.HTTP_ERROR_STATES,
+    request_failed_states: summary.REQUEST_FAILED_STATES,
     missing_asset_states: summary.MISSING_ASSET_STATES,
     readiness_timeout_states: summary.READINESS_TIMEOUT_STATES,
     runtime_asset_sweep: summary.RUNTIME_ASSET_SWEEP,
@@ -1003,7 +1244,8 @@ function writeCandidate(results, ledger, sweep) {
   const clean = (r) => r.real_parity_defects === 0 && r.unclassified_residuals === 0
     && r.stable_ledger_entries === 0 && r.console_error_states === 0 && r.page_error_states === 0
     && r.network_error_states === 0 && r.missing_asset_states === 0
-    && r.readiness_timeout_states === 0 && r.frozen_behavior_preserved === 'YES';
+    && r.readiness_timeout_states === 0 && r.frozen_behavior_preserved === 'YES'
+    && (r.http_error_states || 0) === 0 && (r.request_failed_states || 0) === 0;
   proof.runs_clean = proof.runs.every(clean);
   proof.THREE_RUN_PROOF = proof.runs.length >= 3 && proof.runs_clean;
   proof.runs_required = 3;

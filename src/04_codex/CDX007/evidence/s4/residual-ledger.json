@@ -17,46 +17,11 @@
       "state_intent": "AUTHORED_RANDOM",
       "channel": "semantic",
       "field_path": "dom.particleCount",
-      "original_a": 10,
+      "original_a": 40,
       "original_b": null,
-      "split": 12,
+      "split": 10,
       "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "contract_disposition": "LEDGER"
-    },
-    {
-      "state": "D1/21_face_click_random",
-      "state_intent": "AUTHORED_RANDOM",
-      "channel": "computedStyle",
-      "field_path": "portraitWrap.transform",
-      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 2.49461e-07, 0, 0, -2.49461e-07, 1, 0, 0, -5.1455e-05, 0, 1)",
-      "original_b": null,
-      "split": "matrix(1, 0, 0, 1, 0, 0)",
-      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
-      "contract_disposition": "LEDGER",
-      "native_animation_proof": {
-        "original": [
-          {
-            "target": "portraitWrap",
-            "kind": "CSSAnimation",
-            "name": "breath",
-            "iterations": "Infinity",
-            "finite": false,
-            "authored_track": true,
-            "playState": "running"
-          }
-        ],
-        "split": [
-          {
-            "target": "portraitWrap",
-            "kind": "CSSAnimation",
-            "name": "breath",
-            "iterations": "Infinity",
-            "finite": false,
-            "authored_track": true,
-            "playState": "running"
-          }
-        ]
-      }
     }
   ]
 }
