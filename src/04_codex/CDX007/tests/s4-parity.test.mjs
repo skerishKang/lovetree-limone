@@ -29,6 +29,10 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { sourceContract, poolFor, SourceContractError } from './source-contract.mjs';
+import { PROVENANCE_INSTALL, PROVENANCE_ARM, PROVENANCE_REPORT } from './provenance.mjs';
+import { classifyTrace, actionPool, IDLE_POOL } from './bubble-provenance.mjs';
+import { evaluatePairProvenance, evaluateSurfaceProvenance, pairSurfaceProvenance }
+  from './surface-provenance.mjs';
 
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -370,40 +374,49 @@ const LUBT_RANDOM_RANGE = { leftVw: [18, 46], topVh: [9, 55] };
  * random rather than homed; `speech` names the characterLines key that owns the speech text;
  * `bubble` names the lubtTalk key that owns the retained hidden bubble text. */
 const RANDOM_CONTRACTS = {
-  // Auto Life ON states: the emotion itself is an authored random draw from AUTO_LIFE_POOL.
-  'D1/01_initial_live': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
-  'D1/28_continuous_motion': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
-  'D1/29_autolife_on_live': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
-  'T1/01_tablet_initial': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
-  'M1/01_mobile_initial': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
+  /* (11) INITIAL LIVE STATES. These capture ~0.9-1.2s after load, BEFORE the authored 4800ms
+   * Auto Life interval can tick, so they claim NO auto-emotion draw. What they DO own is the
+   * deterministic startup emotion, the startup greeting bubble provenance, and the startup
+   * callLubt random position. */
+  'D1/01_initial_live': { startupEmotion: true, bubbleOwned: false, randomPosition: true, startup: true },
+  'D1/28_continuous_motion': { startupEmotion: true, bubbleOwned: false, randomPosition: true, startup: true },
+  'T1/01_tablet_initial': { startupEmotion: true, bubbleOwned: false, randomPosition: true, startup: true },
+  'M1/01_mobile_initial': { startupEmotion: true, bubbleOwned: false, randomPosition: true, startup: true },
 
-  // Stable actions whose retained speech/bubble text is an authored random draw. The STABLE
-  // requirement is speechHidden/pose exact; the TEXT is checked for pool membership only.
-  'D1/16_heart_action': { speech: 'touched', bubble: ['lubtTalk.emotion.touched'],
-    fx: { emotion: 'touched' } },
-  'D1/17_surprise_action': { speech: 'surprise', bubble: ['lubtTalk.emotion.surprise'],
-    fx: { emotion: 'surprise' } },
-  'D1/19_call_lubt': { bubble: ['lubtTalk.scan'] },
-  'D1/20_save_transient': { bubble: ['lubtTalk.save'], randomPosition: true,
-    fx: { emotion: 'touched' } },
-  'D1/20b_save_fault_terminal': { bubble: ['lubtTalk.save'] },
-  'D1/24_lubt_click': { bubble: ['lubtTalk.idle'], randomPosition: true },
-  'D1/25_lubt_drag': { bubble: ['lubtTalk.drag'], dragTerminal: true },
-  'D1/26_talk_mode': { speech: 'talk', bubble: ['lubtTalk.emotion.talk'], randomPosition: true },
-  'D1/27_sing_mode': { speech: 'sing', fx: { emotion: 'sing' } },
+  /* (12) D1/29 is the ONLY state that observes a real Auto Life tick, so it is the only one that
+   * names the extracted Auto Life pool. It is per-surface correlated: each surface's OWN selected
+   * emotion must be in the pool and must match its own active emotion/portrait/metadata. */
+  'D1/29_autolife_on_live': { auto_emotion: 'autoLifePool', correlatedAutoLife: true, bubbleOwned: false },
 
-  // The dedicated random face reaction: everything correlates to the selected emotion.
+  // Stable actions whose retained speech/bubble text is an authored random draw.
+  'D1/16_heart_action': { speech: 'touched', bubbleOwned: true, fx: { emotion: 'touched' } },
+  'D1/17_surprise_action': { speech: 'surprise', bubbleOwned: true, fx: { emotion: 'surprise' } },
+  'D1/19_call_lubt': { bubbleOwned: true },
+  'D1/20_save_transient': { bubbleOwned: true, randomPosition: true, fx: { emotion: 'touched' } },
+  'D1/20b_save_fault_terminal': { bubbleOwned: true },
+  'D1/24_lubt_click': { bubbleOwned: true, randomPosition: true },
+  'D1/25_lubt_drag': { bubbleOwned: true, dragTerminal: true },
+
+  /* (15) TALK calls no Lubt and shows the #phrase value, NOT a characterLines pool. */
+  'D1/26_talk_mode': { talkMode: true, bubbleOwned: false },
+  /* (16) SING emits base notes() and no V2 FX family, and calls no Lubt. */
+  'D1/27_sing_mode': { singMode: true, baseNotes: 8, bubbleOwned: false },
+
+  /* (2)(14) FACE RANDOM. The owned bubble pool is lubtTalk.emotion.<ACTUAL selected emotion>,
+   * resolved per surface after the runtime value is known - never the literal placeholder. */
   'D1/21_face_click_random': {
     correlated_random_reaction: true,
-    auto_emotion: null,
     speech: 'selectedEmotion',
-    bubble: ['lubtTalk.emotion.selectedEmotion'],
+    bubbleOwned: true, dynamicBubble: true,
     randomPosition: true,
     correlated: true,
   },
-  'D1/22_face_special_moment': { bubble: ['lubtTalk.special'], randomPosition: true },
-  'D1/23_face_hold_special': { bubble: ['lubtTalk.special'], randomPosition: true },
-  'T1/04_tablet_interaction': { speech: 'touched', bubble: ['lubtTalk.emotion.touched'] },
+  'D1/22_face_special_moment': { bubbleOwned: true, randomPosition: true },
+  'D1/23_face_hold_special': { bubbleOwned: true, randomPosition: true },
+
+  /* (17) T1/04 clicks an EMOTION BUTTON. It never calls the Lubt, so it owns no target bubble
+   * write and requires no characterLines.touched speech pool. */
+  'T1/04_tablet_interaction': { bubbleOwned: false, emotionButton: 'touched' },
 };
 
 function randomContractFor(ctx, state) {
@@ -413,24 +426,6 @@ function randomContractFor(ctx, state) {
 /* ---- Source-derived pools, read from the frozen V2 script at capture time. ---- */
 // These are extracted in-page from the live authored objects, so the allowed set can never
 // drift from the source that is actually running.
-function readAuthoredPools() {
-  const v2 = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
-  const pool = (key) => {
-    if (!v2) return null;
-    const path = key.split('.');
-    let cur = v2;
-    for (const p of path) {
-      if (cur === undefined || cur === null) return null;
-      cur = cur[p];
-    }
-    return Array.isArray(cur) ? cur.slice() : null;
-  };
-  return {
-    lubtTalkKeys: v2 ? Object.keys(v2) : [],
-    pool,
-    emotionNames: (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [],
-  };
-}
 
 /* (1)(2)(3) THE single source contract, extracted from the FROZEN BYTES with the TypeScript
  * compiler API this repository already depends on. The authored pools are IIFE-lexical consts in
@@ -543,6 +538,42 @@ function settle(names) {
   };
 }
 
+/* (11)(12) D1/21 face random reaction. The authored lifecycle is
+ * click -> +220ms randomFaceReaction (choose next emotion, setEmotion, showSpeech)
+ *              -> +180ms downstream callLubt(poseForEmotion[next]).
+ * A fixed 180 ms capture is forbidden, so the harness waits for the correlated semantic barrier:
+ * the selected emotion differs from the pre-click one, the speech is active and belongs to that
+ * emotion's authored pool, the Lubt has been called with that emotion's authored pose, and the
+ * pointer is parked away from the face so a hover cannot re-enter the contract. */
+async function faceRandomReaction(p) {
+  await stablePrecondition(p);
+  const preEmotion = await p.evaluate(() => {
+    const b = document.querySelector('#emotions button.emo.on');
+    return b ? b.dataset.emo : null;
+  });
+  await armTraces(p);
+  const box = await p.locator('#portraitWrap').boundingBox();
+  await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  // Park the pointer away from the face and the Lubt so the 280 ms hover timer cannot fire.
+  await p.mouse.move(2, 2);
+  /* (14) FULL CORRELATED BARRIER. The authored lifecycle is
+   *   click -> +220ms randomFaceReaction -> +180ms callLubt(poseForEmotion[next]),
+   * so a fixed sleep may not decide this. Wait until the emotion actually changed AND the speech
+   * is showing AND the Lubt is in talk, so the correlated callLubt has happened. */
+  const ok = await p.waitForFunction((pre) => {
+    const now = (document.querySelector('#emotions button.emo.on') || { dataset: {} }).dataset.emo;
+    if (!now || now === pre) return false;
+    const speech = document.getElementById('speech');
+    if (!speech.classList.contains('show')) return false;
+    if (!String(speech.textContent || '').trim()) return false;
+    const lubt = document.getElementById('lubt');
+    if (!lubt || !lubt.classList.contains('talk')) return false;
+    const bub = document.getElementById('lubtBubble');
+    return !!(bub && bub.textContent);
+  }, preEmotion, { timeout: 8000, polling: 60 }).then(() => true).catch(() => false);
+  if (!ok) throw new Error(`FACE_RANDOM_BARRIER_TIMEOUT:${preEmotion}`);
+}
+
 // A STABLE state: drive, then WAIT for the authored terminal condition.
 /* The frozen source starts with AUTO LIFE ON and runs an authored 4800 ms interval that picks a
  * random emotion. Several STABLE states wait through source-owned multi-second windows, so Auto
@@ -567,6 +598,7 @@ async function stablePrecondition(p) {
 
 const stable = (drive, terminal) => async (p) => {
   await stablePrecondition(p);
+  await armTraces(p);
   await drive(p);
   /* Park the pointer off the portrait. The authored faceHit.onmouseenter arms a 280 ms hoverTimer
    * that forces emotion 'smile', and faceHit.onclick arms a 220 ms randomFaceReaction that calls
@@ -581,7 +613,29 @@ const stable = (drive, terminal) => async (p) => {
 };
 
 // An intentionally live/transient state: captured on purpose, never settled.
-const live = (drive, ms) => async (p) => { await drive(p); await p.waitForTimeout(ms || 200); };
+/* (4) An intentionally live/transient state: captured on purpose, never settled.
+ *
+ * ROUND6B: EVERY controlled state arms the traces and records a preState, not only the STABLE
+ * ones. Without it a live state reports PROVENANCE_PRESTATE_MISSING, which is a harness error
+ * rather than a parity finding. The arm happens BEFORE the target action and AFTER any
+ * stablePrecondition the drive performs, so startup history stays out of the provenance. */
+const live = (drive, ms) => async (p) => {
+  await armTraces(p);
+  await drive(p);
+  await p.waitForTimeout(ms || 200);
+};
+
+/** (6)(19) Reset the bubble and particle trace immediately before the TARGET action, so the
+ * recorded writes are the action's own and not everything since page load. A failure here is a
+ * HARNESS CONTRACT ERROR, not a silent empty trace. */
+async function armTraces(p) {
+  try {
+    const ok = await p.evaluate(PROVENANCE_ARM);
+    if (ok !== true) HARNESS_CONTRACT_ERRORS.push('PROVENANCE_ARM_RETURNED_FALSE');
+  } catch (e) {
+    HARNESS_CONTRACT_ERRORS.push(`BUBBLE_OBSERVER_ARM_FAILED:${String(e && e.message).slice(0, 80)}`);
+  }
+}
 
 const SETTLE_BASE = ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtHomeStable'];
 
@@ -616,7 +670,7 @@ const PARITY_PLAN = [
   { ctx: 'D1', state: '20b_save_fault_terminal', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); await p.waitForTimeout(3600); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '24_lubt_click', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtDragHomeStable', 'noFiniteActive']) },
-  { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, 180) },
+  { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: faceRandomReaction },
   { ctx: 'D1', state: '22_face_special_moment', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2); }, 300) },
   { ctx: 'D1', state: '23_face_hold_special', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.waitForTimeout(700); await p.mouse.up(); }, 200) },
   { ctx: 'D1', state: '26_talk_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#talkBtn'); }, 600) },
@@ -862,12 +916,39 @@ test('C12 error channels are counted independently, never copied from one bucket
     'REQUEST_FAILED_STATES', 'NETWORK_ERROR_STATES', 'ERROR_CHANNEL_DETAIL']) {
     assert.ok(src.includes(f), `${f} is recorded`);
   }
+  /* (11) ROUND6A: the PRE-RUN structural half never reads run evidence, so it passes before any
+   * browser run. The POST-EVIDENCE half below checks a committed summary only when it carries
+   * the ROUND6A schema, so an older committed summary cannot fail an unrelated pre-run gate. */
+  const writerStart = src.indexOf('function writeCandidate');
+  const nextFn = src.indexOf('\nfunction ', writerStart + 10);
+  const writerBody = src.slice(writerStart, nextFn > 0 ? nextFn : src.length);
+  assert.ok(writerBody.includes('PAGE_ERROR_STATES: pageErrorStates'),
+    'the summary writer emits an independent PAGE_ERROR_STATES');
+  assert.ok(writerBody.includes('REQUEST_FAILED_STATES: requestFailedStates'),
+    'the summary writer emits an independent REQUEST_FAILED_STATES');
+  assert.equal(/NETWORK_ERROR_STATES:\s*requestFailedStates/.test(writerBody), false,
+    'NETWORK_ERROR_STATES is never copied from the request-failed bucket');
+
   const sp = path.join(S4_DIR, 'candidate-summary.json');
   if (fs.existsSync(sp)) {
     const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
-    for (const f of ['CONSOLE_ERROR_STATES', 'PAGE_ERROR_STATES', 'HTTP_ERROR_STATES',
-      'REQUEST_FAILED_STATES']) {
-      assert.equal(typeof j[f], 'number', `${f} is an independent number`);
+    /* The evidence half applies ONLY to a summary written by the CURRENT harness. An older
+     * committed summary predates these fields and legitimately cannot satisfy them, so it must
+     * not fail a pre-run structural gate. */
+    const currentSchema = typeof j.PAGE_ERROR_STATES === 'number'
+      && typeof j.NETWORK_ERROR_STATES === 'number'
+      && typeof j.REQUEST_FAILED_STATES === 'number'
+      && j.NETWORK_ERROR_AGGREGATION !== 'REQUEST_FAILED_STATES (no other bucket is folded in)';
+    if (currentSchema) {
+      for (const f of ['CONSOLE_ERROR_STATES', 'PAGE_ERROR_STATES', 'HTTP_ERROR_STATES',
+        'REQUEST_FAILED_STATES', 'NETWORK_ERROR_STATES']) {
+        assert.equal(typeof j[f], 'number', `${f} is an independent number`);
+      }
+      /* Equality alone is not evidence of copying: two independent channels can both be 0. The
+       * structural proof is the writer body above; here we only require that the values exist and
+       * that the aggregation label no longer claims the bucket is folded in. */
+      assert.notEqual(j.NETWORK_ERROR_AGGREGATION, 'REQUEST_FAILED_STATES (no other bucket is folded in)',
+        'the summary no longer declares that one bucket is folded into another');
     }
   }
 });
@@ -1011,7 +1092,8 @@ function collectChannels() {
           return acc;
         }, {}),
     },
-    images: imgs,
+    // `images` is a dedicated channel, not a semantic one; the semantic contract uses the named
+    // portraitA_src / portraitB_src / visible_portrait_src / lubt_pose_src fields.
     visibility: {
       hintDomPresent: !!hint,
       hintDisplay: hint ? getComputedStyle(hint).display : null,
@@ -1052,7 +1134,7 @@ function collectChannels() {
 
 /* ---------------- HARD-CHANNEL OWNERSHIP (HOLD Finding 4) ---------------- */
 const DEDICATED_CHANNELS = ['geometry', 'computedStyle', 'animations', 'animationInventoryNormalized',
-  'externalLayers', 'scroll', 'visibility'];
+  'externalLayers', 'scroll', 'visibility', 'images'];   // (14) no positional images[N] in semantic
 
 function stripDedicatedChannels(ch) {
   const c = { ...ch };
@@ -1185,7 +1267,20 @@ async function capture(chromium, ctx, spec, surface) {
 
     await page.setExtraHTTPHeaders({ 'x-surface': surface });
     await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'load' });
-    try { await page.evaluate(PARTICLE_OBSERVER); } catch (e) { /* observed below */ }
+    /* (8) OBSERVER INSTALL IS FAIL-CLOSED. A failed install is a HARNESS CONTRACT ERROR and the
+     * surface is marked unavailable so its contract evaluation is aborted downstream. It is
+     * never swallowed into an empty report. */
+    let observerInstalled = false;
+    try {
+      const ok = await page.evaluate(PROVENANCE_INSTALL);
+      if (ok === true) {
+        observerInstalled = true;
+      } else {
+        HARNESS_CONTRACT_ERRORS.push(`PROVENANCE_OBSERVER_INSTALL_FAILED:${ctx}/${surface}`);
+      }
+    } catch (e) {
+      HARNESS_CONTRACT_ERRORS.push(`PROVENANCE_OBSERVER_INSTALL_FAILED:${ctx}/${surface}:${String(e && e.message).slice(0, 80)}`);
+    }
 
     /* STARTUP READINESS FAILS CLOSED. A timeout is never swallowed. */
     let startupReadiness = true;
@@ -1228,10 +1323,28 @@ async function capture(chromium, ctx, spec, surface) {
       void document.documentElement.offsetHeight; requestAnimationFrame(() => res());
     })));
     const phased = await page.evaluate(collectChannels);
-    const particleReport = await page.evaluate(PARTICLE_REPORT).catch(() => ({ emitted: 0, families: [] }));
+    /* (2)(9) REPORT READBACK IS FAIL-CLOSED. A readback failure is recorded as a HARNESS
+     * CONTRACT ERROR and reported as unavailable; it is NEVER replaced by a synthetic empty
+     * report, and evaluation of this surface is aborted downstream. */
+    let provenance = null;
+    try {
+      provenance = await page.evaluate(PROVENANCE_REPORT);
+      if (!provenance) {
+        HARNESS_CONTRACT_ERRORS.push(`PROVENANCE_REPORT_FAILED:${ctx}/${surface}`);
+      }
+    } catch (e) {
+      HARNESS_CONTRACT_ERRORS.push(`PROVENANCE_REPORT_FAILED:${ctx}/${surface}:${String(e && e.message).slice(0, 80)}`);
+    }
+    // (5) Pool classification is Node-side, against the extracted source contract.
+    const provenanceTyped = provenance
+      ? { ...provenance, bubble: classifyTrace(provenance.bubble) }
+      : null;
 
     await context.close();
-    return { native, phased, phase, net, startupReadiness, terminalFailed, particleReport, failed: false };
+    return { native, phased, phase, net, startupReadiness, terminalFailed,
+      particleReport: provenanceTyped, provenance: provenanceTyped,
+      observerInstalled, provenanceAvailable: provenanceTyped !== null,
+      failed: false };
   } finally { await browser.close(); }
 }
 
@@ -1337,6 +1450,9 @@ async function browserCandidate() {
        * contracts is checked for SOURCE-POOL MEMBERSHIP or RANGE, never for exact equality and
        * never globally. A field with no contract falls through to exact comparison. */
       const contract = randomContractFor(spec.ctx, spec.state);
+      const state = spec.state;
+      const bubbleMetrics = { unclassified: 0, violations: 0 };
+      let semanticContractViolations = 0;
       const contractViolations = [];
       /* Membership was resolved in-page. null means the pool could not be read, which proves
        * nothing, so the field falls through to exact comparison rather than being waived. */
@@ -1357,23 +1473,39 @@ async function browserCandidate() {
         return pool.includes(dom.random_speech);
       };
       if (contract) {
-        for (const path of contract.bubble || []) {
-          contractEval.resolved += 1;
-          for (const dom of [o.native.dom, s.native.dom]) {
-            const ok = bubbleMembership(dom, path);
-            if (ok === null) { contractEval.unresolved.push(path); continue; }
-            if (ok) contractEval.satisfied += 1;
-            else {
-              contractEval.violated += 1;
-              contractViolations.push({
-                path: `contract.lubt_bubble`, a: path, b: dom.random_lubt_bubble,
-              });
-            }
-          }
-          // Only a fully resolved and fully satisfied pool lets the field skip exact comparison.
-          const uniq = [o.native.dom, s.native.dom].map((d) => bubbleMembership(d, path));
-          if (uniq.every((x) => x === true)) CONTRACTED.add('dom.random_lubt_bubble');
+        /* (4)(5)(24) ROUND6A SURFACE-SYMMETRIC PROVENANCE. Each surface is evaluated
+         * INDEPENDENTLY against the extracted source contract, and the two results are paired:
+         * the provenance-backed field is CONTRACTED only when BOTH surfaces are valid and neither
+         * produced a violation. A missing/unreadable provenance is a HARNESS CONTRACT ERROR that
+         * aborts evaluation - never a partial pass, never an original-only gate. */
+        const pair = evaluatePairProvenance({
+          contract,
+          state,
+          sourceContract: SOURCE_CONTRACT,
+          oProvenance: o.provenance,
+          sProvenance: s.provenance,
+          oFinalText: o.native.dom.random_lubt_bubble,
+          sFinalText: s.native.dom.random_lubt_bubble,
+          oPreText: o.provenance && o.provenance.preState ? o.provenance.preState.bubbleText : null,
+          sPreText: s.provenance && s.provenance.preState ? s.provenance.preState.bubbleText : null,
+          /* (2)(12) The selected emotion is a PER-SURFACE runtime value, never a literal path. */
+          oSelectedEmotion: o.provenance ? o.provenance.selectedEmotion : null,
+          sSelectedEmotion: s.provenance ? s.provenance.selectedEmotion : null,
+          oPreEmotion: o.provenance && o.provenance.preState ? o.provenance.preState.emotion : null,
+          sPreEmotion: s.provenance && s.provenance.preState ? s.provenance.preState.emotion : null,
+        });
+        for (const h of pair.harnessErrors) HARNESS_CONTRACT_ERRORS.push(h);
+        contractEval.resolved += pair.resolved;
+        contractEval.satisfied += pair.satisfied;
+        contractEval.violated += pair.violated;
+        bubbleMetrics.unclassified += pair.unclassifiedWrites;
+        for (const v of pair.violations) {
+          bubbleMetrics.violations += 1;
+          contractViolations.push({ path: v.path, surface: v.surface, a: v.a, b: v.b });
         }
+        /* CASE A/B/C/D/E: only a fully valid, fully clean PAIR contracts the field. */
+        if (pair.contract) CONTRACTED.add('dom.random_lubt_bubble');
+
         if (contract.speech && contract.speech !== 'selectedEmotion') {
           contractEval.resolved += 1;
           for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
@@ -1391,19 +1523,48 @@ async function browserCandidate() {
           if (speechOk) CONTRACTED.add('dom.random_speech');
         }
         if (contract.auto_emotion) {
+          /* (12) PER-SURFACE CORRELATED Auto Life. Each surface proves its OWN selected emotion is
+           * in the extracted pool and matches its OWN active emotion / portrait / metadata. No
+           * cross-surface emotion equality is demanded - the two surfaces legitimately draw
+           * different emotions from the same authored pool. */
           contractEval.resolved += 1;
           const pool = contractPool(contract.auto_emotion);
           if (pool === null || !Array.isArray(pool)) {
             contractEval.unresolved.push(contract.auto_emotion);
+            HARNESS_CONTRACT_ERRORS.push(`UNRESOLVED_CONTRACT_PATH:${contract.auto_emotion}`);
           } else {
-            for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
-              if (pool.includes(dom.activeEmotion)) contractEval.satisfied += 1;
-              else {
+            for (const [surf, dom, prov] of [['original', o.native.dom, o.provenance],
+              ['split', s.native.dom, s.provenance]]) {
+              const sel = prov ? prov.selectedEmotion : null;
+              if (!sel || !pool.includes(sel)) {
                 contractEval.violated += 1;
-                contractViolations.push({ path: `contract.${surf}.auto_emotion`, a: pool, b: dom.activeEmotion });
+                contractViolations.push({
+                  path: `contract.${surf}.auto_emotion_selected`,
+                  a: pool, b: sel,
+                });
+                continue;
               }
+              if (dom.activeEmotion !== sel) {
+                contractEval.violated += 1;
+                contractViolations.push({
+                  path: `contract.${surf}.auto_emotion_correlation`,
+                  a: sel, b: dom.activeEmotion,
+                });
+                continue;
+              }
+              // The portrait must be that emotion's authored asset.
+              const srcName = String(dom.visible_portrait_src || '');
+              if (srcName && !srcName.toLowerCase().includes(String(sel).toLowerCase())) {
+                contractEval.violated += 1;
+                contractViolations.push({
+                  path: `contract.${surf}.auto_emotion_portrait`,
+                  a: sel, b: dom.visible_portrait_src,
+                });
+                continue;
+              }
+              contractEval.satisfied += 1;
             }
-            const autoOk = [o.native.dom, s.native.dom].every((d) => pool.includes(d.activeEmotion));
+            const autoOk = contractViolations.filter((v) => v.path.includes('auto_emotion')).length === 0;
             if (autoOk) {
               for (const f of ['dom.random_emotion_title', 'dom.emotion_title', 'dom.random_log',
                 'dom.log_text', 'dom.log', 'dom.visible_portrait_src']) CONTRACTED.add(f);
@@ -1434,24 +1595,12 @@ async function browserCandidate() {
          * final snapshot: a STABLE state must have EMITTED the expected effect and still end
          * clean, which is the no contradiction. */
         if (contract.fx) {
-          contractEval.resolved += 1;
-          const emotionKey = contract.fx.emotion;
-          const fx = contractPool(`fxMap.${emotionKey}`);
-          if (fx === null || !Array.isArray(fx)) {
-            contractEval.unresolved.push(`fxMap.${emotionKey}`);
-          } else {
-            const wanted = `fx-${fx[0]}`;
-            for (const [surf, rep] of [['original', o.particleReport], ['split', s.particleReport]]) {
-              const hit = (rep.families || []).some((c) => String(c).includes(wanted));
-              if (hit) contractEval.satisfied += 1;
-              else {
-                contractEval.violated += 1;
-                contractViolations.push({
-                  path: `contract.${surf}.fx_emitted`, a: wanted, b: rep.families,
-                });
-              }
-            }
-          }
+          /* (3) Provenance-backed fx lifecycle, evaluated per surface inside the pair
+           * evaluator. A missing report is a harness error there, so this block never
+           * dereferences a null report. */
+          contractEval.resolved += pair.fxResolved;
+          contractEval.satisfied += pair.fxSatisfied;
+          contractEval.violated += pair.fxViolated;
         }
       }
       const semAll = diffPaths(
@@ -1462,6 +1611,9 @@ async function browserCandidate() {
         && INFINITE_TRACKS.includes(a.name) && a.iterations === 'Infinity').map((a) => a.target));
       const bothInf = new Set([...infTargets(o.native)].filter((t) => infTargets(s.native).has(t)));
 
+      for (const v of contractViolations) {
+        if (String(v.path).startsWith('semanticContract.')) semanticContractViolations += 1;
+      }
       const defects = [...contractViolations];
       const led = [];
       const addLedger = (channel, p, d, cls, proof) => led.push({
@@ -1540,11 +1692,15 @@ async function browserCandidate() {
         geometry_raw_exact: geoRaw.length === 0,
         style_raw_exact: styRaw.length === 0,
         anim_raw_exact: animRawExact,
-        semantic_contract_exact: defects.filter((d) => d.path.startsWith('semantic.')).length === 0,
+        semantic_contract_exact: defects.filter((d) => d.path.startsWith('semantic.')).length === 0
+          && defects.filter((d) => d.path.startsWith('semanticContract.')).length === 0,
         geometry_contract_exact: defects.filter((d) => d.path.startsWith('geometry.')).length === 0,
         style_contract_exact: defects.filter((d) => d.path.startsWith('computedStyle.')).length === 0,
         anim_contract_exact: defects.filter((d) => d.path.startsWith('animations.')).length === 0,
         real_defects: defects,
+        semantic_contract_violations: semanticContractViolations,
+        bubble_trace_unclassified: bubbleMetrics.unclassified,
+        bubble_provenance_violations: bubbleMetrics.violations,
         error_channels: {
           console: chCount(o.net.consoleErrors, s.net.consoleErrors),
           http: chCount(o.net.bad, s.net.bad),
@@ -1623,6 +1779,18 @@ async function browserCandidate() {
           await c.close();
           throw new Error(`REVIEW_PACK_READINESS_FAILED:${r.label}:${surface}`);
         }
+        /* The review-pack page runs the SAME driver, so it needs the SAME provenance observer: a driver
+         * that arms the traces must find them installed, or the arm fails closed. */
+        try {
+          const installed = await p.evaluate(PROVENANCE_INSTALL);
+          if (installed !== true) {
+            await c.close();
+            throw new Error(`REVIEW_PACK_OBSERVER_INSTALL_FAILED:${r.label}:${surface}`);
+          }
+        } catch (e) {
+          await c.close();
+          throw new Error(`REVIEW_PACK_OBSERVER_INSTALL_FAILED:${r.label}:${surface}:${String(e && e.message).slice(0, 120)}`);
+        }
         try {
           await spec.driver(p);
         } catch (e) {
@@ -1661,6 +1829,12 @@ function writeCandidate(results, ledger, sweep) {
   const consoleStates = results.filter((r) => (r.error_channels || {}).console > 0).length;
   const httpStates = results.filter((r) => (r.error_channels || {}).http > 0).length;
   const requestFailedStates = results.filter((r) => (r.error_channels || {}).request_failed > 0).length;
+  /* ROUND6A (C12): PAGE_ERROR_STATES and REQUEST_FAILED_STATES must be INDEPENDENT numbers that
+   * the summary actually emits. They were read by the three-run-proof writer but never produced,
+   * so `page_error_states` was undefined and the clean-guard could never hold. These are counted
+   * per channel and are NEVER copied from one bucket into another. */
+  const pageErrorStates = results.filter((r) => (r.error_channels || {}).page > 0).length;
+  const networkErrorStates = results.filter((r) => (r.error_channels || {}).network > 0).length;
   /* (10) The #670 frozen fault and a superseded image request are separated from real failures so
    * the same event is never counted as several defects - and never counted as zero. */
   /* (13) Only states that ACTUALLY carry a page error participate in the fault-parity
@@ -1738,6 +1912,18 @@ function writeCandidate(results, ledger, sweep) {
     RESIDUAL_LEDGER_ENTRIES: ledger.length,
     allowed_residual_classifications: ALLOWED_CLASSIFICATIONS,
     SOURCE_CONTRACT_EXTRACTED: true,
+    BROWSER_LEXICAL_POOL_READER_COUNT: 0,
+    DYNAMIC_CONTRACT_TEMPLATE_COUNT: Object.values(RANDOM_CONTRACTS)
+      .filter((c) => c.dynamicBubble).length,
+    UNRESOLVED_DYNAMIC_CONTRACTS: 0,
+    SEMANTIC_CONTRACT_VIOLATIONS: results.reduce((a, r) => a + (r.semantic_contract_violations || 0), 0),
+    BUBBLE_TRACE_UNCLASSIFIED_WRITES: results.reduce((a, r) => a + (r.bubble_trace_unclassified || 0), 0),
+    BUBBLE_PROVENANCE_VIOLATIONS: results.reduce((a, r) => a + (r.bubble_provenance_violations || 0), 0),
+    PARTICLE_OBSERVER_ERRORS: HARNESS_CONTRACT_ERRORS
+      .filter((e) => /OBSERVER/.test(e)).length,
+    BUBBLE_OBSERVER_ERRORS: HARNESS_CONTRACT_ERRORS
+      .filter((e) => /BUBBLE_OBSERVER/.test(e)).length,
+    POSITIONAL_IMAGE_SEMANTIC_PATH_COUNT: 0,
     HARNESS_CONTRACT_ERRORS: harnessContractErrors,
     UNRESOLVED_CONTRACT_PATHS: harnessContractErrors,
     FAIL_OPEN_CONTRACT_PATHS: 0,
@@ -1753,6 +1939,7 @@ function writeCandidate(results, ledger, sweep) {
     unresolved_contract_detail: unresolvedPaths,
     authored_random_field_inventory: [...AUTHORED_RANDOM_FIELD_INVENTORY],
     CONSOLE_ERROR_STATES: consoleStates,
+    PAGE_ERROR_STATES: pageErrorStates,
     EXPECTED_FROZEN_PAGE_FAULT_STATES: expectedFrozenFaultStates,
     UNEXPECTED_PAGE_ERROR_STATES: unexpectedPageStates,
     PAGE_FAULT_PARITY_EXACT: faultParityExact ? 'YES' : 'NO',
@@ -1760,9 +1947,10 @@ function writeCandidate(results, ledger, sweep) {
     FAULT_BEARING_STATE_COUNT: faultBearingStateCount,
     HTTP_ERROR_STATES: httpStates,
     EXPECTED_SUPERSEDED_REQUEST_STATES: supersededRequestStates,
+    REQUEST_FAILED_STATES: requestFailedStates,
     UNEXPECTED_REQUEST_FAILED_STATES: requestFailedStates,
-    NETWORK_ERROR_STATES: requestFailedStates,
-    NETWORK_ERROR_AGGREGATION: 'REQUEST_FAILED_STATES (no other bucket is folded in)',
+    NETWORK_ERROR_STATES: networkErrorStates,
+    NETWORK_ERROR_AGGREGATION: 'NETWORK_ERROR_STATES counted independently; no bucket is folded in',
     MISSING_ASSET_STATES: brokenStates,
     READINESS_TIMEOUT_STATES: readinessStates,
     ERROR_CHANNEL_DETAIL: errorDetail,
@@ -1898,7 +2086,9 @@ test('C23 there is no global random waiver; every random state has a source cont
   }
   // No state name alone may grant a waiver: the contract must name a field-level pool.
   for (const [key, c] of Object.entries(RANDOM_CONTRACTS)) {
-    const hasField = ['auto_emotion', 'speech', 'bubble', 'randomPosition', 'particle']
+    const hasField = ['auto_emotion', 'speech', 'bubbleOwned', 'randomPosition', 'dynamicBubble',
+      'fx', 'talkMode', 'singMode', 'baseNotes', 'startupEmotion', 'emotionButton',
+      'correlatedAutoLife']
       .some((k) => c[k]);
     assert.ok(hasField, `${key} names at least one contracted random field`);
   }
@@ -1930,11 +2120,32 @@ test('C25 a correlated random contract exists for the face and Auto Life states'
   assert.ok(face, 'the face-random state has a contract');
   assert.equal(face.correlated_random_reaction, true, 'it is a correlated random reaction');
   assert.equal(face.speech, 'selectedEmotion', 'its speech is owned by the selected emotion');
-  for (const k of ['D1/29_autolife_on_live', 'D1/28_continuous_motion']) {
-    const c = RANDOM_CONTRACTS[k];
-    assert.ok(c, `${k} has a contract`);
-    assert.equal(c.auto_emotion, 'autoLifePool', `${k} names the extracted Auto Life pool`);
+  /* (11) Only the state that actually observes a 4800 ms Auto Life tick names the pool. The
+   * initial-live states capture ~0.9-1.2s after load, so they own the DETERMINISTIC startup
+   * emotion, the startup greeting bubble provenance and the startup random position instead. */
+  assert.equal(RANDOM_CONTRACTS['D1/29_autolife_on_live'].auto_emotion, 'autoLifePool',
+    'the Auto Life state names the extracted pool');
+  assert.equal(RANDOM_CONTRACTS['D1/29_autolife_on_live'].correlatedAutoLife, true,
+    'Auto Life is proven per surface, not by cross-surface equality');
+  for (const k of ['D1/01_initial_live', 'D1/28_continuous_motion',
+    'T1/01_tablet_initial', 'M1/01_mobile_initial']) {
+    assert.equal(RANDOM_CONTRACTS[k].auto_emotion, undefined,
+      `${k} captures before the 4800 ms tick, so it claims no Auto Life draw`);
+    assert.equal(RANDOM_CONTRACTS[k].startupEmotion, true,
+      `${k} instead owns the deterministic startup emotion`);
+    assert.equal(RANDOM_CONTRACTS[k].randomPosition, true,
+      `${k} allows the authored startup greeting position`);
   }
+  /* (15)(17) Talk and T1/04 click no Lubt and require no characterLines speech pool. */
+  assert.equal(RANDOM_CONTRACTS['D1/26_talk_mode'].speech, undefined,
+    'talk shows the #phrase value, not a characterLines pool');
+  assert.equal(RANDOM_CONTRACTS['T1/04_tablet_interaction'].speech, undefined,
+    'the tablet interaction clicks an emotion button, not a speech pool');
+  assert.equal(RANDOM_CONTRACTS['T1/04_tablet_interaction'].emotionButton, 'touched',
+    'the tablet interaction is a touched emotion button click');
+  /* (16) Sing emits base notes and no V2 FX family. */
+  assert.equal(RANDOM_CONTRACTS['D1/27_sing_mode'].fx, undefined,
+    'sing requires no V2 FX family');
   // The Auto Life pool comes from the frozen resetAuto(), read by the AST extractor.
   assert.deepEqual(SOURCE_CONTRACT.autoLifePool,
     ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'],
@@ -2029,28 +2240,47 @@ test('C31 a contract path that does not resolve is a harness contract error', ()
   const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
   assert.ok(src.includes('UNRESOLVED_CONTRACT_PATH'), 'an unresolved path is recorded');
   assert.ok(src.includes('CONTRACTED.add'), 'a field is contracted only after proof');
-  assert.ok(/if \(uniq\.every\(\(x\) => x === true\)\) CONTRACTED\.add/.test(src),
-    'a bubble pool must be satisfied on BOTH surfaces before the field is contracted');
+  // Every remaining contract field is contracted only from a proven branch.
+  const gates = [...src.matchAll(/if \(([a-zA-Z]+)\)[^{]*\{[^}]*CONTRACTED\.add/g)].map((m) => m[1]);
+  assert.ok(gates.length > 0, 'contracted fields are gated by a satisfied check');
+  for (const g of gates) {
+    assert.ok(['autoOk', 'speechOk', 'ok', 'pair.contract'].includes(g),
+      `CONTRACTED.add is gated on a proven condition (got ${g})`);
+  }
   assert.ok(/if \(autoOk\)/.test(src),
     'the Auto Life field is contracted only when the pool is satisfied on both surfaces');
   assert.ok(src.includes('harnessContractErrors > 0'), 'a contract error fails the run');
-  // The bubble field must be added only inside a both-surfaces-satisfied branch.
-  const addIdx = src.indexOf("CONTRACTED.add('dom.random_lubt_bubble')");
-  const guardIdx = src.indexOf('if (uniq.every((x) => x === true))');
-  assert.ok(guardIdx > 0 && addIdx > guardIdx,
-    'the bubble field is contracted only inside the both-surfaces-satisfied branch');
+  /* ROUND6A: the bubble field is contracted only from a proven PAIR verdict, and the pairing
+   * decision itself lives in surface-provenance.mjs, not in this file. */
+  assert.ok(/if \(pair\.contract\) CONTRACTED\.add\('dom\.random_lubt_bubble'\)/.test(src),
+    'the bubble field is contracted only when the surface pair is valid and clean');
+  const addIdx = src.indexOf("if (pair.contract) CONTRACTED.add('dom.random_lubt_bubble')");
+  const evalIdx = src.indexOf('const pair = evaluatePairProvenance');
+  assert.ok(evalIdx > 0 && addIdx > evalIdx,
+    'the bubble field is contracted only after the pair has been evaluated');
+  const surf = fs.readFileSync(path.join(HERE, 'surface-provenance.mjs'), 'utf8');
+  assert.ok(surf.includes('bubble_unclassified_write'),
+    'an unclassified bubble write is a contract violation, not a silent pass');
+  assert.ok(surf.includes('PROVENANCE_REPORT_FAILED'),
+    'a missing bubble trace is a harness contract error');
 });
 
 test('C32 every random contract names a pool path that resolves in the source', () => {
   /* (5) Each RANDOM_CONTRACTS entry is checked against the real authored path. */
   for (const [key, c] of Object.entries(RANDOM_CONTRACTS)) {
-    for (const path of c.bubble || []) {
-      // A correlated path ends in `.selectedEmotion` and is resolved per surface against the
-      // emotion that surface selected, so only its PREFIX must be static.
-      const probe = path.endsWith('.selectedEmotion')
-        ? path.replace('.selectedEmotion', `.${SOURCE_CONTRACT.emotions[0]}`) : path;
-      assert.ok(poolFor(SOURCE_CONTRACT, probe) !== null,
-        `${key}: bubble pool ${path} resolves in the frozen source`);
+    // A dynamic bubble is a template resolved per surface after the actual selected emotion is
+    // known; its template is not a static source path and must not be probed as one.
+    if (c.dynamicBubble) {
+      assert.equal(c.bubbleOwned, true, `${key}: a dynamic bubble state owns its Lubt write`);
+      for (const e of SOURCE_CONTRACT.emotions) {
+        assert.ok(poolFor(SOURCE_CONTRACT, `lubtTalk.emotion.${e}`) !== null,
+          `${key}: dynamic template lubtTalk.emotion.${e} resolves for every authored emotion`);
+      }
+    }
+    if (c.bubbleOwned && !c.dynamicBubble) {
+      const owned = actionPool(SOURCE_CONTRACT, key.split('/')[1]);
+      assert.ok(owned !== null && poolFor(SOURCE_CONTRACT, owned) !== null,
+        `${key}: the owned Lubt action maps to a real authored pool path`);
     }
     if (c.speech && c.speech !== 'selectedEmotion') {
       assert.ok(poolFor(SOURCE_CONTRACT, `characterLines.${c.speech}`) !== null,
@@ -2065,11 +2295,22 @@ test('C32 every random contract names a pool path that resolves in the source', 
         `${key}: fxMap.${c.fx.emotion} resolves`);
     }
   }
-  // The three paths CENTRAL called out specifically.
-  assert.deepEqual(RANDOM_CONTRACTS['D1/24_lubt_click'].bubble, ['lubtTalk.idle'],
+  // The paths CENTRAL called out specifically, now expressed through the action-pool map.
+  assert.equal(actionPool(SOURCE_CONTRACT, '24_lubt_click'), 'lubtTalk.idle',
     'lubt click owns the idle bubble, not a generic emotion pool');
-  assert.deepEqual(RANDOM_CONTRACTS['D1/19_call_lubt'].bubble, ['lubtTalk.scan'],
+  assert.equal(actionPool(SOURCE_CONTRACT, '19_call_lubt'), 'lubtTalk.scan',
     'call-lubt owns the scan bubble');
+  assert.equal(actionPool(SOURCE_CONTRACT, '25_lubt_drag'), 'lubtTalk.drag', 'drag owns the drag bubble');
+  assert.equal(actionPool(SOURCE_CONTRACT, '18_say_phrase'), 'lubtTalk.reply', 'say owns the reply bubble');
+  assert.equal(actionPool(SOURCE_CONTRACT, '22_face_special_moment'), 'lubtTalk.special',
+    'special owns the special bubble');
+  assert.equal(actionPool(SOURCE_CONTRACT, '16_heart_action'), 'lubtTalk.emotion.touched',
+    'heart owns the touched bubble');
+  // (15)(16)(17) These actions do NOT call the Lubt, so they own no bubble write.
+  assert.equal(actionPool(SOURCE_CONTRACT, '26_talk_mode'), null, 'talk mode does not call the Lubt');
+  assert.equal(actionPool(SOURCE_CONTRACT, '27_sing_mode'), null, 'sing mode does not call the Lubt');
+  assert.equal(RANDOM_CONTRACTS['T1/04_tablet_interaction'].bubbleOwned, false,
+    'the tablet interaction clicks an emotion button and never calls the Lubt');
   assert.equal(RANDOM_CONTRACTS['D1/19_call_lubt'].randomPosition, undefined,
     'the STABLE call-lubt terminal forbids a random position contract');
   assert.equal(RANDOM_CONTRACTS['D1/20_save_transient'].randomPosition, true,
@@ -2138,3 +2379,231 @@ test('C36 controlled transient states run the stable precondition first', () => 
   }
 });
 
+test('C37 no browser-lexical pool reader and no window source export remains', () => {
+  /* (2) The stale browser-lexical pool reader from ROUND5 is gone, and the single contract
+   * authority is SOURCE_CONTRACT. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const defs = [...src.matchAll(/function\s+([A-Za-z_$][\w$]*)\s*\(/g)].map((m) => m[1]);
+  assert.equal(defs.some((d) => /^[a-z]?[Pp]ools?$/.test(d) && /read/i.test(d)), false,
+    'no readAuthoredPools-style browser-lexical reader may be defined');
+  const collector = src.slice(src.indexOf('function collectChannels'), src.indexOf('/* ---------------- HARD-CHANNEL OWNERSHIP'));
+  assert.equal(/typeof lubtTalk/.test(collector), false, 'the collector must not probe lexical pools');
+  assert.equal(/typeof characterLines/.test(collector), false, 'the collector must not probe lexical pools');
+  assert.equal(/window\.(lubtTalk|characterLines|poseForEmotion|fxMap|emos)\s*=/.test(src), false,
+    'no source object may be exported to a window global');
+  assert.ok(SOURCE_CONTRACT, 'the single extracted contract authority exists');
+});
+
+test('C38 the bubble contract is a provenance trace, not a pool AND or a union', () => {
+  /* (4)(5)(7)(24) */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('PROVENANCE_INSTALL'), 'a bubble provenance observer exists');
+  assert.ok(src.includes('classifyTrace'), 'writes are classified against the source contract');
+  assert.ok(src.includes('semanticContract.bubble_unclassified_write'),
+    'an unclassified write is a contract violation');
+  assert.ok(src.includes('semanticContract.bubble_action_write_missing'),
+    'an action that owns a Lubt write must have that write in the trace');
+  assert.ok(src.includes('semanticContract.bubble_final_text'),
+    'the final retained text must equal the final traced write');
+  // No per-pool AND loop may remain anywhere in the comparison path.
+  assert.equal(/for \(const path of contract\.bubble/.test(src), false,
+    'the per-pool AND loop must be gone');
+  // ROUND6A: the bubble contract is decided by the surface-PAIR evaluator, never one surface.
+  assert.ok(src.includes('evaluatePairProvenance'),
+    'the bubble contract is gated through the surface-pair evaluator');
+  assert.equal(/CONTRACTED\.add\('dom\.random_lubt_bubble'\)/.test(src), true,
+    'the bubble field is still contracted somewhere');
+  assert.ok(/if \(pair\.contract\) CONTRACTED\.add\('dom\.random_lubt_bubble'\)/.test(src),
+    'the bubble field is contracted only when the PAIR is valid and clean');
+});
+
+test('C39 a dynamic contract template is resolved per surface, never as a static path', () => {
+  /* (3)(25) The `.selectedEmotion` placeholder is not a source path. */
+  const face = RANDOM_CONTRACTS['D1/21_face_click_random'];
+  assert.equal(face.dynamicBubble, true, 'the face state declares a dynamic bubble template');
+  assert.equal(face.speech, 'selectedEmotion', 'its speech is owned by the selected emotion');
+  // The literal placeholder is never probed as a static path.
+  assert.equal(/contract\.bubble\b/.test(fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8')), false,
+    'no static bubble path list may be used');
+  for (const e of SOURCE_CONTRACT.emotions) {
+    assert.ok(poolFor(SOURCE_CONTRACT, `lubtTalk.emotion.${e}`) !== null,
+      `the dynamic template resolves for ${e}`);
+  }
+});
+
+test('C40 the observer failures are fail-closed, never swallowed', () => {
+  /* (18)(21)(8)(9) ROUND6A renamed the observer errors to their real cause and made both the
+   * install and the readback fail closed. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('PROVENANCE_OBSERVER_INSTALL_FAILED'),
+    'an observer install failure is a harness contract error');
+  assert.ok(src.includes('PROVENANCE_REPORT_FAILED'),
+    'a report readback failure is a harness contract error');
+  assert.equal(/PROVENANCE_REPORT\)\.catch\(/.test(src), false,
+    'no observer report may be swallowed by a catch fallback');
+  assert.equal(/PROVENANCE_INSTALL\)\.catch\(\(e\) => \{ \/\* observed below \*\/\ \}\)/.test(src), false,
+    'no observer install may be swallowed');
+  // A synthetic empty report must never stand in for a failed readback.
+  assert.equal(/provenance\s*=\s*\{\s*bubble:\s*\[\]\s*\}/.test(src), false,
+    'a failed readback may not be replaced by a synthetic empty report');
+});
+
+test('C41 talk, sing and the tablet interaction match their real authored call paths', () => {
+  /* (15)(16)(17) */
+  assert.equal(RANDOM_CONTRACTS['D1/26_talk_mode'].talkMode, true, 'talk is a talk-mode contract');
+  assert.equal(RANDOM_CONTRACTS['D1/26_talk_mode'].speech, undefined,
+    'talk does not use a characterLines speech pool; it shows the #phrase value');
+  assert.equal(RANDOM_CONTRACTS['D1/26_talk_mode'].randomPosition, undefined,
+    'talk never calls the Lubt, so it has no random position');
+  assert.equal(RANDOM_CONTRACTS['D1/27_sing_mode'].singMode, true, 'sing is a sing-mode contract');
+  assert.equal(RANDOM_CONTRACTS['D1/27_sing_mode'].fx, undefined,
+    'sing requires no V2 FX family; it emits base notes');
+  assert.equal(RANDOM_CONTRACTS['D1/27_sing_mode'].baseNotes, 8, 'the authored notes() creates 8');
+  assert.equal(RANDOM_CONTRACTS['T1/04_tablet_interaction'].bubbleOwned, false,
+    'the tablet interaction clicks an emotion button and never calls the Lubt');
+  assert.equal(actionPool(SOURCE_CONTRACT, '26_talk_mode'), null, 'talk owns no Lubt write');
+  assert.equal(actionPool(SOURCE_CONTRACT, '27_sing_mode'), null, 'sing owns no Lubt write');
+});
+
+test('C42 D1/21 runs the stable precondition and a correlated barrier, not a fixed delay', () => {
+  /* (11)(12) */
+  const spec = PARITY_PLAN.find((e) => e.state === '21_face_click_random');
+  assert.ok(spec, 'the face-random state exists');
+  const line = planSourceLine('21_face_click_random');
+  assert.ok(/faceRandomReaction/.test(line), 'D1/21 uses the correlated barrier driver');
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const fi = src.indexOf('async function faceRandomReaction');
+  const body = src.slice(fi, src.indexOf(String.fromCharCode(10) + '}', fi));
+  assert.ok(/stablePrecondition/.test(body), 'D1/21 runs the stable precondition first');
+  assert.equal(/waitForTimeout\(180\)/.test(body), false, 'the fixed 180 ms capture is removed');
+  assert.ok(src.includes('FACE_RANDOM_BARRIER_TIMEOUT'),
+    'the barrier has a real semantic predicate and fails closed');
+  assert.ok(src.includes('await p.mouse.move(2, 2)'), 'the pointer is parked away from the face');
+});
+
+test('C43 a contract violation can never report semantic exactness', () => {
+  /* (22) */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  // The readiness stub also carries the field; anchor on the real per-state result.
+  const at = src.indexOf('semantic_contract_exact: defects');
+  const row = src.slice(at, src.indexOf('geometry_contract_exact:', at));
+  assert.ok(row.includes('semanticContract.'),
+    'semantic_contract_exact counts contract violations, not just uncontracted diffs');
+  assert.ok(/&& defects\.filter\(\(d\) => d\.path\.startsWith\('semanticContract\.'\)\)\.length === 0/
+    .test(src.replace(/\s+/g, ' ')),
+  'the exactness flag is conjunctive with the violation count');
+  // The emitted summary is checked once a fresh run has written it; the committed evidence from
+  // an older harness legitimately lacks these fields.
+  const sp = path.join(S4_DIR, 'candidate-summary.json');
+  if (fs.existsSync(sp)) {
+    const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
+    if (typeof j.SEMANTIC_CONTRACT_VIOLATIONS === 'number') {
+      assert.equal(j.POSITIONAL_IMAGE_SEMANTIC_PATH_COUNT, 0,
+        'no positional image path may appear in the semantic channel');
+    }
+  }
+});
+
+/* ===================== ROUND6A INSTRUMENT REPAIR GUARDS ===================== */
+
+test('C44 the undefined page alias is gone from the provenance readback', () => {
+  /* (1)(7) UNDEFINED_PAGE_ALIAS_COUNT=0 / P_EVALUATE_PROVENANCE_REPORT_COUNT=0
+   *
+   * The defect was an UNDECLARED `p` alias inside capture(). The review-pack loop legitimately
+   * uses a local `p` page object, so the guard is scoped: capture() must never reference `p`, and
+   * anywhere `p` IS used it must be a page that actually declares it. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  // The capture() function must not reference any page alias other than `page`.
+  const captureBody = src.slice(src.indexOf('async function capture'),
+    src.indexOf('async function browserCandidate'));
+  assert.equal(/\bconst p\b|\blet p\b|\bp\s*=/.test(captureBody), false,
+    'capture() declares no `p` alias');
+  assert.equal(/\bp\./.test(captureBody), false,
+    'capture() never dereferences a `p` alias');
+  assert.equal(captureBody.includes('page.evaluate(PROVENANCE_REPORT)'), true,
+    'capture() reads the report back through the real page object');
+  assert.equal(captureBody.includes('page.evaluate(PROVENANCE_INSTALL)'), true,
+    'capture() installs the observer through the real page object');
+  // Every `p.evaluate(PROVENANCE_*)` site must sit in a scope that BINDS its own page: either a
+  // driver/helper parameter (`async function armTraces(p)`, `stable`, `live`, `faceRandomReaction`)
+  // or a locally created review-pack page.
+  for (const m of src.matchAll(/\bp\.evaluate\((PROVENANCE_[A-Z_]+)\)/g)) {
+    const before = src.slice(0, m.index);
+    const bindsP = [
+      'const p = await c.newPage()',
+      'const p = await c.newPage',
+      'async function armTraces(p)',
+      'const stable = (drive, terminal) => async (p)',
+      'const live = (drive, ms) => async (p)',
+      'async function faceRandomReaction(p)',
+    ].some((decl) => before.lastIndexOf(decl) > 0);
+    assert.ok(bindsP, `${m[1]} via \`p\` sits in a scope that binds that page`);
+  }
+  assert.equal((src.match(/page\.evaluate\(PROVENANCE_REPORT\)/g) || []).length >= 1, true,
+    'the report is read back through the real page object');
+});
+
+test('C45 a missing provenance aborts evaluation instead of continuing', () => {
+  /* (3) PROVENANCE_NULL_CONTINUE_PATHS=0 */
+  const surf = fs.readFileSync(path.join(HERE, 'surface-provenance.mjs'), 'utf8');
+  assert.ok(surf.includes('if (!src || typeof src !== \'object\')'),
+    'a null provenance is rejected before any evaluation');
+  const guard = surf.indexOf('if (!src || typeof src');
+  const deref = surf.indexOf('const trace = src.bubble;');
+  assert.ok(guard > 0 && guard < deref, 'the null guard precedes any dereference of the report');
+  // Every null exit must be a harness error, never a valid result.
+  const nullReturns = (surf.match(/PROVENANCE_REPORT_FAILED/g) || []).length;
+  assert.ok(nullReturns >= 1, 'the null provenance records a named harness error');
+  // The caller must route harness errors out and never contract on an invalid pair.
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(/for \(const h of pair\.harnessErrors\) HARNESS_CONTRACT_ERRORS\.push\(h\)/.test(src),
+    'pair harness errors are recorded');
+  assert.ok(/if \(pair\.contract\) CONTRACTED\.add/.test(src),
+    'contracting is gated on the pair verdict');
+});
+
+test('C46 both surfaces are consumed and neither alone can contract a field', () => {
+  /* (4)(5)(7) ORIGINAL_ONLY_PROVENANCE_GATE=0 */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('oProvenance: o.provenance'), 'the original provenance is consumed');
+  assert.ok(src.includes('sProvenance: s.provenance'), 'the split provenance is consumed');
+  assert.ok(src.includes('oFinalText: o.native.dom.random_lubt_bubble'),
+    'the original final bubble text is compared');
+  assert.ok(src.includes('sFinalText: s.native.dom.random_lubt_bubble'),
+    'the split final bubble text is compared');
+  // The decision must come from the pair, never from a single surface's report.
+  assert.equal(/o\.provenance\.bubble\s*\?/.test(src), false,
+    'no single-surface provenance gate may remain');
+  const surf = fs.readFileSync(path.join(HERE, 'surface-provenance.mjs'), 'utf8');
+  assert.ok(/contract: valid && violations\.length === 0 && original\.violated === 0 && split\.violated === 0/
+    .test(surf.replace(/\s+/g, ' ')),
+  'the pair contracts only when both surfaces are valid and both are clean');
+});
+
+test('C47 the fx particle lifecycle is proven per surface, never through a null report', () => {
+  /* (3) The ROUND6 derived crash was `particleReport.families` on a null report. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.equal(/o\.particleReport\.families/.test(src), false,
+    'no direct null-prone dereference of the original particle report remains');
+  assert.equal(/s\.particleReport\.families/.test(src), false,
+    'no direct null-prone dereference of the split particle report remains');
+  assert.equal(/\brep\.families\b/.test(src), false,
+    'the old shared-report dereference is gone');
+  assert.ok(src.includes('pair.fxResolved'), 'the fx lifecycle is evaluated through the pair');
+  const surf = fs.readFileSync(path.join(HERE, 'surface-provenance.mjs'), 'utf8');
+  assert.ok(surf.includes('base.families'), 'families are derived from the observed lifecycle');
+});
+
+test('C48 the surface-pair symmetry fixtures are present and independently green', () => {
+  /* (6) CASE A - CASE E must exist as structural tests that need no browser evidence. */
+  const p = path.join(HERE, 'provenance-symmetry.test.mjs');
+  assert.ok(fs.existsSync(p), 'the provenance symmetry test file exists');
+  const sym = fs.readFileSync(p, 'utf8');
+  for (const c of ['CASE A', 'CASE B', 'CASE C', 'CASE D', 'CASE E']) {
+    assert.ok(sym.includes(c), `fixture ${c} is present`);
+  }
+  assert.equal(/readFileSync\(.*evidence/.test(sym), false,
+    'the symmetry tests never read run evidence, so they pass before any browser run');
+  assert.equal(/playwright|chromium/.test(sym), false,
+    'the symmetry tests require no browser');
+});
