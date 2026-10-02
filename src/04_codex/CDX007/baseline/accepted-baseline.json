@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX007",
+  "status": "ACCEPTED",
+  "stage": "S2_BASELINE",
+  "accepted_by": "CENTRAL",
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
+  "report": {
+    "repo": "skerishKang/workdiary",
+    "path": "lovetree-reports/2026-10-01/LOCAL1/589-mst106-cdx007-s2-baseline.md",
+    "commit": "af5d04b8c38ea2b932b42fa08e9674c9c65df834"
+  },
+  "authority": {
+    "filename": "index.html",
+    "bytes": 22310,
+    "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b"
+  },
+  "capture": {
+    "surface": "STANDALONE_AUTHORITY_SURFACE",
+    "serve_mode": "LOOPBACK_HTTP",
+    "file_protocol_used": false,
+    "viewports": [
+      {
+        "id": "D1",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "id": "T1",
+        "width": 900,
+        "height": 900
+      },
+      {
+        "id": "M1",
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "passes_per_viewport": 2,
+    "screenshots_total": 6,
+    "network_error_states": 0,
+    "missing_asset_states": 0,
+    "broken_images": 0,
+    "console_or_page_errors": 0,
+    "external_runtime_dependencies": 0,
+    "baseline_stable_across_2_passes": true,
+    "screenshot_equality_claimed": false,
+    "pixel_tolerance": "NONE",
+    "ssim": "NONE",
+    "raw_png_equality": "NOT_COMPUTED"
+  },
+  "motion_inventory": {
+    "infinite_tracks": [
+      "breath",
+      "pulse",
+      "spin"
+    ],
+    "finite_tracks": [
+      "hintFade"
+    ],
+    "finite_effects": [
+      "hintFade",
+      "fxBurst",
+      "specialHalo"
+    ],
+    "animation_counts": {
+      "desktop": 8,
+      "tablet": 8,
+      "mobile": 7
+    },
+    "note": "recorded natively; mobile reports one fewer because a responsive branch drops one animated element. Observed, not normalized."
+  },
+  "product_adoption": false,
+  "lineage58_adoption": false
+}

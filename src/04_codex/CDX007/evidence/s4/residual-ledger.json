@@ -1,0 +1,97 @@
+{
+  "schema_version": "2.0",
+  "source_id": "CDX007",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "CANDIDATE_PENDING_CENTRAL",
+  "allowed_classifications": [
+    "AUTHORED_RANDOM_SCALAR",
+    "AUTHORED_LIVE_PHASE",
+    "AUTHORED_FINITE_TRANSIENT_PHASE",
+    "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+  ],
+  "note": "Every residual authorized by a bounded class with concrete field/target proof. A STABLE state contributes ZERO ledger rows by contract. A residual absent here is a real parity defect.",
+  "stable_ledger_entries": 0,
+  "entries": [
+    {
+      "state": "D1/21_face_click_random",
+      "state_intent": "AUTHORED_RANDOM",
+      "channel": "semantic",
+      "field_path": "dom.particleCount",
+      "original_a": 14,
+      "original_b": null,
+      "split": 12,
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "D1/22_face_special_moment",
+      "state_intent": "EXPLICIT_TRANSIENT",
+      "channel": "computedStyle",
+      "field_path": "portraitWrap.transform",
+      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 0.000219212, 0, 0, -0.000219212, 1, 0, 0, -0.0452157, 0, 1)",
+      "original_b": null,
+      "split": "matrix3d(1, 0, 0, 0, 0, 1, 9.67113e-05, 0, 0, -9.67113e-05, 1, 0, 0, -0.0199481, 0, 1)",
+      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "contract_disposition": "LEDGER",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ]
+      }
+    },
+    {
+      "state": "D1/23_face_hold_special",
+      "state_intent": "EXPLICIT_TRANSIENT",
+      "channel": "computedStyle",
+      "field_path": "portraitWrap.transform",
+      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 0.000218738, 0, 0, -0.000218738, 1, 0, 0, -0.045118, 0, 1)",
+      "original_b": null,
+      "split": "matrix3d(1, 0, 0, 0, 0, 1, 0.000218204, 0, 0, -0.000218204, 1, 0, 0, -0.0450078, 0, 1)",
+      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "contract_disposition": "LEDGER",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ]
+      }
+    }
+  ]
+}
