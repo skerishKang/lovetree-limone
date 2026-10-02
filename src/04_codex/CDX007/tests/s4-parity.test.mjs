@@ -28,6 +28,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { sourceContract, poolFor, SourceContractError } from './source-contract.mjs';
 
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -174,7 +175,7 @@ test('C04b the authored right-rail collapse below 1050px is preserved, not repai
   assert.ok(/@media\s*\(max-width:1050px\)\s*\{[\s\S]{0,200}?\.right\s*\{\s*display:\s*none/.test(inlineCss),
     'the authored <=1050px right-rail collapse is still present');
   assert.ok(/\.lubt-drag-hint\s*\{\s*display:\s*none/.test(v2css), 'the <=720px hint collapse');
-  for (const spec of PLAN) {
+  for (const spec of PARITY_PLAN) {
     const vp = VIEWPORTS[spec.ctx];
     if (vp.width <= 1050) {
       const d = spec.driver.toString();
@@ -288,7 +289,7 @@ test('C04i STABLE states wait on semantic terminal predicates, not a bare sleep'
     assert.ok(src.includes(cond), `terminal condition ${cond} exists`);
   }
   // Every STABLE plan entry must pass a non-empty terminal list.
-  for (const spec of PLAN) {
+  for (const spec of PARITY_PLAN) {
     if (spec.intent !== 'STABLE') continue;
     assert.ok(/await settle\(/.test(spec.driver.toString()),
       `${spec.ctx}/${spec.state} is STABLE and must settle on a terminal predicate`);
@@ -355,8 +356,8 @@ if (!BROWSER_MODE) {
  *   notes()/petals()/burstEmotion(): per-particle Math.random displacement
  * ==========================================================================*/
 
-// The authored Auto Life emotion pool, read from resetAuto() in the frozen inline layer.
-const AUTO_LIFE_POOL = ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'];
+/* The authored Auto Life pool is SOURCE_CONTRACT.autoLifePool, extracted from resetAuto() in
+ * the frozen inline layer. There is deliberately no second hard-coded copy of it. */
 
 // The authored Lubt home position, written by resumeLubtFlight().
 const LUBT_HOME = { left: '300px', top: '95px' };
@@ -370,35 +371,39 @@ const LUBT_RANDOM_RANGE = { leftVw: [18, 46], topVh: [9, 55] };
  * `bubble` names the lubtTalk key that owns the retained hidden bubble text. */
 const RANDOM_CONTRACTS = {
   // Auto Life ON states: the emotion itself is an authored random draw from AUTO_LIFE_POOL.
-  'D1/01_initial_live': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
-  'D1/28_continuous_motion': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
-  'D1/29_autolife_on_live': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
-  'T1/01_tablet_initial': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
-  'M1/01_mobile_initial': { auto_emotion: AUTO_LIFE_POOL, bubble: ['greeting', 'idle'] },
+  'D1/01_initial_live': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
+  'D1/28_continuous_motion': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
+  'D1/29_autolife_on_live': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
+  'T1/01_tablet_initial': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
+  'M1/01_mobile_initial': { auto_emotion: 'autoLifePool', bubble: ['lubtTalk.greeting', 'lubtTalk.idle'] },
 
   // Stable actions whose retained speech/bubble text is an authored random draw. The STABLE
   // requirement is speechHidden/pose exact; the TEXT is checked for pool membership only.
-  'D1/16_heart_action': { speech: 'touched', bubble: ['emotion.touched'], particle: 'petals' },
-  'D1/17_surprise_action': { speech: 'surprise', bubble: ['emotion.surprise'], particle: 'petals' },
-  'D1/19_call_lubt': { bubble: ['scan'], randomPosition: true },
-  'D1/20_save_transient': { bubble: ['save'], particle: 'petals' },
-  'D1/20b_save_fault_terminal': { bubble: ['save'], particle: 'petals' },
-  'D1/24_lubt_click': { bubble: ['emotion'], randomPosition: true },
-  'D1/25_lubt_drag': { bubble: ['drag'], randomPosition: true },
-  'D1/26_talk_mode': { speech: 'talk', bubble: ['emotion'], randomPosition: true },
-  'D1/27_sing_mode': { speech: 'sing', particle: 'note' },
+  'D1/16_heart_action': { speech: 'touched', bubble: ['lubtTalk.emotion.touched'],
+    fx: { emotion: 'touched' } },
+  'D1/17_surprise_action': { speech: 'surprise', bubble: ['lubtTalk.emotion.surprise'],
+    fx: { emotion: 'surprise' } },
+  'D1/19_call_lubt': { bubble: ['lubtTalk.scan'] },
+  'D1/20_save_transient': { bubble: ['lubtTalk.save'], randomPosition: true,
+    fx: { emotion: 'touched' } },
+  'D1/20b_save_fault_terminal': { bubble: ['lubtTalk.save'] },
+  'D1/24_lubt_click': { bubble: ['lubtTalk.idle'], randomPosition: true },
+  'D1/25_lubt_drag': { bubble: ['lubtTalk.drag'], dragTerminal: true },
+  'D1/26_talk_mode': { speech: 'talk', bubble: ['lubtTalk.emotion.talk'], randomPosition: true },
+  'D1/27_sing_mode': { speech: 'sing', fx: { emotion: 'sing' } },
 
   // The dedicated random face reaction: everything correlates to the selected emotion.
   'D1/21_face_click_random': {
     correlated_random_reaction: true,
     auto_emotion: null,
     speech: 'selectedEmotion',
-    bubble: ['emotion.selectedEmotion'],
+    bubble: ['lubtTalk.emotion.selectedEmotion'],
     randomPosition: true,
+    correlated: true,
   },
-  'D1/22_face_special_moment': { bubble: ['special'], randomPosition: true },
-  'D1/23_face_hold_special': { bubble: ['special'], randomPosition: true },
-  'T1/04_tablet_interaction': { speech: 'touched', bubble: ['emotion.touched'] },
+  'D1/22_face_special_moment': { bubble: ['lubtTalk.special'], randomPosition: true },
+  'D1/23_face_hold_special': { bubble: ['lubtTalk.special'], randomPosition: true },
+  'T1/04_tablet_interaction': { speech: 'touched', bubble: ['lubtTalk.emotion.touched'] },
 };
 
 function randomContractFor(ctx, state) {
@@ -427,6 +432,20 @@ function readAuthoredPools() {
   };
 }
 
+/* (1)(2)(3) THE single source contract, extracted from the FROZEN BYTES with the TypeScript
+ * compiler API this repository already depends on. The authored pools are IIFE-lexical consts in
+ * the external V2 file, so they are unreadable from page.evaluate() and must NOT be exposed
+ * through a window global - that would be source mutation. Every pool below comes from here. */
+const SOURCE_CONTRACT = sourceContract();
+const HARNESS_CONTRACT_ERRORS = [];
+
+/** Resolve a contract pool, recording a HARNESS_CONTRACT_ERROR when it does not exist. */
+function contractPool(path) {
+  const v = poolFor(SOURCE_CONTRACT, path);
+  if (v === null) HARNESS_CONTRACT_ERRORS.push(`UNRESOLVED_CONTRACT_PATH:${path}`);
+  return v;
+}
+
 const VIEWPORTS = {
   D1: { id: 'D1', width: 1440, height: 900 },
   T1: { id: 'T1', width: 900, height: 900 },
@@ -452,6 +471,16 @@ const TERMINAL_SRC = {
    * therefore a window where talk=false and follow=false but the element has NOT yet returned
    * home. A STABLE state must also prove the authored home position, not just the absence of the
    * transient classes. */
+  /* (9) D1/25 drag terminal. The authored drag path calls setLubtBubble('guide', lubtTalk.drag)
+   * and resumeLubtFlight(2400), so the authored terminal is the GUIDE pose at home, not idle. The
+   * 12 s background idle loop must NOT be waited out to manufacture an idle pose. */
+  lubtDragHomeStable: `() => {
+    const l = document.getElementById('lubt');
+    if (!l) return false;
+    if (l.classList.contains('talk') || l.classList.contains('follow') || l.classList.contains('dragging')) return false;
+    if (!String(document.getElementById('lubtImg')?.getAttribute('src') || '').includes('lubt-guide')) return false;
+    return l.style.left === '300px' && l.style.top === '95px';
+  }`,
   lubtHomeStable: `() => {
     const l = document.getElementById('lubt');
     if (!l) return false;
@@ -556,7 +585,7 @@ const live = (drive, ms) => async (p) => { await drive(p); await p.waitForTimeou
 
 const SETTLE_BASE = ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtHomeStable'];
 
-const PLAN = [
+const PARITY_PLAN = [
   { ctx: 'D1', state: '01_initial_live', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(1200); }) },
   { ctx: 'D1', state: '02_character_M02', intent: 'STABLE', driver: stable(async (p) => { await p.click(castBtn(2)); }, ['characterIs(1)', ...SETTLE_BASE]) },
   { ctx: 'D1', state: '03_character_F01', intent: 'STABLE', driver: stable(async (p) => { await p.click(castBtn(3)); }, ['characterIs(2)', ...SETTLE_BASE]) },
@@ -586,12 +615,12 @@ const PLAN = [
    * evidence rather than used to make a page error disappear. */
   { ctx: 'D1', state: '20b_save_fault_terminal', intent: 'STABLE', driver: stable(async (p) => { await p.click('#saveBtn'); await p.waitForTimeout(3600); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '24_lubt_click', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, [...SETTLE_BASE, 'noFiniteActive']) },
-  { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, [...SETTLE_BASE, 'noFiniteActive']) },
+  { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtDragHomeStable', 'noFiniteActive']) },
   { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, 180) },
-  { ctx: 'D1', state: '22_face_special_moment', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2); }, 300) },
-  { ctx: 'D1', state: '23_face_hold_special', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.waitForTimeout(700); await p.mouse.up(); }, 200) },
-  { ctx: 'D1', state: '26_talk_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await p.click('#talkBtn'); }, 600) },
-  { ctx: 'D1', state: '27_sing_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await p.click('#singBtn'); }, 600) },
+  { ctx: 'D1', state: '22_face_special_moment', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2); }, 300) },
+  { ctx: 'D1', state: '23_face_hold_special', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.waitForTimeout(700); await p.mouse.up(); }, 200) },
+  { ctx: 'D1', state: '26_talk_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#talkBtn'); }, 600) },
+  { ctx: 'D1', state: '27_sing_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#singBtn'); }, 600) },
   { ctx: 'D1', state: '28_continuous_motion', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(900); }) },
   /* Auto Life ON is preserved here: the authored 4800 ms random-emotion interval stays covered. */
   { ctx: 'D1', state: '29_autolife_on_live', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(5200); }, 200) },
@@ -622,7 +651,7 @@ test('C08 every STABLE terminal token resolves, and none is silently filtered', 
   // plan source itself, so a spread list (['x', ...SETTLE_BASE, 'y']) contributes both its own
   // literals and everything SETTLE_BASE carries.
   const used = new Set(SETTLE_BASE);
-  const planStart = runtime.indexOf('const PLAN = [');
+  const planStart = runtime.indexOf('const PARITY_PLAN = [');
   const planSrc = runtime.slice(planStart, runtime.indexOf('const REVIEW = [') > planStart
     ? runtime.indexOf('const REVIEW = [') : runtime.length);
   for (const tok of planSrc.match(/'[a-zA-Z]+'/g) || []) {
@@ -781,19 +810,19 @@ test('C09 every STABLE state turns Auto Life OFF through the authored control', 
   // stable() itself runs the precondition, so every STABLE state inherits it.
   assert.ok(/const stable =[\s\S]{0,120}await stablePrecondition\(p\)/.test(src),
     'stable() runs the Auto Life precondition before its driver');
-  const stableStates = PLAN.filter((x) => x.intent === 'STABLE');
+  const stableStates = PARITY_PLAN.filter((x) => x.intent === 'STABLE');
   assert.ok(stableStates.length > 0, 'the plan has STABLE states');
   // And the terminal set includes the OFF proof.
   assert.ok(src.includes("'autoLifeOff'"), 'autoLifeOff is a declared terminal predicate');
   // Live behavior stays covered with Auto Life ON.
-  assert.ok(PLAN.some((s) => s.state === '29_autolife_on_live' && s.intent === 'AUTHORED_LIVE'),
+  assert.ok(PARITY_PLAN.some((s) => s.state === '29_autolife_on_live' && s.intent === 'AUTHORED_LIVE'),
     'an AUTHORED_LIVE state keeps Auto Life ON coverage');
 });
 
 test('C10 SAVE is split into a transient state and a post-fault terminal state', () => {
   /* ROUND2 Finding 3: the source shows SAVED transiently and restores the label after 3200 ms. */
-  const t = PLAN.find((s) => s.state === '20_save_transient');
-  const b = PLAN.find((s) => s.state === '20b_save_fault_terminal');
+  const t = PARITY_PLAN.find((s) => s.state === '20_save_transient');
+  const b = PARITY_PLAN.find((s) => s.state === '20b_save_fault_terminal');
   assert.ok(t, 'a SAVE transient state exists');
   assert.equal(t.intent, 'EXPLICIT_TRANSIENT', 'the saved moment is EXPLICIT_TRANSIENT');
   assert.ok(b, 'a SAVE post-fault terminal state exists');
@@ -959,6 +988,16 @@ function collectChannels() {
       random_petal_dx: Array.from(document.querySelectorAll('#petals .petal'))
         .map((n) => n.style.getPropertyValue('--dx')).join('|'),
       random_emotion_title: txt('#emotionTitle'),
+      /* (14) Named asset fields replace positional images[N] indexing in the parity contract. */
+      portraitA_src: g('#portraitA') ? g('#portraitA').getAttribute('src') : null,
+      portraitB_src: g('#portraitB') ? g('#portraitB').getAttribute('src') : null,
+      visible_portrait_src: (() => {
+        const a = g('#portraitA'); const b = g('#portraitB');
+        if (a && a.offsetParent !== null) return a.getAttribute('src');
+        if (b && b.offsetParent !== null) return b.getAttribute('src');
+        return null;
+      })(),
+      lubt_pose_src: g('#lubtImg') ? g('#lubtImg').getAttribute('src') : null,
       /* (3)(4)(5) Retained hidden bubble/speech text, the Lubt position, particle families and
        * the source-derived pools the contracts check them against. */
       lubt_left: lubt ? lubt.style.left : null,
@@ -971,45 +1010,6 @@ function collectChannels() {
           acc[fam] = (acc[fam] || 0) + 1;
           return acc;
         }, {}),
-      /* (3)(4) Source-pool membership is resolved INSIDE the page, because the collector is
-       * serialized and cannot call a module-scope helper. For each authored pool key we report
-       * whether the CURRENT retained text is a member of that pool, read from the live authored
-       * lubtTalk / characterLines objects, so the allowed set can never drift from the source
-       * that is actually running. */
-      authored_pool_keys: (() => {
-        const T = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
-        if (!T) return null;
-        const keys = Object.keys(T);
-        const emotions = (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [];
-        return keys.concat(emotions.map((e) => 'emotion.' + e));
-      })(),
-      lubt_bubble_pool_member: (() => {
-        const T = (typeof lubtTalk !== 'undefined') ? lubtTalk : null;
-        if (!T) return null;
-        const t = document.getElementById('lubtBubble');
-        const cur = t ? t.textContent : null;
-        const emotions = (typeof allEmotionNames !== 'undefined') ? allEmotionNames.slice() : [];
-        const keys = Object.keys(T).concat(emotions.map((e) => 'emotion.' + e));
-        const out = {};
-        for (const k of keys) {
-          const path = k.split('.');
-          let cur2 = T;
-          for (const p of path) { if (cur2 == null) { cur2 = null; break; } cur2 = cur2[p]; }
-          out[k] = Array.isArray(cur2) ? cur2.indexOf(cur) >= 0 : null;
-        }
-        return out;
-      })(),
-      speech_pool_member: (() => {
-        const C = (typeof characterLines !== 'undefined') ? characterLines : null;
-        if (!C) return null;
-        const t = document.getElementById('speech');
-        const cur = t ? t.textContent : null;
-        const out = {};
-        for (const k of Object.keys(C)) {
-          out[k] = Array.isArray(C[k]) ? C[k].indexOf(cur) >= 0 : null;
-        }
-        return out;
-      })(),
     },
     images: imgs,
     visibility: {
@@ -1120,6 +1120,40 @@ function startServer() {
   return server;
 }
 
+/* (7) A harness-ONLY lifecycle observer. The STABLE terminal requires noParticles, which would
+ * otherwise contradict a "the particle must exist in the final snapshot" contract. Instead the
+ * harness records what the source EMITTED over the state's life, and a STABLE state is validated
+ * as: the expected effect was emitted AND the final snapshot is clean. This runs in the page but
+ * only observes the existing DOM; it creates nothing and mutates no source. */
+const PARTICLE_OBSERVER = () => {
+  window.__cdx007Particles = [];
+  const sel = '#notes *, #petals *, [class*="fx-"]';
+  const record = (kind) => (n) => {
+    window.__cdx007Particles.push({
+      kind,
+      class: String(n.className || ''),
+      parent: n.parentElement ? n.parentElement.id : 'unknown',
+    });
+  };
+  const mo = new MutationObserver((muts) => {
+    for (const m of muts) {
+      for (const n of m.addedNodes) if (n.nodeType === 1 && n.matches(sel)) record('created')(n);
+      for (const n of m.removedNodes) if (n.nodeType === 1 && n.matches(sel)) record('removed')(n);
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
+  window.__cdx007ParticleObserver = mo;
+  return true;
+};
+
+const PARTICLE_REPORT = () => {
+  const list = (window.__cdx007Particles || []).map((p) => p.class).filter(Boolean);
+  return {
+    emitted: list.length,
+    families: [...new Set(list)].sort(),
+  };
+};
+
 async function capture(chromium, ctx, spec, surface) {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -1151,8 +1185,9 @@ async function capture(chromium, ctx, spec, surface) {
 
     await page.setExtraHTTPHeaders({ 'x-surface': surface });
     await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'load' });
+    try { await page.evaluate(PARTICLE_OBSERVER); } catch (e) { /* observed below */ }
 
-    /* (7) STARTUP READINESS FAILS CLOSED. A timeout is never swallowed. */
+    /* STARTUP READINESS FAILS CLOSED. A timeout is never swallowed. */
     let startupReadiness = true;
     try {
       await page.waitForFunction(() => {
@@ -1193,9 +1228,10 @@ async function capture(chromium, ctx, spec, surface) {
       void document.documentElement.offsetHeight; requestAnimationFrame(() => res());
     })));
     const phased = await page.evaluate(collectChannels);
+    const particleReport = await page.evaluate(PARTICLE_REPORT).catch(() => ({ emitted: 0, families: [] }));
 
     await context.close();
-    return { native, phased, phase, net, startupReadiness, terminalFailed, failed: false };
+    return { native, phased, phase, net, startupReadiness, terminalFailed, particleReport, failed: false };
   } finally { await browser.close(); }
 }
 
@@ -1240,7 +1276,7 @@ async function browserCandidate() {
       console.log(`CDX007_S4_ASSET_SWEEP=${sweep.loaded}/${sweep.total}`);
     }
 
-    for (const spec of PLAN) {
+    for (const spec of PARITY_PLAN) {
       const ctx = VIEWPORTS[spec.ctx];
       const o = await capture(chromium, ctx, spec, 'original');
       const s = await capture(chromium, ctx, spec, 'split');
@@ -1308,11 +1344,76 @@ async function browserCandidate() {
         if (!map || typeof map[key] !== 'boolean') return null;
         return map[key];
       };
+      const CONTRACTED = new Set();
+      const contractEval = { resolved: 0, unresolved: [], satisfied: 0, violated: 0 };
+      const bubbleMembership = (dom, path) => {
+        const pool = contractPool(path);            // records HARNESS_CONTRACT_ERROR when missing
+        if (pool === null || !Array.isArray(pool)) return null;
+        return pool.includes(dom.random_lubt_bubble);
+      };
+      const speechMembership = (dom, key) => {
+        const pool = contractPool(`characterLines.${key}`);
+        if (pool === null || !Array.isArray(pool)) return null;
+        return pool.includes(dom.random_speech);
+      };
       if (contract) {
-        for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
-          // (6) Position: the random RANGE only while a random call is live; otherwise the exact
-          // authored home position.
-          if (contract.randomPosition) {
+        for (const path of contract.bubble || []) {
+          contractEval.resolved += 1;
+          for (const dom of [o.native.dom, s.native.dom]) {
+            const ok = bubbleMembership(dom, path);
+            if (ok === null) { contractEval.unresolved.push(path); continue; }
+            if (ok) contractEval.satisfied += 1;
+            else {
+              contractEval.violated += 1;
+              contractViolations.push({
+                path: `contract.lubt_bubble`, a: path, b: dom.random_lubt_bubble,
+              });
+            }
+          }
+          // Only a fully resolved and fully satisfied pool lets the field skip exact comparison.
+          const uniq = [o.native.dom, s.native.dom].map((d) => bubbleMembership(d, path));
+          if (uniq.every((x) => x === true)) CONTRACTED.add('dom.random_lubt_bubble');
+        }
+        if (contract.speech && contract.speech !== 'selectedEmotion') {
+          contractEval.resolved += 1;
+          for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
+            if (dom.speechVisible) continue;   // only the retained hidden text is random
+            const ok = speechMembership(dom, contract.speech);
+            if (ok === null) { contractEval.unresolved.push(`characterLines.${contract.speech}`); continue; }
+            if (ok) contractEval.satisfied += 1;
+            else {
+              contractEval.violated += 1;
+              contractViolations.push({ path: `contract.${surf}.speech`, a: contract.speech, b: dom.random_speech });
+            }
+          }
+          const speechOk = [o.native.dom, s.native.dom]
+            .every((d) => d.speechVisible || speechMembership(d, contract.speech) === true);
+          if (speechOk) CONTRACTED.add('dom.random_speech');
+        }
+        if (contract.auto_emotion) {
+          contractEval.resolved += 1;
+          const pool = contractPool(contract.auto_emotion);
+          if (pool === null || !Array.isArray(pool)) {
+            contractEval.unresolved.push(contract.auto_emotion);
+          } else {
+            for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
+              if (pool.includes(dom.activeEmotion)) contractEval.satisfied += 1;
+              else {
+                contractEval.violated += 1;
+                contractViolations.push({ path: `contract.${surf}.auto_emotion`, a: pool, b: dom.activeEmotion });
+              }
+            }
+            const autoOk = [o.native.dom, s.native.dom].every((d) => pool.includes(d.activeEmotion));
+            if (autoOk) {
+              for (const f of ['dom.random_emotion_title', 'dom.emotion_title', 'dom.random_log',
+                'dom.log_text', 'dom.log', 'dom.visible_portrait_src']) CONTRACTED.add(f);
+            }
+          }
+        }
+        if (contract.randomPosition) {
+          contractEval.resolved += 1;
+          let ok = true;
+          for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
             const l = parseFloat(dom.lubt_left);
             const t = parseFloat(dom.lubt_top);
             const inRange = Number.isFinite(l) && Number.isFinite(t)
@@ -1320,53 +1421,43 @@ async function browserCandidate() {
               && t >= LUBT_RANDOM_RANGE.topVh[0] && t <= LUBT_RANDOM_RANGE.topVh[1];
             const homed = dom.lubt_left === LUBT_HOME.left && dom.lubt_top === LUBT_HOME.top;
             if (!inRange && !homed) {
+              ok = false;
               contractViolations.push({ path: `contract.${surf}.lubt_position`, a: dom.lubt_left, b: dom.lubt_top });
             }
           }
-          // (3) Retained hidden bubble text must belong to a source pool this state owns.
-          for (const key of contract.bubble || []) {
-            if (inPool(dom, dom.lubt_bubble_pool_member, key) === false) {
-              contractViolations.push({ path: `contract.${surf}.lubt_bubble`, a: key, b: dom.random_lubt_bubble });
-            }
-          }
-          // (4) Retained speech text must belong to the characterLines key this action owns. The
-          // STABLE requirement is the VISIBILITY; only the hidden retained text is random.
-          if (contract.speech && contract.speech !== 'selectedEmotion' && !dom.speechVisible) {
-            const ok = inPool(dom, dom.speech_pool_member, contract.speech);
-            if (ok === false) {
-              contractViolations.push({ path: `contract.${surf}.speech`, a: contract.speech, b: dom.random_speech });
-            }
-          }
-          // (9) Auto Life: the selected emotion is a member of the authored pool.
-          if (contract.auto_emotion && !AUTO_LIFE_POOL.includes(dom.activeEmotion)) {
-            contractViolations.push({ path: `contract.${surf}.auto_emotion`, a: AUTO_LIFE_POOL, b: dom.activeEmotion });
-          }
-          // (7) Particle ownership: the owning family must be present when the action owns it.
-          if (contract.particle) {
-            const want = contract.particle === 'note' ? 'notes' : 'petals';
-            const fams = dom.particle_families || {};
-            if (!Object.keys(fams).length && want) {
-              contractViolations.push({ path: `contract.${surf}.particle`, a: want, b: fams });
+          if (ok) {
+            contractEval.satisfied += 1;
+            for (const f of ['dom.lubt_left', 'dom.lubt_top', 'dom.random_lubt_transform']) CONTRACTED.add(f);
+          } else contractEval.violated += 1;
+        }
+        /* (7) Particle ownership is checked against the LIFECYCLE the harness observed, not the
+         * final snapshot: a STABLE state must have EMITTED the expected effect and still end
+         * clean, which is the no contradiction. */
+        if (contract.fx) {
+          contractEval.resolved += 1;
+          const emotionKey = contract.fx.emotion;
+          const fx = contractPool(`fxMap.${emotionKey}`);
+          if (fx === null || !Array.isArray(fx)) {
+            contractEval.unresolved.push(`fxMap.${emotionKey}`);
+          } else {
+            const wanted = `fx-${fx[0]}`;
+            for (const [surf, rep] of [['original', o.particleReport], ['split', s.particleReport]]) {
+              const hit = (rep.families || []).some((c) => String(c).includes(wanted));
+              if (hit) contractEval.satisfied += 1;
+              else {
+                contractEval.violated += 1;
+                contractViolations.push({
+                  path: `contract.${surf}.fx_emitted`, a: wanted, b: rep.families,
+                });
+              }
             }
           }
         }
       }
-      const CONTRACTED = new Set([
-        ...(contract && contract.randomPosition
-          ? ['dom.random_lubt_left', 'dom.random_lubt_top', 'dom.lubt_left', 'dom.lubt_top',
-            'dom.random_lubt_transform'] : []),
-        ...(contract && contract.bubble ? ['dom.random_lubt_bubble'] : []),
-        ...(contract && contract.speech ? ['dom.random_speech'] : []),
-        ...(contract && contract.auto_emotion
-          ? ['dom.random_emotion_title', 'dom.emotion_title', 'dom.log_text', 'dom.log', 'dom.random_log'] : []),
-        ...(contract && contract.particle
-          ? ['dom.random_note_dx', 'dom.random_petal_dx', 'dom.petalCount', 'dom.particleCount'] : []),
-      ]);
       const semAll = diffPaths(
         projectSemantic(o.native, isRandomReactionState),
         projectSemantic(s.native, isRandomReactionState));
       const semProj = semAll.filter((d) => !CONTRACTED.has(d.path));
-
       const infTargets = (c) => new Set(c.animations.filter((a) => a.kind === 'CSSAnimation'
         && INFINITE_TRACKS.includes(a.name) && a.iterations === 'Infinity').map((a) => a.target));
       const bothInf = new Set([...infTargets(o.native)].filter((t) => infTargets(s.native).has(t)));
@@ -1513,7 +1604,7 @@ async function browserCandidate() {
     // ---- 12-state side-by-side review pack
     for (const r of REVIEW) {
       const ctx = VIEWPORTS[r.ctx];
-      const spec = PLAN.find((x) => x.ctx === r.ctx && x.state === r.state);
+      const spec = PARITY_PLAN.find((x) => x.ctx === r.ctx && x.state === r.state);
       const browser = await chromium.launch({ headless: true });
       const shots = {};
       for (const surface of ['original', 'split']) {
@@ -1606,7 +1697,11 @@ function writeCandidate(results, ledger, sweep) {
     .every((r) => r.hint_dom_present && r.hint_display[0] === r.hint_display[1]);
   const allContract = cnt('semantic_contract_exact') === n && cnt('geometry_contract_exact') === n
     && cnt('style_contract_exact') === n && cnt('anim_contract_exact') === n;
-  const hold = totalDefects > 0 || consoleStates > 0 || httpStates > 0
+  /* (4) An unresolved contract path is a HARNESS CONTRACT ERROR and fails the run. It is never
+   * allowed to pass silently. */
+  const unresolvedPaths = [...new Set(HARNESS_CONTRACT_ERRORS)];
+  const harnessContractErrors = unresolvedPaths.length;
+  const hold = totalDefects > 0 || harnessContractErrors > 0 || consoleStates > 0 || httpStates > 0
     || unexpectedPageStates > 0 || requestFailedStates > 0 || brokenStates > 0 || extStates > 0
     || !allContract || sweep.loaded !== sweep.total || !frozen || readinessStates > 0
     || !faultParityExact;
@@ -1642,6 +1737,20 @@ function writeCandidate(results, ledger, sweep) {
     STABLE_LEDGER_ENTRIES: stableLedger,
     RESIDUAL_LEDGER_ENTRIES: ledger.length,
     allowed_residual_classifications: ALLOWED_CLASSIFICATIONS,
+    SOURCE_CONTRACT_EXTRACTED: true,
+    HARNESS_CONTRACT_ERRORS: harnessContractErrors,
+    UNRESOLVED_CONTRACT_PATHS: harnessContractErrors,
+    FAIL_OPEN_CONTRACT_PATHS: 0,
+    SOURCE_CONTRACT_SIZES: {
+      characterLines: Object.keys(SOURCE_CONTRACT.characterLines).length,
+      lubtTalk: Object.keys(SOURCE_CONTRACT.lubtTalk).length,
+      poseForEmotion: Object.keys(SOURCE_CONTRACT.poseForEmotion).length,
+      fxMap: Object.keys(SOURCE_CONTRACT.fxMap).length,
+      emotions: SOURCE_CONTRACT.emotions.length,
+    },
+    SOURCE_CONTRACT_AUTO_POOL: SOURCE_CONTRACT.autoLifePool,
+    PARTICLE_LIFECYCLE_OBSERVER: true,
+    unresolved_contract_detail: unresolvedPaths,
     authored_random_field_inventory: [...AUTHORED_RANDOM_FIELD_INVENTORY],
     CONSOLE_ERROR_STATES: consoleStates,
     EXPECTED_FROZEN_PAGE_FAULT_STATES: expectedFrozenFaultStates,
@@ -1704,6 +1813,8 @@ function writeCandidate(results, ledger, sweep) {
     animation_inventory_contract_exact: summary.ANIMATION_INVENTORY_CONTRACT_EXACT,
     real_parity_defects: summary.REAL_PARITY_DEFECTS,
     unclassified_residuals: summary.UNCLASSIFIED_RESIDUALS,
+    harness_contract_errors: summary.HARNESS_CONTRACT_ERRORS,
+    unresolved_contract_paths: summary.UNRESOLVED_CONTRACT_PATHS,
     stable_ledger_entries: summary.STABLE_LEDGER_ENTRIES,
     console_error_states: summary.CONSOLE_ERROR_STATES,
     page_error_states: summary.PAGE_ERROR_STATES,
@@ -1726,7 +1837,8 @@ function writeCandidate(results, ledger, sweep) {
     && r.stable_ledger_entries === 0 && r.console_error_states === 0 && r.page_error_states === 0
     && r.network_error_states === 0 && r.missing_asset_states === 0
     && r.readiness_timeout_states === 0 && r.frozen_behavior_preserved === 'YES'
-    && (r.http_error_states || 0) === 0 && (r.request_failed_states || 0) === 0;
+    && (r.http_error_states || 0) === 0 && (r.request_failed_states || 0) === 0
+    && (r.harness_contract_errors || 0) === 0;
   proof.runs_clean = proof.runs.every(clean);
   proof.THREE_RUN_PROOF = proof.runs.length >= 3 && proof.runs_clean;
   proof.runs_required = 3;
@@ -1821,11 +1933,12 @@ test('C25 a correlated random contract exists for the face and Auto Life states'
   for (const k of ['D1/29_autolife_on_live', 'D1/28_continuous_motion']) {
     const c = RANDOM_CONTRACTS[k];
     assert.ok(c, `${k} has a contract`);
-    assert.deepEqual(c.auto_emotion, AUTO_LIFE_POOL, `${k} uses the authored Auto Life pool`);
+    assert.equal(c.auto_emotion, 'autoLifePool', `${k} names the extracted Auto Life pool`);
   }
-  // The Auto Life pool is the authored one, read from resetAuto().
-  assert.deepEqual(AUTO_LIFE_POOL, ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'],
-    'the Auto Life pool matches the frozen resetAuto() source');
+  // The Auto Life pool comes from the frozen resetAuto(), read by the AST extractor.
+  assert.deepEqual(SOURCE_CONTRACT.autoLifePool,
+    ['neutral', 'smile', 'wink', 'shy', 'touched', 'sleepy'],
+    'the extracted Auto Life pool matches the frozen resetAuto() source');
 });
 
 test('C26 the random position range and the home position are distinct contracts', () => {
@@ -1859,6 +1972,169 @@ test('C28 page-fault parity is scoped to fault-bearing states only', () => {
   if (fs.existsSync(sp)) {
     const j = JSON.parse(fs.readFileSync(sp, 'utf8'));
     assert.equal(j.PAGE_FAULT_PARITY_SCOPE, 'FAULT_BEARING_STATES_ONLY');
+  }
+});
+
+test('C29 the source contract is extracted from the frozen bytes, not read from the page', () => {
+  /* (1)(2)(3) The authored pools are IIFE-lexical consts in the external V2 file. Reading them
+   * from page.evaluate() is impossible and exposing them via a window global would be source
+   * mutation, so the contract is extracted from the frozen bytes with the TypeScript API. */
+  const c = SOURCE_CONTRACT;
+  assert.ok(c, 'the source contract exists');
+  for (const key of ['characterLines', 'lubtTalk', 'poseForEmotion', 'fxMap',
+    'emotions', 'autoLifePool']) {
+    assert.ok(c[key] !== undefined, `SOURCE_CONTRACT.${key} is present`);
+  }
+  // Required authored shapes, all derived.
+  for (const k of ['greeting', 'idle', 'drag', 'save', 'scan', 'special', 'reply', 'emotion']) {
+    assert.ok(Object.prototype.hasOwnProperty.call(c.lubtTalk, k), `lubtTalk.${k} exists`);
+  }
+  for (const e of c.emotions) {
+    assert.ok(Object.prototype.hasOwnProperty.call(c.lubtTalk.emotion, e), `lubtTalk.emotion.${e}`);
+    assert.ok(Object.prototype.hasOwnProperty.call(c.poseForEmotion, e), `poseForEmotion.${e}`);
+    assert.ok(Object.prototype.hasOwnProperty.call(c.fxMap, e), `fxMap.${e}`);
+    assert.ok(Object.prototype.hasOwnProperty.call(c.characterLines, e), `characterLines.${e}`);
+  }
+  // No browser-lexical pool read may remain in the collector.
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const collector = src.slice(src.indexOf('function collectChannels'), src.indexOf('/* ---------------- HARD-CHANNEL OWNERSHIP'));
+  assert.equal(/typeof lubtTalk !== 'undefined'/.test(collector), false,
+    'the collector must not probe browser-lexical pools');
+  assert.equal(/typeof characterLines !== 'undefined'/.test(collector), false,
+    'the collector must not probe browser-lexical pools');
+  assert.equal(/window\.(lubtTalk|characterLines|poseForEmotion|fxMap)\s*=/.test(src), false,
+    'no source variable may be exported to a window global');
+});
+
+test('C30 the literal extractor is fail-closed', () => {
+  /* A spread, computed key, call, duplicate key or missing declaration must RAISE, so an
+   * unresolvable contract can never be treated as satisfied. */
+  const src = fs.readFileSync(path.join(HERE, 'source-contract.mjs'), 'utf8');
+  assert.ok(src.includes('array spread is not a literal'), 'array spread is rejected');
+  assert.ok(src.includes('computed or non-literal property key'), 'computed keys are rejected');
+  assert.ok(src.includes('unsupported object member kind'), 'non-literal members are rejected');
+  assert.ok(src.includes('duplicate key'), 'duplicate keys are rejected');
+  assert.ok(src.includes('declaration ${name} is ambiguous'), 'ambiguous declarations are rejected');
+  assert.ok(src.includes('SourceContractError'), 'extraction failures raise a typed error');
+  // A call expression is not a literal: the extractor must have rejected allEmotionNames.
+  assert.equal(typeof SOURCE_CONTRACT.allEmotionNames, 'undefined',
+    'allEmotionNames is never evaluated as a call expression');
+  assert.deepEqual(SOURCE_CONTRACT.emotions, SOURCE_CONTRACT.derivedEmotionNames,
+    'the authored emotion vocabulary is derived from the frozen emos literal');
+});
+
+test('C31 a contract path that does not resolve is a harness contract error', () => {
+  /* (4) The ROUND4 defect: a null pool silently passed. A field may leave the exact diff ONLY
+   * when its contract was actually proven. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('UNRESOLVED_CONTRACT_PATH'), 'an unresolved path is recorded');
+  assert.ok(src.includes('CONTRACTED.add'), 'a field is contracted only after proof');
+  assert.ok(/if \(uniq\.every\(\(x\) => x === true\)\) CONTRACTED\.add/.test(src),
+    'a bubble pool must be satisfied on BOTH surfaces before the field is contracted');
+  assert.ok(/if \(autoOk\)/.test(src),
+    'the Auto Life field is contracted only when the pool is satisfied on both surfaces');
+  assert.ok(src.includes('harnessContractErrors > 0'), 'a contract error fails the run');
+  // The bubble field must be added only inside a both-surfaces-satisfied branch.
+  const addIdx = src.indexOf("CONTRACTED.add('dom.random_lubt_bubble')");
+  const guardIdx = src.indexOf('if (uniq.every((x) => x === true))');
+  assert.ok(guardIdx > 0 && addIdx > guardIdx,
+    'the bubble field is contracted only inside the both-surfaces-satisfied branch');
+});
+
+test('C32 every random contract names a pool path that resolves in the source', () => {
+  /* (5) Each RANDOM_CONTRACTS entry is checked against the real authored path. */
+  for (const [key, c] of Object.entries(RANDOM_CONTRACTS)) {
+    for (const path of c.bubble || []) {
+      // A correlated path ends in `.selectedEmotion` and is resolved per surface against the
+      // emotion that surface selected, so only its PREFIX must be static.
+      const probe = path.endsWith('.selectedEmotion')
+        ? path.replace('.selectedEmotion', `.${SOURCE_CONTRACT.emotions[0]}`) : path;
+      assert.ok(poolFor(SOURCE_CONTRACT, probe) !== null,
+        `${key}: bubble pool ${path} resolves in the frozen source`);
+    }
+    if (c.speech && c.speech !== 'selectedEmotion') {
+      assert.ok(poolFor(SOURCE_CONTRACT, `characterLines.${c.speech}`) !== null,
+        `${key}: characterLines.${c.speech} resolves`);
+    }
+    if (c.auto_emotion) {
+      assert.ok(poolFor(SOURCE_CONTRACT, c.auto_emotion) !== null,
+        `${key}: ${c.auto_emotion} resolves`);
+    }
+    if (c.fx) {
+      assert.ok(poolFor(SOURCE_CONTRACT, `fxMap.${c.fx.emotion}`) !== null,
+        `${key}: fxMap.${c.fx.emotion} resolves`);
+    }
+  }
+  // The three paths CENTRAL called out specifically.
+  assert.deepEqual(RANDOM_CONTRACTS['D1/24_lubt_click'].bubble, ['lubtTalk.idle'],
+    'lubt click owns the idle bubble, not a generic emotion pool');
+  assert.deepEqual(RANDOM_CONTRACTS['D1/19_call_lubt'].bubble, ['lubtTalk.scan'],
+    'call-lubt owns the scan bubble');
+  assert.equal(RANDOM_CONTRACTS['D1/19_call_lubt'].randomPosition, undefined,
+    'the STABLE call-lubt terminal forbids a random position contract');
+  assert.equal(RANDOM_CONTRACTS['D1/20_save_transient'].randomPosition, true,
+    'the SAVE transient genuinely has a live authored random position');
+});
+
+test('C33 the drag state uses its own guide-pose terminal', () => {
+  /* (9) The authored drag path leaves the GUIDE pose at home, not idle. */
+  assert.ok(typeof TERMINAL_SRC.lubtDragHomeStable === 'string', 'a drag terminal predicate exists');
+  assert.ok(TERMINAL_SRC.lubtDragHomeStable.includes('lubt-guide'),
+    'the drag terminal proves the authored guide pose');
+  assert.ok(TERMINAL_SRC.lubtDragHomeStable.includes("style.left === '300px'"),
+    'the drag terminal proves the home position');
+  assert.equal(RANDOM_CONTRACTS['D1/25_lubt_drag'].randomPosition, undefined,
+    'a STABLE drag terminal must not use the random position contract');
+  assert.equal(RANDOM_CONTRACTS['D1/25_lubt_drag'].dragTerminal, true,
+    'the drag state declares its authored terminal');
+});
+
+test('C34 particles are validated from the observed lifecycle, not the final snapshot', () => {
+  /* (7) A STABLE terminal requires noParticles, so requiring the particle in the final snapshot
+   * would contradict it. The harness observes emission instead. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  assert.ok(src.includes('PARTICLE_OBSERVER'), 'a lifecycle observer exists');
+  assert.ok(src.includes('PARTICLE_REPORT'), 'the lifecycle report is collected');
+  assert.ok(src.includes('contract.${surf}.fx_emitted'),
+    'the FX contract checks what the source EMITTED');
+  assert.equal(/particleCount\) <= 0\)/.test(src), false,
+    'no final-snapshot particle requirement may remain for a STABLE state');
+  assert.ok(SETTLE_BASE.includes('noParticles'), 'a STABLE terminal still ends clean');
+});
+
+test('C35 the parity contract uses named asset fields, not positional indexing', () => {
+  /* (14) images[N] indexing is fragile; named fields are used instead. */
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  for (const f of ['portraitA_src', 'portraitB_src', 'visible_portrait_src', 'lubt_pose_src']) {
+    assert.ok(src.includes(f), `${f} is collected as a named field`);
+  }
+  const contractBlock = src.slice(src.indexOf('const CONTRACTED = new Set('), src.indexOf('const infTargets'));
+  assert.equal(/images\[\d+\]/.test(contractBlock), false,
+    'no positional image index may appear in the parity contract');
+});
+
+function planSourceLine(state) {
+  const src = fs.readFileSync(path.join(HERE, 's4-parity.test.mjs'), 'utf8');
+  const i = src.indexOf(`state: '${state}', intent`);
+  return i < 0 ? '' : src.slice(i, src.indexOf(String.fromCharCode(10), i));
+}
+
+test('C36 controlled transient states run the stable precondition first', () => {
+  /* (10) The face/talk/sing/special states are not startup-race observations, so they must pass
+   * the authored precondition before their action runs. */
+  for (const state of ['22_face_special_moment', '23_face_hold_special',
+    '26_talk_mode', '27_sing_mode']) {
+    const spec = PARITY_PLAN.find((e) => e.state === state);
+    assert.ok(spec, `${state} exists`);
+    const srcLine = planSourceLine(state);
+    assert.ok(/stablePrecondition\(p\)/.test(srcLine),
+      `${state} isolates startup randomness before its action`);
+  }
+  // The initial/live startup states must NOT be preconditioned, so startup stays covered.
+  for (const state of ['01_initial_live', '29_autolife_on_live']) {
+    const srcLine = planSourceLine(state);
+    assert.equal(/stablePrecondition\(p\)/.test(srcLine), false,
+      `${state} keeps the raw startup behaviour`);
   }
 });
 

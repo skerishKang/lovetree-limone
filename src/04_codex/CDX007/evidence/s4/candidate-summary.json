@@ -24,23 +24,46 @@
     "face_followup_ms": 180
   },
   "PAIRED_STATE_COUNT": 39,
-  "SEMANTIC_RAW_EXACT": "10/39",
-  "SEMANTIC_CONTRACT_EXACT": "16/39",
-  "GEOMETRY_RAW_EXACT": "38/39",
-  "GEOMETRY_CONTRACT_EXACT": "38/39",
-  "COMPUTED_STYLE_RAW_EXACT": "38/39",
+  "SEMANTIC_RAW_EXACT": "12/39",
+  "SEMANTIC_CONTRACT_EXACT": "17/39",
+  "GEOMETRY_RAW_EXACT": "37/39",
+  "GEOMETRY_CONTRACT_EXACT": "37/39",
+  "COMPUTED_STYLE_RAW_EXACT": "37/39",
   "COMPUTED_STYLE_CONTRACT_EXACT": "38/39",
-  "ANIMATION_INVENTORY_RAW_EXACT": "36/39",
-  "ANIMATION_INVENTORY_CONTRACT_EXACT": "36/39",
-  "REAL_PARITY_DEFECTS": 62,
-  "UNCLASSIFIED_RESIDUALS": 62,
+  "ANIMATION_INVENTORY_RAW_EXACT": "37/39",
+  "ANIMATION_INVENTORY_CONTRACT_EXACT": "37/39",
+  "REAL_PARITY_DEFECTS": 77,
+  "UNCLASSIFIED_RESIDUALS": 77,
   "STABLE_LEDGER_ENTRIES": 0,
-  "RESIDUAL_LEDGER_ENTRIES": 0,
+  "RESIDUAL_LEDGER_ENTRIES": 3,
   "allowed_residual_classifications": [
     "AUTHORED_RANDOM_SCALAR",
     "AUTHORED_LIVE_PHASE",
     "AUTHORED_FINITE_TRANSIENT_PHASE",
     "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+  ],
+  "SOURCE_CONTRACT_EXTRACTED": true,
+  "HARNESS_CONTRACT_ERRORS": 1,
+  "UNRESOLVED_CONTRACT_PATHS": 1,
+  "FAIL_OPEN_CONTRACT_PATHS": 0,
+  "SOURCE_CONTRACT_SIZES": {
+    "characterLines": 12,
+    "lubtTalk": 8,
+    "poseForEmotion": 12,
+    "fxMap": 12,
+    "emotions": 12
+  },
+  "SOURCE_CONTRACT_AUTO_POOL": [
+    "neutral",
+    "smile",
+    "wink",
+    "shy",
+    "touched",
+    "sleepy"
+  ],
+  "PARTICLE_LIFECYCLE_OBSERVER": true,
+  "unresolved_contract_detail": [
+    "UNRESOLVED_CONTRACT_PATH:lubtTalk.emotion.selectedEmotion"
   ],
   "authored_random_field_inventory": [
     "dom.random_speech",
@@ -124,35 +147,34 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
+        },
+        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "23.3993vw",
-          "b": "26.2777vw"
+          "a": "27.5839vw",
+          "b": "19.1996vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "16.9341vh",
-          "b": "48.8395vh"
+          "a": "22.191vh",
+          "b": "23.5431vh"
         },
         {
           "path": "semantic.dom.lubt_left",
-          "a": "23.3993vw",
-          "b": "26.2777vw"
+          "a": "27.5839vw",
+          "b": "19.1996vw"
         },
         {
           "path": "semantic.dom.lubt_top",
-          "a": "16.9341vh",
-          "b": "48.8395vh"
-        }
-      ]
-    },
-    {
-      "state": "D1/05_emotion_smile",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "안녕! 나는 러브트리요정 럽트야."
+          "a": "22.191vh",
+          "b": "23.5431vh"
         }
       ]
     },
@@ -163,7 +185,7 @@
         {
           "path": "semantic.dom.random_lubt_bubble",
           "a": "네가 고른 순간을 따라왔어.",
-          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+          "b": "럽트가 옆에서 도와줄게."
         }
       ]
     },
@@ -173,30 +195,19 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
+          "a": "럽트가 옆에서 도와줄게.",
           "b": "반가워. 오늘의 기억을 시작해 볼까?"
         }
       ]
     },
     {
-      "state": "D1/09_emotion_wink",
+      "state": "D1/08_emotion_sleepy",
       "intent": "STABLE",
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "네가 고른 순간을 따라왔어."
-        }
-      ]
-    },
-    {
-      "state": "D1/10_emotion_angry",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "오늘은 어떤 마음을 만나러 왔어?"
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "안녕! 나는 러브트리요정 럽트야."
         }
       ]
     },
@@ -207,7 +218,7 @@
         {
           "path": "semantic.dom.random_lubt_bubble",
           "a": "럽트가 옆에서 도와줄게.",
-          "b": "네가 고른 순간을 따라왔어."
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
         }
       ]
     },
@@ -223,56 +234,13 @@
       ]
     },
     {
-      "state": "D1/15_emotion_surprise",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.dom.random_lubt_bubble",
-          "a": "안녕! 나는 러브트리요정 럽트야.",
-          "b": "오늘은 어떤 마음을 만나러 왔어?"
-        }
-      ]
-    },
-    {
-      "state": "D1/16_heart_action",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "contract.original.particle",
-          "a": "petals",
-          "b": {}
-        },
-        {
-          "path": "contract.split.particle",
-          "a": "petals",
-          "b": {}
-        }
-      ]
-    },
-    {
-      "state": "D1/17_surprise_action",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "contract.original.particle",
-          "a": "petals",
-          "b": {}
-        },
-        {
-          "path": "contract.split.particle",
-          "a": "petals",
-          "b": {}
-        }
-      ]
-    },
-    {
       "state": "D1/18_say_phrase",
       "intent": "STABLE",
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "나를 잡아서 원하는 곳으로 옮겨 봐!",
-          "b": "럽트도 그 말이 마음에 들어."
+          "a": "가만히 있어도 마음은 계속 움직여.",
+          "b": "모든 표정에는 다음 이야기가 숨어 있어."
         }
       ]
     },
@@ -281,66 +249,14 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
-          "path": "contract.original.particle",
-          "a": "petals",
-          "b": {}
-        },
-        {
-          "path": "contract.split.particle",
-          "a": "petals",
-          "b": {}
-        },
-        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "36.1211vw",
-          "b": "38.1775vw"
+          "a": "43.998vw",
+          "b": "35.6391vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "37.2928vh",
-          "b": "17.6474vh"
-        },
-        {
-          "path": "semantic.dom.lubt_left",
-          "a": "36.1211vw",
-          "b": "38.1775vw"
-        },
-        {
-          "path": "semantic.dom.lubt_top",
-          "a": "37.2928vh",
-          "b": "17.6474vh"
-        }
-      ]
-    },
-    {
-      "state": "D1/20b_save_fault_terminal",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "contract.original.particle",
-          "a": "petals",
-          "b": {}
-        },
-        {
-          "path": "contract.split.particle",
-          "a": "petals",
-          "b": {}
-        }
-      ]
-    },
-    {
-      "state": "D1/25_lubt_drag",
-      "intent": "STABLE",
-      "defects": [
-        {
-          "path": "semantic.images[6].src",
-          "a": "assets/lubt/lubt-guide.png",
-          "b": "assets/lubt/lubt-idle.png"
-        },
-        {
-          "path": "TERMINAL_PREDICATE_TIMEOUT",
-          "a": "TERMINAL_PREDICATE_TIMEOUT:noParticles+lubtIdle+speechHidden+noHoverSmile+lubtHomeStable+noFiniteActive",
-          "b": null
+          "a": "48.8473vh",
+          "b": "45.114vh"
         }
       ]
     },
@@ -359,19 +275,28 @@
           "b": ""
         },
         {
+          "path": "semantic.dom.portraitB_src",
+          "a": "assets/characters/M01/M01-touched.webp",
+          "b": "assets/characters/M01/M01-angry.webp"
+        },
+        {
+          "path": "semantic.dom.particle_families.petals",
+          "a": 20
+        },
+        {
           "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-smile.webp",
-          "b": "assets/characters/M01/M01-sleepy.webp"
+          "a": "assets/characters/M01/M01-touched.webp",
+          "b": "assets/characters/M01/M01-angry.webp"
         },
         {
           "path": "geometry.lubtSize.w",
-          "a": 150,
-          "b": 155
+          "a": 155,
+          "b": 150
         },
         {
           "path": "geometry.lubtSize.h",
-          "a": 150,
-          "b": 155
+          "a": 155,
+          "b": 150
         },
         {
           "path": "animations.MISSING_ON_SPLIT.fx fx-heart|fxBurst|CSSAnimation|finite",
@@ -379,9 +304,14 @@
           "b": null
         },
         {
-          "path": "animations.EXTRA_ON_SPLIT.fx fx-sleep|fxBurst|CSSAnimation|finite",
+          "path": "animations.MISSING_ON_SPLIT.petal|petal|CSSAnimation|finite",
+          "a": "petal|petal|CSSAnimation|finite",
+          "b": null
+        },
+        {
+          "path": "animations.EXTRA_ON_SPLIT.fx fx-fire|fxBurst|CSSAnimation|finite",
           "a": null,
-          "b": "fx fx-sleep|fxBurst|CSSAnimation|finite"
+          "b": "fx fx-fire|fxBurst|CSSAnimation|finite"
         }
       ]
     },
@@ -390,19 +320,44 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
+          "path": "semantic.dom.random_lubt_left",
+          "a": "42.9392vw",
+          "b": "26.3164vw"
+        },
+        {
+          "path": "semantic.dom.random_lubt_top",
+          "a": "45.0795vh",
+          "b": "14.7205vh"
+        },
+        {
           "path": "semantic.dom.random_petal_dx",
-          "a": "-12.30659864206163px|-241.06204618522258px|14.981388364152679px|84.20092313604431px|-184.21377432937936px|-119.70985491639331px|-154.14690828970186px|-222.5963170365632px|72.06193909493794px|94.65657996230061px|118.08319784600485px|118.20681900648583px|52.355026170727456px|-181.67679341875635px|-21.197250190663084px|-73.47414926060299px|-120.2079786816665px|-227.05744118378973px|87.21175051237151px|26.908137941238806px",
-          "b": "36.782951839342104px|-142.36314280433908px|34.80962373774037px|-6.0941228680206905px|-4.084302810722704px|-241.2580848577987px|-148.0839743228372px|151.70214506541868px|62.39596620641146px|183.82665654708444px|99.11089312121095px|5.520269872944027px|215.38607271118184px|-243.48407565350695px|230.43402064642925px|233.08043409944622px|183.8884693802775px|-74.67349293464846px|-189.52803372045202px|165.78076951020722px"
+          "a": "-198.19506011945137px|211.12425424279525px|203.70810149459675px|79.3311343424088px|-143.18983438540556px|-28.802062683251904px|-215.49843555226px|-139.9817406538935px|234.940174722336px|53.35625223607093px|-149.26493316795214px|-220.2080947089074px|-32.32445128315075px|155.46339150160236px|89.53592012163148px|-176.14389931036663px|-130.73971005317742px|-234.52025960722534px|-218.2945754149893px|59.64822119794303px",
+          "b": "54.78562076760721px|15.733405644319248px|109.74388183858673px|38.45626546867362px|154.35977962833869px|157.9972970771932px|-83.32640908837186px|-76.49151442248936px|-7.155587560004449px|-35.169037644937504px|-67.82151158316131px|77.47028360595112px|189.23934716853597px|189.39402190662418px|-211.4507314597884px|186.28167384299314px|223.09812098451755px|-141.25953062204977px|-206.38993648329046px|-174.874715371246px"
+        },
+        {
+          "path": "geometry.lubtSize.w",
+          "a": 156,
+          "b": 150
+        },
+        {
+          "path": "geometry.lubtSize.h",
+          "a": 156,
+          "b": 150
         },
         {
           "path": "computedStyle.lubt.transform",
-          "a": "matrix(1, 0, 0, 1, 0, 0)",
+          "a": "matrix(1.03746, 0, 0, 1.03746, 0, 0)",
           "b": "none"
         },
         {
-          "path": "animations.EXTRA_ON_SPLIT.speech|unknown|CSSTransition|finite",
-          "a": null,
-          "b": "speech|unknown|CSSTransition|finite"
+          "path": "animations.lubt|unknown|CSSTransition|finite.count",
+          "a": 3,
+          "b": 2
+        },
+        {
+          "path": "animations.portraitWrap|unknown|CSSTransition|finite.count",
+          "a": 2,
+          "b": 1
         }
       ]
     },
@@ -411,9 +366,40 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
+          "path": "semantic.dom.random_lubt_left",
+          "a": "30.1527vw",
+          "b": "45.0411vw"
+        },
+        {
+          "path": "semantic.dom.random_lubt_top",
+          "a": "34.6323vh",
+          "b": "29.3411vh"
+        },
+        {
           "path": "semantic.dom.random_petal_dx",
-          "a": "216.7677265452973px|-196.63363458908594px|71.6858579517181px|192.75832056134925px|135.89734572991307px|-7.963088499084336px|-129.67401215212854px|-75.65126521791171px|-219.95027644598719px|-83.15533178691098px|152.07470083015176px|-212.07887594380685px|134.80799111528654px|29.646254386132057px|233.93789194724013px|174.13914447572034px|-155.7728565057189px|13.82990603863027px|-182.8158548204661px|76.20730483626289px",
-          "b": "-228.4180823827553px|-40.51654424216622px|47.74810125951376px|-43.43565312652265px|-108.77703168746905px|-26.1650410371484px|-77.59630421616103px|-220.89161270042678px|-202.22337268085826px|240.4069715387435px|183.5973025299224px|-167.73604803103643px|80.58052195811064px|184.4478981375512px|3.503795993085248px|66.98051120992562px|180.81840265578904px|-169.42625863183696px|31.716337887499492px|127.87647975532434px"
+          "a": "91.35586655916075px|59.06163353346301px|74.9237037179534px|-186.50503133628825px|-226.93283095262845px|207.3174015135328px|241.65497422260057px|-115.94511859372182px|176.73667935505972px|58.043771727425565px|-113.47938337101598px|-243.0880460957502px|-141.08141422203957px|-224.59347986985796px|14.627864185760131px|-79.7188711772055px|-206.29151031680914px|-204.50275947770552px|104.1435103038321px|45.455269806689216px",
+          "b": "12.353816757010634px|-130.22079015975373px|59.020944036440596px|94.0360087692959px|13.249484492980002px|133.95315848409405px|1.340924242177124px|-95.83591438595678px|105.34062597093691px|7.083721617163917px|66.63004918561762px|-51.48640253950788px|-102.01549687386708px|249.54387031382663px|-231.0376617230825px|-160.01799106004216px|-147.08891196164177px|-99.62315992461129px|-212.37274221992607px|-249.80837073259372px"
+        }
+      ]
+    },
+    {
+      "state": "D1/26_talk_mode",
+      "intent": "EXPLICIT_TRANSIENT",
+      "defects": [
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.emotion.talk",
+          "b": "럽트가 옆에서 도와줄게."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.emotion.talk",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
+        },
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
         }
       ]
     },
@@ -422,34 +408,40 @@
       "intent": "EXPLICIT_TRANSIENT",
       "defects": [
         {
+          "path": "contract.original.speech",
+          "a": "sing",
+          "b": "오늘 어떤 순간을 기억하고 싶어요?"
+        },
+        {
+          "path": "contract.split.speech",
+          "a": "sing",
+          "b": "오늘 어떤 순간을 기억하고 싶어요?"
+        },
+        {
+          "path": "contract.original.fx_emitted",
+          "a": "fx-note",
+          "b": [
+            "note",
+            "petal"
+          ]
+        },
+        {
+          "path": "contract.split.fx_emitted",
+          "a": "fx-note",
+          "b": [
+            "note",
+            "petal"
+          ]
+        },
+        {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "네가 고른 순간을 따라왔어.",
-          "b": "오늘은 어떤 마음을 만나러 왔어?"
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "네가 고른 순간을 따라왔어."
         },
         {
-          "path": "semantic.dom.random_lubt_left",
-          "a": "19.3631vw",
-          "b": "35.9374vw"
-        },
-        {
-          "path": "semantic.dom.random_lubt_top",
-          "a": "37.4479vh",
-          "b": "47.1171vh"
-        },
-        {
-          "path": "semantic.dom.lubt_left",
-          "a": "19.3631vw",
-          "b": "35.9374vw"
-        },
-        {
-          "path": "semantic.dom.lubt_top",
-          "a": "37.4479vh",
-          "b": "47.1171vh"
-        },
-        {
-          "path": "animations.EXTRA_ON_SPLIT.lubtBubble|unknown|CSSTransition|finite",
-          "a": null,
-          "b": "lubtBubble|unknown|CSSTransition|finite"
+          "path": "semantic.dom.random_note_dx",
+          "a": "-54.150395349410495px|16.789678702863px|48.046367890111625px|-30.96653363713743px|54.66344577021806px|-2.705206993529842px|59.383742765615665px|-8.303319474712538px",
+          "b": "66.97000134424229px|54.42995805612827px|-9.826357876915907px|60.61922070187319px|-58.16431710625054px|-61.42646897241936px|-25.589317225051808px|42.08473518522591px"
         }
       ]
     },
@@ -458,24 +450,34 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "럽트가 옆에서 도와줄게."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "안녕! 나는 러브트리요정 럽트야."
+        },
+        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "37.8382vw",
-          "b": "23.4653vw"
+          "a": "19.56vw",
+          "b": "20.8675vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "32.2239vh",
-          "b": "44.5703vh"
+          "a": "23.2185vh",
+          "b": "27.1187vh"
         },
         {
           "path": "semantic.dom.lubt_left",
-          "a": "37.8382vw",
-          "b": "23.4653vw"
+          "a": "19.56vw",
+          "b": "20.8675vw"
         },
         {
           "path": "semantic.dom.lubt_top",
-          "a": "32.2239vh",
-          "b": "44.5703vh"
+          "a": "23.2185vh",
+          "b": "27.1187vh"
         }
       ]
     },
@@ -484,18 +486,33 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "네가 고른 순간을 따라왔어."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "네가 고른 순간을 따라왔어."
+        },
+        {
           "path": "semantic.dom.activeEmotion",
-          "a": "wink",
+          "a": "neutral",
           "b": "shy"
         },
         {
+          "path": "semantic.dom.portraitB_src",
+          "a": "assets/characters/M01/M01-neutral.webp",
+          "b": "assets/characters/M01/M01-shy.webp"
+        },
+        {
           "path": "semantic.dom.emotion_line",
-          "a": "“Just between us.”",
+          "a": "“I’m listening.”",
           "b": "“Don’t look too closely.”"
         },
         {
           "path": "semantic.images[5].src",
-          "a": "assets/characters/M01/M01-wink.webp",
+          "a": "assets/characters/M01/M01-neutral.webp",
           "b": "assets/characters/M01/M01-shy.webp"
         }
       ]
@@ -505,24 +522,34 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "럽트가 옆에서 도와줄게."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "안녕! 나는 러브트리요정 럽트야."
+        },
+        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "34.11vw",
-          "b": "32.8522vw"
+          "a": "44.7456vw",
+          "b": "23.4048vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "17.9202vh",
-          "b": "38.8768vh"
+          "a": "33.6198vh",
+          "b": "17.4384vh"
         },
         {
           "path": "semantic.dom.lubt_left",
-          "a": "34.11vw",
-          "b": "32.8522vw"
+          "a": "44.7456vw",
+          "b": "23.4048vw"
         },
         {
           "path": "semantic.dom.lubt_top",
-          "a": "17.9202vh",
-          "b": "38.8768vh"
+          "a": "33.6198vh",
+          "b": "17.4384vh"
         }
       ]
     },
@@ -532,8 +559,39 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
+          "a": "안녕! 나는 러브트리요정 럽트야.",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+        }
+      ]
+    },
+    {
+      "state": "T1/04_tablet_interaction",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.emotion.touched",
+          "b": "럽트가 옆에서 도와줄게."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.emotion.touched",
+          "b": "네가 고른 순간을 따라왔어."
+        },
+        {
+          "path": "contract.original.speech",
+          "a": "touched",
+          "b": "오늘 어떤 순간을 기억하고 싶어요?"
+        },
+        {
+          "path": "contract.split.speech",
+          "a": "touched",
+          "b": "오늘 어떤 순간을 기억하고 싶어요?"
+        },
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "네가 고른 순간을 따라왔어."
         }
       ]
     },
@@ -542,24 +600,34 @@
       "intent": "AUTHORED_LIVE",
       "defects": [
         {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "네가 고른 순간을 따라왔어."
+        },
+        {
+          "path": "contract.lubt_bubble",
+          "a": "lubtTalk.idle",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+        },
+        {
           "path": "semantic.dom.random_lubt_left",
-          "a": "18.8846vw",
-          "b": "45.7201vw"
+          "a": "25.7471vw",
+          "b": "20.6428vw"
         },
         {
           "path": "semantic.dom.random_lubt_top",
-          "a": "25.3652vh",
-          "b": "18.5301vh"
+          "a": "45.8531vh",
+          "b": "30.0944vh"
         },
         {
           "path": "semantic.dom.lubt_left",
-          "a": "18.8846vw",
-          "b": "45.7201vw"
+          "a": "25.7471vw",
+          "b": "20.6428vw"
         },
         {
           "path": "semantic.dom.lubt_top",
-          "a": "25.3652vh",
-          "b": "18.5301vh"
+          "a": "45.8531vh",
+          "b": "30.0944vh"
         }
       ]
     },
@@ -569,8 +637,8 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "오늘은 어떤 마음을 만나러 왔어?",
-          "b": "안녕! 나는 러브트리요정 럽트야."
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "오늘은 어떤 마음을 만나러 왔어?"
         }
       ]
     },
@@ -580,8 +648,19 @@
       "defects": [
         {
           "path": "semantic.dom.random_lubt_bubble",
-          "a": "반가워. 오늘의 기억을 시작해 볼까?",
-          "b": "네가 고른 순간을 따라왔어."
+          "a": "네가 고른 순간을 따라왔어.",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
+        }
+      ]
+    },
+    {
+      "state": "M1/05_mobile_lubt",
+      "intent": "STABLE",
+      "defects": [
+        {
+          "path": "semantic.dom.random_lubt_bubble",
+          "a": "럽트가 옆에서 도와줄게.",
+          "b": "반가워. 오늘의 기억을 시작해 볼까?"
         }
       ]
     }

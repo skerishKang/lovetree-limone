@@ -11,5 +11,87 @@
   ],
   "note": "Every residual authorized by a bounded class with concrete field/target proof. A STABLE state contributes ZERO ledger rows by contract. A residual absent here is a real parity defect.",
   "stable_ledger_entries": 0,
-  "entries": []
+  "entries": [
+    {
+      "state": "D1/21_face_click_random",
+      "state_intent": "AUTHORED_RANDOM",
+      "channel": "semantic",
+      "field_path": "dom.particleCount",
+      "original_a": 42,
+      "original_b": null,
+      "split": 16,
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "contract_disposition": "LEDGER"
+    },
+    {
+      "state": "D1/22_face_special_moment",
+      "state_intent": "EXPLICIT_TRANSIENT",
+      "channel": "computedStyle",
+      "field_path": "portraitWrap.transform",
+      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 9.67178e-05, 0, 0, -9.67178e-05, 1, 0, 0, -0.0199495, 0, 1)",
+      "original_b": null,
+      "split": "matrix3d(1, 0, 0, 0, 0, 1, 0.000218207, 0, 0, -0.000218207, 1, 0, 0, -0.0450085, 0, 1)",
+      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "contract_disposition": "LEDGER",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ]
+      }
+    },
+    {
+      "state": "D1/23_face_hold_special",
+      "state_intent": "EXPLICIT_TRANSIENT",
+      "channel": "computedStyle",
+      "field_path": "portraitWrap.transform",
+      "original_a": "matrix3d(1, 0, 0, 0, 0, 1, 0.000218204, 0, 0, -0.000218204, 1, 0, 0, -0.0450078, 0, 1)",
+      "original_b": null,
+      "split": "matrix3d(1, 0, 0, 0, 0, 1, 0.000219214, 0, 0, -0.000219214, 1, 0, 0, -0.045216, 0, 1)",
+      "classification": "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF",
+      "contract_disposition": "LEDGER",
+      "native_animation_proof": {
+        "original": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ],
+        "split": [
+          {
+            "target": "portraitWrap",
+            "kind": "CSSAnimation",
+            "name": "breath",
+            "iterations": "Infinity",
+            "finite": false,
+            "authored_track": true,
+            "playState": "running"
+          }
+        ]
+      }
+    }
+  ]
 }
