@@ -66,21 +66,23 @@
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "s3_status": "ACCEPTED",
   "central_s3_accepted": true,
-  "s4_status": "RELEASED_CANDIDATE_ONLY",
-  "parity_ref": null,
+  "s4_status": "ACCEPTED",
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "product_adoption": false,
   "product_canonical": false,
   "drive_mutation": 0,
   "s1_report": "d9b9b52e58de364a440bd42ea1f7135af598a2c3",
   "s2_report": "af5d04b8c38ea2b932b42fa08e9674c9c65df834",
   "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
-  "central_s4_accepted": false,
+  "central_s4_accepted": true,
   "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
   "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260",
-  "s4_measurement_note": "Mechanical round-trip is exact: reversing only the new mechanical glue reconstructs the 22310-byte authority, and both authored external layers match the Drive source byte for byte. That proves byte reconstruction only. It does NOT prove browser execution timing of inline code versus externalized code is identical, so it cannot waive a parity residual. Corrected-harness RUN1 measured 35 residuals across 37 paired states and did NOT reach the clean gate, so no three-run proof was attempted. Separately, a five-fold self-comparison of ORIGINAL on one STABLE state returned five DIFFERENT emotions (touched/neutral/touched/shy/touched), which shows the frozen SOURCE is nondeterministic on that channel. That observation is diagnostic evidence about the source, not a parity waiver, and the residuals stand as measured. Origin of the residuals: UNRESOLVED pending CENTRAL direction.",
-  "lineage57_adoption": false
+  "s4_measurement_note": "CENTRAL accepted S4 parity at candidate head 12d0bf9cda024c9fddbd55460bb0fdba5a94598d after exact-head three-run proof (3/3 clean; 39/39 semantic, geometry, computed-style and animation-inventory contract exactness; 0 real parity defects; 0 unclassified residuals; 54/54 runtime asset sweep), exact-head CI with no failures, and direct qualitative review of all 12 commit-pinned ORIGINAL|SPLIT review-pack panels. Raw semantic exactness varies across runs because the frozen source contains authored Math.random()-driven behavior; acceptance uses the fail-closed SOURCE_SPECIFIC_MOTION_RANDOMNESS_AWARE relational contract and does not seed/patch RNG or clocks. Product adoption, Product canonical status, Lineage57 adoption and Drive mutation remain false/zero.",
+  "lineage57_adoption": false,
+  "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5978980904",
+  "s4_candidate_head": "12d0bf9cda024c9fddbd55460bb0fdba5a94598d"
 }

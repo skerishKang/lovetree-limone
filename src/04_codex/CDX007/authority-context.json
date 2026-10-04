@@ -115,14 +115,16 @@
   "stage_gate": {
     "s3_release": "ACCEPTED",
     "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
-    "s4_release": "RELEASED_CANDIDATE_ONLY",
+    "s4_release": "ACCEPTED",
     "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260",
     "parity_capture_authorized": true,
-    "source_split_parity_pass": false,
-    "parity_status": "CANDIDATE_PENDING_CENTRAL",
-    "parity_ref": null,
-    "s4_accepted": "NO",
-    "note": "S4 released for CANDIDATE capture only. A candidate parity artifact may exist under evidence/s4. No accepted-parity.json exists, source_split_parity_pass is false and parity_ref is null, so nothing is promoted: acceptance remains CENTRAL's decision."
+    "source_split_parity_pass": true,
+    "parity_status": "ACCEPTED",
+    "parity_ref": "evidence/parity/accepted-parity.json",
+    "s4_accepted": "YES",
+    "note": "S4 parity is ACCEPTED by CENTRAL at candidate head 12d0bf9cda024c9fddbd55460bb0fdba5a94598d after a clean 3-run proof and direct 12-panel visual review. Accepted lifecycle metadata is recorded at evidence/parity/accepted-parity.json. This acceptance is source/split parity only and does not imply Product adoption, Product canonical status, Lineage57 adoption or Drive mutation.",
+    "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5978980904",
+    "accepted_candidate_head": "12d0bf9cda024c9fddbd55460bb0fdba5a94598d"
   },
   "authority_refs": {
     "s0_s1": "skerishKang/lovetree-limone#589 comment 5922885731",

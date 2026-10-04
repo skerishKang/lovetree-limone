@@ -1,0 +1,219 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX007",
+  "source_id": "CDX007",
+  "master_id": "MST106",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "ACCEPTED",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_RANDOMNESS_AWARE",
+  "identity": {
+    "codex_id": "CDX007",
+    "source_id": "CDX007",
+    "master_id": "MST106",
+    "namespace": "CDX",
+    "semantic_identity": "Codex-07 Living Character World V2",
+    "parity_contract": "SOURCE_SPECIFIC_MOTION_RANDOMNESS_AWARE"
+  },
+  "frozen_authority": {
+    "drive_file_id": "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
+    "filename": "index.html",
+    "bytes": 22310,
+    "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+    "git_blob_sha1": "af1d19d92ba85abb22171be82c9b55a0eb182997",
+    "authority_mode": "SINGLE"
+  },
+  "protected_runtime": {
+    "round_trip_byte_identity": true,
+    "round_trip_bytes": 22310,
+    "blobs": {
+      "original/original.html": {
+        "git_blob_sha1": "af1d19d92ba85abb22171be82c9b55a0eb182997",
+        "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+        "bytes": 22310
+      },
+      "original/living-world-v2.css": {
+        "git_blob_sha1": "de2e654d0eab08949abc7047592b65ba170e5fa1",
+        "sha256": "b8c3a829ebeef1432ef01edf633bb6b2da184bf0147eed0047489cfe9b0f2214",
+        "bytes": 2736
+      },
+      "original/living-world-v2.js": {
+        "git_blob_sha1": "0b25ff162b5d5bf23ded3747c2855d9ef2cd0612",
+        "sha256": "6c0d33c96fc507d2732bb92d4d0b0a65e66014fb5ede159d5862e359b51e1838",
+        "bytes": 14449
+      },
+      "split/index.html": {
+        "git_blob_sha1": "27906be68b1d68744ce0475fddfc6297e873f30d",
+        "sha256": "f5abd39e602c49e989939faac604e79d8cd719c078f667e370eb6cc09307b201",
+        "bytes": 3548
+      },
+      "split/styles.css": {
+        "git_blob_sha1": "dd8fd054da12b0ea8f79f7a504a54282e7b6f34b",
+        "sha256": "a19e03cdd640427ee25503be073a4ffe909235c1d6098fba3a50bb59b4eb772b",
+        "bytes": 10605
+      },
+      "split/script.js": {
+        "git_blob_sha1": "e29a41069573388bf261bc5171aac8dde325efd9",
+        "sha256": "e3623e8e6313835369e419a1fee69d10f300bfc91bbc484811abd8fda9aac223",
+        "bytes": 8204
+      },
+      "split/living-world-v2.css": {
+        "git_blob_sha1": "de2e654d0eab08949abc7047592b65ba170e5fa1",
+        "sha256": "b8c3a829ebeef1432ef01edf633bb6b2da184bf0147eed0047489cfe9b0f2214",
+        "bytes": 2736
+      },
+      "split/living-world-v2.js": {
+        "git_blob_sha1": "0b25ff162b5d5bf23ded3747c2855d9ef2cd0612",
+        "sha256": "6c0d33c96fc507d2732bb92d4d0b0a65e66014fb5ede159d5862e359b51e1838",
+        "bytes": 14449
+      }
+    }
+  },
+  "asset_preservation": {
+    "runtime_asset_files": 54,
+    "reference_only_files": 7,
+    "total_source_asset_files": 61,
+    "original_equals_drive": true,
+    "split_equals_drive": true,
+    "original_equals_split": true,
+    "runtime_asset_sweep": "54/54",
+    "url_rewrites": 0,
+    "reencode": 0,
+    "resize": 0,
+    "format_change": 0
+  },
+  "binding": {
+    "accepted_candidate_head": "12d0bf9cda024c9fddbd55460bb0fdba5a94598d",
+    "capture_head": "12d0bf9cda024c9fddbd55460bb0fdba5a94598d",
+    "pull_request": 668,
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5978980904",
+    "central_visual_review_ref": "skerishKang/lovetree-limone#589 comment 5978980904 (direct 12-state visual review PASS)",
+    "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
+    "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260",
+    "three_run_release_ref": "skerishKang/lovetree-limone#589 comment 5978201004",
+    "note": "This accepted record binds S4 parity to the reviewed candidate head. The promotion commit that creates this record necessarily has a different head; CENTRAL verifies that promotion head by exact-head CI before Ready/merge."
+  },
+  "three_run_proof": {
+    "required_runs": 3,
+    "runs_recorded": 3,
+    "runs_clean": true,
+    "three_run_proof": true,
+    "averaging_or_best_of": "FORBIDDEN",
+    "carried_over_prior_proof": false,
+    "harness_bytes_sha256": "8cc1811bfcd0dee9f6b92c4b69062167208fe05086e24157e89d00c7fa64f88d",
+    "runs": [
+      {
+        "run_index": 1,
+        "semantic_raw_exact": "11/39",
+        "semantic_contract_exact": "39/39",
+        "geometry_contract_exact": "39/39",
+        "computed_style_contract_exact": "39/39",
+        "animation_inventory_contract_exact": "39/39",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "harness_contract_errors": 0,
+        "unresolved_contract_paths": 0,
+        "runtime_asset_sweep": "54/54",
+        "frozen_behavior_preserved": "YES"
+      },
+      {
+        "run_index": 2,
+        "semantic_raw_exact": "8/39",
+        "semantic_contract_exact": "39/39",
+        "geometry_contract_exact": "39/39",
+        "computed_style_contract_exact": "39/39",
+        "animation_inventory_contract_exact": "39/39",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "harness_contract_errors": 0,
+        "unresolved_contract_paths": 0,
+        "runtime_asset_sweep": "54/54",
+        "frozen_behavior_preserved": "YES"
+      },
+      {
+        "run_index": 3,
+        "semantic_raw_exact": "9/39",
+        "semantic_contract_exact": "39/39",
+        "geometry_contract_exact": "39/39",
+        "computed_style_contract_exact": "39/39",
+        "animation_inventory_contract_exact": "39/39",
+        "real_parity_defects": 0,
+        "unclassified_residuals": 0,
+        "harness_contract_errors": 0,
+        "unresolved_contract_paths": 0,
+        "runtime_asset_sweep": "54/54",
+        "frozen_behavior_preserved": "YES"
+      }
+    ]
+  },
+  "residual_ledger": {
+    "path": "evidence/s4/residual-ledger.json",
+    "entries": 0,
+    "stable_ledger_entries": 0,
+    "unclassified_residuals": 0,
+    "note": "No residual is accepted or waived. All three runs finished with zero real parity defects and zero unclassified residuals."
+  },
+  "source_contract": {
+    "extracted_from_frozen_bytes": true,
+    "browser_lexical_pool_reader_count": 0,
+    "unresolved_dynamic_contracts": 0,
+    "unresolved_contract_paths": 0,
+    "fail_open_contract_paths": 0,
+    "face_random_relational_contract": "PASS",
+    "autolife_relational_contract": "PASS",
+    "math_random_patched": false,
+    "clock_patched": false,
+    "frozen_behavior_preserved": true,
+    "expected_frozen_page_fault_states": 1,
+    "unexpected_page_error_states": 0,
+    "page_fault_parity_exact": true,
+    "frozen_save_source_defect": "#670"
+  },
+  "central_visual_review": {
+    "performed": true,
+    "result": "PASS",
+    "ref": "skerishKang/lovetree-limone#589 comment 5978980904 (direct 12-state visual review PASS)",
+    "states_reviewed": 12,
+    "panel_results": {
+      "D1_INITIAL": "STRUCTURAL_VISUAL_PARITY_WITH_AUTHORED_RANDOM_LUBT_VARIATION",
+      "D1_CHARACTER_SWITCH": "VISUAL_EQUAL",
+      "D1_EMOTION_SMILE": "VISUAL_EQUAL",
+      "D1_FACE_RANDOM": "SOURCE_CORRELATED_RANDOM_VISUAL_PARITY",
+      "D1_LUBT_DRAG": "VISUAL_EQUAL",
+      "D1_SAVE_TRANSIENT": "SOURCE_CORRELATED_TRANSIENT_VISUAL_PARITY",
+      "D1_SAY": "VISUAL_EQUAL",
+      "D1_SPECIAL_MOMENT": "SOURCE_CORRELATED_TRANSIENT_VISUAL_PARITY",
+      "M1_INITIAL": "STRUCTURAL_VISUAL_PARITY_WITH_AUTHORED_RANDOM_LUBT_VARIATION",
+      "M1_LUBT_DRAG_HINT": "VISUAL_EQUAL",
+      "T1_INTERACTION": "VISUAL_EQUAL",
+      "T1_STABLE": "VISUAL_EQUAL"
+    },
+    "method": "CENTRAL direct qualitative review of 12 commit-pinned ORIGINAL|SPLIT side-by-side review-pack panels; no raw-PNG equality, pixel tolerance, SSIM or perceptual threshold is used",
+    "review_pack_committed": 12
+  },
+  "visual_comparison_policy": {
+    "raw_png_byte_equality_required": false,
+    "pixel_tolerance": "NONE",
+    "ssim": "NONE",
+    "perceptual_hamming_threshold": "NONE",
+    "screenshots_are": "EVIDENCE_CHANNEL_ONLY"
+  },
+  "stochastic_projection": {
+    "policy": "SOURCE_DERIVED_PER_SURFACE_RELATIONAL_CONTRACT_ONLY; authored random values may differ across surfaces only when each side independently proves its frozen-source relation",
+    "math_random_seed_or_monkey_patch": false,
+    "clock_or_performance_now_patch": false,
+    "source_normalization": false
+  },
+  "adoption": {
+    "product_adoption": false,
+    "product_canonical": false,
+    "lineage57_adoption": false,
+    "drive_mutation": 0
+  },
+  "candidate_evidence_refs": {
+    "candidate_summary": "evidence/s4/candidate-summary.json",
+    "residual_ledger": "evidence/s4/residual-ledger.json",
+    "three_run_proof": "evidence/s4/three-run-proof.json",
+    "review_pack": "evidence/s4/review-pack/",
+    "s3_roundtrip": "evidence/s3/roundtrip.json"
+  }
+}
