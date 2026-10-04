@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX007",
+  "codex_folder_name": "CDX007",
+  "master_id": "MST106",
+  "master_filename": "Codex-07 Living Character World V2",
+  "namespace": "CDX",
+  "product_job": "CAMPAIGN",
+  "authority": {
+    "drive_folder_id": "1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH",
+    "drive_file_id": "1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI",
+    "filename": "index.html",
+    "bytes": 22310,
+    "sha256": "4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b"
+  },
+  "family_ref": "07_러브트리_살아있는캐릭터월드_V2",
+  "duplicate_variant_status": "SINGLE_EXECUTABLE_NO_DUPLICATE",
+  "duplicate_variant_note": {
+    "finding": "ROOT_LAUNCHER_ONLY_PLUS_SUPERSEDED_V1_REVISION; the single V2 executable is the authority. V1 is a superseded revision whose vendored assets duplicate the V2 tree; it is NOT a DUPLICATE_COPY_SAME_SHA and NOT AUTHORITY.",
+    "follow_up_adjudication": {
+      "at_utc": "2026-10-01T00:00:00Z",
+      "by": "LOCAL1",
+      "basis": "authored launcher target + V2 README entry-point declaration",
+      "finding": "SINGLE_EXECUTABLE_NO_DUPLICATE"
+    },
+    "adjudicated_by": "5922885731"
+  },
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "capture_surface": {
+    "mode": "STANDALONE_AUTHORITY_SURFACE",
+    "required_serving": "CAPSULE_LOCAL_ASSETS_DIRECTORY",
+    "canonical_layout_ref": "authority-context.json#/serving_contract"
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_ONLY",
+  "source_contract": {
+    "frozen_defects": [
+      {
+        "id": "MOBILE_ELEMENT_REMOVED",
+        "preserved": false,
+        "repaired": false,
+        "title": "mobile hides .lubt-drag-hint via authored CSS, DOM element retained"
+      },
+      {
+        "id": "NO_AUTHORED_REDUCED_MOTION",
+        "preserved": true,
+        "repaired": false,
+        "title": "no authored prefers-reduced-motion; breath/pulse/spin run infinite"
+      },
+      {
+        "id": "MATH_RANDOM_RUNTIME",
+        "preserved": true,
+        "repaired": false,
+        "title": "runtime uses Math.random() for emotion selection, notes, petals, Lubt position"
+      }
+    ],
+    "external_layers_preserved": true,
+    "external_layers_merged_into_split": false,
+    "url_rewrites": 0,
+    "reencode": 0
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": true
+  },
+  "s3_status": "ACCEPTED",
+  "central_s3_accepted": true,
+  "s4_status": "ACCEPTED",
+  "parity_ref": "evidence/parity/accepted-parity.json",
+  "product_adoption": false,
+  "product_canonical": false,
+  "drive_mutation": 0,
+  "s1_report": "d9b9b52e58de364a440bd42ea1f7135af598a2c3",
+  "s2_report": "af5d04b8c38ea2b932b42fa08e9674c9c65df834",
+  "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5924890181",
+  "central_s4_accepted": true,
+  "s3_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5925877072",
+  "s4_parity_contract_ref": "skerishKang/lovetree-limone#589 comment 5925898260",
+  "s4_measurement_note": "CENTRAL accepted S4 parity at candidate head 12d0bf9cda024c9fddbd55460bb0fdba5a94598d after exact-head three-run proof (3/3 clean; 39/39 semantic, geometry, computed-style and animation-inventory contract exactness; 0 real parity defects; 0 unclassified residuals; 54/54 runtime asset sweep), exact-head CI with no failures, and direct qualitative review of all 12 commit-pinned ORIGINAL|SPLIT review-pack panels. Raw semantic exactness varies across runs because the frozen source contains authored Math.random()-driven behavior; acceptance uses the fail-closed SOURCE_SPECIFIC_MOTION_RANDOMNESS_AWARE relational contract and does not seed/patch RNG or clocks. Product adoption, Product canonical status, Lineage57 adoption and Drive mutation remain false/zero.",
+  "lineage57_adoption": false,
+  "s4_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5978980904",
+  "s4_candidate_head": "12d0bf9cda024c9fddbd55460bb0fdba5a94598d"
+}

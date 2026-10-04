@@ -1,0 +1,15 @@
+{
+  "schema_version": "2.0",
+  "source_id": "CDX007",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "CANDIDATE_PENDING_CENTRAL",
+  "allowed_classifications": [
+    "AUTHORED_RANDOM_SCALAR",
+    "AUTHORED_LIVE_PHASE",
+    "AUTHORED_FINITE_TRANSIENT_PHASE",
+    "INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF"
+  ],
+  "note": "Every residual authorized by a bounded class with concrete field/target proof. A STABLE state contributes ZERO ledger rows by contract. A residual absent here is a real parity defect.",
+  "stable_ledger_entries": 0,
+  "entries": []
+}

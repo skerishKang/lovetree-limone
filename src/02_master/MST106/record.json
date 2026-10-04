@@ -5,21 +5,36 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Codex-07 Living Character World V2",
   "product_job": "CAMPAIGN",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
-  "family_ref": null,
+  "mapping_status": "CODEX_RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "CDX",
+      "id": "CDX007",
+      "basis": "EXPLICIT_DRIVE_AUTHORITY_PROVENANCE"
+    }
+  ],
+  "family_ref": "07_루브트리_살아있는캐랝터월드_V2",
   "relation": null,
   "notes": [
-    "semantic_identity=Lineage57 Living Character V2",
-    "namespace_type=lineage",
+    "semantic_identity=Codex-07 Living Character World V2",
+    "namespace_type=codex",
     "coverage_state=COVERED",
-    "mvp_review_state=native_backlog_review",
+    "mvp_review_state=s3_mechanical_split_candidate",
     "source_authority_version=V2",
     "source_freshness=low",
-    "source_runner_route=Lineage57",
-    "native_route=/design-lab/lineages/57/v2",
+    "source_runner_route=CDX007 source-local V2 runtime",
     "current_main_present=true",
-    "github_issue=138"
+    "github_issue=138",
+    "mapping_basis=EXPLICIT_DRIVE_AUTHORITY_PROVENANCE",
+    "mapping_evidence=driven from the Drive Codex family, NOT from the prior Lineage57 overlay; CENTRAL #589 comment 5494180891 and 5494703739 both name MST106 Codex07 -> LIN057 as the exact namespace contamination those reconciliations were required to remove",
+    "mapping_evidence=MST106/CDX007 S0+S1 accepted under #589 comment 5922885731",
+    "mapping_evidence=Drive authority object drive_file_id=1vUMhdOXGo586GnJCnl8o_9zGizF_jYMI folder 1Ui-0V0KWhJyAIq-JEkswKLA0VpUxC6BH path 개발과정/index.html 22310 B sha256 4f28f1671146a36c53e88e0645c6dbe29076b1db526e21adb40794617a36223b",
+    "mapping_evidence=S2 baseline accepted under #589 comment 5924890181",
+    "mapping_evidence=S3 mechanical split capsule at src/04_codex/CDX007 (candidate, awaiting CENTRAL)",
+    "mapping_note=Lineage57 Living Character V2 is OLD/native implementation overlay only and does not define the CLEAN primary namespace; no Product/native route adoption is created",
+    "overlay_provenance=historical native route /design-lab/lineages/57/v2 retained for history only",
+    "numeric_equality_is_not_identity_evidence=true"
   ],
-  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default. Its primary identity is resolved to the CDX namespace from current Drive authority; Lineage/native/Product state is overlay only.",
+  "product_adoption": false
 }
