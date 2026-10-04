@@ -1,0 +1,261 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "master_id": "MST108",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "result": "PASS",
+  "authority_mode": "SUITE_MULTI_EXECUTABLE",
+  "member_count": 4,
+  "members": [
+    {
+      "label": "HUB",
+      "relative_path": "개발과정/index.html",
+      "original": {
+        "bytes": 6088,
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+      },
+      "split_html": {
+        "bytes": 2180,
+        "sha256": "7ebae624d63af9d640a8fd7fadf7985730b79145e187642026d78060f7ef402f"
+      },
+      "inline_style_blocks": 1,
+      "inline_script_blocks": 0,
+      "css_file": "개발과정/index.styles.css",
+      "css": {
+        "bytes": 3942,
+        "sha256": "ccb6fba460bf815c5ff07df67754d7d09d9421afaef261c5ed36865b85812d6a"
+      },
+      "js_file": null,
+      "js": null,
+      "round_trip_exact": true,
+      "reconstructed_sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+    },
+    {
+      "label": "PROGRAM_01_MEMORY_CAPSULE",
+      "relative_path": "개발과정/01-memory-capsule.html",
+      "original": {
+        "bytes": 15991,
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+      },
+      "split_html": {
+        "bytes": 3343,
+        "sha256": "ed36a6becaad3b91626ec7306b049a54c472812b6412ec4c11d99e3a80de3bcf"
+      },
+      "inline_style_blocks": 1,
+      "inline_script_blocks": 1,
+      "css_file": "개발과정/01-memory-capsule.styles.css",
+      "css": {
+        "bytes": 9353,
+        "sha256": "5e873445cfb442abc70b4ae0043a20456d95421606f7773fd7f6776cee4def30"
+      },
+      "js_file": "개발과정/01-memory-capsule.script.js",
+      "js": {
+        "bytes": 3377,
+        "sha256": "eb1e51d5e70a57c9e09c9764eaa48b5c56e1e8f6655cd6ac586393521a97aeba"
+      },
+      "round_trip_exact": true,
+      "reconstructed_sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+    },
+    {
+      "label": "PROGRAM_02_MEMORY_STACK",
+      "relative_path": "개발과정/02-memory-stack.html",
+      "original": {
+        "bytes": 15578,
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+      },
+      "split_html": {
+        "bytes": 2255,
+        "sha256": "82b517d78429c2b451ff2422cc71b1026f73925abe86f40b4866daa31dc37193"
+      },
+      "inline_style_blocks": 1,
+      "inline_script_blocks": 1,
+      "css_file": "개발과정/02-memory-stack.styles.css",
+      "css": {
+        "bytes": 7593,
+        "sha256": "e587a0e734f67216700e30653cf3c8a8981c80f66e15df65aa57cb29d25df9a3"
+      },
+      "js_file": "개발과정/02-memory-stack.script.js",
+      "js": {
+        "bytes": 5808,
+        "sha256": "999375862e048787608124c5b2c607600b5d7a4aa5167e97f50593f969175b5d"
+      },
+      "round_trip_exact": true,
+      "reconstructed_sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+    },
+    {
+      "label": "PROGRAM_03_TREE_KEEPER",
+      "relative_path": "개발과정/03-tree-keeper.html",
+      "original": {
+        "bytes": 18280,
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+      },
+      "split_html": {
+        "bytes": 1700,
+        "sha256": "f97aadc6e8268cb7934b99eeb2e70a551501891ebeefa61fb34fe905337061a8"
+      },
+      "inline_style_blocks": 1,
+      "inline_script_blocks": 1,
+      "css_file": "개발과정/03-tree-keeper.styles.css",
+      "css": {
+        "bytes": 9486,
+        "sha256": "e1dde1117902c3584fc13ecb47ce553b073d06daaa9d3cdaa85002811169f572"
+      },
+      "js_file": "개발과정/03-tree-keeper.script.js",
+      "js": {
+        "bytes": 7170,
+        "sha256": "feebaa6f388a290549d6e2199dcbc3a40d83f9b9241a26002f69364ae005d1e6"
+      },
+      "round_trip_exact": true,
+      "reconstructed_sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+    }
+  ],
+  "launcher": {
+    "relative_path": "최종본.html",
+    "role": "BOOTSTRAP_PROVENANCE_ONLY",
+    "original": {
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99"
+    },
+    "split": {
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99"
+    },
+    "byte_exact_both_sides": true,
+    "mechanically_split": false
+  },
+  "documents": [
+    {
+      "relative_path": "00_프로젝트안내.md",
+      "bytes": 406,
+      "sha256": "cd71e8f1b1b99543797acac521ad0136032b94fe37ddf65e9c22b370a9170931"
+    },
+    {
+      "relative_path": "개발과정/README.md",
+      "bytes": 1360,
+      "sha256": "b7d9b615a13aec211a39fc757a9310dd1ac7da61e3f517ab72c9bc4cc88d528f"
+    }
+  ],
+  "asset_summary": {
+    "runtime": 86,
+    "reference_only": 2,
+    "total": 88,
+    "asset_ledger_ref": "asset-ledger.json"
+  },
+  "topology": {
+    "expected": 8,
+    "verified": 8,
+    "ref": "topology.json"
+  },
+  "randomness": {
+    "math_random_sites": 9,
+    "by_surface": {
+      "index.html": 0,
+      "01-memory-capsule.html": 5,
+      "02-memory-stack.html": 0,
+      "03-tree-keeper.html": 4
+    }
+  },
+  "prefers_reduced_motion_authored": false,
+  "checks": [
+    {
+      "id": "T01",
+      "name": "source snapshot has exactly 95 authored files",
+      "pass": true
+    },
+    {
+      "id": "T02",
+      "name": "root launcher bytes/hash exact",
+      "pass": true
+    },
+    {
+      "id": "T03",
+      "name": "four member authority originals exact",
+      "pass": true
+    },
+    {
+      "id": "T04",
+      "name": "all four member HTML round trips reconstruct exact authority bytes",
+      "pass": true
+    },
+    {
+      "id": "T05",
+      "name": "root launcher remains exact and unsplit",
+      "pass": true
+    },
+    {
+      "id": "T06",
+      "name": "all 88 assets exact on both sides",
+      "pass": true
+    },
+    {
+      "id": "T07",
+      "name": "runtime asset set exactly 86",
+      "pass": true
+    },
+    {
+      "id": "T08",
+      "name": "reference-only set exactly 2",
+      "pass": true
+    },
+    {
+      "id": "T09",
+      "name": "figure domain exactly A-J x 8 angles",
+      "pass": true
+    },
+    {
+      "id": "T10",
+      "name": "all eight suite topology targets present in ORIGINAL and mechanically split executable file set",
+      "pass": true
+    },
+    {
+      "id": "T11",
+      "name": "authored Math.random count remains 9",
+      "pass": true
+    },
+    {
+      "id": "T12",
+      "name": "no authored prefers-reduced-motion adaptation added",
+      "pass": true
+    },
+    {
+      "id": "T13",
+      "name": "zero URL rewrites",
+      "pass": true
+    },
+    {
+      "id": "T14",
+      "name": "zero source repairs",
+      "pass": true
+    },
+    {
+      "id": "T15",
+      "name": "six frozen defects preserved/unrepaired",
+      "pass": true
+    },
+    {
+      "id": "T16",
+      "name": "S4 remains CENTRAL hold",
+      "pass": true
+    },
+    {
+      "id": "T17",
+      "name": "adoption false and Drive mutation zero",
+      "pass": true
+    },
+    {
+      "id": "T18",
+      "name": "all 86 authored runtime asset URLs resolve unchanged on ORIGINAL and SPLIT",
+      "pass": true
+    }
+  ],
+  "passed": 18,
+  "failed": 0,
+  "s4_released": false,
+  "url_resolution": {
+    "runtime_urls": 86,
+    "resolved_original": 86,
+    "resolved_split": 86,
+    "url_rewrites": 0,
+    "ref": "url-resolution.json"
+  }
+}

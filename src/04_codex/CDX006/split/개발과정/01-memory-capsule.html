@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoveTree — Memory Capsule</title>
+<link rel="stylesheet" href="./01-memory-capsule.styles.css">
+</head>
+<body><div class="grain"></div>
+<header><div class="brand"><div class="tree-mark"></div><div><strong>LOVETREE</strong><small>MEMORY CAPSULE / 01</small></div></div><div class="top-actions"><button class="pill" onclick="location.href='index.html'">EXPERIENCE INDEX</button><button class="icon-btn" id="autoBtn" title="자동회전">Ⅱ</button></div></header>
+<main>
+ <aside class="panel left"><span class="eyebrow">A keepsake you can orbit</span><h1>Your favorite<br><em>moment, held.</em></h1><p class="intro">좋아했던 한 장면과 옷차림을 빛나는 캡슐에 담아 돌려보세요. 드래그하면 모든 각도의 기억이 이어집니다.</p><div class="label">Choose a figure</div><div class="figure-grid" id="figures"></div><div class="label">Aura color</div><div class="swatches" id="swatches"></div><div class="label">Surface memories</div><div class="tags" id="tags"><button class="tag on" data-target="s1">DATE</button><button class="tag on" data-target="s2">STAGE</button><button class="tag on" data-target="s3">♡ SAVED</button><button class="tag on" data-target="s4">MY WORDS</button></div><div class="micro">DRAG TO ORBIT · WHEEL TO ROTATE<br>Every angle belongs to the same memory.</div></aside>
+ <section class="panel stage" id="stage"><div class="orbit"></div><div class="capsule-wrap"><div class="capsule" id="capsule"><div class="aura"></div><div class="shell"></div><img class="figure" id="figure" src="assets/figures/A_000.png" alt="선택한 360도 피규어"><div class="sticker s1">AUG 09 · 2026</div><div class="sticker s2">ON STAGE / 01</div><div class="sticker s3">♡ MOMENT SAVED</div><div class="sticker s4">you moved me.</div></div></div><div class="angle"><i></i><span id="angleText">FRONT · 000°</span></div></section>
+ <aside class="panel right"><span class="eyebrow">Inside this capsule</span><h2>One idol.<br>Many moments.</h2><p>최애의 영상에서 고른 의상과 순간들이 하나의 소장품 안에서 연결됩니다.</p><div class="memory-card"><div class="date">MY LOVE TREE · CAPSULE 001</div><blockquote>“노래가 끝난 뒤의 눈빛을 오래 기억하고 싶었다.”</blockquote><small>Stage moment · saved privately</small></div><div class="timeline"><div class="dot"></div><div class="timecopy"><strong>THE MOMENT I CHOSE</strong><span>00:18 — right before the final chorus</span></div><div class="dot" style="background:#77cbe8"></div><div class="timecopy"><strong>THE LOOK I KEPT</strong><span>Black crystal stage suit · 8 views</span></div></div><button class="primary" id="saveBtn">♡ SAVE THIS CAPSULE</button><button class="secondary" id="openBtn">OPEN MEMORY INSIDE →</button></aside>
+</main>
+<div class="heart-burst" id="burst"></div><aside class="drawer" id="drawer"><button id="closeDrawer">×</button><span class="eyebrow">Capsule contents</span><h3>What this<br>memory holds.</h3><div class="inside"><div>THE STAGE<br>00:18</div><div>THAT SMILE<br>00:24</div><div>BACKSTAGE<br>23:11</div><div>MY NOTE<br>August 9</div></div></aside>
+<script src="./01-memory-capsule.script.js"></script></body></html>

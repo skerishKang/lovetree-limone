@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.2-suite",
+  "codex_id": "CDX006",
+  "codex_folder_name": "CDX006",
+  "master_id": "MST108",
+  "master_filename": "Codex-06 3D Experience Collection",
+  "namespace": "CDX",
+  "product_job": "LAB",
+  "authority": {
+    "mode": "SUITE_MULTI_EXECUTABLE",
+    "suite_root_folder_id": "131menEkP2-XGnPlu4DqsjynPErIptoQ_",
+    "root_launcher": {
+      "drive_file_id": "1PeYJa6ROLiNKsRxjcJsi5dYrXMyh7Aka",
+      "filename": "최종본.html",
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99",
+      "role": "BOOTSTRAP_PROVENANCE_ONLY"
+    },
+    "member_surfaces": [
+      {
+        "label": "HUB",
+        "drive_file_id": "1L1bFbB1BB-pKysR1xy-Vup1iQhlR4MlG",
+        "relative_path": "개발과정/index.html",
+        "bytes": 6088,
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+      },
+      {
+        "label": "PROGRAM_01_MEMORY_CAPSULE",
+        "drive_file_id": "1lGCvpq8Eu2zIm713QWQ5_2k7Q9nmIQqt",
+        "relative_path": "개발과정/01-memory-capsule.html",
+        "bytes": 15991,
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+      },
+      {
+        "label": "PROGRAM_02_MEMORY_STACK",
+        "drive_file_id": "13F5tUplnEoHTh4gIrkbZ6o-g7Nk-OyUh",
+        "relative_path": "개발과정/02-memory-stack.html",
+        "bytes": 15578,
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+      },
+      {
+        "label": "PROGRAM_03_TREE_KEEPER",
+        "drive_file_id": "1mNp6oDUZ3QuOH1IKS3z6Dy34V09_UPrV",
+        "relative_path": "개발과정/03-tree-keeper.html",
+        "bytes": 18280,
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+      }
+    ]
+  },
+  "family_ref": "06_러브트리_3D체험_프로그램모음_V1",
+  "suite_representation": {
+    "mode": "ONE_SUITE_CAPSULE",
+    "member_surface_count": 4,
+    "child_namespace_ids": [],
+    "root_launcher_is_surface": false,
+    "visual_shell_normalization": false
+  },
+  "duplicate_variant_status": "UNRESOLVED",
+  "duplicate_variant_note": {
+    "disposition": "NOT_RECLASSIFIED_DURING_S3",
+    "reason": "The adopted duplicate-variant vocabulary has no value for an authored multi-executable suite whose four members are intentionally distinct programs. S3 does not widen that vocabulary or mislabel the suite as SINGLE_EXECUTABLE. Suite identity/authority is separately accepted by CENTRAL.",
+    "suite_policy_ref": "skerishKang/lovetree-limone#589 comment 5979757832"
+  },
+  "baseline_ref": "baseline/accepted-baseline.json",
+  "mechanical_split_ref": "split/materialization.json",
+  "authority_context_required": true,
+  "authority_context_ref": "authority-context.json",
+  "capture_surface": {
+    "mode": "SUITE_MULTI_EXECUTABLE",
+    "member_surfaces": [
+      "HUB",
+      "PROGRAM_01_MEMORY_CAPSULE",
+      "PROGRAM_02_MEMORY_STACK",
+      "PROGRAM_03_TREE_KEEPER"
+    ],
+    "required_serving": "CAPSULE_LOCAL_ASSETS_DIRECTORY",
+    "canonical_layout_ref": "authority-context.json#/serving_contract"
+  },
+  "runtime_policy": "HTML_CSS_JS_MECHANICAL_SUITE_ONLY",
+  "source_contract": {
+    "frozen_defects": [
+      {
+        "id": "BD-01",
+        "title": "no authored prefers-reduced-motion adaptation",
+        "preserved": true,
+        "repaired": false
+      },
+      {
+        "id": "BD-02",
+        "title": "P01 T1/M1 responsive core-control loss",
+        "preserved": true,
+        "repaired": false
+      },
+      {
+        "id": "BD-03",
+        "title": "P02 direct 3D-layer physical pointer-selection path is unreliable while legend path works",
+        "preserved": true,
+        "repaired": false
+      },
+      {
+        "id": "BD-04",
+        "title": "P02 T1/M1 responsive core-control loss",
+        "preserved": true,
+        "repaired": false
+      },
+      {
+        "id": "BD-05",
+        "title": "P03 M1 Experience Index and AUTO STORY controls hidden",
+        "preserved": true,
+        "repaired": false
+      },
+      {
+        "id": "BD-06",
+        "title": "P03 T1 900x900 headline/scene-card authored layout collision",
+        "preserved": true,
+        "repaired": false
+      }
+    ],
+    "frozen_defect_count": 6,
+    "authored_math_random_sites": 9,
+    "authored_prefers_reduced_motion": false,
+    "url_rewrites": 0,
+    "reencode": 0,
+    "source_repairs": 0,
+    "responsive_repairs": 0,
+    "motion_repairs": 0,
+    "randomness_patches": 0
+  },
+  "runtime_asset_dependencies": {
+    "figure_files": 80,
+    "keeper_runtime_files": 6,
+    "runtime_files": 86,
+    "reference_only_files": 2,
+    "total_asset_files": 88,
+    "asset_ledger_ref": "evidence/s3/asset-ledger.json",
+    "url_resolution_ref": "evidence/s3/url-resolution.json",
+    "source_empty_directories": [
+      "개발과정/assets/ui"
+    ]
+  },
+  "suite_topology": {
+    "edge_count": 8,
+    "topology_ref": "evidence/s3/topology.json"
+  },
+  "stages": {
+    "identity_verified": true,
+    "raw_authority_locked": true,
+    "baseline_captured": true,
+    "mechanical_split_complete": true,
+    "source_split_parity_pass": false
+  },
+  "s3_status": "CANDIDATE",
+  "central_s3_accepted": false,
+  "s4_status": "HOLD_CENTRAL",
+  "parity_ref": null,
+  "stage_gate": {
+    "s3_release": "RELEASED",
+    "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
+    "s4_release": "HOLD_CENTRAL",
+    "parity_capture_authorized": false,
+    "skip_reason": "CENTRAL_S4_NOT_RELEASED"
+  },
+  "s2_report": {
+    "repo": "skerishKang/workdiary",
+    "path": "lovetree-reports/2026-10-04/CENTRAL/589-mst108-cdx006-s2-suite-baseline.md",
+    "commit": "ca53e5252d6c12dab283a50293b49fe4e9a7a28d",
+    "acceptance_comment": 5980345669
+  },
+  "product_adoption": false,
+  "capability_native_adoption": false,
+  "product_canonical": false,
+  "drive_mutation": 0
+}

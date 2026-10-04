@@ -5,21 +5,34 @@
   "authority_ledger": "design-intake/master-design-coverage.json",
   "master_filename": "Codex-06 3D Experience Collection",
   "product_job": "LAB",
-  "mapping_status": "UNRESOLVED",
-  "identity_refs": [],
-  "family_ref": null,
+  "mapping_status": "CODEX_RESOLVED",
+  "identity_refs": [
+    {
+      "namespace": "CDX",
+      "id": "CDX006",
+      "basis": "EXPLICIT_DRIVE_SUITE_AUTHORITY_PROVENANCE"
+    }
+  ],
+  "family_ref": "06_러브트리_3D체험_프로그램모음_V1",
   "relation": null,
   "notes": [
     "semantic_identity=Codex-06 3D Experience Collection suite",
     "namespace_type=codex-suite-decomposed",
     "coverage_state=COVERED",
-    "mvp_review_state=partial_suite_native_review",
+    "mvp_review_state=s3_mechanical_suite_candidate",
+    "source_authority_version=V1",
     "source_freshness=medium",
-    "source_runner_route=capability/lineage split",
-    "native_route=/design-lab/capabilities/memory-anatomy",
-    "canonical_route=selective capability reuse",
+    "source_runner_route=CDX006 suite-local HUB + P01 Memory Capsule + P02 Memory Stack + P03 Tree Keeper",
     "current_main_present=true",
-    "github_issue=140,141"
+    "github_issue=140,141",
+    "mapping_basis=EXPLICIT_DRIVE_SUITE_AUTHORITY_PROVENANCE",
+    "mapping_evidence=MST108/CDX006 S1 suite policy accepted under #589 comment 5979757832",
+    "mapping_evidence=S2 suite baseline accepted under #589 comment 5980345669",
+    "mapping_evidence=Drive suite root folder 131menEkP2-XGnPlu4DqsjynPErIptoQ_ with bootstrap launcher plus four executable member surfaces; no child namespace IDs",
+    "mapping_evidence=S3 mechanical suite capsule at src/04_codex/CDX006 (candidate, awaiting CENTRAL)",
+    "mapping_note=#140 Memory Stack and #141 3D mechanics remain native capability/reference overlays only; neither substitutes for CDX006 suite source truth",
+    "numeric_equality_is_not_identity_evidence=true"
   ],
-  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default."
+  "rule": "This record is an evaluation-row work record, never an independent Source runtime by default. Its primary identity is resolved to the CDX namespace from current Drive suite authority; native capability/Product state is overlay only.",
+  "product_adoption": false
 }
