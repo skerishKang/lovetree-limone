@@ -29,7 +29,64 @@ export function classifyBubbleText(text, contract = DEFAULT_CONTRACT) {
     const pool = poolFor(contract, path);
     if (Array.isArray(pool) && pool.includes(text)) out.push(path);
   }
+  /* ROUND6D (FIX 2) The authored CHARACTER GUIDE pool.
+   *
+   * selectChar() writes `callLubt('guide', `${c.name}의 표정을 만나볼까?`)`, which is authored but
+   * DYNAMIC - no static lubtTalk pool contains it. Membership here is CLASSIFICATION only: it says
+   * the text is an authored guide line. It never says WHICH character the state selected, so it is
+   * never sufficient on its own. The character-switch states prove the exact correlation against
+   * their own selected character separately (see resolveCharacterGuide).
+   *
+   * Classification is scoped: a guide line is only accepted where the state's own contract asks
+   * for it. There is no global waiver - an unauthored text is still a violation. */
+  if (contract.characterGuideByName) {
+    const name = characterNameForGuide(text, contract);
+    if (name) out.push(`characterGuide.${name}`);
+  }
   return out;
+}
+
+/**
+ * ROUND6D (FIX 2) The character a rendered guide line belongs to, or null.
+ * Matching is EXACT against the derived per-character lines, never a substring guess, so a guide
+ * line for one character can never satisfy the contract of another.
+ */
+export function characterNameForGuide(text, contract = DEFAULT_CONTRACT) {
+  if (typeof text !== 'string' || text === '') return null;
+  const byName = contract.characterGuideByName;
+  if (!byName || typeof byName !== 'object') return null;
+  for (const [name, line] of Object.entries(byName)) {
+    if (line === text) return name;
+  }
+  return null;
+}
+
+/**
+ * ROUND6D (FIX 2) Resolve the guide line this state OWNS, per surface.
+ *
+ * The character is a PER-SURFACE runtime value read from the DOM (#castName), never a literal.
+ * The resolved line must then appear in the surface's own trace, so M02 selected + F01 guide is a
+ * violation, not a pass. An unknown character is a HARNESS CONTRACT ERROR.
+ *
+ * @returns {{ok:boolean, path:string|null, expectedText:string|null, error:string|null}}
+ */
+export function resolveCharacterGuide({ selectedCharacter, sourceContract }) {
+  const byName = (sourceContract && sourceContract.characterGuideByName) || null;
+  if (!byName) {
+    return { ok: false, path: null, expectedText: null, error: 'CHARACTER_GUIDE_CONTRACT_MISSING' };
+  }
+  if (typeof selectedCharacter !== 'string' || selectedCharacter === '') {
+    return { ok: false, path: null, expectedText: null, error: 'CHARACTER_GUIDE_SELECTION_MISSING' };
+  }
+  if (!Object.prototype.hasOwnProperty.call(byName, selectedCharacter)) {
+    return { ok: false, path: null, expectedText: null, error: `CHARACTER_GUIDE_UNKNOWN_CHARACTER:${selectedCharacter}` };
+  }
+  return {
+    ok: true,
+    path: `characterGuide.${selectedCharacter}`,
+    expectedText: byName[selectedCharacter],
+    error: null,
+  };
 }
 
 /**
@@ -84,15 +141,36 @@ export function actionPool(contract, state) {
     case '18_say_phrase': return 'lubtTalk.reply';
     case '22_face_special_moment': return 'lubtTalk.special';
     case '23_face_hold_special': return 'lubtTalk.special';
+    /* ROUND6D (FIX 2) The character-switch states OWN a real Lubt write: selectChar() calls
+     * callLubt('guide', `${c.name}의 표정을 만나볼까?`). The pool cannot be named statically
+     * because it depends on the character the user selected, so it is resolved per surface by
+     * resolveCharacterGuide. These states must NOT fall through to the DEFAULT no-Lubt-write
+     * policy, which would let the real write go unproven. */
+    case '02_character_M02':
+    case '03_character_F01':
+    case '04_character_F02':
+    case '03_tablet_character':
+    case '04_mobile_character':
+      return CHARACTER_GUIDE_POOL;
     /* D1/21 is dynamic: the owned pool is lubtTalk.emotion.<selectedEmotion>, which cannot be
      * named statically. It is resolved per surface by resolveDynamicBubblePath instead. */
     default: return null;
   }
 }
 
+/** The dynamic character-guide pool marker. */
+export const CHARACTER_GUIDE_POOL = 'characterGuide';
+
+export const CHARACTER_GUIDE_STATES = [
+  '02_character_M02', '03_character_F01', '04_character_F02',
+  '03_tablet_character', '04_mobile_character',
+];
+
 /** Whether the state OWNS a Lubt bubble write at all (statically decidable). */
 export function stateOwnsLubtWrite(state) {
-  return state === '21_face_click_random' || actionPool(DEFAULT_CONTRACT, state) !== null;
+  return state === '21_face_click_random'
+    || CHARACTER_GUIDE_STATES.includes(state)
+    || actionPool(DEFAULT_CONTRACT, state) !== null;
 }
 
 /** The background idle write, which may legitimately follow an action's own write. */

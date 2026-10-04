@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { authoredParticleRanges } from './particle-range.mjs';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -101,6 +102,146 @@ function extractLiteral(sourceText, fileName, name) {
   return result;
 }
 
+/**
+ * ROUND6C (FIX C) The authored `lubtPoses` pose-asset mapping.
+ *
+ * `poseForEmotion` names a POSE ('bloom','heart',...), but the parity contract compares the
+ * concrete #lubtImg asset. The pose->asset mapping lives in the frozen inline layer as a
+ * top-level `const lubtPoses` object literal, so it is extracted from those frozen bytes with
+ * the same fail-closed literal evaluator - never a hard-coded duplicate truth table.
+ */
+function extractLubtPoses(sourceText, fileName) {
+  const poses = extractLiteral(sourceText, fileName, 'lubtPoses');
+  if (!poses || typeof poses !== 'object' || Array.isArray(poses)) {
+    throw new SourceContractError(`${fileName}: lubtPoses is not an authored pose mapping`);
+  }
+  for (const [pose, asset] of Object.entries(poses)) {
+    if (typeof asset !== 'string' || asset === '') {
+      throw new SourceContractError(`${fileName}: lubtPoses.${pose} is not an authored asset name`);
+    }
+  }
+  return poses;
+}
+
+/**
+ * ROUND6D (FIX 2) The authored CHARACTER GUIDE lines.
+ *
+ * `selectChar(i)` owns a real Lubt write:
+ *
+ *     callLubt('guide', `${c.name}의 표정을 만나볼까?`)
+ *
+ * The text is authored but DYNAMIC - it is rendered from the selected character's name - so it is
+ * in no static `lubtTalk` pool. Without this the classifier correctly reported it as an
+ * unclassified write, and the whole character-switch family could never be evaluated.
+ *
+ * Both halves are taken from the frozen bytes with the fail-closed literal evaluator:
+ *   - `chars` gives the source-derived {id, name} authority,
+ *   - the `selectChar()` template gives the exact rendered suffix.
+ * The rendered line is then DERIVED per character by substituting that name into that template.
+ * There is no second hard-coded guide table anywhere.
+ */
+function extractChars(sourceText, fileName) {
+  const chars = extractLiteral(sourceText, fileName, 'chars');
+  if (!Array.isArray(chars) || chars.length === 0) {
+    throw new SourceContractError(`${fileName}: chars is not an authored character list`);
+  }
+  const out = {};
+  for (const c of chars) {
+    if (!c || typeof c !== 'object' || typeof c.id !== 'string' || typeof c.name !== 'string') {
+      throw new SourceContractError(`${fileName}: a chars row is not the authored {id,name} shape`);
+    }
+    if (Object.prototype.hasOwnProperty.call(out, c.name)) {
+      throw new SourceContractError(`${fileName}: duplicate character name ${c.name}`);
+    }
+    out[c.name] = { id: c.id, name: c.name };
+  }
+  return out;
+}
+
+/** Find the authored `${c.name}...` template inside selectChar's callLubt call. Fail-closed. */
+function extractCharacterGuideTemplate(sourceText, fileName) {
+  const bodyMatch = /function\s+selectChar\s*\([^)]*\)\s*\{([\s\S]*?)\n/.exec(sourceText);
+  if (!bodyMatch) throw new SourceContractError(`${fileName}: selectChar() not found`);
+  const callMatch = /callLubt\(\s*'guide'\s*,\s*`([^`]*)`\s*\)/.exec(bodyMatch[1]);
+  if (!callMatch) {
+    throw new SourceContractError(`${fileName}: selectChar() has no authored guide callLubt template`);
+  }
+  const tpl = callMatch[1];
+  /* The template MUST interpolate the character name, otherwise it is not the dynamic guide. */
+  if (!/\$\{c\.name\}/.test(tpl)) {
+    throw new SourceContractError(`${fileName}: the guide template does not interpolate c.name`);
+  }
+  return tpl;
+}
+
+/**
+ * ROUND6D (FIX 3/FIX 4) The base particle triggers authored inside `setEmotion()`:
+ *
+ *     if(name==='sing')notes();
+ *     if(name==='touched'||name==='laugh')petals();
+ *
+ * Read from the frozen bytes so the per-surface expected particle lifecycle is DERIVED, not
+ * restated. Fail-closed on any other shape.
+ */
+function extractBaseParticleTriggers(sourceText, fileName) {
+  const fn = /function\s+setEmotion\s*\([^)]*\)\s*\{([\s\S]*?)\n[a-z]/i.exec(sourceText);
+  if (!fn) throw new SourceContractError(`${fileName}: setEmotion() body not found`);
+  const body = fn[1];
+  const out = {};
+  const re = /if\s*\(\s*name\s*===\s*'([a-z]+)'\s*(?:\|\|\s*name\s*===\s*'([a-z]+)'\s*)?\)\s*(\w+)\s*\(\s*\)/g;
+  let m;
+  while ((m = re.exec(body)) !== null) {
+    const emotions = [m[1], m[2]].filter(Boolean);
+    for (const e of emotions) {
+      if (out[e] && out[e] !== m[3]) {
+        throw new SourceContractError(`${fileName}: emotion ${e} triggers two different families`);
+      }
+      out[e] = m[3];
+    }
+  }
+  if (!Object.values(out).includes('notes') || !Object.values(out).includes('petals')) {
+    throw new SourceContractError(`${fileFileGuard(fileName)}: base particle triggers not fully authored`);
+  }
+  return out;
+}
+
+function fileFileGuard(name) { return name; }
+
+/** The authored particle COUNTS, derived from the frozen loop bounds in notes()/petals(). */
+function extractParticleCounts(counts, fileName) {
+  if (!counts || !counts.notes || !counts.petals) {
+    throw new SourceContractError(`${fileName}: authored particle counts were not derived`);
+  }
+  const notes = counts.notes.count;
+  const petals = counts.petals.count;
+  if (!Number.isFinite(notes) || !Number.isFinite(petals)
+    || notes <= 0 || petals <= 0) {
+    throw new SourceContractError(`${fileName}: an authored particle count is not positive`);
+  }
+  return {
+    notes, petals,
+    noteDxRange: { min: counts.notes.min, max: counts.notes.max },
+    petalDxRange: { min: counts.petals.min, max: counts.petals.max },
+  };
+}
+
+/**
+ * ROUND6D (FIX 3/FIX 4) Whether the V2 `setEmotion` wrapper bursts on a user-triggered call:
+ *
+ *     setEmotion = function livingSetEmotion(name, user) { ...; if (user) burstEmotion(name); }
+ *
+ * An Auto Life tick calls setEmotion(selected) with NO user flag, so no V2 FX is expected there.
+ * Read from the frozen bytes, fail-closed.
+ */
+function extractBurstOnUser(v2Text, fileName) {
+  const re = /setEmotion\s*=\s*function[\s\S]{0,400}?if\s*\(\s*user\s*\)\s*(\w+)\s*\(/;
+  const m = re.exec(v2Text);
+  if (!m) {
+    throw new SourceContractError(`${fileName}: the V2 setEmotion wrapper has no authored user burst`);
+  }
+  return m[1];
+}
+
 /** The authored Auto Life pool lives inside resetAuto(); read it from that function body. */
 function extractAutoLifePool(sourceText, fileName) {
   const sf = ts.createSourceFile(fileName, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
@@ -143,7 +284,31 @@ export function sourceContract() {
   const poseForEmotion = extractLiteral(v2, 'living-world-v2.js', 'poseForEmotion');
   const fxMap = extractLiteral(v2, 'living-world-v2.js', 'fxMap');
   const emos = extractLiteral(inline, 'script.js', 'emos');
+  const lubtPoses = extractLubtPoses(inline, 'script.js');
   const autoLifePool = extractAutoLifePool(inline, 'script.js');
+  const chars = extractChars(inline, 'script.js');
+  const characterGuideTemplate = extractCharacterGuideTemplate(inline, 'script.js');
+
+  /* ROUND6D (FIX 2) The rendered guide line per authored character, DERIVED from the template. */
+  const characterGuideByName = {};
+  for (const [name, ch] of Object.entries(chars)) {
+    characterGuideByName[name] = characterGuideTemplate.replace('${c.name}', name);
+  }
+
+  /* ROUND6D (FIX 3/FIX 4) The authored particle counts and --dx ranges, derived from the frozen
+   * loop bounds in notes()/petals() by the shared fail-closed parser. */
+  const authoredParticleCounts = authoredParticleRanges(inline);
+
+  /* ROUND6C (FIX C) The per-emotion metadata the relational contract compares against. `emos` is
+   * the authored row shape [name, glyph, title, line]; deriving the per-emotion view HERE keeps a
+   * single extracted truth instead of a second copy in the harness. */
+  const emoMeta = {};
+  for (const row of emos) {
+    if (!Array.isArray(row) || row.length < 4) {
+      throw new SourceContractError('script.js: an emos row is not the authored [name,glyph,title,line]');
+    }
+    emoMeta[row[0]] = { name: row[0], glyph: row[1], title: row[2], line: row[3] };
+  }
 
   // The emotion vocabulary the harness exercises is the authored `emos` array, read from the
   // frozen inline layer, and must agree with the external layer's allEmotionNames.
@@ -158,9 +323,28 @@ export function sourceContract() {
     }
   }
 
+  /* ROUND6C (FIX C) Every emotion the relational contracts name must resolve through ALL the
+   * authored maps it is compared against. An emotion missing from poseForEmotion / fxMap /
+   * characterLines would make a relation silently unprovable, so it fails closed here instead. */
+  for (const name of emoNames) {
+    for (const [label, map] of [['poseForEmotion', poseForEmotion], ['fxMap', fxMap],
+      ['characterLines', characterLines]]) {
+      if (!Object.prototype.hasOwnProperty.call(map, name)) {
+        throw new SourceContractError(`${label}.${name} is missing from the frozen source`);
+      }
+    }
+    if (!Object.prototype.hasOwnProperty.call(lubtTalk.emotion, name)) {
+      throw new SourceContractError(`lubtTalk.emotion.${name} is missing from the frozen source`);
+    }
+  }
+
   cached = {
-    characterLines, lubtTalk, poseForEmotion, fxMap,
+    characterLines, lubtTalk, poseForEmotion, fxMap, lubtPoses, emoMeta,
     emotions: emoNames, derivedEmotionNames: emoNames, autoLifePool,
+    chars, characterGuideTemplate, characterGuideByName,
+    baseParticleTriggers: extractBaseParticleTriggers(inline, 'script.js'),
+    burstOnUser: extractBurstOnUser(v2, 'living-world-v2.js'),
+    particleCounts: extractParticleCounts(authoredParticleCounts, 'script.js'),
   };
   return cached;
 }

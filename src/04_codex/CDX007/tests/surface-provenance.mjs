@@ -20,7 +20,8 @@
  *   missing instrumentation != parity defect  =  harness contract error
  */
 
-import { actionPool, resolveDynamicBubblePath, stateOwnsLubtWrite, IDLE_POOL } from './bubble-provenance.mjs';
+import { actionPool, resolveDynamicBubblePath, stateOwnsLubtWrite, IDLE_POOL,
+  resolveCharacterGuide, CHARACTER_GUIDE_POOL } from './bubble-provenance.mjs';
 
 /**
  * Evaluate one surface's bubble provenance against the state contract.
@@ -80,11 +81,22 @@ export function evaluateSurfaceProvenance(p) {
   const live = Array.isArray(src.particle.still_present_classes) ? src.particle.still_present_classes : [];
   base.families = [...new Set([...created, ...removed, ...live].map(String))].sort();
 
-  if (!contract) {
-    // No contract on this state: there is nothing to prove, and nothing is contracted.
-    base.valid = true;
-    return base;
-  }
+  /* ROUND6C (FIX A) DEFAULT BUBBLE POLICY for a state with no RANDOM_CONTRACTS entry.
+   *
+   * A contract-less state is NOT skipped: the target still owns NO Lubt write, and the same four
+   * obligations apply as for an explicit `bubbleOwned:false` state -
+   *
+   *   1. the preState bubble text was captured,
+   *   2. the bubble trace is available,
+   *   3. every recorded write is source-classified,
+   *   4. the final text equals the LAST observed write, or - when there was no write - the
+   *      recorded preState text.
+   *
+   * This is NOT a generic ignore and NOT a pool union. The evaluator still runs the unclassified
+   * -write check, the unowned-unclassified check and the final-text invariant below; a state that
+   * writes an unauthored text, or whose final text does not match its own trace, still fails. The
+   * only thing "default" decides is WHICH pool is owned: none. */
+  const activeContract = contract || { bubbleOwned: false, dynamicBubble: false, ownsNothing: true };
 
   const trace = src.bubble;
 
@@ -103,7 +115,7 @@ export function evaluateSurfaceProvenance(p) {
 
   /* ---- (2) Resolve the pool this action OWNS on THIS surface. ---- */
   let owned = null;
-  if (contract.dynamicBubble) {
+  if (activeContract.dynamicBubble) {
     const dyn = resolveDynamicBubblePath({
       selectedEmotion: p.selectedEmotion,
       preEmotion: p.preEmotion,
@@ -114,19 +126,44 @@ export function evaluateSurfaceProvenance(p) {
       return base;
     }
     owned = dyn.path;
-  } else if (contract.bubbleOwned) {
+  } else if (activeContract.bubbleOwned === 'characterGuide') {
+    /* ROUND6D (FIX 2) The character-switch states own a DYNAMIC guide write. The selected
+     * character is a per-surface runtime value read from the authored #castName element, and the
+     * resolved line must be this surface's own. An unknown character fails closed. */
+    const guide = resolveCharacterGuide({
+      selectedCharacter: p.selectedCharacter,
+      sourceContract: p.sourceContract,
+    });
+    if (!guide.ok) {
+      base.harnessErrors.push(`${guide.error}:${surface}`);
+      return base;
+    }
+    owned = guide.path;
+    base.ownedExpectedText = guide.expectedText;
+  } else if (activeContract.bubbleOwned) {
     owned = actionPool(p.sourceContract, p.state);
     if (!owned) {
       base.harnessErrors.push(`UNMAPPED_BUBBLE_ACTION_POOL:${surface}:${p.state}`);
       return base;
     }
   }
-  const ownsLubtWrite = stateOwnsLubtWrite(p.state) && (contract.bubbleOwned || contract.dynamicBubble);
+  const ownsLubtWrite = stateOwnsLubtWrite(p.state)
+    && !!(activeContract.bubbleOwned || activeContract.dynamicBubble);
 
-  /* ---- (5) A target-owned write MUST appear in the trace. ---- */
+  /* ---- (5) A target-owned write MUST appear in the trace. ----
+   *
+   * ROUND6D (FIX 2): when the state owns the DYNAMIC character guide, pool membership is NOT
+   * enough. The write must equal this surface's OWN resolved guide line, so selecting M02 while
+   * the trace shows the F01 guide is a violation rather than a pass. For a static pool the
+   * membership test is unchanged. */
   if (ownsLubtWrite) {
     base.resolved += 1;
-    const ownedIdx = trace.findIndex((w) => (w.sourcePoolCandidates || []).includes(owned));
+    const isGuide = owned && String(owned).startsWith(CHARACTER_GUIDE_POOL);
+    const ownedIdx = trace.findIndex((w) => {
+      if (!(w.sourcePoolCandidates || []).includes(owned)) return false;
+      if (!isGuide) return true;
+      return w.text === base.ownedExpectedText;
+    });
     if (ownedIdx >= 0) {
       base.satisfied += 1;
       base.ownedWriteIndex = ownedIdx;
@@ -134,9 +171,11 @@ export function evaluateSurfaceProvenance(p) {
     } else {
       base.violated += 1;
       base.violations.push({
-        path: 'semanticContract.bubble_action_write_missing',
+        path: isGuide
+          ? 'semanticContract.bubble_character_guide_mismatch'
+          : 'semanticContract.bubble_action_write_missing',
         surface,
-        a: owned,
+        a: isGuide ? base.ownedExpectedText : owned,
         b: trace.map((w) => w.text).slice(0, 2),
       });
       // A missing owned write is a PARITY finding, not an instrumentation failure, so evaluation
@@ -224,10 +263,10 @@ export function evaluateSurfaceProvenance(p) {
   else base.violated += 1;
 
   /* ---- The fx lifecycle is proven on this surface too. ---- */
-  if (contract.fx) {
+  if (activeContract.fx) {
     base.resolved += 1;
     base.fx.resolved += 1;
-    const emotionKey = contract.fx.emotion;
+    const emotionKey = activeContract.fx.emotion;
     const fxPool = resolveFxPool(p.sourceContract, emotionKey);
     if (fxPool === null) {
       base.harnessErrors.push(`UNRESOLVED_FX_POOL:${surface}:fxMap.${emotionKey}`);
@@ -315,11 +354,13 @@ export function evaluatePairProvenance(p) {
     ...shared, surface: 'original', provenance: p.oProvenance,
     finalBubbleText: p.oFinalText, preBubbleText: p.oPreText,
     selectedEmotion: p.oSelectedEmotion, preEmotion: p.oPreEmotion,
+    selectedCharacter: p.oSelectedCharacter,
   });
   const splitResult = evaluateSurfaceProvenance({
     ...shared, surface: 'split', provenance: p.sProvenance,
     finalBubbleText: p.sFinalText, preBubbleText: p.sPreText,
     selectedEmotion: p.sSelectedEmotion, preEmotion: p.sPreEmotion,
+    selectedCharacter: p.sSelectedCharacter,
   });
   const pair = pairSurfaceProvenance(originalResult, splitResult);
   return { originalResult, splitResult, ...pair };

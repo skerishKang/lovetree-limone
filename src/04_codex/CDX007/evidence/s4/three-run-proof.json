@@ -4,15 +4,15 @@
   "runs": [
     {
       "run_index": 1,
-      "semantic_raw_exact": "6/39",
-      "semantic_contract_exact": "13/39",
-      "geometry_raw_exact": "38/39",
-      "geometry_contract_exact": "38/39",
-      "computed_style_raw_exact": "37/39",
-      "computed_style_contract_exact": "38/39",
-      "animation_inventory_contract_exact": "37/39",
-      "real_parity_defects": 52,
-      "unclassified_residuals": 52,
+      "semantic_raw_exact": "11/39",
+      "semantic_contract_exact": "39/39",
+      "geometry_raw_exact": "39/39",
+      "geometry_contract_exact": "39/39",
+      "computed_style_raw_exact": "39/39",
+      "computed_style_contract_exact": "39/39",
+      "animation_inventory_contract_exact": "39/39",
+      "real_parity_defects": 0,
+      "unclassified_residuals": 0,
       "harness_contract_errors": 0,
       "unresolved_contract_paths": 0,
       "stable_ledger_entries": 0,
@@ -27,7 +27,7 @@
       "frozen_behavior_preserved": "YES"
     }
   ],
-  "runs_clean": false,
+  "runs_clean": true,
   "THREE_RUN_PROOF": false,
   "runs_required": 3,
   "runs_recorded": 1,

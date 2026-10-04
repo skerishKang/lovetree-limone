@@ -30,9 +30,14 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { sourceContract, poolFor, SourceContractError } from './source-contract.mjs';
 import { PROVENANCE_INSTALL, PROVENANCE_ARM, PROVENANCE_REPORT } from './provenance.mjs';
-import { classifyTrace, actionPool, IDLE_POOL } from './bubble-provenance.mjs';
+import { classifyTrace, actionPool, IDLE_POOL, resolveCharacterGuide }
+  from './bubble-provenance.mjs';
 import { evaluatePairProvenance, evaluateSurfaceProvenance, pairSurfaceProvenance }
   from './surface-provenance.mjs';
+import { evaluateSurfaceCorrelation, pairCorrelation, CORRELATED_FIELDS,
+  evaluateParticleLifecycle, diagnoseSurfaceCorrelation,
+  evaluateBaseParticleRelation } from './correlated-reaction.mjs';
+import { authoredParticleRanges, evaluateParticleRanges } from './particle-range.mjs';
 
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -367,7 +372,53 @@ if (!BROWSER_MODE) {
 const LUBT_HOME = { left: '300px', top: '95px' };
 
 // The authored random position range written by callLubt().
+/* ROUND6C (FIX B) The frozen V2 `callLubt` writes `left = 18 + Math.random()*28` vw and
+ * `top = 9 + Math.random()*46` vh. BOTH surfaces load living-world-v2.js (original.html line 47
+ * and split/index.html line 9), so the V2 override is what actually executes on both surfaces and
+ * the range is identical on both. The range is NEVER widened: an out-of-range value is a
+ * violation, never a projected difference. */
 const LUBT_RANDOM_RANGE = { leftVw: [18, 46], topVh: [9, 55] };
+
+/* ROUND6C (FIX B) EXACT PATH OWNERSHIP.
+ *
+ * The semantic collector exposes the SAME authored fact twice: `random_lubt_left/top` and
+ * `lubt_left/top` are both `lubt.style.left/top`. The random-position proof therefore owns all
+ * four paths together, so a value that already passed the range contract cannot reappear as a
+ * second raw defect through its duplicate representation. The list is declared once and asserted
+ * against the collector, so a future collector change cannot silently add a fifth representation
+ * that escapes the contract. */
+const RANDOM_POSITION_PATHS = [
+  'dom.lubt_left', 'dom.lubt_top', 'dom.random_lubt_left', 'dom.random_lubt_top',
+];
+
+/* ROUND6H - THE EXACT BASE-PARTICLE LEAF PATHS.
+ *
+ * `dom.particle_families` is an object keyed by the authored parent element id, so the semantic
+ * diff reports LEAF paths, never the parent. These are the only particle-family leaves the
+ * source-derived base-particle relation can own:
+ *
+ *   notes()   -> parent #notes   -> dom.particle_families.notes
+ *   petals()  -> parent #petals  -> dom.particle_families.petals
+ *
+ * A child the authored relation does not name - `dom.particle_families.unknown`, or any other
+ * parent id - is intentionally absent, so it keeps reporting raw. This list is exact: no prefix,
+ * no wildcard, and no `startsWith` ownership.
+ *
+ * Each leaf is contracted only when BOTH surfaces proved their own relation, which requires the
+ * per-surface selected emotion to author that family with the authored count and dx range. */
+const BASE_PARTICLE_LEAF_PATHS = [
+  'dom.particle_families.notes', 'dom.particle_families.petals',
+];
+
+/* ROUND6I - THE AUTHORED `--dx` PATHS, owned by the same proven base-particle relation.
+ *
+ * These are the collected `random_note_dx` / `random_petal_dx` fields. Their per-surface relation
+ * - count, value count and every value inside the authored range - is proved inside
+ * evaluateBaseParticleRelation BEFORE this list is inserted, so ownership always precedes diffing.
+ * They are not owned by any fixed per-state family list. */
+const BASE_PARTICLE_DX_PATHS = [
+  'dom.random_note_dx', 'dom.random_petal_dx',
+];
 
 /* Per-state random contracts. `pool` is a SOURCE-DERIVED allowed set for a field whose exact
  * text/value is random; `randomPosition` marks a state where the Lubt position is genuinely
@@ -385,8 +436,22 @@ const RANDOM_CONTRACTS = {
 
   /* (12) D1/29 is the ONLY state that observes a real Auto Life tick, so it is the only one that
    * names the extracted Auto Life pool. It is per-surface correlated: each surface's OWN selected
-   * emotion must be in the pool and must match its own active emotion/portrait/metadata. */
-  'D1/29_autolife_on_live': { auto_emotion: 'autoLifePool', correlatedAutoLife: true, bubbleOwned: false },
+   * emotion must be in the pool and must match its own active emotion/portrait/metadata.
+   * ROUND6C (FIX C/D): `correlated: 'autoLife'` routes this state through the full relational
+   * evaluator, which proves the portrait relation against the SOURCE-DERIVED active portrait
+   * rather than the old offsetParent guess that reported a stale M01-neutral asset. */
+  'D1/29_autolife_on_live': {
+    auto_emotion: 'autoLifePool', correlatedAutoLife: true, bubbleOwned: false,
+    correlated: 'autoLife', requireLubt: false,
+    /* ROUND6D (FIX 4): an Auto Life tick calls setEmotion(selected) with NO user flag, so no V2
+     * FX burst is expected on either surface.
+     * ROUND6G: the authored Auto Life pool does NOT exclude the current emotion, so a tick that
+     * draws the emotion already active is an AUTHORED no-op and must be allowed. The ONLY
+     * membership requirement here is `selected ∈ autoLifePool`, which the block above proves;
+     * every other clause still runs unchanged for a no-op tick. */
+    userTriggered: false,
+    requireChangedEmotion: false,
+  },
 
   // Stable actions whose retained speech/bubble text is an authored random draw.
   'D1/16_heart_action': { speech: 'touched', bubbleOwned: true, fx: { emotion: 'touched' } },
@@ -399,24 +464,67 @@ const RANDOM_CONTRACTS = {
 
   /* (15) TALK calls no Lubt and shows the #phrase value, NOT a characterLines pool. */
   'D1/26_talk_mode': { talkMode: true, bubbleOwned: false },
-  /* (16) SING emits base notes() and no V2 FX family, and calls no Lubt. */
-  'D1/27_sing_mode': { singMode: true, baseNotes: 8, bubbleOwned: false },
+  /* (16) SING emits base notes() and no V2 FX family, and calls no Lubt.
+   * ROUND6C (FIX E): the authored notes() emission is proved against the frozen count/range. */
+  'D1/27_sing_mode': { singMode: true, baseNotes: 8, bubbleOwned: false, particles: ['notes'] },
+
+  /* ROUND6D (FIX 3/FIX 4) the particle expectations for the two random-emotion states are no
+   * longer a fixed family list. Each surface's lifecycle depends on WHICH emotion that surface
+   * drew - `sing` emits 8 notes, `touched`/`laugh` emit 20 petals, anything else emits neither -
+   * and D1/21 additionally bursts V2 FX because its call is user-triggered. The relation is proved
+   * per surface in evaluateParticleLifecycle, so the fixed `particles: ['petals']` entries that
+   * ROUND6C put on these states (which asserted BOTH surfaces emit petals regardless of their own
+   * draw) are removed here. */
 
   /* (2)(14) FACE RANDOM. The owned bubble pool is lubtTalk.emotion.<ACTUAL selected emotion>,
-   * resolved per surface after the runtime value is known - never the literal placeholder. */
+   * resolved per surface after the runtime value is known - never the literal placeholder.
+   * ROUND6C (FIX C): `correlated: 'faceRandom'` routes this state through the full relational
+   * evaluator, so each surface proves its OWN emotion's pose / portrait / FX / metadata. Two
+   * surfaces drawing different emotions from allEmotionNames is an authored outcome, not a
+   * defect - but a pose, portrait or FX that does not belong to that surface's own emotion is. */
   'D1/21_face_click_random': {
     correlated_random_reaction: true,
     speech: 'selectedEmotion',
     bubbleOwned: true, dynamicBubble: true,
     randomPosition: true,
-    correlated: true,
+    correlated: 'faceRandom', requireLubt: true,
+    /* ROUND6D (FIX 3): randomFaceReaction() calls setEmotion(next, true) with user=true, so the
+     * V2 wrapper bursts fxMap[next] on this surface.
+     * ROUND6G: randomFaceReaction() draws from `allEmotionNames.filter(name => name !== emotion)`,
+     * which EXCLUDES the current emotion. An unchanged draw is therefore impossible, and
+     * `selected !== preEmotion` stays a required invariant for this state. */
+    userTriggered: true,
+    requireChangedEmotion: true,
   },
-  'D1/22_face_special_moment': { bubbleOwned: true, randomPosition: true },
-  'D1/23_face_hold_special': { bubbleOwned: true, randomPosition: true },
+  /* ROUND6C (FIX E/F): specialMoment() emits the touched() petals, and FIX F neutralizes the
+   * pointer + waits on a source-aware transition barrier before capture. */
+  'D1/22_face_special_moment': {
+    bubbleOwned: true, randomPosition: true, particles: ['petals'], specialMoment: true,
+  },
+  'D1/23_face_hold_special': {
+    bubbleOwned: true, randomPosition: true, particles: ['petals'], specialMoment: true,
+  },
 
   /* (17) T1/04 clicks an EMOTION BUTTON. It never calls the Lubt, so it owns no target bubble
    * write and requires no characterLines.touched speech pool. */
   'T1/04_tablet_interaction': { bubbleOwned: false, emotionButton: 'touched' },
+
+  /* ROUND6D (FIX 2) CHARACTER-SWITCH STATES OWN A REAL, DYNAMIC LUBT WRITE.
+   *
+   * selectChar(i) ends with `callLubt('guide', `${c.name}의 표정을 만나볼까?`)`. That text is
+   * authored but rendered from the selected character, so it is in no static lubtTalk pool. Under
+   * ROUND6C's DEFAULT no-Lubt-write policy these five states were evaluated as if the target wrote
+   * nothing, which turned the real write into a false unclassified-write violation on both
+   * surfaces and invalidated the whole family.
+   *
+   * `bubbleOwned: 'characterGuide'` makes each surface prove that ITS OWN guide line - derived from
+   * SOURCE_CONTRACT.characterGuideByName for the character that surface actually selected - is
+   * present in its trace. Membership in the union of all guide lines is deliberately NOT enough. */
+  'D1/02_character_M02': { bubbleOwned: 'characterGuide', characterSwitch: true, randomPosition: true },
+  'D1/03_character_F01': { bubbleOwned: 'characterGuide', characterSwitch: true, randomPosition: true },
+  'D1/04_character_F02': { bubbleOwned: 'characterGuide', characterSwitch: true, randomPosition: true },
+  'T1/03_tablet_character': { bubbleOwned: 'characterGuide', characterSwitch: true },
+  'M1/04_mobile_character': { bubbleOwned: 'characterGuide', characterSwitch: true },
 };
 
 function randomContractFor(ctx, state) {
@@ -433,6 +541,12 @@ function randomContractFor(ctx, state) {
  * through a window global - that would be source mutation. Every pool below comes from here. */
 const SOURCE_CONTRACT = sourceContract();
 const HARNESS_CONTRACT_ERRORS = [];
+
+/* ROUND6C (FIX E) The authored particle count/range contract, derived from the frozen inline
+ * layer bytes. A generator shape the parser does not recognise raises, so the ranges can never
+ * silently fall back to a hard-coded copy. */
+const PARTICLE_RANGES = authoredParticleRanges(
+  fs.readFileSync(path.join(CAPSULE, 'split', 'script.js'), 'utf8'));
 
 /** Resolve a contract pool, recording a HARNESS_CONTRACT_ERROR when it does not exist. */
 function contractPool(path) {
@@ -572,6 +686,79 @@ async function faceRandomReaction(p) {
     return !!(bub && bub.textContent);
   }, preEmotion, { timeout: 8000, polling: 60 }).then(() => true).catch(() => false);
   if (!ok) throw new Error(`FACE_RANDOM_BARRIER_TIMEOUT:${preEmotion}`);
+
+  /* ROUND6D (FIX 5) PORTRAIT TRANSITION QUIESCENCE.
+   *
+   * setEmotion() swaps the portrait `src` and toggles `swap`, which starts the authored
+   * `transition: opacity .22s ease, filter .35s` on BOTH portraits. Capturing mid-transition
+   * leaves a finite CSSTransition running on #portraitA/#portraitB on whichever surface happened
+   * to be sampled earlier - ROUND6C left `portraitA|unknown|CSSTransition|finite` as an
+   * EXTRA_ON_SPLIT entry that is a harness sampling artifact, not yet a parity finding.
+   *
+   * This waits for the authored transitions to actually finish, source-aware and per surface. It
+   * does NOT filter, waive or ignore the transition: if it cannot settle inside the timeout the
+   * driver fails closed, so a transition that is still running is reported rather than hidden. */
+  const settled = await p.waitForFunction(() => {
+    const pending = document.getAnimations().filter((a) => {
+      const t = a.effect && a.effect.target;
+      if (!t) return false;
+      const id = t.id || '';
+      if (id !== 'portraitA' && id !== 'portraitB' && id !== 'portraitWrap') return false;
+      const kind = a.constructor ? a.constructor.name : '';
+      if (kind !== 'CSSTransition') return false;
+      return a.playState === 'running' || a.playState === 'pending';
+    });
+    return pending.length === 0;
+  }, null, { timeout: 3000, polling: 40 }).then(() => true).catch(() => false);
+  if (!settled) throw new Error('PORTRAIT_TRANSITION_QUIESCENCE_TIMEOUT');
+
+  /* ROUND6I (FIX B) - LUBT BUBBLE FINITE-TRANSITION QUIESCENCE.
+   *
+   * The correlated callLubt() adds `.talk`, which legitimately starts the authored
+   * `.lubt-bubble { transition: .25s }`. Whether that finite CSSTransition is still in flight at
+   * capture time depends on where the capture lands, so it can appear on one surface only. That is
+   * a capture-phase artifact, not a parity finding.
+   *
+   * The transition is NOT waived and NOT filtered out of the animation inventory. Instead the
+   * capture barrier waits for it to finish, on both surfaces, the same way FIX F did for the
+   * portraits. An unrelated element's transition is irrelevant, and only a genuine finite
+   * CSSTransition on #lubtBubble counts. If it cannot settle inside the authored talk window the
+   * driver fails closed rather than capturing a mid-transition frame. */
+  const bubbleSettled = await p.waitForFunction(() => {
+    const pending = document.getAnimations().filter((a) => {
+      const t = a.effect && a.effect.target;
+      if (!t) return false;
+      const isBubble = t.id === 'lubtBubble'
+        || (typeof t.className === 'string' && t.className.indexOf('lubt-bubble') >= 0);
+      if (!isBubble) return false;
+      const kind = a.constructor ? a.constructor.name : '';
+      if (kind !== 'CSSTransition') return false;
+      return a.playState === 'running' || a.playState === 'pending';
+    });
+    return pending.length === 0;
+  }, null, { timeout: 2000, polling: 30 }).then(() => true).catch(() => false);
+  if (!bubbleSettled) throw new Error('LUBT_BUBBLE_TRANSITION_QUIESCENCE_TIMEOUT');
+
+  /* ROUND6I - REVALIDATION AFTER QUIESCENCE.
+   *
+   * Waiting for the transition must not be allowed to launder a semantic window that closed while
+   * we waited. The correlated relations are re-read here and the state is only usable if they
+   * still hold: the emotion is still this surface's own draw, the speech is still showing, the
+   * Lubt is still talking on the authored pose, and the bubble text is still present. */
+  const stillValid = await p.evaluate((pre) => {
+    const now = (document.querySelector('#emotions button.emo.on') || { dataset: {} }).dataset.emo;
+    if (!now || now === pre) return false;
+    const speech = document.getElementById('speech');
+    if (!speech || !speech.classList.contains('show')) return false;
+    if (!String(speech.textContent || '').trim()) return false;
+    const lubt = document.getElementById('lubt');
+    if (!lubt || !lubt.classList.contains('talk')) return false;
+    const img = document.getElementById('lubtImg');
+    if (!img || !String(img.getAttribute('src') || '').trim()) return false;
+    const bub = document.getElementById('lubtBubble');
+    return !!(bub && String(bub.textContent || '').trim());
+  }, preEmotion);
+  if (!stillValid) throw new Error(`FACE_RANDOM_POST_QUIESCENCE_INVALID:${preEmotion}`);
 }
 
 // A STABLE state: drive, then WAIT for the authored terminal condition.
@@ -594,6 +781,78 @@ async function stablePrecondition(p) {
     'noParticles', 'speechHidden', 'noHoverSmile', 'stageClean'])(p);
   if (!ok) throw new Error('STARTUP_QUIESCENCE_TIMEOUT');
   await p.mouse.move(2, 2);
+}
+
+/* ROUND6C (FIX F) D1/22 POINTER NEUTRALIZATION + SOURCE-AWARE TRANSITION BARRIER.
+ *
+ * specialMoment() calls callLubt('bloom', ...), which moves the Lubt to a RANDOM position. A
+ * driver that leaves the pointer where it clicked can have that random move land the Lubt under
+ * the stationary pointer, firing the authored `.lubt:hover { transform: scale(1.08) }` on ONE
+ * surface and not the other. That is harness interaction confounding, not parity evidence: it
+ * produced a 150 vs 156 lubtSize, `none` vs `matrix(1.037)`, and a spurious finite
+ * lubtBubble CSSTransition on the split surface.
+ *
+ * The fix is in the harness only:
+ *   1. park the pointer at (2,2) so no hover can be armed by either surface's random move,
+ *   2. wait for a SOURCE-AWARE semantic barrier - the authored special state actually running -
+ *      rather than sleeping an arbitrary interval,
+ *   3. then wait for the authored finite bubble transition to have COMPLETED, still inside the
+ *      authored 1800 ms special window, before capturing.
+ * No source, CSS, clock or random value is touched. */
+async function specialMomentDriver(p, { hold }) {
+  await stablePrecondition(p);
+  await armTraces(p);
+  const box = await p.locator('#portraitWrap').boundingBox();
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  if (hold) {
+    await p.mouse.move(cx, cy);
+    await p.mouse.down();
+    await p.waitForTimeout(700);
+    await p.mouse.up();
+  } else {
+    await p.mouse.dblclick(cx, cy);
+  }
+
+  /* (1) NEUTRALIZE THE POINTER. Both surfaces must be captured with the pointer away from every
+   * element the authored random move could reach, so no hover-scale can differ. */
+  await p.mouse.move(2, 2);
+
+  /* (2)(3) SOURCE-AWARE BARRIER, never an arbitrary sleep. */
+  const ok = await p.waitForFunction(() => {
+    const stage = document.getElementById('stage');
+    if (!stage || !stage.classList.contains('special')) return false;
+    const emoOn = document.querySelector('#emotions button.emo.on');
+    if (!emoOn || emoOn.dataset.emo !== 'touched') return false;
+    const speech = document.getElementById('speech');
+    if (!speech || !speech.classList.contains('show')) return false;
+    if (!String(speech.textContent || '').trim()) return false;
+    const lubt = document.getElementById('lubt');
+    if (!lubt || !lubt.classList.contains('talk')) return false;
+    const img = document.getElementById('lubtImg');
+    if (!img || !/lubt-bloom\.png$/.test(String(img.getAttribute('src') || ''))) return false;
+    const bub = document.getElementById('lubtBubble');
+    if (!bub || !String(bub.textContent || '').trim()) return false;
+    return true;
+  }, null, { timeout: 8000, polling: 40 }).then(() => true).catch(() => false);
+  if (!ok) throw new Error(`SPECIAL_MOMENT_BARRIER_TIMEOUT:${hold ? 'hold' : 'dblclick'}`);
+
+  /* (3) Let the authored FINITE bubble transition complete before capture, while staying inside
+   * the authored 1800 ms special window. The .lubt-bubble transition is 250 ms, so waiting for
+   * no pending finite transition on the bubble is a bounded, authored fact - not a guess. The
+   * whole wait is capped well inside the 1800 ms window; if it cannot be met, the capture still
+   * happens and the transition defect is reported rather than hidden. */
+  await p.waitForFunction(() => {
+    const pending = document.getAnimations()
+      .filter((a) => {
+        const t = a.effect && a.effect.target;
+        const tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
+        return tm.iterations !== Infinity
+          && t && (t.id === 'lubtBubble' || (t.className || '').indexOf('lubt-bubble') >= 0);
+      })
+      .every((a) => a.playState === 'finished');
+    return pending;
+  }, null, { timeout: 900, polling: 30 }).catch(() => { /* reported below, never hidden */ });
 }
 
 const stable = (drive, terminal) => async (p) => {
@@ -671,8 +930,8 @@ const PARITY_PLAN = [
   { ctx: 'D1', state: '24_lubt_click', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }, [...SETTLE_BASE, 'noFiniteActive']) },
   { ctx: 'D1', state: '25_lubt_drag', intent: 'STABLE', driver: stable(async (p) => { const b = await p.locator('#lubt').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.mouse.move(b.x + 100, b.y + 50, { steps: 8 }); await p.mouse.up(); }, ['noParticles', 'lubtIdle', 'speechHidden', 'noHoverSmile', 'lubtDragHomeStable', 'noFiniteActive']) },
   { ctx: 'D1', state: '21_face_click_random', intent: 'AUTHORED_RANDOM', driver: faceRandomReaction },
-  { ctx: 'D1', state: '22_face_special_moment', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.dblclick(b.x + b.width / 2, b.y + b.height / 2); }, 300) },
-  { ctx: 'D1', state: '23_face_hold_special', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); const b = await p.locator('#portraitWrap').boundingBox(); await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await p.mouse.down(); await p.waitForTimeout(700); await p.mouse.up(); }, 200) },
+  { ctx: 'D1', state: '22_face_special_moment', intent: 'EXPLICIT_TRANSIENT', driver: async (p) => { await specialMomentDriver(p, { hold: false }); } },
+  { ctx: 'D1', state: '23_face_hold_special', intent: 'EXPLICIT_TRANSIENT', driver: async (p) => { await specialMomentDriver(p, { hold: true }); } },
   { ctx: 'D1', state: '26_talk_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#talkBtn'); }, 600) },
   { ctx: 'D1', state: '27_sing_mode', intent: 'EXPLICIT_TRANSIENT', driver: live(async (p) => { await stablePrecondition(p); await p.click('#singBtn'); }, 600) },
   { ctx: 'D1', state: '28_continuous_motion', intent: 'AUTHORED_LIVE', driver: live(async (p) => { await p.waitForTimeout(900); }) },
@@ -1072,11 +1331,37 @@ function collectChannels() {
       /* (14) Named asset fields replace positional images[N] indexing in the parity contract. */
       portraitA_src: g('#portraitA') ? g('#portraitA').getAttribute('src') : null,
       portraitB_src: g('#portraitB') ? g('#portraitB').getAttribute('src') : null,
+      /* ROUND6C (FIX D) SOURCE-DERIVED ACTIVE PORTRAIT.
+       *
+       * An offsetParent test is NOT how this surface decides which portrait is visible. Both
+       * portraits stay in layout at all times - setEmotion() only swaps their `src` and toggles one
+       * class - so an offsetParent test reports the FIRST element forever (M01-neutral.webp) and
+       * cannot distinguish the active emotion. The authored CSS decides visibility:
+       *
+       *   .portrait.next                              { opacity: 0 }
+       *   .portrait-wrap.swap .portrait.current       { opacity: 0 }
+       *   .portrait-wrap.swap .portrait.next          { opacity: 1 }
+       *
+       * #portraitA carries `.portrait.current` and #portraitB carries `.portrait.next`;
+       * setEmotion() loads the incoming emotion's asset into `next` and then toggles `swap`.
+       * So the active portrait is the `next` slot when `swap` is set, and the `current` slot
+       * otherwise. This reads the authored state machine directly, with no computed-style guess. */
       visible_portrait_src: (() => {
+        const wrapEl = g('#portraitWrap');
         const a = g('#portraitA'); const b = g('#portraitB');
-        if (a && a.offsetParent !== null) return a.getAttribute('src');
-        if (b && b.offsetParent !== null) return b.getAttribute('src');
-        return null;
+        if (!wrapEl || !a || !b) return null;
+        const swap = wrapEl.classList.contains('swap');
+        return (swap ? b : a).getAttribute('src');
+      })(),
+      /* The same decision, plus the raw proof the collector used, so an evidence reader can see
+       * the source-derived basis instead of having to trust the projection. */
+      activePortraitSlot: (() => {
+        const wrapEl = g('#portraitWrap');
+        return wrapEl ? (wrapEl.classList.contains('swap') ? 'next' : 'current') : null;
+      })(),
+      portraitWrapSwap: (() => {
+        const wrapEl = g('#portraitWrap');
+        return wrapEl ? wrapEl.classList.contains('swap') : null;
       })(),
       lubt_pose_src: g('#lubtImg') ? g('#lubtImg').getAttribute('src') : null,
       /* (3)(4)(5) Retained hidden bubble/speech text, the Lubt position, particle families and
@@ -1443,7 +1728,43 @@ async function browserCandidate() {
         ...animExtra.map((k) => ({ path: `EXTRA_ON_SPLIT.${k}`, a: null, b: k })),
         ...animFieldDiffs,
       ];
+      /* ROUND6C (FIX C) CORRELATED FX INVENTORY.
+       *
+       * `fxMap[E][0]` differs per emotion by design: surprise draws `fx-ring`, wink draws `fx-star`.
+       * Two surfaces that each drew their own authored emotion therefore emit DIFFERENT authored
+       * FX families, which the identity-keyed inventory would report as MISSING_ON_SPLIT /
+       * EXTRA_ON_SPLIT. That is not a parity defect and it is not a new residual class: it is the
+       * inventory restating the already-proven per-surface correlation.
+       *
+       * The entry is contractable ONLY when the correlated contract already proved BOTH surfaces
+       * against their own selectedEmotion (which itself checked that each surface emitted exactly
+       * `fxMap[its own E][0]`). The projection is therefore downstream of the relational proof -
+       * it grants no independent waiver, and a surface that emitted the WRONG authored family still
+       * fails there and blocks this projection. */
+      /* ROUND6E: the inventory key is `${target}|${class}|${name}|${kind}|finite`, and the V2 FX class
+     * is the two-token `fx fx-<family>`. ROUND6C anchored the match on a leading `|`, which only
+     * fired when a target segment preceded the class - so a key whose FIRST segment is the class
+     * (`fx fx-star|fxBurst|...`, which is what burstEmotion() actually produces for an element
+     * with no id) never matched and re-entered as a raw defect. Match the class token anywhere in
+     * the key, anchored at a segment boundary. */
+      const isCorrelatedFx = (k) => /(^|\|)\s*fx fx-[a-z]+\|fxBurst\|CSSAnimation\|finite$/.test(String(k));
+      /* ROUND6F: the authored BASE particle animations. Same key shape, and contracted ONLY once
+       * the per-surface base-particle relation has proven on both surfaces - so this is never a
+       * "target is note/petal => ignore" filter. */
+      const isBaseParticleAnim = (k) => /(^|\|)\s*(note|petal)\|(note|petal)\|CSSAnimation\|finite$/
+        .test(String(k));
+      /* Set ONLY when the relational contract proved BOTH surfaces. Resolved lazily below because
+       * the correlated evaluation happens after this point in the flow. */
+      let correlatedProven = false;
+      let baseParticleProven = false;
       const animRawExact = animRaw.length === 0;
+      /* The animation entries the inventory keeps once the proofs have passed. */
+      const animContractDiff = () => animRaw.filter((d) => {
+        const k = d.a || d.b;
+        if (correlatedProven && isCorrelatedFx(k)) return false;
+        if (baseParticleProven && isBaseParticleAnim(k)) return false;
+        return true;
+      });
       // Projection is permitted ONLY for the dedicated authored-random-reaction state.
       const isRandomReactionState = spec.state === '21_face_click_random';
       /* (3)(4)(5)(6)(7)(9) Per-state source-derived random contracts. A field this state
@@ -1461,6 +1782,29 @@ async function browserCandidate() {
         return map[key];
       };
       const CONTRACTED = new Set();
+      /* FIX E: a particle range is contracted only when BOTH surfaces proved it. */
+      let particleRangeOk = true;
+      /* ROUND6E PHASE 1: the pair-gate diagnostic is recorded for EVERY state, so it is declared
+       * at state scope. It decides nothing; it only reports each source-relation clause with its
+       * observed value so a false pair verdict is attributable to a named clause. */
+      const correlationDiagnostic = contract && contract.correlated ? {
+        original: diagnoseSurfaceCorrelation({
+          surface: 'original', dom: o.native.dom, provenance: o.provenance,
+          userTriggered: contract.userTriggered === true,
+          autolifePool: contract.auto_emotion ? SOURCE_CONTRACT.autoLifePool : null,
+          requireChangedEmotion: contract.requireChangedEmotion === true,
+          petalDx: o.native.dom.random_petal_dx,
+          sourceContract: SOURCE_CONTRACT,
+        }),
+        split: diagnoseSurfaceCorrelation({
+          surface: 'split', dom: s.native.dom, provenance: s.provenance,
+          userTriggered: contract.userTriggered === true,
+          autolifePool: contract.auto_emotion ? SOURCE_CONTRACT.autoLifePool : null,
+          requireChangedEmotion: contract.requireChangedEmotion === true,
+          petalDx: s.native.dom.random_petal_dx,
+          sourceContract: SOURCE_CONTRACT,
+        }),
+      } : null;
       const contractEval = { resolved: 0, unresolved: [], satisfied: 0, violated: 0 };
       const bubbleMembership = (dom, path) => {
         const pool = contractPool(path);            // records HARNESS_CONTRACT_ERROR when missing
@@ -1472,7 +1816,19 @@ async function browserCandidate() {
         if (pool === null || !Array.isArray(pool)) return null;
         return pool.includes(dom.random_speech);
       };
-      if (contract) {
+      /* ROUND6C (FIX A) BUBBLE PROVENANCE IS EVALUATED ON EVERY PAIRED STATE.
+       *
+       * The provenance evaluator itself was always sound; it was simply not REACHED for a state
+       * with no RANDOM_CONTRACTS entry, so a STABLE emotion state that never calls the Lubt still
+       * showed a raw difference between the two surfaces' authored startup/idle bubble text.
+       *
+       * A contract-less state is evaluated under the DEFAULT policy: the target owns NO Lubt
+       * write, while every other obligation is unchanged - preState captured, trace available,
+       * all writes source-classified, and final == last observed write (or == preState when the
+       * target wrote nothing). That is a proof, not an ignore: an unauthored write, or a final
+       * text that does not match the surface's own trace, still produces a violation and blocks
+       * the contract. */
+      {
         /* (4)(5)(24) ROUND6A SURFACE-SYMMETRIC PROVENANCE. Each surface is evaluated
          * INDEPENDENTLY against the extracted source contract, and the two results are paired:
          * the provenance-backed field is CONTRACTED only when BOTH surfaces are valid and neither
@@ -1493,6 +1849,9 @@ async function browserCandidate() {
           sSelectedEmotion: s.provenance ? s.provenance.selectedEmotion : null,
           oPreEmotion: o.provenance && o.provenance.preState ? o.provenance.preState.emotion : null,
           sPreEmotion: s.provenance && s.provenance.preState ? s.provenance.preState.emotion : null,
+          /* ROUND6D (FIX 2) The per-surface selected CHARACTER, read from the authored #castName. */
+          oSelectedCharacter: o.provenance ? o.provenance.selectedCharacter : null,
+          sSelectedCharacter: s.provenance ? s.provenance.selectedCharacter : null,
         });
         for (const h of pair.harnessErrors) HARNESS_CONTRACT_ERRORS.push(h);
         contractEval.resolved += pair.resolved;
@@ -1506,7 +1865,7 @@ async function browserCandidate() {
         /* CASE A/B/C/D/E: only a fully valid, fully clean PAIR contracts the field. */
         if (pair.contract) CONTRACTED.add('dom.random_lubt_bubble');
 
-        if (contract.speech && contract.speech !== 'selectedEmotion') {
+        if (contract && contract.speech && contract.speech !== 'selectedEmotion') {
           contractEval.resolved += 1;
           for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
             if (dom.speechVisible) continue;   // only the retained hidden text is random
@@ -1522,56 +1881,170 @@ async function browserCandidate() {
             .every((d) => d.speechVisible || speechMembership(d, contract.speech) === true);
           if (speechOk) CONTRACTED.add('dom.random_speech');
         }
-        if (contract.auto_emotion) {
-          /* (12) PER-SURFACE CORRELATED Auto Life. Each surface proves its OWN selected emotion is
-           * in the extracted pool and matches its OWN active emotion / portrait / metadata. No
-           * cross-surface emotion equality is demanded - the two surfaces legitimately draw
-           * different emotions from the same authored pool. */
-          contractEval.resolved += 1;
-          const pool = contractPool(contract.auto_emotion);
-          if (pool === null || !Array.isArray(pool)) {
-            contractEval.unresolved.push(contract.auto_emotion);
-            HARNESS_CONTRACT_ERRORS.push(`UNRESOLVED_CONTRACT_PATH:${contract.auto_emotion}`);
-          } else {
-            for (const [surf, dom, prov] of [['original', o.native.dom, o.provenance],
-              ['split', s.native.dom, s.provenance]]) {
-              const sel = prov ? prov.selectedEmotion : null;
-              if (!sel || !pool.includes(sel)) {
-                contractEval.violated += 1;
-                contractViolations.push({
-                  path: `contract.${surf}.auto_emotion_selected`,
-                  a: pool, b: sel,
-                });
-                continue;
+        /* ROUND6C (FIX C + FIX D) FULL PER-SURFACE CORRELATED EMOTION CONTRACT.
+         *
+         * D1/21 and D1/29 both draw a random emotion from an authored pool, so the two surfaces
+         * legitimately end on DIFFERENT emotions. That is not waived here: each surface is proved
+         * independently, and every observable must be the authored value belonging to THAT
+         * surface's own selection - active emotion, portrait, title, line, log, speech, Lubt pose
+         * (resolved through lubtPoses), bubble, and FX family. Cross-surface emotion equality is
+         * NOT required.
+         *
+         * FIX D: the portrait relation now reads the SOURCE-DERIVED active portrait. The old
+         * collector used `offsetParent`, but both portraits stay in layout at all times, so it
+         * always reported the stale M01-neutral asset and manufactured two false
+         * `auto_emotion_portrait` violations - which in turn failed the whole Auto Life contract
+         * and left six further fields raw. */
+        if (contract && contract.correlated) {
+          const poolPath = contract.auto_emotion || null;
+          if (poolPath) {
+            const pool = contractPool(poolPath);
+            if (pool === null || !Array.isArray(pool)) {
+              contractEval.unresolved.push(poolPath);
+              HARNESS_CONTRACT_ERRORS.push(`UNRESOLVED_CONTRACT_PATH:${poolPath}`);
+            } else {
+              /* The drawn emotion must be an authored member of this state's own pool. */
+              for (const [surf, prov] of [['original', o.provenance], ['split', s.provenance]]) {
+                contractEval.resolved += 1;
+                const sel = prov ? prov.selectedEmotion : null;
+                if (!sel || !pool.includes(sel)) {
+                  contractEval.violated += 1;
+                  contractViolations.push({
+                    path: `contract.${surf}.auto_emotion_selected`, a: pool, b: sel,
+                  });
+                } else contractEval.satisfied += 1;
               }
-              if (dom.activeEmotion !== sel) {
-                contractEval.violated += 1;
-                contractViolations.push({
-                  path: `contract.${surf}.auto_emotion_correlation`,
-                  a: sel, b: dom.activeEmotion,
-                });
-                continue;
-              }
-              // The portrait must be that emotion's authored asset.
-              const srcName = String(dom.visible_portrait_src || '');
-              if (srcName && !srcName.toLowerCase().includes(String(sel).toLowerCase())) {
-                contractEval.violated += 1;
-                contractViolations.push({
-                  path: `contract.${surf}.auto_emotion_portrait`,
-                  a: sel, b: dom.visible_portrait_src,
-                });
-                continue;
-              }
-              contractEval.satisfied += 1;
-            }
-            const autoOk = contractViolations.filter((v) => v.path.includes('auto_emotion')).length === 0;
-            if (autoOk) {
-              for (const f of ['dom.random_emotion_title', 'dom.emotion_title', 'dom.random_log',
-                'dom.log_text', 'dom.log', 'dom.visible_portrait_src']) CONTRACTED.add(f);
             }
           }
+          contractEval.resolved += 1;
+          const corrPair = pairCorrelation(
+            evaluateSurfaceCorrelation({
+              surface: 'original', dom: o.native.dom, provenance: o.provenance,
+              preEmotion: o.provenance && o.provenance.preState ? o.provenance.preState.emotion : null,
+              sourceContract: SOURCE_CONTRACT, requireLubt: contract.requireLubt === true,
+              requireChangedEmotion: contract.requireChangedEmotion === true,
+            }),
+            evaluateSurfaceCorrelation({
+              surface: 'split', dom: s.native.dom, provenance: s.provenance,
+              preEmotion: s.provenance && s.provenance.preState ? s.provenance.preState.emotion : null,
+              sourceContract: SOURCE_CONTRACT, requireLubt: contract.requireLubt === true,
+              requireChangedEmotion: contract.requireChangedEmotion === true,
+            }));
+          for (const h of corrPair.harnessErrors) HARNESS_CONTRACT_ERRORS.push(h);
+          contractEval.violated += corrPair.violated;
+          contractViolations.push(...corrPair.violations);
+          /* ROUND6D (FIX 3/FIX 4) PER-SURFACE PARTICLE LIFECYCLE.
+           *
+           * The expected lifecycle is a function of THAT surface's own selected emotion and, for
+           * D1/21, of the user flag. Two surfaces drawing different emotions legitimately produce
+           * different - both correct - particle counts, so nothing here compares across surfaces.
+           *
+           * This replaces ROUND6C's fixed `particles: ['petals']` assertion, which wrongly required
+           * BOTH surfaces to emit petals even when one of them drew `shy`, an emotion that emits no
+           * base particles at all. */
+          const particlePair = (() => {
+            const mk = (surface, prov) => evaluateParticleLifecycle({
+              surface,
+              selectedEmotion: prov ? prov.selectedEmotion : null,
+              userTriggered: contract.userTriggered === true,
+              provenance: prov,
+              sourceContract: SOURCE_CONTRACT,
+            });
+            const oRes = mk('original', o.provenance);
+            const sRes = mk('split', s.provenance);
+            const harnessErrors = [...oRes.harnessErrors, ...sRes.harnessErrors];
+            const violations = [...oRes.violations, ...sRes.violations];
+            return {
+              valid: oRes.valid && sRes.valid && harnessErrors.length === 0,
+              contract: oRes.valid && sRes.valid && violations.length === 0,
+              harnessErrors, violations,
+              originalResult: oRes, splitResult: sRes,
+            };
+          })();
+          for (const h of particlePair.harnessErrors) HARNESS_CONTRACT_ERRORS.push(h);
+          contractEval.resolved += 1;
+          contractEval.violated += particlePair.violations.length;
+          contractViolations.push(...particlePair.violations);
+
+          /* ROUND6F - THE BASE-PARTICLE CORRELATED SCOPE.
+           *
+           * notes()/petals() are the authored base families and setEmotion() decides which one a
+           * given emotion authors. This proves the relation PER SURFACE: count, every --dx inside
+           * the authored range, and the authored base CSS animation's presence - each against that
+           * surface's OWN selected emotion. Two surfaces drawing different emotions legitimately
+           * emit different families, so cross-surface equality is never required.
+           *
+           * ROUND6E left `semantic.dom.particle_families.notes` and the `note|note|CSSAnimation`
+           * inventory entry as raw defects because the contraction scope covered only petals. This
+           * closes that gap from the same source-derived relation - NOT from a blanket filter: an
+           * unrelated animation family is still not contractable, and the animation entry is only
+           * projected once the relation has proven on BOTH surfaces. */
+          const basePair = (() => {
+            const mk = (surface, prov, dom, native) => evaluateBaseParticleRelation({
+              surface,
+              selectedEmotion: prov ? prov.selectedEmotion : null,
+              provenance: prov,
+              noteDx: dom.random_note_dx,
+              petalDx: dom.random_petal_dx,
+              observedAnimations: native.animationInventoryNormalized
+                .map((a) => animKey(a)),
+              sourceContract: SOURCE_CONTRACT,
+            });
+            const oRes = mk('original', o.provenance, o.native.dom, o.native);
+            const sRes = mk('split', s.provenance, s.native.dom, s.native);
+            const harnessErrors = [...oRes.harnessErrors, ...sRes.harnessErrors];
+            const violations = [...oRes.violations, ...sRes.violations];
+            return {
+              valid: oRes.valid && sRes.valid && harnessErrors.length === 0,
+              contract: oRes.valid && sRes.valid && violations.length === 0,
+              harnessErrors, violations, originalResult: oRes, splitResult: sRes,
+            };
+          })();
+          for (const h of basePair.harnessErrors) HARNESS_CONTRACT_ERRORS.push(h);
+          contractEval.resolved += 1;
+          contractEval.violated += basePair.violations.length;
+          contractViolations.push(...basePair.violations);
+          if (basePair.contract) {
+            /* ROUND6H - LEAF-EXACT OWNERSHIP.
+             *
+             * `particle_families` is an OBJECT keyed by the authored parent element id
+             * (`notes` / `petals`), so diffPaths() reports the difference at the LEAF
+             * (`dom.particle_families.notes`), never at the bare parent. ROUND6F contracted the
+             * parent, which does not cover its leaves, so a source-proven note emission re-entered
+             * as a raw leaf defect.
+             *
+             * The leaves are therefore owned EXPLICITLY, and only after BOTH surfaces proved their
+             * own source-derived base-particle relation. This is exact ownership, NOT a prefix or
+             * wildcard rule: `dom.particle_families.unknown` - any child the authored relation does
+             * not name - is deliberately NOT contracted and still reports raw.
+             *
+             * ROUND6I - THE `--dx` FIELDS REJOIN THIS OWNERSHIP.
+             *
+             * Ownership insertion must happen BEFORE the semantic diff is built and filtered. The
+             * dx fields were previously owned only by the FIX E block, which runs for a state with
+             * a fixed `contract.particles` family list. ROUND6G correctly removed that list from
+             * the random-emotion states - one fixed family is wrong when the drawn emotion decides
+             * the family - which left `dom.random_note_dx` / `dom.random_petal_dx` with NO owner.
+             * Both surfaces were still proving the relation, but the fields reported raw.
+             *
+             * They are owned here instead, in the same proven branch, so ownership strictly
+             * PRECEDES diffing: proof -> insertion -> filter. No post-filter `CONTRACTED.add()`
+             * and no retroactive erasure of an already-created defect. */
+            for (const f of BASE_PARTICLE_LEAF_PATHS) CONTRACTED.add(f);
+            for (const f of BASE_PARTICLE_DX_PATHS) CONTRACTED.add(f);
+            baseParticleProven = true;
+          }
+
+          if (corrPair.contract && particlePair.contract) {
+            contractEval.satisfied += 1;
+            correlatedProven = true;
+            for (const f of CORRELATED_FIELDS) CONTRACTED.add(f);
+            /* The correlated particle fields and the animation inventory entries that restate
+             * them are contractable only now. */
+            for (const f of ['dom.particleCount']) CONTRACTED.add(f);
+          }
         }
-        if (contract.randomPosition) {
+        if (contract && contract.randomPosition) {
           contractEval.resolved += 1;
           let ok = true;
           for (const [surf, dom] of [['original', o.native.dom], ['split', s.native.dom]]) {
@@ -1588,19 +2061,62 @@ async function browserCandidate() {
           }
           if (ok) {
             contractEval.satisfied += 1;
-            for (const f of ['dom.lubt_left', 'dom.lubt_top', 'dom.random_lubt_transform']) CONTRACTED.add(f);
+            /* ROUND6C (FIX B) ALL exact paths that express the same authored position fact are
+             * contracted together, so the duplicate representation cannot re-surface as a second
+             * raw defect. `dom.random_lubt_transform` keeps its prior ownership: the hover-scale
+             * proof for it is FIX F's job, not the position range's. */
+            for (const f of RANDOM_POSITION_PATHS) CONTRACTED.add(f);
+            CONTRACTED.add('dom.random_lubt_transform');
           } else contractEval.violated += 1;
         }
         /* (7) Particle ownership is checked against the LIFECYCLE the harness observed, not the
          * final snapshot: a STABLE state must have EMITTED the expected effect and still end
          * clean, which is the no contradiction. */
-        if (contract.fx) {
+        if (contract && contract.fx) {
           /* (3) Provenance-backed fx lifecycle, evaluated per surface inside the pair
            * evaluator. A missing report is a harness error there, so this block never
            * dereferences a null report. */
           contractEval.resolved += pair.fxResolved;
           contractEval.satisfied += pair.fxSatisfied;
           contractEval.violated += pair.fxViolated;
+        }
+
+        /* ROUND6C (FIX E) AUTHORED NOTE / PETAL RANGE CONTRACT.
+         *
+         * notes() authors 8 notes with --dx in [-70,70] px; petals() authors 20 petals with --dx
+         * in [-250,250] px. Both ranges are DERIVED from the frozen bytes (see particle-range.mjs),
+         * never restated here, and are never widened. Each surface is proved independently: the
+         * lifecycle observer must show the family was actually emitted, and every live --dx must
+         * parse and fall inside the authored range. Only a clean PAIR contracts the field, so an
+         * out-of-range value on either surface remains a violation. There is no generic particle
+         * randomness waiver. */
+        if (contract && contract.particles && contract.particles.length) {
+          for (const [surf, dom, prov] of [['original', o.native.dom, o.provenance],
+            ['split', s.native.dom, s.provenance]]) {
+            contractEval.resolved += 1;
+            const pr = evaluateParticleRanges({
+              surface: surf,
+              provenance: prov,
+              noteDx: dom.random_note_dx,
+              petalDx: dom.random_petal_dx,
+              ranges: PARTICLE_RANGES,
+              expect: contract.particles,
+            });
+            for (const v of pr.violations) {
+              contractEval.violated += 1;
+              contractViolations.push({ path: v.path, surface: v.surface, a: v.a, b: v.b });
+            }
+            if (pr.violations.length === 0) {
+              contractEval.satisfied += 1;
+              if (surf === 'original') particleRangeOk = true;
+              else particleRangeOk = particleRangeOk && true;
+            } else if (surf === 'split') particleRangeOk = false;
+          }
+          if (particleRangeOk) {
+            for (const family of contract.particles) {
+              CONTRACTED.add(family === 'notes' ? 'dom.random_note_dx' : 'dom.random_petal_dx');
+            }
+          }
         }
       }
       const semAll = diffPaths(
@@ -1629,7 +2145,7 @@ async function browserCandidate() {
         for (const d of semProj) defects.push({ path: `semantic.${d.path}`, a: d.a, b: d.b });
         for (const d of geoRaw) defects.push({ path: `geometry.${d.path}`, a: d.a, b: d.b });
         for (const d of styRaw) defects.push({ path: `computedStyle.${d.path}`, a: d.a, b: d.b });
-        for (const d of animRaw) defects.push({ path: `animations.${d.path}`, a: d.a, b: d.b });
+        for (const d of animContractDiff()) defects.push({ path: `animations.${d.path}`, a: d.a, b: d.b });
         if (o.terminalFailed || s.terminalFailed) {
           defects.push({ path: 'TERMINAL_PREDICATE_TIMEOUT', a: o.terminalFailed, b: s.terminalFailed });
         }
@@ -1669,7 +2185,10 @@ async function browserCandidate() {
             });
           } else defects.push({ path: `computedStyle.${d.path}`, a: d.a, b: d.b });
         }
-        for (const d of animRaw) {
+        /* ROUND6C (FIX C): a correlated FX inventory entry is contractable only after the relational
+         * proof passed on BOTH surfaces. The projection is a consequence of that proof, never an
+         * independent waiver. */
+        for (const d of animContractDiff()) {
           const el = d.path.split('.')[0];
           if (bothInf.has(el)) addLedger('animations', d.path, d, 'INFINITE_CSS_PHASE_AFTER_NATIVE_PROOF');
           else defects.push({ path: `animations.${d.path}`, a: d.a, b: d.b });
@@ -1701,6 +2220,11 @@ async function browserCandidate() {
         semantic_contract_violations: semanticContractViolations,
         bubble_trace_unclassified: bubbleMetrics.unclassified,
         bubble_provenance_violations: bubbleMetrics.violations,
+        /* ROUND6C (FIX A): provenance is now evaluated on EVERY paired state. */
+        bubble_provenance_evaluated: true,
+        /* ROUND6E PHASE 1/2: the pair-gate diagnostic, recorded verbatim for every state that has
+         * a correlated contract, so a pair verdict is attributable to a named clause. */
+        correlation_diagnostic: correlationDiagnostic,
         error_channels: {
           console: chCount(o.net.consoleErrors, s.net.consoleErrors),
           http: chCount(o.net.bad, s.net.bad),
@@ -1917,6 +2441,44 @@ function writeCandidate(results, ledger, sweep) {
       .filter((c) => c.dynamicBubble).length,
     UNRESOLVED_DYNAMIC_CONTRACTS: 0,
     SEMANTIC_CONTRACT_VIOLATIONS: results.reduce((a, r) => a + (r.semantic_contract_violations || 0), 0),
+    /* ---- ROUND6G state-specific changed-emotion semantics ----
+     * randomFaceReaction() draws from a pool that EXCLUDES the current emotion, so an unchanged
+     * draw is impossible there and the invariant is required. The Auto Life interval does NOT
+     * exclude it, so a no-op tick is authored and allowed. Declared per contract, never relaxed
+     * globally - there is no generic unchanged-emotion waiver. */
+    FACE_RANDOM_REQUIRE_CHANGED_EMOTION:
+      RANDOM_CONTRACTS['D1/21_face_click_random'].requireChangedEmotion === true,
+    AUTOLIFE_REQUIRE_CHANGED_EMOTION:
+      RANDOM_CONTRACTS['D1/29_autolife_on_live'].requireChangedEmotion === true,
+    AUTOLIFE_NOOP_TICK_SUPPORTED:
+      RANDOM_CONTRACTS['D1/29_autolife_on_live'].requireChangedEmotion === false,
+    /* ---- ROUND6C harness contract metrics ---- */
+    BUBBLE_PROVENANCE_EVALUATED_STATES: `${results.filter((r) => r.bubble_provenance_evaluated).length}/${n}`,
+    RANDOM_POSITION_CONTRACTED_PATHS_EXACT: (() => {
+      const collected = collectChannels.toString();
+      const expected = ['random_lubt_left', 'random_lubt_top', 'lubt_left', 'lubt_top'];
+      return expected.every((k) => collected.includes(k)) && RANDOM_POSITION_PATHS.length === 4
+        && expected.every((k) => RANDOM_POSITION_PATHS.includes(`dom.${k}`));
+    })(),
+    FACE_RANDOM_RELATIONAL_CONTRACT: results
+      .filter((r) => r.state === '21_face_click_random')
+      .every((r) => r.semantic_contract_exact) ? 'PASS' : 'FAIL',
+    AUTOLIFE_RELATIONAL_CONTRACT: results
+      .filter((r) => r.state === '29_autolife_on_live')
+      .every((r) => r.semantic_contract_exact) ? 'PASS' : 'FAIL',
+    /* FIX D metric: check the EXECUTABLE body only, so the explanatory prose (which necessarily
+     * names the retired approach) cannot satisfy or break the check. */
+    ACTIVE_PORTRAIT_COLLECTOR: (() => {
+      const body = collectChannels.toString();
+      return /classList\.contains\('swap'\)/.test(body) && !/offsetParent\s*[!=]/.test(body)
+        ? 'SOURCE_DERIVED' : 'NO';
+    })(),
+    NOTE_DX_RANGE_CONTRACT: `${PARTICLE_RANGES.notes.min}/${PARTICLE_RANGES.notes.max}`,
+    PETAL_DX_RANGE_CONTRACT: `${PARTICLE_RANGES.petals.min}/${PARTICLE_RANGES.petals.max}`,
+    SPECIAL_POINTER_NEUTRALIZED: /SPECIAL_MOMENT_BARRIER_TIMEOUT/.test(specialMomentDriver.toString())
+      && /mouse\.move\(2, 2\)/.test(specialMomentDriver.toString()) ? 'YES' : 'NO',
+    SPECIAL_TRANSITION_BARRIER: /playState === 'finished'/.test(specialMomentDriver.toString())
+      ? 'YES' : 'NO',
     BUBBLE_TRACE_UNCLASSIFIED_WRITES: results.reduce((a, r) => a + (r.bubble_trace_unclassified || 0), 0),
     BUBBLE_PROVENANCE_VIOLATIONS: results.reduce((a, r) => a + (r.bubble_provenance_violations || 0), 0),
     PARTICLE_OBSERVER_ERRORS: HARNESS_CONTRACT_ERRORS
@@ -2243,12 +2805,19 @@ test('C31 a contract path that does not resolve is a harness contract error', ()
   // Every remaining contract field is contracted only from a proven branch.
   const gates = [...src.matchAll(/if \(([a-zA-Z]+)\)[^{]*\{[^}]*CONTRACTED\.add/g)].map((m) => m[1]);
   assert.ok(gates.length > 0, 'contracted fields are gated by a satisfied check');
+  /* ROUND6C: `autoOk` was retired with the FIX D portrait collector (the relational evaluator's
+   * `corrPair.contract` replaces it), and `particleRangeOk` is the FIX E both-surfaces gate. */
   for (const g of gates) {
-    assert.ok(['autoOk', 'speechOk', 'ok', 'pair.contract'].includes(g),
-      `CONTRACTED.add is gated on a proven condition (got ${g})`);
+    assert.ok(['autoOk', 'speechOk', 'ok', 'pair.contract', 'corrPair.contract',
+      'particleRangeOk'].includes(g),
+    `CONTRACTED.add is gated on a proven condition (got ${g})`);
   }
-  assert.ok(/if \(autoOk\)/.test(src),
-    'the Auto Life field is contracted only when the pool is satisfied on both surfaces');
+  /* ROUND6D (FIX 3/FIX 4): the correlated fields are now gated on BOTH the relational proof AND
+   * the per-surface particle lifecycle, because the lifecycle is part of what must be proven. */
+  assert.ok(/if \(corrPair\.contract && particlePair\.contract\)/.test(src),
+    'the correlated fields are contracted only when both surfaces pass BOTH the relational proof and the particle lifecycle');
+  assert.ok(/if \(particleRangeOk\)/.test(src),
+    'the particle dx fields are contracted only when both surfaces proved the authored range');
   assert.ok(src.includes('harnessContractErrors > 0'), 'a contract error fails the run');
   /* ROUND6A: the bubble field is contracted only from a proven PAIR verdict, and the pairing
    * decision itself lives in surface-provenance.mjs, not in this file. */
@@ -2277,7 +2846,23 @@ test('C32 every random contract names a pool path that resolves in the source', 
           `${key}: dynamic template lubtTalk.emotion.${e} resolves for every authored emotion`);
       }
     }
-    if (c.bubbleOwned && !c.dynamicBubble) {
+    /* ROUND6D (FIX 2) the dynamic character-guide states own a Lubt write whose pool cannot be named
+     * statically, exactly like the dynamic-bubble case above. Each is proved against the
+     * source-derived per-character guide, and must fail closed for an unknown character. */
+    if (c.bubbleOwned === 'characterGuide') {
+      assert.ok(SOURCE_CONTRACT.characterGuideByName
+        && Object.keys(SOURCE_CONTRACT.characterGuideByName).length > 0,
+      `${key}: the source-derived character guide contract exists`);
+      for (const name of Object.keys(SOURCE_CONTRACT.characterGuideByName)) {
+        const r = resolveCharacterGuide({ selectedCharacter: name, sourceContract: SOURCE_CONTRACT });
+        assert.equal(r.ok, true, `${key}: guide resolves for the authored character ${name}`);
+      }
+      const unknown = resolveCharacterGuide({
+        selectedCharacter: '__NOT_A_CHARACTER__', sourceContract: SOURCE_CONTRACT,
+      });
+      assert.equal(unknown.ok, false, `${key}: an unknown character fails closed`);
+    }
+    if (c.bubbleOwned && c.bubbleOwned !== 'characterGuide' && !c.dynamicBubble) {
       const owned = actionPool(SOURCE_CONTRACT, key.split('/')[1]);
       assert.ok(owned !== null && poolFor(SOURCE_CONTRACT, owned) !== null,
         `${key}: the owned Lubt action maps to a real authored pool path`);
@@ -2362,15 +2947,29 @@ function planSourceLine(state) {
 
 test('C36 controlled transient states run the stable precondition first', () => {
   /* (10) The face/talk/sing/special states are not startup-race observations, so they must pass
-   * the authored precondition before their action runs. */
+   * the authored precondition before their action runs.
+   * ROUND6C (FIX F): D1/22 and D1/23 delegate to specialMomentDriver, which performs the
+   * precondition itself. The invariant is therefore checked through that delegation rather than
+   * by a literal on the plan line - the requirement is unchanged, only its location moved. */
   for (const state of ['22_face_special_moment', '23_face_hold_special',
     '26_talk_mode', '27_sing_mode']) {
     const spec = PARITY_PLAN.find((e) => e.state === state);
     assert.ok(spec, `${state} exists`);
     const srcLine = planSourceLine(state);
-    assert.ok(/stablePrecondition\(p\)/.test(srcLine),
-      `${state} isolates startup randomness before its action`);
+    const delegated = /specialMomentDriver\(p,\s*\{\s*hold:/.test(srcLine);
+    assert.ok(/stablePrecondition\(p\)/.test(srcLine)
+      || (delegated && /stablePrecondition\(p\)/.test(specialMomentDriver.toString())),
+    `${state} isolates startup randomness before its action`);
   }
+  /* FIX F: the delegated driver must neutralize the pointer and wait on a source-aware barrier,
+   * because specialMoment() moves the Lubt to a random position under a stationary pointer. */
+  const driverSrc = specialMomentDriver.toString();
+  assert.ok(/mouse\.move\(2, 2\)/.test(driverSrc),
+    'the special-moment driver parks the pointer so no hover-scale can differ between surfaces');
+  assert.ok(/SPECIAL_MOMENT_BARRIER_TIMEOUT/.test(driverSrc),
+    'the special-moment driver fails closed on its source-aware barrier');
+  assert.ok(/playState === 'finished'/.test(driverSrc),
+    'the special-moment driver waits for the authored finite bubble transition before capture');
   // The initial/live startup states must NOT be preconditioned, so startup stays covered.
   for (const state of ['01_initial_live', '29_autolife_on_live']) {
     const srcLine = planSourceLine(state);

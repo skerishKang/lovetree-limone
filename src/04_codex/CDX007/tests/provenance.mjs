@@ -111,10 +111,44 @@ export const PROVENANCE_REPORT = () => {
   const removed = st.particles.removed;
   const live = document.querySelectorAll('#notes *, #petals *, [class*="fx-"]');
   const emoOn = document.querySelector('#emotions button.emo.on');
+  const castOn = document.querySelector('#cast button.active label');
+  /* ROUND6D (FIX 3/FIX 4) Source-neutral per-class COUNTS.
+   *
+   * The unique-class list cannot distinguish `fx-heart x12` from `fx-heart x22`, which is exactly
+   * the difference between two surfaces drawing `shy` and `touched`. These counters observe what
+   * the DOM actually did and nothing more: no source value is read, no timer or random is touched,
+   * and the counts create nothing in the page. The authored expectation is resolved separately,
+   * Node-side, from the frozen contract. */
+  const countBy = (rows, key) => {
+    const out = {};
+    for (const r of rows) {
+      const k = key(r);
+      if (k === null || k === undefined) continue;
+      out[k] = (out[k] || 0) + 1;
+    }
+    return out;
+  };
+  /* The authored particle classes are `note`, `petal` and `fx fx-<family>` - two tokens for the
+   * V2 FX. Counting by the FIRST token alone would collapse every FX family into one `fx` key and
+   * lose which family was emitted, so a key is the full class when it carries an fx family and the
+   * first token otherwise. This is a pure observation of the authored class string. */
+  const classKey = (r) => {
+    const tokens = String(r.class || '').trim().split(/\s+/).filter(Boolean);
+    if (!tokens.length) return null;
+    const fam = tokens.find((t) => /^fx-/.test(t));
+    return fam ? `fx ${fam}` : tokens[0];
+  };
   return {
     bubble: st.bubble.slice(),
     preState: st.preState,
     selectedEmotion: emoOn ? emoOn.dataset.emo : null,
+    /* ROUND6D (FIX 2) The selected CHARACTER, read from the authored #castName element the
+     * selectChar() action itself updates. This is the per-surface value the guide contract
+     * correlates against; it is never a literal. */
+    selectedCharacter: (() => {
+      const el = document.getElementById('castName');
+      return el ? String(el.textContent || '').trim() || null : null;
+    })(),
     particle: {
       created_count: created.length,
       removed_count: removed.length,
@@ -122,6 +156,9 @@ export const PROVENANCE_REPORT = () => {
       removed_by_class: [...new Set(removed.map((c) => c.class))].sort(),
       still_present_count: live.length,
       still_present_classes: [...new Set(Array.from(live).map((n) => String(n.className || '')))].sort(),
+      created_count_by_class: countBy(created, classKey),
+      created_count_by_parent: countBy(created, (r) => r.parent || null),
+      removed_count_by_class: countBy(removed, classKey),
     },
   };
 };
