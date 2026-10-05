@@ -6,6 +6,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 const ROOT=process.env.CDX006_ROOT;
 const OUT=process.env.CDX006_OUT;
+const PORT=Number(process.env.CDX006_PORT||41731);
 fs.rmSync(OUT,{recursive:true,force:true}); fs.mkdirSync(OUT,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.md':'text/markdown; charset=utf-8','.png':'image/png','.json':'application/json','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8'};
 const server=http.createServer((req,res)=>{try{
@@ -33,31 +34,140 @@ async function instrument(page,ctxId,surface){
  page.on('response',r=>{if(r.status()>=400)err.http.push({url:r.url(),status:r.status()})});
  page.__errs=err; page.__ctxId=ctxId; page.__surface=surface;
 }
+/* Source-aware capture stabilization.
+ *
+ * P03's authored scene logic opens every scene with a finite "out" transition:
+ *   keeper.classList.add('out'); setTimeout(()=>keeper.classList.remove('out'),180)
+ * with `.keeper{transition:.55s ...}` and `.keeper.out{opacity:0;transform:translateX(60px) scale(.92)}`.
+ * A fixed settle delay therefore samples INSIDE that authored transient, and the sample lands at a
+ * different phase on ORIGINAL vs SPLIT purely because SPLIT has two extra blocking resources
+ * (styles.css + script.js) that move its load event. That was the Pair-15 defect: the keeper was
+ * invisible in one screenshot and visible in the other while both sides were actually equivalent.
+ *
+ * This wait is deliberately NARROW and SOURCE-AWARE:
+ *   - it applies to #keeper ONLY, never to the document or the world;
+ *   - it never waits for all animations, never waits for infinite/live animations, and never
+ *     touches the particles, the world background transition, or anything else on the page;
+ *   - it does not patch the clock, performance.now, Math.random, or any runtime source;
+ *   - it is bounded, and a timeout FAILS the capture rather than silently degrading.
+ * A 2-rAF settle confirms the element is visually stationary before it is measured.
+ */
+const KEEPER_SETTLE_TIMEOUT_MS = 8000;
+const keeperStableState = (pg) => pg.evaluate(() => {
+  const k = document.getElementById('keeper');
+  if (!k) return { ready: false, why: 'missing' };
+  const cs = getComputedStyle(k);
+  if (!k.complete) return { ready: false, why: 'incomplete' };
+  if (k.naturalWidth === 0) return { ready: false, why: 'no-natural-width' };
+  if (k.classList.contains('out')) return { ready: false, why: 'authored-out' };
+  if (cs.display === 'none') return { ready: false, why: 'display-none' };
+  if (cs.visibility === 'hidden') return { ready: false, why: 'visibility-hidden' };
+  if (+cs.opacity < 0.999) return { ready: false, why: 'opacity-below-1' };
+  const running = document.getAnimations().filter((a) =>
+    (a.constructor && a.constructor.name === 'CSSTransition') && a.effect && a.effect.target === k);
+  if (running.length) return { ready: false, why: 'keeper-transition-running' };
+  return { ready: true, why: 'stable' };
+});
+async function settleKeeper(page) {
+  const deadline = Date.now() + KEEPER_SETTLE_TIMEOUT_MS;
+  for (;;) {
+    const s = await keeperStableState(page);
+    if (s.ready) break;
+    if (Date.now() > deadline) {
+      throw new Error(`fail-closed: #keeper never left its authored transient (${s.why}) within ${KEEPER_SETTLE_TIMEOUT_MS}ms`);
+    }
+    await page.waitForTimeout(25);
+  }
+  /* Two rAFs: one to apply, one to confirm the painted frame is unchanged. */
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true)))));
+  const after = await keeperStableState(page);
+  if (!after.ready) throw new Error(`fail-closed: #keeper was not stable at capture (${after.why})`);
+  return after;
+}
+/* Every P03 state, not just the initial one, gets the source-aware keeper wait.
+ *
+ * `show(i)` runs the SAME authored `out` transient on EVERY scene change, not only on the first
+ * paint: `keeper.classList.add('out'); setTimeout(()=>keeper.classList.remove('out'),180)` behind
+ * `.keeper{transition:.55s}`. So scene_02..scene_06, skip_to_bloom, the keyboard/wheel/autoplay
+ * navigations and every representative initial probe are all sampling the same ~180ms + 550ms
+ * window. Applying the wait only at scene_01 left those states mid-transition, which showed up as
+ * keeper opacity/rect divergence that is capture-phase, not execution parity.
+ *
+ * The wait remains scoped to #keeper alone and is bounded and fail-closed. */
+async function settle(page) {
+  const onP03 = await page.evaluate(() => location.pathname.includes('03-tree-keeper'));
+  if (onP03) { await settleKeeper(page); return 'KEEPER_AWARE'; }
+  await page.waitForTimeout(120);
+  return 'FIXED_120';
+}
 async function observe(page,ctxId,surface,state,extra){
- extra=extra||{}; await page.waitForTimeout(120);
+ extra=extra||{}; const settleMode = await settle(page);
  const snap=await page.evaluate(()=>{
-  const rect=sel=>{const el=document.querySelector(sel);if(!el)return null;const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return{x:+r.x.toFixed(2),y:+r.y.toFixed(2),w:+r.width.toFixed(2),h:+r.height.toFixed(2),display:cs.display,visibility:cs.visibility,opacity:cs.opacity,overflow:cs.overflow}};
+  const n2=v=>(typeof v==='number'?+v.toFixed(2):v);
+  const rect=sel=>{const el=document.querySelector(sel);if(!el)return null;const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return{x:n2(r.x),y:n2(r.y),w:n2(r.width),h:n2(r.height),display:cs.display,visibility:cs.visibility,opacity:cs.opacity,overflow:cs.overflow}};
   const visible=sel=>{const e=document.querySelector(sel);if(!e)return null;const r=e.getBoundingClientRect(),c=getComputedStyle(e);return c.display!=='none'&&c.visibility!=='hidden'&&+c.opacity!==0&&r.width>0&&r.height>0};
-  const animations=document.getAnimations().map(a=>{const t=a.effect&&a.effect.getTiming?a.effect.getTiming():{};const el=a.effect&&a.effect.target;return{type:(a.constructor&&a.constructor.name)||'Animation',target:el?(el.id||el.className||el.tagName||'unknown'):'unknown',name:a.animationName||null,playState:a.playState,currentTime:typeof a.currentTime==='number'?Math.round(a.currentTime):null,duration:t.duration??null,delay:t.delay??null,iterations:t.iterations??null}});
+  /* Keeper-specific snapshot. The generic geometry/controlVisibility maps above never select
+   * #keeper, and images[] only carries src/complete/naturalWidth/naturalHeight, so the element
+   * state that actually determines whether the keeper figure is present on screen was never
+   * compared. This block is the measured surface the comparator now compares exactly. */
+  const keeper=document.getElementById('keeper');
+  let keeperSnap=null;
+  if(keeper){
+   const cs=getComputedStyle(keeper),r=keeper.getBoundingClientRect();
+   const p=keeper.parentElement,pcs=p?getComputedStyle(p):null,pr=p?p.getBoundingClientRect():null;
+   const vw=innerWidth,vh=innerHeight;
+   const ixW=Math.max(0,Math.min(r.right,vw)-Math.max(r.left,0)),ixH=Math.max(0,Math.min(r.bottom,vh)-Math.max(r.top,0));
+   const area=r.width*r.height;
+   keeperSnap={
+    exists:true,tagName:keeper.tagName,id:keeper.id,className:keeper.className,
+    src:keeper.getAttribute('src'),currentSrc:keeper.currentSrc,
+    /* currentSrc is an absolute URL that embeds the loopback serving port, which differs between
+     * the ORIGINAL and SPLIT servers purely because they are served separately. The port is not a
+     * source property, so compare the resolved path (everything from the surface directory on).
+     * The raw attribute `src` is still recorded verbatim and compared exactly. */
+    currentSrcPath:keeper.currentSrc?decodeURIComponent(new URL(keeper.currentSrc,location.href).pathname):null,
+    complete:keeper.complete,naturalWidth:keeper.naturalWidth,naturalHeight:keeper.naturalHeight,
+    display:cs.display,visibility:cs.visibility,opacity:cs.opacity,transform:cs.transform,
+    rect:{x:n2(r.x),y:n2(r.y),width:n2(r.width),height:n2(r.height),top:n2(r.top),left:n2(r.left),right:n2(r.right),bottom:n2(r.bottom)},
+    viewportIntersection:{visible:r.right>0&&r.bottom>0&&r.left<vw&&r.top<vh,intersectionWidth:n2(ixW),intersectionHeight:n2(ixH),intersectionRatio:area>0?n2((ixW*ixH)/area):0},
+    parent:p?{tagName:p.tagName,className:p.className,display:pcs.display,visibility:pcs.visibility,opacity:pcs.opacity,rect:{x:n2(pr.x),y:n2(pr.y),width:n2(pr.width),height:n2(pr.height)}}:null,
+    runningTransitions:document.getAnimations().filter(a=>(a.constructor&&a.constructor.name==='CSSTransition')&&a.effect&&a.effect.target===keeper).length
+   };
+  }else{keeperSnap={exists:false}}
+  const animations=document.getAnimations().map(a=>{const t=a.effect&&a.effect.getTiming?a.effect.getTiming():{};const el=a.effect&&a.effect.target;return{type:(a.constructor&&a.constructor.name)||'Animation',target:el?(el.id||el.className||el.tagName||'unknown'):'unknown',name:a.animationName||null,playState:a.playState,currentTime:typeof a.currentTime==='number'?Math.round(a.currentTime):null,transitionProperty:t.transitionProperty??null,duration:t.duration??null,delay:t.delay??null,iterations:t.iterations??null,easing:t.easing??null,fill:t.fill??null}});
+  /* Authored transition structure, read from the CSS cascade rather than from live Animation
+   * objects. A running CSSTransition reports an ADJUSTED duration (fractional, shortened when an
+   * in-flight transition is interrupted and retargeted), and whether a given element happens to
+   * have a transition running at all depends on the capture instant. Both are capture phase.
+   * The declared `transition-*` longhands are the source-level structure, and they are stable, so
+   * they are what the comparator compares exactly. */
+  const authoredTransitions=[...document.querySelectorAll('*')].map((el)=>{
+   const cs=getComputedStyle(el);
+   const prop=cs.transitionProperty;
+   if(!prop||prop==='none'||!cs.transitionDuration||/^(0s|0px|0)$/.test(cs.transitionDuration))return null;
+   const label=el.id?('#'+el.id):(el.tagName.toLowerCase()+'.'+String(el.className||'').trim().split(/\s+/).filter(Boolean).sort().join('.'));
+   return{target:label,transitionProperty:prop,transitionDuration:cs.transitionDuration,transitionDelay:cs.transitionDelay,transitionTimingFunction:cs.transitionTimingFunction};
+  }).filter(Boolean).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
   const imgs=[...document.images].map(i=>({src:i.getAttribute('src'),complete:i.complete,naturalWidth:i.naturalWidth,naturalHeight:i.naturalHeight}));
   return{url:location.pathname,title:document.title,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,viewport:{w:innerWidth,h:innerHeight,dpr:devicePixelRatio},
    body:{scrollWidth:document.body.scrollWidth,scrollHeight:document.body.scrollHeight,clientWidth:document.documentElement.clientWidth,clientHeight:document.documentElement.clientHeight},
    geometry:{header:rect('header'),stage:rect('#stage'),left:rect('.left'),right:rect('.right'),world:rect('#world'),cards:rect('.cards')},
+   keeper:keeperSnap,
    controlVisibility:{indexButton:visible('button[onclick*="index.html"]'),autoBtn:visible('#autoBtn'),saveBtn:visible('#saveBtn'),openBtn:visible('#openBtn'),slider:visible('#explode'),play:visible('#play'),skip:visible('#skip'),autoplay:visible('#autoplay'),file:visible('#file')},
    state:{angleText:(document.querySelector('#angleText')&&document.querySelector('#angleText').textContent)||null,figureSrc:(document.querySelector('#figure')&&document.querySelector('#figure').getAttribute('src'))||null,drawerOpen:document.querySelector('#drawer')?document.querySelector('#drawer').classList.contains('open'):null,tags:[...document.querySelectorAll('#tags .tag')].map(e=>({text:e.textContent.trim(),on:e.classList.contains('on')})),explode:(document.querySelector('#explode')&&document.querySelector('#explode').value)||null,rootExplode:getComputedStyle(document.documentElement).getPropertyValue('--explode').trim()||null,rootRx:getComputedStyle(document.documentElement).getPropertyValue('--rx').trim()||null,rootRy:getComputedStyle(document.documentElement).getPropertyValue('--ry').trim()||null,status:(document.querySelector('#status')&&document.querySelector('#status').textContent)||null,inspectTitle:(document.querySelector('#inspectTitle')&&document.querySelector('#inspectTitle').textContent)||null,progress:(document.querySelector('#progress')&&document.querySelector('#progress').style.width)||null,scene:document.querySelector('#world')?document.querySelector('#world').dataset.scene:null,step:(document.querySelector('#step')&&document.querySelector('#step').textContent)||null,fileName:(document.querySelector('#fileName')&&document.querySelector('#fileName').textContent)||null,buildFigureSrc:(document.querySelector('#buildFigure')&&document.querySelector('#buildFigure').getAttribute('src'))||null,activeThumbs:[...document.querySelectorAll('.thumb.active')].map(e=>e.textContent.trim().slice(0,80)),activeNodes:[...document.querySelectorAll('.node.active')].map(e=>e.textContent.trim()),burstScalars:[...document.querySelectorAll('#burst .petal')].map(e=>({left:e.style.left,top:e.style.top,dx:e.style.getPropertyValue('--dx'),dy:e.style.getPropertyValue('--dy'),delay:e.style.animationDelay})),particleScalars:[...document.querySelectorAll('#particles .particle')].map(e=>({x:e.style.getPropertyValue('--x'),t:e.style.getPropertyValue('--t'),drift:e.style.getPropertyValue('--drift'),delay:e.style.animationDelay}))},
    semantic:{cards:[...document.querySelectorAll('a.card')].map(a=>a.getAttribute('href')),figuresButtons:[...document.querySelectorAll('#figures button')].map(b=>b.textContent.trim()),swatchCount:document.querySelectorAll('#swatches button, #swatches .swatch').length,layerCount:document.querySelectorAll('.layer').length,legendCount:document.querySelectorAll('#legend > *').length,legendText:(document.querySelector('#legend')&&document.querySelector('#legend').innerText)||null,sceneNodeCount:document.querySelectorAll('.node').length},
-   animations:animations,images:{count:imgs.length,broken:imgs.filter(x=>x.complete&&x.naturalWidth===0),current:imgs}};
+   animations:animations,authoredTransitions:authoredTransitions,images:{count:imgs.length,broken:imgs.filter(x=>x.complete&&x.naturalWidth===0),current:imgs}};
  });
  const shot=path.join(OUT,ctxId+'_'+surface+'_'+safeName(state)+'.png'); await page.screenshot({path:shot,fullPage:false}); results.screenshots++;
- const rec={ctx:ctxId,surface:surface,state:state,snapshot:snap,errors:JSON.parse(JSON.stringify(page.__errs)),extra:extra,shot:shot}; results.actions.push(rec); return rec;
+ const rec={ctx:ctxId,surface:surface,state:state,settleMode:settleMode,snapshot:snap,errors:JSON.parse(JSON.stringify(page.__errs)),extra:extra,shot:shot}; results.actions.push(rec); return rec;
 }
 // P01 mutates figure.src from requestAnimationFrame, so networkidle is not a valid completion signal.
 // Use the document load event; the action/state plan remains unchanged and observe() adds the same settle delay.
-async function gotoSurface(page,surface){await page.goto('http://127.0.0.1:41731/'+surfaces[surface],{waitUntil:'load',timeout:15000})}
+async function gotoSurface(page,surface){await page.goto(`http://127.0.0.1:${PORT}/`+surfaces[surface],{waitUntil:'load',timeout:15000})}
 async function fresh(browser,cfg,surface){const context=await browser.newContext({viewport:{width:cfg.width,height:cfg.height},deviceScaleFactor:1});const page=await context.newPage();if(cfg.reduced)await page.emulateMedia({reducedMotion:'reduce'});await instrument(page,cfg.id,surface);await gotoSurface(page,surface);return{context:context,page:page}}
 function mergeErr(rec){for(const k of ['page','console','requestFailed','http'])for(const x of rec.errors[k])results.errors[k].push(Object.assign({ctx:rec.ctx,surface:rec.surface,state:rec.state},typeof x==='string'?{message:x}:x))}
 async function cap(){const r=await observe.apply(null,[...arguments]);mergeErr(r);return r}
-async function testLauncher(browser){const c=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1}),p=await c.newPage();await instrument(p,'D1','ROOT');await p.goto('http://127.0.0.1:41731/',{waitUntil:'networkidle',timeout:15000});results.launcher={finalPath:new URL(p.url()).pathname,errors:p.__errs};await c.close()}
+async function testLauncher(browser){const c=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1}),p=await c.newPage();await instrument(p,'D1','ROOT');await p.goto(`http://127.0.0.1:${PORT}/`,{waitUntil:'networkidle',timeout:15000});results.launcher={finalPath:new URL(p.url()).pathname,errors:p.__errs};await c.close()}
 async function assetSweep(browser){
  const c=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1}),p=await c.newPage();await gotoSurface(p,'HUB');
  const figs=fs.readdirSync(path.join(ROOT,'개발과정','assets','figures')).filter(x=>x.endsWith('.png')).sort();
@@ -99,7 +209,7 @@ async function representative(browser,cfg,s){
  await c.close();
 }
 (async()=>{
- await new Promise(r=>server.listen(41731,'127.0.0.1',r));const browser=await chromium.launch({headless:true});
+ await new Promise(r=>server.listen(PORT,'127.0.0.1',r));const browser=await chromium.launch({headless:true});
  try{await testLauncher(browser);await assetSweep(browser);const d1=contexts[0];await hubD1(browser,d1);await p01D1(browser,d1);await p02D1(browser,d1);await p03D1(browser,d1);for(const cfg of contexts.slice(1))for(const s of ['HUB','P01','P02','P03'])await representative(browser,cfg,s);
   for(const k of Object.keys(results.errors)){const seen=new Set();results.errors[k]=results.errors[k].filter(x=>{const q=JSON.stringify(x);if(seen.has(q))return false;seen.add(q);return true})}
   results.metadata.finished=new Date().toISOString();results.metadata.totalActions=results.actions.length;fs.writeFileSync(path.join(OUT,'s2-baseline.json'),JSON.stringify(results,null,2));

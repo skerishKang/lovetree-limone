@@ -4,7 +4,7 @@ import path from 'node:path';
 import http from 'node:http';
 /* ROUND6I-style parameterization: the probe previously hardcoded an absolute path that only
  * existed on the authoring machine. It now takes the capsule root and output path from the
- * environment, exactly like s4-suite-replay.cjs, so it runs on any checkout. No probe logic,
+ * environment, exactly like s4-suite-replay.mjs, so it runs on any checkout. No probe logic,
  * selector, timeout or assertion is changed - only where the paths come from. */
 const ROOT=process.env.CDX006_ROOT||path.resolve(__dirname,'..');
 const OUT=process.env.CDX006_OUT||path.resolve(__dirname,'..','evidence','s4','p02-defect-probe.json');

@@ -22,11 +22,20 @@ const PAIRS = [
   ['D1_P03_scene_05_8angle_build.png', 'D1 P03 scene05 8-angle builder'],
   ['D1_P03_scene_06_bloom.png', 'D1 P03 scene06 bloom'],
   ['T1_P01_initial.png', 'T1 P01 initial'],
-  ['M1_P03_initial.png', 'M1 P03 initial'],
+  /* M1/P03 initial is the RECUT2 pair that matters: the keeper figure must now be captured AFTER
+   * its authored `out` transient, so ORIGINAL and SPLIT show the identical settled state. */
+  ['M1_P03_initial.png', 'M1 P03 initial (keeper settled) — BD-05'],
+  /* T1/P03 initial is the visual surface for BD-06, the authored headline/scene-card collision. */
+  ['T1_P03_initial.png', 'T1 P03 initial — BD-06 headline/scene-card overlap'],
+  /* R1 is the reduced-motion context. BD-01 is the authored ABSENCE of any prefers-reduced-motion
+   * adaptation, so the proof that it is preserved is that R1 renders identically to a normal-motion
+   * capture: these pairs are where CENTRAL can see the unadapted motion on both sides. */
+  ['R1_P01_initial.png', 'R1 P01 initial (reduced-motion) — BD-01'],
+  ['R1_P03_initial.png', 'R1 P03 initial (reduced-motion) — BD-01'],
 ];
 
 const dataUri = (side, file) => {
-  const p = path.join(SRC, `run${RUN}-${side}`, file);
+  const p = path.join(SRC, `recut2-run${RUN}-${side}`, file);
   return `data:image/png;base64,${fs.readFileSync(p).toString('base64')}`;
 };
 

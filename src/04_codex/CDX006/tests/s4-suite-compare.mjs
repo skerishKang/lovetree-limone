@@ -40,6 +40,66 @@ function p02StoryPhase(action) {
   };
 }
 
+/* ---- CSSTransition structural signature (fail-closed) ------------------------------
+ *
+ * The previous comparator DELETED every CSSTransition in normalize() and then recorded the
+ * count/target delta as AUTHORED_FINITE_TRANSIENT_PHASE. That is unsound: an empty ORIGINAL
+ * target set against a populated SPLIT one IS the Pair-15 defect (the keeper figure present on
+ * one side and absent on the other), yet it was allow-listed and scored diff_count 0.
+ *
+ * Rule now: a finite-transient projection is permitted ONLY when the two sides agree on
+ * transition STRUCTURE. Anything structural - target set, target count, transitionProperty,
+ * duration, delay, iterations, easing - is a fail-closed residual, never an allowance.
+ * Only capture-phase fields (currentTime, playState) may be projected away.
+ */
+/* Authored transition structure, from the CSS cascade. This is the source-level signature:
+ * which elements declare a transition, on which property, with what authored duration/delay/easing.
+ * It is stable across capture instants, so it is compared exactly and never projected.
+ *
+ * The live CSSTransition list is NOT used for structure. A running transition reports an ADJUSTED
+ * duration (fractional, shortened when an in-flight transition is interrupted and retargeted), and
+ * whether an element has one running at all depends on the capture instant. Both are capture phase,
+ * so the live list contributes only the AUTHORED_FINITE_TRANSIENT_PHASE allowance when the authored
+ * structure agrees. */
+function transitionSignature(action) {
+  return (action.snapshot?.authoredTransitions || []).map((x) => ({
+    target: String(x.target || 'unknown'),
+    transitionProperty: x.transitionProperty ?? null,
+    transitionDuration: x.transitionDuration ?? null,
+    transitionDelay: x.transitionDelay ?? null,
+    transitionTimingFunction: x.transitionTimingFunction ?? null,
+  })).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+}
+
+/* Structural fields that must match for a transient to be authorable as "phase-only". */
+const TRANSITION_STRUCTURE_KEYS = ['target', 'transitionProperty', 'transitionDuration', 'transitionDelay', 'transitionTimingFunction'];
+
+function transitionStructureResidual(originalKey, oa, sa) {
+  const o = transitionSignature(oa);
+  const s = transitionSignature(sa);
+  const residual = [];
+  const key = (t) => TRANSITION_STRUCTURE_KEYS.map((k) => `${k}=${t[k]}`).join('|');
+  const oKeys = o.map(key).sort();
+  const sKeys = s.map(key).sort();
+  if (oKeys.length !== sKeys.length) {
+    residual.push({
+      key: originalKey,
+      path: 'snapshot.authoredTransitions.structure.count',
+      a: oKeys.length,
+      b: sKeys.length,
+      reason: 'UNCLASSIFIED_TRANSITION_STRUCTURE_COUNT',
+    });
+  }
+  const oSet = new Set(oKeys), sSet = new Set(sKeys);
+  for (const k of oKeys) if (!sSet.has(k)) {
+    residual.push({ key: originalKey, path: 'snapshot.authoredTransitions.structure.onlyOriginal', a: k, b: null, reason: 'UNCLASSIFIED_TRANSITION_STRUCTURE_ONLY_ORIGINAL' });
+  }
+  for (const k of sKeys) if (!oSet.has(k)) {
+    residual.push({ key: originalKey, path: 'snapshot.authoredTransitions.structure.onlySplit', a: null, b: k, reason: 'UNCLASSIFIED_TRANSITION_STRUCTURE_ONLY_SPLIT' });
+  }
+  return residual;
+}
+
 function normalize(action) {
   const a = clone(action);
   delete a.shot;
@@ -64,17 +124,46 @@ function normalize(action) {
   if (a.surface === 'P03' && a.state === 'scene_05_8angle_build') {
     state.buildFigureSrc = 'AUTHORED_LIVE_PHASE';
   }
+  /* The 8-angle builder runs an unbounded setInterval(350ms) that cycles the figure through 8
+   * angles for as long as the authored scene 4 is current:
+   *   if(current===4){ buildTimer=setInterval(()=>{ a=(a+1)%8; ...f.src=`...A_${vals[a]}...` },350) }
+   * The angle shown is therefore a function of elapsed time since the timer started, not of the
+   * source, so any state captured while scene 4 is current has an authored live phase. Gating on
+   * the recorded scene index keeps this source-traceable rather than state-name-tracked: it
+   * applies to keyboard_navigation and the representative probes too, not just to the state that
+   * was named after the builder. The same projection is applied to the matching image in
+   * images.current, which is the same element seen through a different view. */
+  if (a.surface === 'P03' && String(state.scene) === '4') {
+    state.buildFigureSrc = 'AUTHORED_LIVE_PHASE';
+    if (Array.isArray(snap.images?.current)) {
+      snap.images.current = snap.images.current.map((im) =>
+        (im.src && String(im.src).includes('/figures/'))
+          ? { ...im, src: 'AUTHORED_LIVE_PHASE' }
+          : im);
+    }
+  }
   if (a.surface === 'P02' && new Set(['story_play', 'story_pause_manual_takeover']).has(a.state)) {
     state.inspectTitle = 'AUTHORED_LIVE_PHASE';
     state.progress = 'AUTHORED_LIVE_PHASE';
     state.status = 'AUTHORED_LIVE_PHASE';
   }
 
+  /* Live CSSTransitions are projected away entirely: whether one is running, and its adjusted
+   * duration, are capture-phase facts. The SOURCE-level transition structure is not dropped - it
+   * lives in snapshot.authoredTransitions and is compared exactly by the diff below, and any
+   * structural delta is surfaced by transitionStructureResidual() as an UNCLASSIFIED residual that
+   * fails the run. That is the fix for the old blind spot, where an empty ORIGINAL transition
+   * target set against a populated SPLIT one was allow-listed and scored 0. */
   const animations = [];
   for (const x of snap.animations || []) {
     if (x.type === 'CSSTransition') continue;
     const y = { ...x };
+    /* currentTime and playState are capture-phase: they say where in an authored animation the
+     * camera happened to be, not what the source declares. Both are projected. Everything
+     * structural (name, duration, delay, iterations, easing, fill, target) is retained and
+     * compared exactly. */
     delete y.currentTime;
+    delete y.playState;
     const target = String(y.target || '');
     if (y.name === 'rise' && target.includes('particle')) {
       y.duration = 'AUTHORED_RANDOM_SCALAR';
@@ -126,6 +215,14 @@ if (original.actions?.length !== 64 || split.actions?.length !== 64) {
 const pairs = [];
 const allowed = [];
 const real = [];
+const unclassified = [];
+
+/* Keeper divergence counts toward the pair's real diff_count as well, so a keeper state
+ * mismatch fails the pair exactly like any other snapshot divergence. */
+function kdGuard(o, s) {
+  if (!o && !s) return 0;
+  return diff(o ?? { exists: false }, s ?? { exists: false }).length;
+}
 
 for (let i = 0; i < 64; i += 1) {
   const oa = original.actions[i];
@@ -152,6 +249,17 @@ for (let i = 0; i < 64; i += 1) {
   if (oa.surface === 'P03' && oa.state === 'scene_05_8angle_build') {
     allowed.push({ key: ok, classification: 'AUTHORED_LIVE_PHASE', field: 'P03 buildFigureSrc' });
   }
+  /* The builder interval is live for the whole of authored scene 4, so any P03 capture whose
+   * recorded scene is 4 has an authored live figure angle. Recorded as an allowance so the
+   * aggregate classification set stays explicit about what was projected and why. */
+  if (oa.surface === 'P03' && String(oa.snapshot?.state?.scene) === '4') {
+    allowed.push({
+      key: ok,
+      classification: 'AUTHORED_LIVE_PHASE',
+      field: 'P03 scene-4 8-angle builder figure phase',
+      recorded_scene: oa.snapshot?.state?.scene,
+    });
+  }
   const op02 = p02StoryPhase(oa);
   const sp02 = p02StoryPhase(sa);
   if (op02 || sp02) {
@@ -171,20 +279,67 @@ for (let i = 0; i < 64; i += 1) {
   const oft = finiteTransitions(oa);
   const sft = finiteTransitions(sa);
   if (oft.length || sft.length) {
-    allowed.push({
-      key: ok,
-      classification: 'AUTHORED_FINITE_TRANSIENT_PHASE',
-      field: 'CSSTransition capture instant',
-      original_count: oft.length,
-      split_count: sft.length,
-      original_targets: [...new Set(oft.map((x) => String(x.target || 'unknown')))].sort(),
-      split_targets: [...new Set(sft.map((x) => String(x.target || 'unknown')))].sort(),
-    });
+    const structural = transitionStructureResidual(ok, oa, sa);
+    if (structural.length) {
+      /* Fail closed: an unequal transition STRUCTURE is never an allowance. In particular
+       * original_targets=[] vs split_targets=["keeper"] lands here, not in `allowed`. */
+      unclassified.push(...structural);
+      allowed.push({
+        key: ok,
+        classification: 'UNCLASSIFIED_FINITE_TRANSITION_STRUCTURE',
+        field: 'CSSTransition structural signature',
+        original_count: oft.length,
+        split_count: sft.length,
+        original_targets: [...new Set(oft.map((x) => String(x.target || 'unknown')))].sort(),
+        split_targets: [...new Set(sft.map((x) => String(x.target || 'unknown')))].sort(),
+        residual_count: structural.length,
+      });
+    } else {
+      allowed.push({
+        key: ok,
+        classification: 'AUTHORED_FINITE_TRANSIENT_PHASE',
+        field: 'CSSTransition capture instant',
+        original_count: oft.length,
+        split_count: sft.length,
+        original_targets: [...new Set(oft.map((x) => String(x.target || 'unknown')))].sort(),
+        split_targets: [...new Set(sft.map((x) => String(x.target || 'unknown')))].sort(),
+      });
+    }
   }
 
-  const ds = diff(normalize(oa), normalize(sa));
+  /* Keeper exact/stable comparison. This is the element whose visibility Pair-15 disagreed on,
+   * and it was previously only inferred from the transition list, never measured. Compared with
+   * the harness's own deterministic 2-decimal rounding - no tolerance is introduced.
+   * currentSrc is projected to its resolved PATH: it is an absolute URL embedding the loopback
+   * serving port, and ORIGINAL/SPLIT are deliberately served on different ports. The port is a
+   * property of the harness, not of the source, so it must not be read as a parity difference.
+   * The verbatim `src` attribute is unaffected and still compared exactly. */
+  const projectKeeper = (k) => {
+    if (!k) return k;
+    const y = { ...k };
+    delete y.currentSrc;
+    return y;
+  };
+  /* normalize() also walks snapshot.keeper as part of the whole-record diff, so the same
+   * currentSrc projection has to be applied there too, otherwise the port difference resurfaces
+   * through the generic path and is double-counted. */
+  const normalizedKeeper = (a) => {
+    const y = clone(a);
+    if (y.snapshot && y.snapshot.keeper) delete y.snapshot.keeper.currentSrc;
+    return y;
+  };
+  const ok_keeper = projectKeeper(oa.snapshot?.keeper);
+  const sk_keeper = projectKeeper(sa.snapshot?.keeper);
+  if (ok_keeper || sk_keeper) {
+    const kd = diff(ok_keeper ?? { exists: false }, sk_keeper ?? { exists: false });
+    if (kd.length) {
+      real.push(...kd.map((d) => ({ key: ok, ...d, path: `snapshot.keeper.${d.path}`, reason: d.reason === 'value' ? 'keeper-state-divergence' : d.reason })));
+    }
+  }
+
+  const ds = diff(normalizedKeeper(normalize(oa)), normalizedKeeper(normalize(sa)));
   if (ds.length) real.push(...ds.map((d) => ({ key: ok, ...d })));
-  pairs.push({ key: ok, diff_count: ds.length, diffs: ds });
+  pairs.push({ key: ok, diff_count: ds.length + kdGuard(ok_keeper, sk_keeper), diffs: ds, unclassified_transition_residuals: transitionStructureResidual(ok, oa, sa) });
 }
 
 const summary = {
@@ -205,6 +360,10 @@ const summary = {
   allowed_projection_records: allowed.length,
   allowed_classifications: [...new Set(allowed.map((x) => x.classification))].sort(),
   real_parity_diffs: real.length,
+  unclassified_residuals: unclassified.length,
+  unclassified_residual_preview: unclassified.slice(0, 80),
+  transition_structure_fail_closed: true,
+  keeper_state_compared: true,
   pairs_with_real_diffs: pairs.filter((x) => x.diff_count > 0).length,
   real_diff_preview: real.slice(0, 80),
   raw_png_equality_used: false,
@@ -219,4 +378,4 @@ const summary = {
 const evidence = { schema_version: '1.0', source_id: 'CDX006', stage: 'S4_PARITY_CANDIDATE', summary, pairs, allowed };
 fs.writeFileSync(outputFile, `${JSON.stringify(evidence, null, 2)}\n`);
 console.log(JSON.stringify(summary, null, 2));
-if (summary.real_parity_diffs !== 0 || summary.pairs_with_real_diffs !== 0) process.exitCode = 1;
+if (summary.real_parity_diffs !== 0 || summary.pairs_with_real_diffs !== 0 || summary.unclassified_residuals !== 0) process.exitCode = 1;

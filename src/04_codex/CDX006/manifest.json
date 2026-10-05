@@ -158,7 +158,7 @@
     "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
     "s4_release": "RELEASED",
     "parity_capture_authorized": true,
-    "skip_reason": "CENTRAL_S4_NOT_RELEASED"
+    "skip_reason": null
   },
   "s2_report": {
     "repo": "skerishKang/workdiary",
@@ -172,5 +172,12 @@
   "drive_mutation": 0,
   "central_s4_accepted": false,
   "s4_candidate_ref": "evidence/s4/candidate-proof.json",
-  "s4_evidence_series": "LOCAL_K_LIPVOICE_NEW_SERIES"
+  "s4_evidence_series": "LOCAL_K_LIPVOICE_RECUT_2",
+  "s4_evidence_series_superseded": [
+    {
+      "series": "LOCAL_K_LIPVOICE_NEW_SERIES",
+      "disposition": "SUPERSEDED_FOR_ACCEPTANCE",
+      "reason": "The earlier series captured P03 inside the authored finite keeper `out` transient (a fixed 120ms settle against a 180ms setTimeout plus a .55s transition), so pair M1/P03/initial recorded the keeper figure visible on one side and absent on the other, and the comparator absorbed that into an allowed projection rather than measuring the element. Retained as historical evidence only; it is not accepted."
+    }
+  ]
 }

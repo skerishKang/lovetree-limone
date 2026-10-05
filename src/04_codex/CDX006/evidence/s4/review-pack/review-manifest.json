@@ -1,34 +1,255 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "source_id": "CDX006",
   "stage": "S4_PARITY_CANDIDATE",
-  "series": "LOCAL_K_LIPVOICE_NEW_SERIES",
+  "series": "LOCAL_K_LIPVOICE_RECUT_2",
   "run": 3,
-  "note": "Contact sheets are visual-review evidence only. Raw PNG byte equality is NOT a parity gate; these files are SHA-fingerprinted so CENTRAL can confirm which images were reviewed.",
+  "note": "Contact sheets are visual-review evidence only. Raw PNG byte equality is NOT a parity gate; these files are SHA-fingerprinted so CENTRAL can confirm which images were reviewed. This pack supersedes the earlier LOCAL_K_LIPVOICE_NEW_SERIES pack, which was captured inside P03's authored keeper transient and therefore showed the keeper figure on one side only.",
   "raw_png_equality_used": false,
   "pixel_tolerance_used": false,
   "ssim_used": false,
   "perceptual_hash_used": false,
   "layout": "each row = one ORIGINAL/SPLIT pair, ORIGINAL left, SPLIT right",
-  "pair_count": 15,
-  "sheet_count": 3,
+  "pair_count": 18,
+  "sheet_count": 4,
   "sheets": [
     "review-sheet-1.jpg",
     "review-sheet-2.jpg",
-    "review-sheet-3.jpg"
+    "review-sheet-3.jpg",
+    "review-sheet-4.jpg"
   ],
+  "pairs": [
+    {
+      "key": "D1/HUB/initial",
+      "file": "D1_HUB_initial.png",
+      "label": "D1 HUB initial",
+      "original": "recut2-run3-original/D1_HUB_initial.png",
+      "split": "recut2-run3-split/D1_HUB_initial.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P01/initial",
+      "file": "D1_P01_initial.png",
+      "label": "D1 P01 initial",
+      "original": "recut2-run3-original/D1_P01_initial.png",
+      "split": "recut2-run3-split/D1_P01_initial.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P01/manual_drag_angle",
+      "file": "D1_P01_manual_drag_angle.png",
+      "label": "D1 P01 manual drag",
+      "original": "recut2-run3-original/D1_P01_manual_drag_angle.png",
+      "split": "recut2-run3-split/D1_P01_manual_drag_angle.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P01/wheel_rotation",
+      "file": "D1_P01_wheel_rotation.png",
+      "label": "D1 P01 wheel rotation",
+      "original": "recut2-run3-original/D1_P01_wheel_rotation.png",
+      "split": "recut2-run3-split/D1_P01_wheel_rotation.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P01/save_interaction",
+      "file": "D1_P01_save_interaction.png",
+      "label": "D1 P01 save burst",
+      "original": "recut2-run3-original/D1_P01_save_interaction.png",
+      "split": "recut2-run3-split/D1_P01_save_interaction.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P02/initial",
+      "file": "D1_P02_initial.png",
+      "label": "D1 P02 initial",
+      "original": "recut2-run3-original/D1_P02_initial.png",
+      "split": "recut2-run3-split/D1_P02_initial.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P02/selected_layer",
+      "file": "D1_P02_selected_layer.png",
+      "label": "D1 P02 selected layer",
+      "original": "recut2-run3-original/D1_P02_selected_layer.png",
+      "split": "recut2-run3-split/D1_P02_selected_layer.png",
+      "frozen_defects": [
+        "BD-03"
+      ]
+    },
+    {
+      "key": "D1/P02/legend_selection",
+      "file": "D1_P02_legend_selection.png",
+      "label": "D1 P02 legend selection",
+      "original": "recut2-run3-original/D1_P02_legend_selection.png",
+      "split": "recut2-run3-split/D1_P02_legend_selection.png",
+      "frozen_defects": [
+        "BD-03"
+      ]
+    },
+    {
+      "key": "D1/P02/story_play",
+      "file": "D1_P02_story_play.png",
+      "label": "D1 P02 story playing",
+      "original": "recut2-run3-original/D1_P02_story_play.png",
+      "split": "recut2-run3-split/D1_P02_story_play.png",
+      "frozen_defects": [
+        "BD-04"
+      ]
+    },
+    {
+      "key": "D1/P02/story_completion",
+      "file": "D1_P02_story_completion.png",
+      "label": "D1 P02 story completion",
+      "original": "recut2-run3-original/D1_P02_story_completion.png",
+      "split": "recut2-run3-split/D1_P02_story_completion.png",
+      "frozen_defects": [
+        "BD-04"
+      ]
+    },
+    {
+      "key": "D1/P03/scene_01",
+      "file": "D1_P03_scene_01.png",
+      "label": "D1 P03 scene01 keeper settled",
+      "original": "recut2-run3-original/D1_P03_scene_01.png",
+      "split": "recut2-run3-split/D1_P03_scene_01.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P03/scene_05_8angle_build",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "label": "D1 P03 scene05 8-angle builder",
+      "original": "recut2-run3-original/D1_P03_scene_05_8angle_build.png",
+      "split": "recut2-run3-split/D1_P03_scene_05_8angle_build.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "D1/P03/scene_06_bloom",
+      "file": "D1_P03_scene_06_bloom.png",
+      "label": "D1 P03 scene06 bloom",
+      "original": "recut2-run3-original/D1_P03_scene_06_bloom.png",
+      "split": "recut2-run3-split/D1_P03_scene_06_bloom.png",
+      "frozen_defects": []
+    },
+    {
+      "key": "T1/P01/initial",
+      "file": "T1_P01_initial.png",
+      "label": "T1 P01 initial",
+      "original": "recut2-run3-original/T1_P01_initial.png",
+      "split": "recut2-run3-split/T1_P01_initial.png",
+      "frozen_defects": [
+        "BD-02"
+      ]
+    },
+    {
+      "key": "M1/P03/initial",
+      "file": "M1_P03_initial.png",
+      "label": "M1 P03 initial (keeper settled)",
+      "original": "recut2-run3-original/M1_P03_initial.png",
+      "split": "recut2-run3-split/M1_P03_initial.png",
+      "frozen_defects": [
+        "BD-05"
+      ]
+    },
+    {
+      "key": "T1/P03/initial",
+      "file": "T1_P03_initial.png",
+      "label": "T1 P03 initial (BD-06 overlap)",
+      "original": "recut2-run3-original/T1_P03_initial.png",
+      "split": "recut2-run3-split/T1_P03_initial.png",
+      "frozen_defects": [
+        "BD-06"
+      ]
+    },
+    {
+      "key": "R1/P01/initial",
+      "file": "R1_P01_initial.png",
+      "label": "R1 P01 initial (reduced-motion) BD-01",
+      "original": "recut2-run3-original/R1_P01_initial.png",
+      "split": "recut2-run3-split/R1_P01_initial.png",
+      "frozen_defects": [
+        "BD-01"
+      ]
+    },
+    {
+      "key": "R1/P03/initial",
+      "file": "R1_P03_initial.png",
+      "label": "R1 P03 initial (reduced-motion) BD-01",
+      "original": "recut2-run3-original/R1_P03_initial.png",
+      "split": "recut2-run3-split/R1_P03_initial.png",
+      "frozen_defects": [
+        "BD-01"
+      ]
+    }
+  ],
+  "frozen_defect_coverage": {
+    "BD-01": [
+      "R1/P01/initial",
+      "R1/P03/initial"
+    ],
+    "BD-02": [
+      "T1/P01/initial"
+    ],
+    "BD-03": [
+      "D1/P02/selected_layer",
+      "D1/P02/legend_selection"
+    ],
+    "BD-04": [
+      "D1/P02/story_play",
+      "D1/P02/story_completion"
+    ],
+    "BD-05": [
+      "M1/P03/initial"
+    ],
+    "BD-06": [
+      "T1/P03/initial"
+    ]
+  },
+  "frozen_defect_coverage_count": 6,
+  "frozen_defect_coverage_complete": true,
+  "central_review": {
+    "status": "PENDING_CENTRAL_REVIEW",
+    "reviewer": null,
+    "accepted": false,
+    "run": 3,
+    "pair_count": 18,
+    "sheet_count": 4,
+    "note": "Review pack regenerated and hash-consistent. CENTRAL has NOT yet performed or passed the direct visual review. LOCAL must not and does not assert a CENTRAL pass.",
+    "review_files": {
+      "review-sheet-1.jpg": {
+        "bytes": 425342,
+        "sha256": "4a754c5a934b1ea86324b54656119c87289fc5722f73d168fa8e2c7cb428efea"
+      },
+      "review-sheet-2.jpg": {
+        "bytes": 411677,
+        "sha256": "f4e46bca86e4502f83eb289d9a28bb02f135ae84b6c2c9b2b8a793a25b1c46ec"
+      },
+      "review-sheet-3.jpg": {
+        "bytes": 504390,
+        "sha256": "bd8c21a2be2f63ef125b592e5ddbc706b576f8637863f28d85c3d6c1a683df6a"
+      },
+      "review-sheet-4.jpg": {
+        "bytes": 265586,
+        "sha256": "1ee4d3be22f67be7d6387cbfee371d41d438fb29cfbe6fa7688398195020973d"
+      }
+    }
+  },
   "review_files": {
     "review-sheet-1.jpg": {
-      "bytes": 425449,
-      "sha256": "a02d6f3c323104bb5b83c3729081d787338cea773315acbb87b336860c776738"
+      "bytes": 425342,
+      "sha256": "4a754c5a934b1ea86324b54656119c87289fc5722f73d168fa8e2c7cb428efea"
     },
     "review-sheet-2.jpg": {
-      "bytes": 410521,
-      "sha256": "4ef3c34c43de2891c21173815b09a2941fd69882aba69a893b28fbe6b87cff5f"
+      "bytes": 411677,
+      "sha256": "f4e46bca86e4502f83eb289d9a28bb02f135ae84b6c2c9b2b8a793a25b1c46ec"
     },
     "review-sheet-3.jpg": {
-      "bytes": 478961,
-      "sha256": "ef31db9a4555db97cf624b32f3159e9c9f3a66062d2264e348c35d6b11451c65"
+      "bytes": 504390,
+      "sha256": "bd8c21a2be2f63ef125b592e5ddbc706b576f8637863f28d85c3d6c1a683df6a"
+    },
+    "review-sheet-4.jpg": {
+      "bytes": 265586,
+      "sha256": "1ee4d3be22f67be7d6387cbfee371d41d438fb29cfbe6fa7688398195020973d"
     }
   }
 }

@@ -27,13 +27,17 @@
       "failures": 0
     },
     "launcher_equal": true,
-    "allowed_projection_records": 74,
+    "allowed_projection_records": 65,
     "allowed_classifications": [
       "AUTHORED_FINITE_TRANSIENT_PHASE",
       "AUTHORED_LIVE_PHASE",
       "AUTHORED_RANDOM_SCALAR"
     ],
     "real_parity_diffs": 0,
+    "unclassified_residuals": 0,
+    "unclassified_residual_preview": [],
+    "transition_structure_fail_closed": true,
+    "keeper_state_compared": true,
     "pairs_with_real_diffs": 0,
     "real_diff_preview": [],
     "raw_png_equality_used": false,
@@ -48,322 +52,386 @@
     {
       "key": "D1/HUB/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/HUB/navigate_01-memory-capsule.html",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/HUB/navigate_02-memory-stack.html",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/HUB/navigate_03-tree-keeper.html",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/auto_orbit",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/manual_drag_angle",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/wheel_rotation",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/figure_selection",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/aura_selection",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/sticker_tag_toggle",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/save_interaction",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/drawer_open",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/drawer_close",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P01/return_hub",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/slider",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/assemble",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/explode",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/selected_layer",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/legend_selection",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/drag_rotation",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/wheel_explode",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/seven_layer_semantics",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/story_play",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/story_pause_manual_takeover",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/story_completion",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/story_replay",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P02/return_hub",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_01",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_02",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/synthetic_upload",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_03",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_04",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/look_selection",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_05_8angle_build",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/scene_06_bloom",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/keyboard_navigation",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/wheel_navigation",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/autoplay",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/skip_to_bloom",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/return_hub",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "D1/P03/final_transition_to_p01",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/HUB/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P01/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P01/auto_orbit_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P02/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P02/slider_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P03/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "T1/P03/keyboard_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/HUB/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P01/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P01/auto_orbit_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P02/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P02/slider_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P03/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "M1/P03/keyboard_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/HUB/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P01/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P01/auto_orbit_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P02/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P02/slider_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P03/initial",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     },
     {
       "key": "R1/P03/keyboard_probe",
       "diff_count": 0,
-      "diffs": []
+      "diffs": [],
+      "unclassified_transition_residuals": []
     }
   ],
   "allowed": [
@@ -693,19 +761,6 @@
       "split_count": 42
     },
     {
-      "key": "D1/P03/scene_01",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 2,
-      "split_count": 2,
-      "original_targets": [
-        "keeper"
-      ],
-      "split_targets": [
-        "keeper"
-      ]
-    },
-    {
       "key": "D1/P03/scene_02",
       "classification": "AUTHORED_RANDOM_SCALAR",
       "field": "state.particleScalars",
@@ -716,16 +771,12 @@
       "key": "D1/P03/scene_02",
       "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
       "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
+      "original_count": 1,
+      "split_count": 0,
       "original_targets": [
-        "I",
-        "keeper"
+        "I"
       ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
+      "split_targets": []
     },
     {
       "key": "D1/P03/synthetic_upload",
@@ -733,21 +784,6 @@
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "D1/P03/synthetic_upload",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     },
     {
       "key": "D1/P03/scene_03",
@@ -762,21 +798,6 @@
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "D1/P03/scene_04",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     },
     {
       "key": "D1/P03/look_selection",
@@ -798,26 +819,17 @@
       "field": "P03 buildFigureSrc"
     },
     {
+      "key": "D1/P03/scene_05_8angle_build",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P03 scene-4 8-angle builder figure phase",
+      "recorded_scene": "4"
+    },
+    {
       "key": "D1/P03/scene_06_bloom",
       "classification": "AUTHORED_RANDOM_SCALAR",
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "D1/P03/scene_06_bloom",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     },
     {
       "key": "D1/P03/keyboard_navigation",
@@ -828,18 +840,9 @@
     },
     {
       "key": "D1/P03/keyboard_navigation",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P03 scene-4 8-angle builder figure phase",
+      "recorded_scene": "4"
     },
     {
       "key": "D1/P03/wheel_navigation",
@@ -856,41 +859,11 @@
       "split_count": 42
     },
     {
-      "key": "D1/P03/autoplay",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 7,
-      "split_count": 7,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
-    },
-    {
       "key": "D1/P03/skip_to_bloom",
       "classification": "AUTHORED_RANDOM_SCALAR",
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "D1/P03/skip_to_bloom",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 7,
-      "split_count": 7,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     },
     {
       "key": "D1/P03/final_transition_to_p01",
@@ -964,37 +937,11 @@
       "split_count": 42
     },
     {
-      "key": "T1/P03/initial",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 0,
-      "split_count": 2,
-      "original_targets": [],
-      "split_targets": [
-        "keeper"
-      ]
-    },
-    {
       "key": "T1/P03/keyboard_probe",
       "classification": "AUTHORED_RANDOM_SCALAR",
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "T1/P03/keyboard_probe",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     },
     {
       "key": "M1/P01/initial",
@@ -1062,21 +1009,6 @@
       "split_count": 42
     },
     {
-      "key": "M1/P03/keyboard_probe",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
-    },
-    {
       "key": "R1/P01/initial",
       "classification": "AUTHORED_LIVE_PHASE",
       "field": "P01 orbit angle/figure phase"
@@ -1140,21 +1072,6 @@
       "field": "state.particleScalars",
       "original_count": 42,
       "split_count": 42
-    },
-    {
-      "key": "R1/P03/keyboard_probe",
-      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
-      "field": "CSSTransition capture instant",
-      "original_count": 3,
-      "split_count": 3,
-      "original_targets": [
-        "I",
-        "keeper"
-      ],
-      "split_targets": [
-        "I",
-        "keeper"
-      ]
     }
   ]
 }
