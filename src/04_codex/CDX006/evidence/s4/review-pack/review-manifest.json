@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S4_PARITY_CANDIDATE",
+  "series": "LOCAL_K_LIPVOICE_NEW_SERIES",
+  "run": 3,
+  "note": "Contact sheets are visual-review evidence only. Raw PNG byte equality is NOT a parity gate; these files are SHA-fingerprinted so CENTRAL can confirm which images were reviewed.",
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "perceptual_hash_used": false,
+  "layout": "each row = one ORIGINAL/SPLIT pair, ORIGINAL left, SPLIT right",
+  "pair_count": 15,
+  "sheet_count": 3,
+  "sheets": [
+    "review-sheet-1.jpg",
+    "review-sheet-2.jpg",
+    "review-sheet-3.jpg"
+  ],
+  "review_files": {
+    "review-sheet-1.jpg": {
+      "bytes": 425449,
+      "sha256": "a02d6f3c323104bb5b83c3729081d787338cea773315acbb87b336860c776738"
+    },
+    "review-sheet-2.jpg": {
+      "bytes": 410521,
+      "sha256": "4ef3c34c43de2891c21173815b09a2941fd69882aba69a893b28fbe6b87cff5f"
+    },
+    "review-sheet-3.jpg": {
+      "bytes": 478961,
+      "sha256": "ef31db9a4555db97cf624b32f3159e9c9f3a66062d2264e348c35d6b11451c65"
+    }
+  }
+}

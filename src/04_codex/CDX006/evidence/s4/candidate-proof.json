@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S4_SOURCE_SPLIT_PARITY_CANDIDATE",
+  "status": "CANDIDATE_PENDING_CENTRAL",
+  "parity_contract": "SUITE_SPECIFIC_MOTION_RANDOMNESS_AWARE",
+  "series": "LOCAL_K_LIPVOICE_NEW_SERIES",
+  "series_note": "Produced entirely on LOCAL_DEVICE=K_lipvoice by this worktree's own harness. This is a NEW series and does NOT reproduce, continue or supersede any earlier remote run1 evidence.",
+  "accepted_head": "44e3506b5e6d09d0f0a11a8edc180aedb4fb3c8d",
+  "measurement": {
+    "fresh_full_runs_required": 3,
+    "fresh_full_runs_completed": 3,
+    "paired_actions_per_run": 64,
+    "total_paired_actions": 192,
+    "screenshots_total": 384,
+    "runtime_assets_per_side_per_run": 86,
+    "suite_edges": 8,
+    "raw_png_equality_required": false,
+    "pixel_tolerance_gate": false,
+    "ssim_gate": false,
+    "perceptual_hash_gate": false,
+    "rng_seed_or_monkey_patch": false,
+    "clock_patch": false,
+    "performance_now_patch": false,
+    "source_runtime_mutation": false,
+    "source_normalization": false,
+    "frozen_defect_repair": false
+  },
+  "aggregate": {
+    "clean_runs": "3/3",
+    "paired_actions_exact": "192/192",
+    "runtime_asset_sweeps": "516/516",
+    "real_parity_defects": 0,
+    "unclassified_residuals": 0,
+    "pairs_with_real_diffs": 0,
+    "page_errors": 0,
+    "console_errors": 0,
+    "request_failed": 0,
+    "http_errors": 0,
+    "missing_runtime_assets": 0,
+    "launcher_equal_all_runs": true,
+    "allowed_classifications": [
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_RANDOM_SCALAR"
+    ]
+  },
+  "frozen_source_defects": [
+    {
+      "id": "BD-01",
+      "summary": "no authored prefers-reduced-motion adaptation",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "both surfaces: 0 prefers-reduced-motion occurrences in hub/P01/P02/P03"
+    },
+    {
+      "id": "BD-02",
+      "summary": "P01 responsive core-control loss (T1 right, M1 both sides + index)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces"
+    },
+    {
+      "id": "BD-03",
+      "summary": "P02 physical direct 3D-layer pointer-selection unreliable; legend/DOM path works",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "physical blocked both sides, DOM+legend titles identical"
+    },
+    {
+      "id": "BD-04",
+      "summary": "P02 responsive control loss (T1 story controls, M1 both sides)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces"
+    },
+    {
+      "id": "BD-05",
+      "summary": "P03 M1 index + AUTO STORY hidden",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces"
+    },
+    {
+      "id": "BD-06",
+      "summary": "P03 T1 900x900 headline/scene-card authored layout collision",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces"
+    }
+  ],
+  "p02_defect_probe": {
+    "parity": {
+      "physicalBlockedBoth": true,
+      "physicalTitleUnchangedBoth": true,
+      "domPathSame": true,
+      "legendPathSame": true,
+      "zeroErrors": true
+    }
+  },
+  "central_direct_visual_review": {
+    "status": "PENDING_CENTRAL_REVIEW",
+    "reviewer": null,
+    "accepted": false,
+    "run": 3,
+    "pair_count": 15,
+    "sheet_count": 3,
+    "note": "Review pack generated and hash-consistent. CENTRAL has NOT yet performed or passed the direct visual review. LOCAL must not and does not assert a CENTRAL pass.",
+    "review_files": {
+      "review-sheet-1.jpg": {
+        "bytes": 425449,
+        "sha256": "a02d6f3c323104bb5b83c3729081d787338cea773315acbb87b336860c776738"
+      },
+      "review-sheet-2.jpg": {
+        "bytes": 410521,
+        "sha256": "4ef3c34c43de2891c21173815b09a2941fd69882aba69a893b28fbe6b87cff5f"
+      },
+      "review-sheet-3.jpg": {
+        "bytes": 478961,
+        "sha256": "ef31db9a4555db97cf624b32f3159e9c9f3a66062d2264e348c35d6b11451c65"
+      }
+    }
+  },
+  "accepted": false,
+  "candidate_state": {
+    "source_split_parity_pass": false,
+    "parity_ref": null,
+    "S4_ACCEPTED": "NO",
+    "PRODUCT_ADOPTION": false,
+    "CAPABILITY_NATIVE_ADOPTION": false,
+    "PRODUCT_CANONICAL": false,
+    "DRIVE_MUTATION": 0
+  },
+  "provenance": {
+    "replay_harness": "tests/s4-suite-replay.cjs",
+    "comparator": "tests/s4-suite-compare.mjs",
+    "p02_probe": "tests/s4-p02-defect-probe.cjs",
+    "review_pack": "tests/s4-review-pack.mjs"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "original": {
+    "initial": "Source Video",
+    "physical": {
+      "success": false,
+      "error": "locator.click: Timeout 1200ms exceeded.",
+      "titleAfter": "Source Video"
+    },
+    "domClick": {
+      "index": 3,
+      "titleAfter": "Outfit Map"
+    },
+    "legendClick": {
+      "index": 4,
+      "titleAfter": "Emotion"
+    },
+    "errors": {
+      "page": [],
+      "console": [],
+      "request": []
+    }
+  },
+  "split": {
+    "initial": "Source Video",
+    "physical": {
+      "success": false,
+      "error": "locator.click: Timeout 1200ms exceeded.",
+      "titleAfter": "Source Video"
+    },
+    "domClick": {
+      "index": 3,
+      "titleAfter": "Outfit Map"
+    },
+    "legendClick": {
+      "index": 4,
+      "titleAfter": "Emotion"
+    },
+    "errors": {
+      "page": [],
+      "console": [],
+      "request": []
+    }
+  },
+  "parity": {
+    "physicalBlockedBoth": true,
+    "physicalTitleUnchangedBoth": true,
+    "domPathSame": true,
+    "legendPathSame": true,
+    "zeroErrors": true
+  }
+}

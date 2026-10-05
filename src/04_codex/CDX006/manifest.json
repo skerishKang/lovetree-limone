@@ -149,15 +149,15 @@
     "mechanical_split_complete": true,
     "source_split_parity_pass": false
   },
-  "s3_status": "CANDIDATE",
-  "central_s3_accepted": false,
-  "s4_status": "HOLD_CENTRAL",
+  "s3_status": "ACCEPTED",
+  "central_s3_accepted": true,
+  "s4_status": "CANDIDATE_PENDING_CENTRAL",
   "parity_ref": null,
   "stage_gate": {
     "s3_release": "RELEASED",
     "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
-    "s4_release": "HOLD_CENTRAL",
-    "parity_capture_authorized": false,
+    "s4_release": "RELEASED",
+    "parity_capture_authorized": true,
     "skip_reason": "CENTRAL_S4_NOT_RELEASED"
   },
   "s2_report": {
@@ -169,5 +169,8 @@
   "product_adoption": false,
   "capability_native_adoption": false,
   "product_canonical": false,
-  "drive_mutation": 0
+  "drive_mutation": 0,
+  "central_s4_accepted": false,
+  "s4_candidate_ref": "evidence/s4/candidate-proof.json",
+  "s4_evidence_series": "LOCAL_K_LIPVOICE_NEW_SERIES"
 }
