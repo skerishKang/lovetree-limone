@@ -76,5 +76,6 @@ try {
   await browser.close();
 }
 
-const sha = (p) => `sha256:${require('node:crypto').createHash('sha256').update(fs.readFileSync(p)).digest('hex')}`;
+/* Sheet fingerprints are recorded by the caller into review-pack/review-manifest.json; this
+ * generator only reports what it wrote. */
 console.log(JSON.stringify(sheets.map((p) => ({ file: path.basename(p), bytes: fs.statSync(p).size })), null, 2));

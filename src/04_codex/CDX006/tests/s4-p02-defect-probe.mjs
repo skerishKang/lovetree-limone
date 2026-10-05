@@ -1,5 +1,7 @@
-const { chromium } = require('playwright');
-const fs=require('fs'), path=require('path'), http=require('http');
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+import path from 'node:path';
+import http from 'node:http';
 /* ROUND6I-style parameterization: the probe previously hardcoded an absolute path that only
  * existed on the authoring machine. It now takes the capsule root and output path from the
  * environment, exactly like s4-suite-replay.cjs, so it runs on any checkout. No probe logic,

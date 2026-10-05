@@ -1,9 +1,9 @@
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
-const crypto = require('crypto');
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+import path from 'node:path';
+import http from 'node:http';
+import crypto from 'node:crypto';
 const ROOT=process.env.CDX006_ROOT;
 const OUT=process.env.CDX006_OUT;
 fs.rmSync(OUT,{recursive:true,force:true}); fs.mkdirSync(OUT,{recursive:true});
