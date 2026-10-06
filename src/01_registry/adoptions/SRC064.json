@@ -1,0 +1,40 @@
+{
+  "identity": "LOVETREE_ADOPTION_RECORD",
+  "schema_version": 1,
+  "source_or_codex_id": "SRC064",
+  "authority_ref": "src/03_sources/SRC064/authority",
+  "accepted_parity_ref": "src/03_sources/SRC064/evidence/parity/accepted-parity.json",
+  "accepted_source_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+  "adapter_id": "ADAPTER_SRC064_PRESENTATION",
+  "adapter_contract_version": 1,
+  "adapter_path": "src/06_components/SRC064",
+  "companion_bridge_path": "src/06_components/SRC064/bridge.js",
+  "projection_contract": {
+    "input": "Product read context { tree, memories[], selectedMemory|null } (consumer-neutral read context; no consumer state binding)",
+    "output": "{ cards[<=40], selectedCard, selectedCardId, focusedCard, focusedId } native SRC064 card shape",
+    "seamIdentifiers": ["__TRACK64_SELECT__"],
+    "diagnosticSeam": "__TRACK64_BRIDGE__",
+    "runtimeHook": "window.__TRACK64__ (rebuild/focus/getCards)",
+    "capabilities": ["hydrate", "select"],
+    "bridgeProtocol": {
+      "protocol": "lovetree.mvp.bridge",
+      "protocolVersion": 1,
+      "sourceId": "SRC064",
+      "events": ["SOURCE_READY", "SOURCE_INIT", "SOURCE_DISPOSE", "MEMORY_SELECTED"]
+    },
+    "productOnlyDeltas": [
+      "pre-paint fixture-card neutralization",
+      "hiding Story Book / tree controls inert under Product ownership",
+      "canonical selection emission through the declared __TRACK64_SELECT__ seam"
+    ],
+    "readOnly": true,
+    "network": false
+  },
+  "consumers": [],
+  "source_visual_mutation": false,
+  "source_before_after_hash_invariant": true,
+  "owner_authorized_product_delta_ref": "#673 comment 6014271766",
+  "owner_release_ref": "PR #675 comment 6020686874",
+  "adoption_status": "REUSABLE_ADAPTER_BOUND",
+  "state_note": "S5 lifecycle promoted: CENTRAL exact-head acceptance of the S5 candidate at PR #675 comment 6020686874 binds the ADOPTION_CANDIDATE -> OWNER_RELEASED -> REUSABLE_ADAPTER_BOUND ordering and records this record as REUSABLE_ADAPTER_BOUND. S6 remains unreleased: no product parity, web verification, independent verification, promotion-ready, or product-route release is recorded here."
+}

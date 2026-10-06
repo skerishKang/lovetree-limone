@@ -1,0 +1,64 @@
+{
+  "componentId": "COMP_SRC064",
+  "sourceOrCodexId": "SRC064",
+  "state": "S5_ACCEPTED",
+  "central_s5_accepted": true,
+  "s5AcceptanceRef": "PR #675 comment 6020686874",
+  "note": "Component metadata, not Source authority. SRC064 reusable adoption component accepted at S5 by CENTRAL exact-head review (PR #675 comment 6020686874); reusable adapter bound. No consumer ownership: no consumer path references this layer yet; MVP001 remains byte-unchanged on its existing files. S6 (composition binding, product-route release) remains unreleased. File hashes below reference the accepted candidate bytes unchanged.",
+  "adapterContractVersion": 1,
+  "authorityRef": "src/03_sources/SRC064/authority",
+  "acceptedParityRef": "src/03_sources/SRC064/evidence/parity/accepted-parity.json",
+  "acceptedSourceHead": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+  "runtimeHook": {
+    "qaHook": "window.__TRACK64__",
+    "nativeMethods": ["rebuild", "focus", "getCards"],
+    "productSeams": ["__TRACK64_SELECT__", "__TRACK64_BRIDGE__"],
+    "sourceMutation": false
+  },
+  "bridgeContract": {
+    "protocol": "lovetree.mvp.bridge",
+    "protocolVersion": 1,
+    "sourceId": "SRC064",
+    "injectedConfig": ["consumerId", "sessionId", "allowedOrigin", "parent", "environment"],
+    "wireMapping": {
+      "consumerId": "mvpId",
+      "sessionId": "frameSessionId"
+    },
+    "urlQueryParsing": false,
+    "authorizedProductOnlyDeltas": [
+      "pre-paint fixture-card neutralization",
+      "hiding Story Book / tree controls inert under Product ownership",
+      "canonical selection emission through the declared __TRACK64_SELECT__ seam"
+    ],
+    "authorizationRef": "#673 comment 6014271766"
+  },
+  "files": {
+    "slots.js": {
+      "gitBlobSha1": "1bd54b3a348a1f2a7dda81ea538ec566b5b73a81",
+      "sha256": "18c887d1ccc4ed135c74f8d17d82809cf1e011f5ab068c0291f1d1a50c304170",
+      "reuseClass": "REUSE_EXACT"
+    },
+    "adapter.js": {
+      "gitBlobSha1": "86f02e3c4561de57565b37a8c34b437f71c113ee",
+      "sha256": "ba06da94317cca9ea020bee32fbe8ea8260fe13e6161d01a74c2e71ca2548f48",
+      "reuseClass": "REUSE_WITH_CONSUMER_NEUTRAL_RENAME"
+    },
+    "bridge.js": {
+      "gitBlobSha1": "c067fe6f932136630d8910afe0b45f77d2377638",
+      "sha256": "7fbe38d30f297dc2004e8262e54778802bd9ff39b9dcbe39ea9ec9e44fc48f5e",
+      "reuseClass": "REUSE_WITH_PARAMETERIZATION"
+    }
+  },
+  "provenance": {
+    "mvp001Evidence": {
+      "slotsSeed": "public/mvp/01/src064-slots.js",
+      "adapterSeed": "public/mvp/01/src064-adapter.js",
+      "bridgeSeed": "public/mvp/01/surfaces/src064/src064-product-bridge.js"
+    },
+    "issue": "#674",
+    "preflight": "#673",
+    "centralAcceptance": "#673 comment 6014271766"
+  },
+  "consumerOwnership": "NONE",
+  "consumerMembership": []
+}
