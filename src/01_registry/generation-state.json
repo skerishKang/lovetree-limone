@@ -54,6 +54,18 @@
       "conclusion": "SUCCESS"
     }
   },
+  "componentization": {
+    "broad_release": false,
+    "released_pilots": ["SRC064"],
+    "stage_by_id": {
+      "SRC064": "S5_CANDIDATE_PENDING_CENTRAL"
+    },
+    "s5_accepted": false,
+    "reusable_adapter_bound": false,
+    "product_composition_released": false,
+    "product_adoption_complete": false,
+    "note": "Sole componentization release authority for src/06_components/. broad_release=false: no broad componentization release exists. released_pilots is the exact allowlist the generation phase guard resolves; only these pilot IDs may have a component directory. An adoption ledger record is corroborating evidence for a released pilot and NEVER releases a component on its own. Stage values remain candidate states; S5 acceptance requires a CENTRAL exact-head review (#674 / PR #675)."
+  },
   "product_adoption": {
     "phase_state": "S5_IMPLEMENTATION_CANDIDATE",
     "scope": "The PRODUCT_ADOPTION phase remains separate and unreleased as a whole. This records only that the first reusable S5 component candidate is released for implementation; it does NOT record S5 acceptance, REUSABLE_ADAPTER_BOUND, composition binding, or any downstream state.",
@@ -66,9 +78,15 @@
       "released_by": "#673 comment 6014271766",
       "implementation_issue": "#674",
       "s5_accepted": false,
-      "reusable_adapter_bound": false
+      "reusable_adapter_bound": false,
+      "product_composition_released": false,
+      "product_adoption_complete": false
     },
-    "guard_exception": "generation-phase-guard allows a component directory under src/06_components/ only when it is registered in the adoption ledger (src/01_registry/adoptions/<ID>.json); unregistered entries remain forbidden (fail-closed)."
+    "guard_exception": "The generation phase guard permits a component directory under src/06_components/ only when generation-state componentization.released_pilots explicitly lists that pilot (currently exactly SRC064, broad_release=false) AND its adoption ledger record exists with matching identity/source_or_codex_id. Adding an adoption ledger record alone does NOT release a new pilot; released pilot set, component directories, and ledger records must match exactly. Any malformed/missing/mismatched generation-state or ledger is a FAIL.",
+    "s5_accepted": false,
+    "reusable_adapter_bound": false,
+    "product_composition_released": false,
+    "product_adoption_complete": false
   },
   "notes": [
     "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",

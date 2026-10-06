@@ -42,8 +42,8 @@
       "reuseClass": "REUSE_WITH_CONSUMER_NEUTRAL_RENAME"
     },
     "bridge.js": {
-      "gitBlobSha1": "8ca28156117b5fa89a10fb7d070ce167b8cf57a7",
-      "sha256": "8bd13c163c2b1f88e8126b092f28866f4e7df309f1d5b482cbf124f871e4d7c9",
+      "gitBlobSha1": "c067fe6f932136630d8910afe0b45f77d2377638",
+      "sha256": "7fbe38d30f297dc2004e8262e54778802bd9ff39b9dcbe39ea9ec9e44fc48f5e",
       "reuseClass": "REUSE_WITH_PARAMETERIZATION"
     }
   },

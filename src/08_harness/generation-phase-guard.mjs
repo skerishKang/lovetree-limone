@@ -3,10 +3,16 @@
  * generation-phase-guard.mjs
  *
  * Fail-closed guard for the current clean-generation mechanical source phase.
- * Enforces that active src/ contains no TS/TSX/JSX files, no unregistered
- * component records under 06_components (ledger-registered S5 candidates are
- * allowed), no premature MVP compositions beyond README.md, and no
- * reintroduced clean-generation MVP composition contract tests under tests/.
+ * Enforces that active src/ contains no TS/TSX/JSX files, no component
+ * directory under 06_components other than the exact generation-state released
+ * pilot set (each with a matching adoption ledger record), no premature MVP
+ * compositions beyond README.md, and no reintroduced clean-generation MVP
+ * composition contract tests under tests/.
+ *
+ * Release authority for components comes ONLY from
+ * src/01_registry/generation-state.json -> componentization. The adoption
+ * ledger is corroborating evidence, never a release: a ledger record on its
+ * own never permits a component directory.
  *
  * Exit 0 = PASS, Exit 1 = FAIL (any violation).
  *
@@ -19,6 +25,7 @@ import { join, relative, extname, basename } from 'node:path';
 const SRC_ROOT = join(import.meta.dirname, '..');
 const ROOT = join(SRC_ROOT, '..');
 const ADOPTION_LEDGER = join(ROOT, 'src/01_registry/adoptions');
+const GENERATION_STATE = join(ROOT, 'src/01_registry/generation-state.json');
 
 const FORBIDDEN_EXTENSIONS = new Set(['.ts', '.tsx', '.jsx']);
 
@@ -60,39 +67,155 @@ function checkNoTypeScriptInSrc() {
 }
 
 /**
- * Check 2: src/06_components/ — README.md always allowed; a component
- * directory is allowed ONLY if it is registered in the canonical adoption
- * ledger (src/01_registry/adoptions/<ID>.json). Unregistered entries remain
- * forbidden (fail-closed). This advances the setup-slice "only README.md"
- * policy to the released S5 reusable-component candidate phase (#674)
- * without loosening the guard to arbitrary directories.
+ * Read the componentization release authority from generation-state.json.
+ * Returns null on any structural problem (missing file, malformed JSON,
+ * missing/invalid fields); callers must treat null as FAIL (fail-closed).
+ *
+ * Release authority model:
+ *   componentization.broad_release === false
+ *   componentization.released_pilots = exact released pilot ID set
+ *   componentization.stage_by_id[id]  = per-pilot stage string
+ * The adoption ledger never releases anything on its own — it only
+ * corroborates a pilot that generation-state already released.
  */
-function isLedgerRegisteredComponent(name) {
-  const rec = join(ADOPTION_LEDGER, `${name}.json`);
-  if (!existsSync(rec)) return false;
+function readReleaseAuthority() {
+  let raw;
   try {
-    const data = JSON.parse(readFileSync(rec, 'utf8'));
-    return data && data.identity === 'LOVETREE_ADOPTION_RECORD'
-      && data.source_or_codex_id === name;
+    raw = readFileSync(GENERATION_STATE, 'utf8');
   } catch {
-    return false; // unreadable/invalid record => not registered (fail closed)
+    violations.push('GENERATION_STATE_UNREADABLE: src/01_registry/generation-state.json could not be read');
+    return null;
   }
+  let state;
+  try {
+    state = JSON.parse(raw);
+  } catch (e) {
+    violations.push(`GENERATION_STATE_MALFORMED: src/01_registry/generation-state.json is not valid JSON (${String((e && e.message) || e)})`);
+    return null;
+  }
+  if (!state || typeof state !== 'object' || Array.isArray(state)) {
+    violations.push('GENERATION_STATE_MALFORMED: generation-state root must be an object');
+    return null;
+  }
+  const comp = state.componentization;
+  if (!comp || typeof comp !== 'object' || Array.isArray(comp)) {
+    violations.push('GENERATION_STATE_MALFORMED: componentization block missing or not an object');
+    return null;
+  }
+  if (comp.broad_release !== false) {
+    violations.push('BROAD_RELEASE_NOT_FALSE: componentization.broad_release must be exactly false (got ' + JSON.stringify(comp.broad_release) + ')');
+    return null;
+  }
+  const pilots = comp.released_pilots;
+  if (!Array.isArray(pilots) || pilots.length === 0
+      || pilots.some((id) => typeof id !== 'string' || id.length === 0)
+      || new Set(pilots).size !== pilots.length) {
+    violations.push('RELEASED_PILOTS_INVALID: componentization.released_pilots must be a non-empty array of unique non-empty ID strings (got ' + JSON.stringify(pilots) + ')');
+    return null;
+  }
+  const stages = comp.stage_by_id;
+  if (!stages || typeof stages !== 'object' || Array.isArray(stages)) {
+    violations.push('STAGE_BY_ID_INVALID: componentization.stage_by_id must be an object keyed by released pilot ID');
+    return null;
+  }
+  for (const id of pilots) {
+    const stage = stages[id];
+    if (typeof stage !== 'string' || stage.length === 0) {
+      violations.push(`STAGE_BY_ID_MISMATCH: componentization.stage_by_id.${id} must be a non-empty stage string for a released pilot`);
+      return null;
+    }
+  }
+  // Candidate-lifecycle invariants: this componentization release may never
+  // claim acceptance or downstream states.
+  const forbiddenTrue = ['s5_accepted', 'reusable_adapter_bound', 'product_composition_released', 'product_adoption_complete'];
+  for (const key of forbiddenTrue) {
+    if (comp[key] === true) {
+      violations.push(`LIFECYCLE_CLAIM_FORBIDDEN: componentization.${key} must not be true at this stage`);
+      return null;
+    }
+  }
+  return { releasedPilots: pilots, stageById: stages };
 }
 
+/**
+ * Corroborate one released pilot against the adoption ledger. The ledger
+ * cannot release a pilot (generation-state already did), but a released pilot
+ * without a valid ledger record is a mismatch => FAIL.
+ */
+function ledgerMatchesPilot(pilotId) {
+  const rec = join(ADOPTION_LEDGER, `${pilotId}.json`);
+  if (!existsSync(rec)) return `released pilot ${pilotId} has no adoption ledger record (src/01_registry/adoptions/${pilotId}.json missing)`;
+  let data;
+  try {
+    data = JSON.parse(readFileSync(rec, 'utf8'));
+  } catch (e) {
+    return `released pilot ${pilotId} adoption ledger record is not valid JSON (${String((e && e.message) || e)})`;
+  }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return `released pilot ${pilotId} adoption ledger record must be an object`;
+  }
+  if (data.identity !== 'LOVETREE_ADOPTION_RECORD') {
+    return `released pilot ${pilotId} ledger identity mismatch (expected LOVETREE_ADOPTION_RECORD, got ${JSON.stringify(data.identity)})`;
+  }
+  if (data.source_or_codex_id !== pilotId) {
+    return `released pilot ${pilotId} ledger source_or_codex_id mismatch (got ${JSON.stringify(data.source_or_codex_id)})`;
+  }
+  return null;
+}
+
+/**
+ * Check 2: src/06_components/ — README.md always allowed; a component
+ * directory is allowed ONLY when generation-state release authority says so:
+ * broad_release=false, the directory name is in the exact released_pilots
+ * set, and its adoption ledger record corroborates that pilot. Ledger
+ * self-registration alone never releases a component (fail-closed).
+ */
 function checkComponentsReadOnly() {
+  // Release authority is always validated (malformed generation-state must
+  // FAIL even when no component directory exists).
+  const authority = readReleaseAuthority();
   const dir = join(ROOT, 'src/06_components');
   if (!existsSync(dir)) {
-    console.log('PASS: src/06_components/ does not exist');
+    if (authority) console.log('PASS: src/06_components/ does not exist');
     return;
   }
-  const entries = readdirSync(dir);
+  const entries = readdirSync(dir, { withFileTypes: true });
+  const componentDirs = [];
   for (const entry of entries) {
-    if (entry === 'README.md') continue;
-    if (isLedgerRegisteredComponent(entry)) continue; // released S5 candidate
-    violations.push(`FORBIDDEN_COMPONENT: src/06_components/${entry} — not registered in the adoption ledger (src/01_registry/adoptions/${entry}.json)`);
+    if (entry.name === 'README.md') continue;
+    if (entry.isDirectory()) {
+      componentDirs.push(entry.name);
+      continue;
+    }
+    violations.push(`FORBIDDEN_COMPONENT_ENTRY: src/06_components/${entry.name} — only README.md and released pilot directories are allowed`);
   }
-  if (entries.every(e => e === 'README.md' || isLedgerRegisteredComponent(e))) {
-    console.log('PASS: src/06_components/ contains only README.md and ledger-registered components');
+  if (!authority) return; // release authority unreadable: already recorded as FAIL
+
+  const releasedSet = new Set(authority.releasedPilots);
+
+  // Exact set match: every component directory must be a released pilot…
+  for (const name of componentDirs) {
+    if (!releasedSet.has(name)) {
+      violations.push(`UNRELEASED_COMPONENT: src/06_components/${name} — not in generation-state componentization.released_pilots (an adoption ledger record alone never releases a component)`);
+    }
+  }
+  // …and every released pilot must exist with a corroborating ledger record
+  // and its component directory (released pilot mismatch => FAIL).
+  for (const pilotId of authority.releasedPilots) {
+    const ledgerError = ledgerMatchesPilot(pilotId);
+    if (ledgerError) {
+      violations.push(`RELEASED_PILOT_LEDGER_MISMATCH: ${ledgerError}`);
+    }
+    if (!componentDirs.includes(pilotId)) {
+      violations.push(`RELEASED_PILOT_COMPONENT_MISSING: src/06_components/${pilotId} — generation-state releases pilot ${pilotId} but no component directory exists`);
+    }
+  }
+
+  const ok = componentDirs.length > 0
+    && componentDirs.every((name) => releasedSet.has(name))
+    && authority.releasedPilots.every((id) => componentDirs.includes(id) && !ledgerMatchesPilot(id));
+  if (ok) {
+    console.log(`PASS: src/06_components/ matches generation-state released pilots exactly (${authority.releasedPilots.join(', ')}) with corroborating adoption ledger records`);
   }
 }
 

@@ -186,6 +186,8 @@ function makeEnv() {
   let listener = null;
   const window = {
     __TRACK64__: track,
+    document: doc,   // host-window shape: real consumers resolve doc via win.document
+    parent,         // host-window shape: real consumers resolve parent via win.parent
     addEventListener(type, fn) {
       if (type === 'message') listener = fn;
     },
@@ -385,6 +387,77 @@ test('C10. bridge protocol constants are fixed, not caller-configurable', () => 
   assert.equal(bridge.SOURCE_ID, 'SRC064');
 });
 
+test('C11. browser-default path: bootstrap works with NO environment argument against host globals', () => {
+  const h = makeEnv();
+  // Browser-like global: the host window/document/parent live on the global
+  // object; no `environment` is injected (BLOCKER 2).
+  globalThis.window = h.environment.window;
+  try {
+    const api = bridge.bootstrap({ consumerId: CONSUMER, sessionId: SESSION, allowedOrigin: ORIGIN });
+    assert.ok(api, 'bootstrap must succeed with no environment argument in a browser-like global');
+    const ready = h.posted.find((p) => p.data.type === 'SOURCE_READY');
+    assert.ok(ready, 'SOURCE_READY posted via the browser default path');
+    assert.equal(ready.origin, ORIGIN, 'postMessage targets the exact allowed origin');
+    assert.ok(h.isListening(), 'message listener installed on the host window');
+    h.send(control('SOURCE_INIT', 1, initPayload()));
+    assert.equal(h.track.rebuildCalls.length, 1, 'track.rebuild hydrated via browser default path');
+    assert.deepEqual(h.track.focusCalls, ['mem-2'], 'selected memory focused via browser default path');
+
+    // Fail-closed still holds on the browser default path:
+    assert.equal(bridge.bootstrap({ consumerId: CONSUMER }), null, 'invalid config rejected');
+    assert.equal(bridge.bootstrap(null), null, 'no config rejected');
+    const noHook = makeEnv();
+    globalThis.window = noHook.environment.window;
+    delete globalThis.window.__TRACK64__;
+    assert.equal(
+      bridge.bootstrap({ consumerId: CONSUMER, sessionId: SESSION, allowedOrigin: ORIGIN }),
+      null,
+      'missing runtime hook fails closed on the browser default path',
+    );
+    assert.equal(noHook.posted.length, 0, 'no messages without a runtime hook');
+    assert.ok(!noHook.isListening(), 'no listener without a runtime hook');
+  } finally {
+    delete globalThis.window;
+  }
+});
+
+test('C12. exact-origin contract: wildcard/path/javascript/invalid rejected; trailing slash normalized', () => {
+  const rejected = [
+    '*',
+    '',
+    'https://example.com/path',
+    'https://example.com/path?x=1',
+    'https://example.com/path#frag',
+    'https://example.com/?x=1',
+    'javascript:alert(1)',
+    'not a url',
+    'ftp://example.com',
+    'http://user:pass@example.com',
+    'https://example.com:443',
+    42,
+    null,
+  ];
+  for (const origin of rejected) {
+    const h = makeEnv();
+    const api = bridge.bootstrap({ consumerId: CONSUMER, sessionId: SESSION, allowedOrigin: origin, environment: h.environment });
+    assert.equal(api, null, `allowedOrigin=${JSON.stringify(origin)} must fail closed`);
+    assert.equal(h.posted.length, 0, `allowedOrigin=${JSON.stringify(origin)} must emit zero messages`);
+    assert.ok(!h.isListening(), `allowedOrigin=${JSON.stringify(origin)} must not install a listener`);
+  }
+
+  // Bare trailing slash normalizes to the origin form and still exact-matches
+  // event.origin (which never carries a slash).
+  const h = makeEnv();
+  const api = bridge.bootstrap({ consumerId: CONSUMER, sessionId: SESSION, allowedOrigin: `${ORIGIN}/`, environment: h.environment });
+  assert.ok(api, 'bare trailing slash is normalized, not rejected');
+  const ready = h.posted.find((p) => p.data.type === 'SOURCE_READY');
+  assert.equal(ready.origin, ORIGIN, 'postMessage targetOrigin is the normalized origin');
+  h.send(control('SOURCE_INIT', 1, initPayload()));
+  assert.equal(h.track.rebuildCalls.length, 1, 'event.origin exact-match after normalization');
+  h.send(control('SOURCE_INIT', 2, initPayload()), { origin: 'http://evil.example' });
+  assert.equal(h.track.rebuildCalls.length, 1, 'a different origin is still rejected');
+});
+
 // ---------------------------------------------------------------------------
 // D. negative capabilities: no fetch / write / auth / backend path
 // ---------------------------------------------------------------------------
@@ -417,31 +490,47 @@ test('E1. canonical modules contain no consumer-specific hard dependency', () =>
 // F. protected-byte invariant: BASE_MAIN vs candidate, protected paths unchanged
 // ---------------------------------------------------------------------------
 test('F1. protected paths are unchanged vs BASE_MAIN', () => {
-  let out;
-  try {
-    out = execSync(`git diff --name-only ${BASE_MAIN} -- ${PROTECTED_PATHS.join(' ')}`, { cwd: ROOT, encoding: 'utf8' });
-  } catch {
-    test('F1.skip (git/BASE unavailable)', () => {});
-    return;
-  }
+  // Fail-closed: no skip path. If git/the BASE commit is unavailable the
+  // invariant cannot be proven, so the test must FAIL (never silently pass).
+  const out = execSync(`git diff --name-only ${BASE_MAIN} -- ${PROTECTED_PATHS.join(' ')}`, {
+    cwd: ROOT,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
   assert.equal(out.trim(), '', `protected paths must be byte-unchanged vs ${BASE_MAIN}`);
 });
 
-test('F2. component manifest file hashes match committed bytes', () => {
+test('F2. component manifest declares the exact canonical file set with matching committed hashes', () => {
   const manifest = JSON.parse(readFileSync(join(ROOT, '..', 'src/06_components/SRC064/manifest.json'), 'utf8'));
-  let found = false;
-  for (const [name, meta] of Object.entries(manifest.files)) {
-    let blob;
-    try {
-      blob = execSync(`git cat-file blob ":src/06_components/SRC064/${name}"`, { cwd: ROOT, maxBuffer: 10 * 1024 * 1024 });
-    } catch {
-      continue; // index entry not resolvable (pre-commit local run) — skip that file
+
+  // Exact expected manifest file set (fail-closed: neither extra nor missing).
+  const EXPECTED_FILES = ['slots.js', 'adapter.js', 'bridge.js'];
+  const declared = Object.keys(manifest.files || {}).sort();
+  assert.deepStrictEqual(declared, [...EXPECTED_FILES].sort(), 'manifest.files must declare exactly the canonical file set');
+
+  // Every declared file must resolve from committed/indexed candidate bytes and
+  // its SHA-256 must match. No skip, no continue, no `found || true`.
+  for (const name of EXPECTED_FILES) {
+    const meta = manifest.files[name];
+    assert.ok(meta && typeof meta.sha256 === 'string' && /^[0-9a-f]{64}$/.test(meta.sha256), `${name}: manifest must declare a 64-hex sha256`);
+    let blob = null;
+    const attempts = [
+      `git cat-file blob :src/06_components/SRC064/${name}`,
+      `git cat-file blob HEAD:src/06_components/SRC064/${name}`,
+    ];
+    let lastErr = null;
+    for (const cmd of attempts) {
+      try {
+        blob = execSync(cmd, { cwd: ROOT, maxBuffer: 10 * 1024 * 1024 });
+        break;
+      } catch (e) {
+        lastErr = e;
+      }
     }
+    assert.ok(blob !== null, `${name}: committed/index blob could not be resolved (fail-closed) — ${lastErr && lastErr.message}`);
     const sha = createHash('sha256').update(blob).digest('hex');
-    assert.equal(sha, meta.sha256, `${name} sha256 must match the manifest`);
-    found = true;
+    assert.equal(sha, meta.sha256, `${name} sha256 must match the manifest exactly`);
   }
-  assert.ok(found || true, 'manifest hash check (skipped when index entries are unresolved pre-commit)');
   assert.equal(manifest.state, 'S5_CANDIDATE_PENDING_CENTRAL');
   assert.equal(manifest.consumerOwnership, 'NONE');
 });

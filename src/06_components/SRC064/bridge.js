@@ -14,9 +14,24 @@
  * Injected consumer config:
  *   consumerId  - consumer identity (wire key `mvpId` carries this value)
  *   sessionId   - session identity (wire key `frameSessionId` carries this value)
- *   allowedOrigin - exact origin of the trusted parent
+ *   allowedOrigin - exact origin of the trusted parent (see Exact-origin
+ *                   contract below; NOT a URL with path/query/hash, NOT '*')
  *   parent      - trusted parent window (default: the hosting window's parent)
- *   environment - optional test/DOM injection { window, document, parent }
+ *   environment - OPTIONAL TEST-ONLY injection { window, document, parent }.
+ *                 Omitted in real consumers, which run against browser globals:
+ *                   win  = environment.window  || browser window
+ *                   doc  = environment.document || win.document
+ *                   parent = config.parent || environment.parent || win.parent
+ *
+ * Exact-origin contract: allowedOrigin must be a parseable absolute origin
+ * equal to its own new URL(x).origin form — no path/query/hash, no wildcard.
+ *   https://example.com    => PASS (compared as event.origin exact-match)
+ *   https://example.com/   => PASS (trailing slash normalizes to origin form)
+ *   https://example.com/p  => FAIL
+ *   *                      => FAIL
+ *   javascript:            => FAIL
+ *   unparsable / empty     => FAIL
+ * Incoming events are compared with event.origin === allowedOrigin.
  *
  * No config, or an invalid config => fail closed with zero Source behavior
  * mutation: no DOM neutralization, no listeners, no messages.
@@ -48,26 +63,60 @@
     return typeof value === 'string' && value.length > 0;
   }
 
+  // Exact-origin contract: allowedOrigin must be an absolute origin with no
+  // path/query/hash and no wildcard. 'https://x/' (bare trailing slash)
+  // normalizes to 'https://x'; anything else that is not exactly its own
+  // new URL().origin representation fails closed.
+  function normalizeExactOrigin(value) {
+    if (!isNonEmptyString(value)) return null;
+    if (value === '*') return null;
+    var parsed;
+    try {
+      parsed = new URL(value);
+    } catch (e) {
+      return null;
+    }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return null;
+    if (parsed.username !== '' || parsed.password !== '') return null;
+    if (parsed.search !== '' || parsed.hash !== '') return null;
+    if (parsed.pathname !== '' && parsed.pathname !== '/') return null; // path => not an origin contract
+    if (value !== parsed.origin && value !== parsed.origin + '/') return null;
+    return parsed.origin;
+  }
+
   // Fail-closed config gate. Missing/invalid config never touches the Source.
   function validConfig(config) {
     if (!isPlainObject(config)) return false;
     if (!isNonEmptyString(config.consumerId)) return false;
     if (!isNonEmptyString(config.sessionId)) return false;
-    if (!isNonEmptyString(config.allowedOrigin)) return false;
+    if (normalizeExactOrigin(config.allowedOrigin) === null) return false;
+    if (config.environment !== undefined && !isPlainObject(config.environment)) return false;
     return true;
   }
 
   function createBridge(config) {
-    var env = config.environment && isPlainObject(config.environment) ? config.environment : null;
-    var win = env ? env.window : null;
-    var doc = env ? env.document : null;
-    if (!win || typeof win.addEventListener !== 'function' || !doc || typeof doc.getElementById !== 'function') return null;
+    // Optional TEST-ONLY environment injection; real consumers inject no
+    // environment and bootstrap runs against the host browser globals
+    // (BLOCKER 2: window/document/parent default path must work as-is).
+    var env = isPlainObject(config.environment) ? config.environment : null;
+    var browserWindow = null;
+    if (typeof window !== 'undefined' && window && typeof window.addEventListener === 'function') {
+      browserWindow = window; // real browser host window
+    } else if (typeof global !== 'undefined' && global && typeof global.addEventListener === 'function') {
+      browserWindow = global; // IIFE-captured host window (browser self-reference)
+    }
+    var win = (env && env.window) || browserWindow;
+    if (!win || typeof win.addEventListener !== 'function') return null;
+    var doc = (env && env.document) || (typeof win.document !== 'undefined' && win.document ? win.document : null);
+    if (!doc || typeof doc.getElementById !== 'function') return null;
     var track = win[RUNTIME_HOOK];
     if (!track) return null; // fail closed without runtime hooks
     var parent = (config.parent && typeof config.parent === 'object' && typeof config.parent.postMessage === 'function')
       ? config.parent
-      : (env && env.parent && typeof env.parent.postMessage === 'function' ? env.parent : win.parent);
+      : (env && env.parent && typeof env.parent === 'object' && typeof env.parent.postMessage === 'function' ? env.parent : win.parent);
     if (!parent || typeof parent.postMessage !== 'function') return null;
+    var allowedOrigin = normalizeExactOrigin(config.allowedOrigin);
+    if (allowedOrigin === null) return null;
 
     var revision = 0;
     var msgSeq = 0;
@@ -84,7 +133,7 @@
           type: type,
           contextRevision: revision,
           payload: payload,
-        }, config.allowedOrigin);
+        }, allowedOrigin);
       } catch (e) {}
     }
 
@@ -94,7 +143,7 @@
     // is a teardown signal bound to the session identity.
     function validControl(event, type) {
       if (!event || event.source !== parent) return null;
-      if (event.origin !== config.allowedOrigin) return null;
+      if (event.origin !== allowedOrigin) return null;
       var data = event.data;
       if (!data || typeof data !== 'object') return null;
       if (data.protocol !== PROTOCOL || data.protocolVersion !== PROTOCOL_VERSION) return null;
