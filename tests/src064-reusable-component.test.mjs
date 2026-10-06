@@ -566,3 +566,15 @@ test('G1. adoption record is a REUSABLE_ADAPTER_BOUND at the accepted S5 lifecyc
     'no S6 state fields may be recorded at the accepted S5 boundary',
   );
 });
+
+test('G2. generation-state product adoption records the promoted phase state', () => {
+  const state = JSON.parse(readFileSync(join(ROOT, '..', 'src/01_registry/generation-state.json'), 'utf8'));
+  assert.equal(state.product_adoption.phase_state, 'REUSABLE_ADAPTER_BOUND');
+  assert.equal(state.product_adoption.s5_accepted, true);
+  assert.equal(state.product_adoption.reusable_adapter_bound, true);
+  assert.equal(state.product_adoption.product_composition_released, false);
+  assert.equal(state.product_adoption.product_adoption_complete, false);
+  assert.equal(state.product_adoption.first_s5_candidate.adoption_status, 'REUSABLE_ADAPTER_BOUND');
+  assert.equal(state.componentization.stage_by_id.SRC064, 'REUSABLE_ADAPTER_BOUND');
+  assert.equal(state.componentization.broad_release, false);
+});

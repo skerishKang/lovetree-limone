@@ -339,6 +339,58 @@ test('H9. product_adoption product_adoption_complete=true => FAIL (adoption not 
   );
 });
 
+// --- product_adoption.phase_state exactness (promotion truth) ---
+
+test('H10. stale phase_state=S5_IMPLEMENTATION_CANDIDATE => FAIL', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.product_adoption.phase_state = 'S5_IMPLEMENTATION_CANDIDATE';
+      writeState(s);
+    },
+    'PRODUCT_PHASE_STATE_MISMATCH',
+    'stale candidate phase state',
+  );
+});
+
+test('H11. missing phase_state => FAIL (fail-closed)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      delete s.product_adoption.phase_state;
+      writeState(s);
+    },
+    'PRODUCT_PHASE_STATE_MISMATCH',
+    'missing phase state',
+  );
+});
+
+test('H12. phase_state=COMPOSITION_BOUND (S6 over-claim) => FAIL', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.product_adoption.phase_state = 'COMPOSITION_BOUND';
+      writeState(s);
+    },
+    'PRODUCT_PHASE_STATE_MISMATCH',
+    'S6 phase state over-claimed',
+  );
+});
+
+test('H13. phase_state=null and arbitrary unknown strings => FAIL', () => {
+  for (const value of [null, 'PRODUCT_SHELL_CONNECTED', 'TOTALY_UNKNOWN_STAGE']) {
+    withStateMutation(
+      () => {
+        const s = readState();
+        s.product_adoption.phase_state = value;
+        writeState(s);
+      },
+      'PRODUCT_PHASE_STATE_MISMATCH',
+      `phase state ${JSON.stringify(value)}`,
+    );
+  }
+});
+
 test('G8. tree restored: baseline PASS and no test artifacts remain', () => {
   assert.ok(!existsSync(SRC999_DIR), 'SRC999 component directory must be removed');
   assert.ok(!existsSync(SRC999_LEDGER), 'SRC999 ledger record must be removed');

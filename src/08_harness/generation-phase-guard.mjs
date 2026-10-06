@@ -47,6 +47,7 @@ const FORBIDDEN_EXTENSIONS = new Set(['.ts', '.tsx', '.jsx']);
 // demotion back to a candidate state is as much a FAIL as an over-claim.
 const EXPECTED_STAGE = 'REUSABLE_ADAPTER_BOUND';
 const EXPECTED_LEDGER_STATUS = 'REUSABLE_ADAPTER_BOUND';
+const EXPECTED_PHASE_STATE = 'REUSABLE_ADAPTER_BOUND';
 const OWNER_RELEASE_REF = 'PR #675 comment 6020686874';
 
 let violations = [];
@@ -99,6 +100,8 @@ function checkNoTypeScriptInSrc() {
  *   componentization.reusable_adapter_bound === true
  *   componentization.product_composition_released === false
  *   componentization.product_adoption_complete === false
+ *   product_adoption.phase_state === REUSABLE_ADAPTER_BOUND (any stale,
+ *   missing, null, or future-stage value fails closed)
  * The adoption ledger never releases anything on its own — it only
  * corroborates a pilot that generation-state already released, and at the
  * accepted stage it must record adoption_status=REUSABLE_ADAPTER_BOUND with
@@ -175,6 +178,13 @@ function readReleaseAuthority() {
   const pa = state.product_adoption;
   if (!pa || typeof pa !== 'object' || Array.isArray(pa)) {
     violations.push('PRODUCT_ADOPTION_MALFORMED: product_adoption block missing or not an object');
+    return null;
+  }
+  // The product adoption phase state must record the promoted truth exactly.
+  // Any other value — a stale candidate state, a missing/null value, or an
+  // over-claim of a future stage — fails closed.
+  if (pa.phase_state !== EXPECTED_PHASE_STATE) {
+    violations.push(`PRODUCT_PHASE_STATE_MISMATCH: product_adoption.phase_state must be exactly ${EXPECTED_PHASE_STATE} at the accepted stage (got ${JSON.stringify(pa.phase_state)})`);
     return null;
   }
   for (const [label, obj] of [['componentization', comp], ['product_adoption', pa]]) {
