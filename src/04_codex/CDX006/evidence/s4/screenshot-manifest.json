@@ -1,0 +1,2704 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S4_PARITY_CANDIDATE",
+  "series": "LOCAL_K_LIPVOICE_RECUT_2",
+  "note": "Screenshot paths are not a runtime parity channel and raw PNG equality is not a gate. These records are fingerprinted for CENTRAL visual review only.",
+  "runs": 3,
+  "screenshots_per_side_per_run": 64,
+  "total_screenshots": 384,
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "perceptual_hash_used": false,
+  "records": [
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600591,
+      "sha256": "31ca1e48dbeac179b3aaf187fc92e1ca0ffed898bbee5c91e21d2c2fd5a78d0a"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 808925,
+      "sha256": "21f8ae1976b82f5fbce5f6c4e2f6fba1a2826db4519bba03ed02624cae283b15"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 611468,
+      "sha256": "89f273d2189f72c4e6cb8cf1105e02c10e1633b9fc9050caffd51d6cd08fd4c2"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 602125,
+      "sha256": "9d8dfee7812234ab7bcc617d495183b51b62f0310c44f8c91ae8bb865a2ca96a"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 608488,
+      "sha256": "8756c7853e38c81400210d4944c8ab4f670a01fe3510029e0d22b9dffeca57e3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 560186,
+      "sha256": "0f971a74970d0dde48c1df8f614d6572e2282aef83807c3dcfc93d67dc9f708f"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 611234,
+      "sha256": "6882dd573b5b68b8dc0d549491725c0deb56fe1ad3306cecb3a3b1bb08c83caa"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_initial.png",
+      "bytes": 600914,
+      "sha256": "788b175948c4a8039da241855edb6efd80a4d541b60ee5f4f3120de2e74d69bc"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 613441,
+      "sha256": "82ea956412c52985f2a366d0d4be74a52554e35be6fe9eaa3197cce9dfabe732"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 614009,
+      "sha256": "6a5b8b676df9bf5903ea659e906059e2aded0f408d6ef494469ae2d36b4c5c0c"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 611030,
+      "sha256": "e5dec01ce8868e16cf1548d613734a874798cfb1bb1a66ff443c6d7b898d8cae"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 610886,
+      "sha256": "63d40d90d0364767a626ce1d5c944c86347420c0a4d9e92284918ffebd5a8352"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_assemble.png",
+      "bytes": 723014,
+      "sha256": "d9d673b4e37a9a1bc9728697e61c360aa1fc0a5c9518ae032e30354e462f0088"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 720808,
+      "sha256": "8f55d0ef7e6a80915495cf500e135afb82b7474d6ffca11d9b04f45fc779a07b"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_explode.png",
+      "bytes": 766544,
+      "sha256": "9d5ad87683869c800b71f0d88129cb75ca76553e9ceaa2f790439c174908174d"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 755173,
+      "sha256": "2e285e339bb0af1d624c5e10fee005d4d30a229df82c6550999367f050e90d33"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1010860,
+      "sha256": "e13e3a67f178a2b9eb08217c2ad1af26a81bfbee0a2e6f90dacc39dbac62abba"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761922,
+      "sha256": "99e85db4c08d8924c0e268e66ce372cebc6bfeb1130c83e6cfb0e2cad2956a10"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 684542,
+      "sha256": "947c29d1935f8169fbb2ddde4dac92efe9a24b02b7cf87374582963ab16c3f54"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_slider.png",
+      "bytes": 768362,
+      "sha256": "dbec6063a194f2eb08fdc8f20ac15d83efd79352b574f61b9903f2a0e7d5631d"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 654585,
+      "sha256": "2c600136ca2db4dc436d2fb5f4ece573794b7b32ad7c4ccad64a72f16eeaf780"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 691853,
+      "sha256": "f03c91c9e6e6fccc4ce5c18a0b4d64243519639a94ab8d73c8703719b7328b0d"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_story_play.png",
+      "bytes": 777041,
+      "sha256": "881f0f9461fe1c739149708b3860f60e7a9a8448cad6e009fe37b2bf8b1d6abc"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 778335,
+      "sha256": "1d94c85949e82eefff8cfb441807108fc210cd2acaceaac7013d187ee62123e0"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 689053,
+      "sha256": "2db489e11ef0fd772391829a4bd615f3cca7c71e91ce75a11a7dccba70b5df61"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 808281,
+      "sha256": "ee11be53b0d87d5ceb3e74fef864cb9537bb5fcf74be0ae4af51801ab151cbde"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600704,
+      "sha256": "7c7419977da76b6d8ea1765dc9d07903c9c337c4328a4c3bcaecacc5bc8f48c3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 704498,
+      "sha256": "82fa8a9e005f81f75a87893b8fc6dda0137a3daa9b418830603709491683ad71"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 744523,
+      "sha256": "d287bb02eaf28746f29b19b6f456abc7d8e8f61d8eee4aa1b855335c280af8f7"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1011155,
+      "sha256": "92148f5e34be1a6b9a3b7f280262942aff9d982e6560b8d47efb8e9f4d753275"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 810267,
+      "sha256": "075bb9095c85597d173fb4803765971d6c3665740cb15d91157ec5577c3861d3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 649757,
+      "sha256": "5470e7817828d5dc09039d62f00011a83e9bd7da392600b3fdb0d408350ca430"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 671512,
+      "sha256": "8d8588895d0bea558e64ee851501ac5d0f30914007e313583241ae8b55f45b4e"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 747131,
+      "sha256": "374b5a604e19809ec7e9d497b9b88e49acda19aff601f1aec8f1ee628661167d"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 698344,
+      "sha256": "f29db2a775a4ffb993448f491de2e49e979f7f5f3b37db9d39c2109037d7ad4f"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 781433,
+      "sha256": "efc100ac15a5556ee99f9cfc2b1d4556de1c6a27dd5cf96fbd19621a4de4b3fd"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 787435,
+      "sha256": "e2b73d27f3c4f670c2f7608b5ef078e32f67a292d4cac0b663c70bf589f879d5"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 673998,
+      "sha256": "9bb2bd3cb400f2712d240ea1d40dc337ebb6252589fd69486deb587f43083bf3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 781059,
+      "sha256": "1662a550910dc0a506fb42c4ba5edd7c64bb0b550c0e1564a8b65a4347a08b33"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_HUB_initial.png",
+      "bytes": 355740,
+      "sha256": "d2b6525955b2ef1163338d7691ac1916e70edd83533fd7e6bc2562c758fe874c"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 217966,
+      "sha256": "a5b31e1b0bb4b2f6c0c16cc7acd258ca293b06060bb0d6b94b3c0b448852de79"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P01_initial.png",
+      "bytes": 217422,
+      "sha256": "23b363172e9eb947a6ab7f1f724a8fc3a1f965806e9af59a06ed3be31103a9f0"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 286222,
+      "sha256": "f173e83ee848118914348ec8ac246248287efb29158d303982f6d366054dd798"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P03_initial.png",
+      "bytes": 267081,
+      "sha256": "1213daa0e5a00817b3904985b1c9efe41d25f1eb0e45377319aa1b6bc0ffc207"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 237469,
+      "sha256": "e18b3df0390047bce969f25bd712ec0396156962bce2772a233676ecd5367cb9"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 601205,
+      "sha256": "34755e15447a89a550c40cb9d49754e0d80f572dbaee81cefbe2b7c510f79312"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P01_initial.png",
+      "bytes": 601027,
+      "sha256": "2bad7ba8fffd1adf2fe78ae8a3fd8540a649fe86be2e3080593692c96c5f48b0"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 732870,
+      "sha256": "5184a237ce41e0477358459aab6ad1bd3c303b0fd08530a1e2fd9d4cc9f2baf7"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P03_initial.png",
+      "bytes": 810431,
+      "sha256": "688ccf4ed23ddd9ca05deeeed480ab979e7fdfffecaf92f7783ccded7b4b01ef"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 649344,
+      "sha256": "d4b5ac7b2402a1eab6d0ca85512de7c114e83f0c99b77f42b683dad061f987d8"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_HUB_initial.png",
+      "bytes": 714755,
+      "sha256": "920cebbdf953114477c96d694cb61bd0ce8aa05a8f4010f11c8414686dd90afa"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 453271,
+      "sha256": "4d3e75968ceef80cd6c6d0b134bd05d0c6e752e3219a50138a4c11022d66c421"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P01_initial.png",
+      "bytes": 450695,
+      "sha256": "fb869c03fc6c49db4e60f9fa67d0ffe9de271fc06422afabc4d2c7ae36a2e78d"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581520,
+      "sha256": "75b596b90b60f31538aab7a8a38fad6f8a6364e730fe78d5096454dc6dcace8b"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P03_initial.png",
+      "bytes": 513715,
+      "sha256": "844774c0f653100459f6daad86666842ef80042767450c22f12f681335dcfc38"
+    },
+    {
+      "run": 1,
+      "side": "original",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 448124,
+      "sha256": "f4381b57e09e9702bfb9a10d575d9a7fa2ca895e6de62a55c9fd42ea882dac74"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1008704,
+      "sha256": "f7ebfe9e5ab45157bd48c35fd599d73304f8beb536a6fed342f85daadeb4510e"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600704,
+      "sha256": "7c7419977da76b6d8ea1765dc9d07903c9c337c4328a4c3bcaecacc5bc8f48c3"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 812951,
+      "sha256": "18d35c8dca1a6fd028dc8cba554ce61fa3335df77c6cd388d4d7a9d5f6e04df8"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 611366,
+      "sha256": "dfbdd373edf3a2ba602d250abcba66f9608626c7ff2fd1d07cb8ca4dac586e0d"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 602007,
+      "sha256": "b921006c7b61ae006b51b2f1bf734d6b6694cbc23dc7be1cba529f2d55a7e14a"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 607656,
+      "sha256": "bc264af4c4fb7ddafaba67fde168e39a2c79ca725bb48135246be7c1308cbe0f"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 566591,
+      "sha256": "fe24c85e15dbe7eff77e07c6c565d8db9bc427198e5b4933ffbf8b1096fa60f1"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 610293,
+      "sha256": "c762a015d6bf71a2ea5c5f51a7c7fdcc2c843c900d0978c41e577841c8407073"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_initial.png",
+      "bytes": 600673,
+      "sha256": "17e1143a7c46a381b2132ca50a11614aafbd5a99ced8193d70ec40d7686bece0"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 614351,
+      "sha256": "0d88b05f56c5d1e47ef192675fae57d6b874a804a82c7c5944b1e6659d4c7fa9"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 613953,
+      "sha256": "b0dab7484a6d45c6d960ab9221a00103caf39c4106b2b0c5e40aa88eb30df1e8"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 610656,
+      "sha256": "8164d0051b352120b801289c7bd2304eeff9b38dda632942e4ab5f551fa914a8"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 609535,
+      "sha256": "bbbd14eeb3f4ba9c69b706218f36adfba5721acf23d539a5415e89d116caf20b"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_assemble.png",
+      "bytes": 723843,
+      "sha256": "67eb3dc846c14a7377f2f0fa0eb8bd799bcc21876efd3869685142fd42f84f19"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 751269,
+      "sha256": "37d012add72dc41ed199ac70f6a751b9ee4f30a194172a645d3eba4c79fb34ea"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_explode.png",
+      "bytes": 741333,
+      "sha256": "b9cb862dee4b80ad32a35d5ac5796d66f24313bc14b724776b28eacca4c058f2"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 749417,
+      "sha256": "54298a5252da16cac80630e1f6744b6b2189db42e0b5d1e3a1c39d66710f4b7d"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761467,
+      "sha256": "a1db285e9e610338c61cf040c3cdfa03d75dd9f524fa537097bf1411ddb4a96e"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 716315,
+      "sha256": "dab561df7a583a7401f618d19d295546c33b9e1b9c9e2a8907c8970019de8074"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_slider.png",
+      "bytes": 768362,
+      "sha256": "dbec6063a194f2eb08fdc8f20ac15d83efd79352b574f61b9903f2a0e7d5631d"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 682471,
+      "sha256": "774687488dc7874af4da9ac6f0c96fad0eae571c122e139abbc2444215f2a4a3"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 711535,
+      "sha256": "946b0f58b7885bf53292f34588597afa0cd4c0db5cb6421b6274d64d0d373b5f"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_story_play.png",
+      "bytes": 792429,
+      "sha256": "9cc64beccb2757b830ad066972c652e18ae3994e80e09e98afe73a800198f223"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 792490,
+      "sha256": "7d816dd8d66e2d769636276407246c7f218d2534caf7799944d0e7d75566e7bd"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 723148,
+      "sha256": "aab9e469397bbf56f651342c8057735427dd0a92827d144c47357734938f7954"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 806645,
+      "sha256": "012136cf29a7cbc868d1faef5864846e191a740ebfb03f6c0132ee4c40ab7333"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600574,
+      "sha256": "0460ad51afc45930c36f6ef020a3836541030132fd8fb7c7b86a80a508f9067c"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 704190,
+      "sha256": "10e5685b2acaf69932f7ec5052fd4c95733dfdd3f0e8e63ca2b0a04ed41f8622"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 742636,
+      "sha256": "e904e4ea902f0f34ba6d5631c8ef75e3ec697f72994eafa1245228550d373332"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1011155,
+      "sha256": "92148f5e34be1a6b9a3b7f280262942aff9d982e6560b8d47efb8e9f4d753275"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 811852,
+      "sha256": "6694be0bfad91148851c0b5db4cec7149ffcc11fb54a8984fd69a1a3c193204c"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 651888,
+      "sha256": "e79d512f6d01edef30c220718b740d436d508d3ab9340706ce10619521dc8e5b"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 670386,
+      "sha256": "6fc105b5640d31f5ec2a963b2b9812480decc4027917b23198786919defe80e1"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 748037,
+      "sha256": "c5154758c5fc84fde6d5b2345bf0c2ef30dde4d675a7fd1880fbbc84ac3d55d3"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 698490,
+      "sha256": "e765367d232822b6bee58647af77aa1c828a1f16f611750b00b21f97fcb6bd09"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 783546,
+      "sha256": "c1c4ed04386ff146281179b9c2a972c2e8bfea7be0e6b2b1e0025e70d69681b2"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 785483,
+      "sha256": "8fd3cd2e320d74e46b5b3669b874dee38457d965593ecf47de31d535a4d03628"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 670572,
+      "sha256": "b06548c3a5ec91aa6788f7d37753eb5d1758ddaa3440ba570a6ec1e2c325c491"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 782780,
+      "sha256": "711c9e7a1ce381b6efbd3eb1a1346a8cb9ef34a3a73e1c393d0f2cac09114086"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_HUB_initial.png",
+      "bytes": 356480,
+      "sha256": "d099e408d3f94e94d0fa0db275cee57805f779f51919e6790ce15eda63ac7fa9"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 218017,
+      "sha256": "8c94ddf0db409262fcfab530d1dd2f483f9630f66fbf6582ef2d0cb433f2e023"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P01_initial.png",
+      "bytes": 217443,
+      "sha256": "73115b0750a847897ac603879b3b7d4454ea38187bc8c36c75abadf788a523dd"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 285676,
+      "sha256": "2ae2f03ef805bf5ee000c0cd4ca37910a15d9cd5e6e8d5227efa8f47314b1026"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P03_initial.png",
+      "bytes": 268035,
+      "sha256": "99f8fec0177803a54b13557c8ece076dff96d8860ddf7e15a82802beabfbabab"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 237964,
+      "sha256": "80b9928a1ab0c37ab228a2697d0a0fb5ba95f15bd56be830db27e01c990a8208"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1010860,
+      "sha256": "e13e3a67f178a2b9eb08217c2ad1af26a81bfbee0a2e6f90dacc39dbac62abba"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 601915,
+      "sha256": "f70e13015ac384f4ea0df59c19a76f9f819c630491c5cf090c92beb4eeb87af7"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P01_initial.png",
+      "bytes": 600565,
+      "sha256": "1396d26338d35e916dd2aef70a9d60dfe9e8b0e064a98f31122e7790f96fece6"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 733194,
+      "sha256": "fec6632eb69cfd96d335bb2959884a25033c5270eaf419344dde911b72155c27"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P03_initial.png",
+      "bytes": 811320,
+      "sha256": "8d49f13a5fa815624a01712342e497175c357af4c3b9035fdcf0393bd50fcdce"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 648831,
+      "sha256": "1d47a3ec37804bb12e027438938389bbb05e44b43a214dfc5e09f90cbaeb5deb"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_HUB_initial.png",
+      "bytes": 715250,
+      "sha256": "eb1a904dc7203a247fdfca11d4350ac71b02fc30771822c847554154cfc80089"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 453293,
+      "sha256": "4b934846e8281b2682f01d3b0524c0cffb847c7a3488d5452903029090c86250"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P01_initial.png",
+      "bytes": 451007,
+      "sha256": "042557d6d12afa72fc9cc2df6a2ec7c61aa2c293ae669df603e08aaedab06209"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581520,
+      "sha256": "75b596b90b60f31538aab7a8a38fad6f8a6364e730fe78d5096454dc6dcace8b"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P03_initial.png",
+      "bytes": 513467,
+      "sha256": "d3b4369048d04fdd8bcbadc54cfdc72a5c52eb7331a6bd777a81add2eb17ddb7"
+    },
+    {
+      "run": 1,
+      "side": "split",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 446947,
+      "sha256": "49cd5cefb20e20867ea72822ae857d8b012b947c0e7cd70aa957aa02f10797fa"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1009775,
+      "sha256": "ba793de3866244bb5dcd0bd1b756715bc03666811529bc92419f6d255647c730"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600486,
+      "sha256": "48e3f6d2f3c620aab97ca684ad20264367198d605b4fe1a6f15587b566223b20"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 810523,
+      "sha256": "5fc23a08bb916c4051e43adc8aaac412af79839accb6fbeccbc33f696a950a69"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 612821,
+      "sha256": "29c4e907ee211aeec27343b9f90b02626057f5ba280bb6bc741302d55ac6a5ce"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 601831,
+      "sha256": "110c175d44c80b7a19b1db3206a66264040ad0dacb2982211bacfbcb382510ee"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 608110,
+      "sha256": "6a4ea3dbfee5e8b16eed15cc326261b625139994917986a69173a9618ce610ab"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 572984,
+      "sha256": "7f257a9469b1ead73308cc54bf6e31b1e8fb0a637f3341d9a6f32b2d51b14c76"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 610091,
+      "sha256": "2e22bf94ba85043fb067a83fa56b58d49aaecc45f94714976567c981dd787257"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_initial.png",
+      "bytes": 601870,
+      "sha256": "054d6733ceda9272a7e9ba2495498d3139bd501cb7ba7f3eee6852eda8747792"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 614404,
+      "sha256": "65cfc29110d07c465c2305ebf778537eb43c15e9309fafbe2b26d831e38821ec"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1011066,
+      "sha256": "a0b7d3b74034ea04c5800b811603c01e49a7eb814c6628e0547154068635a8ae"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 613552,
+      "sha256": "e6add7abe66b5a253f71534c37e4129eababec50ceeb1faa091e4cbc0cc9a38b"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 611533,
+      "sha256": "7b32c217f8c16de6b408222af4719ab6d3aee1c7c6666b8ba1011e96c45fcd19"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 608404,
+      "sha256": "78c465e6801b9e32ee90062acd42e386da3d4b72e15c54c17cad31242520c5ac"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_assemble.png",
+      "bytes": 722744,
+      "sha256": "9690994730eeb4fd6018ca355da3f405f7a74cbe96a4b9510cadc17dd311c354"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 751269,
+      "sha256": "37d012add72dc41ed199ac70f6a751b9ee4f30a194172a645d3eba4c79fb34ea"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_explode.png",
+      "bytes": 741767,
+      "sha256": "e3cde3c348a1ffd00291508f67562259563fb904122eee3203a979dee73910c4"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 753400,
+      "sha256": "d54b271fa74038275e7936cb97f370f705a8a5666009cbff128e35ce3eca5c6e"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761485,
+      "sha256": "08c696dfb7ff4956991178824c22fe1120e90ea3526550ce9fd197362a02ee72"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 716340,
+      "sha256": "9d4023bcd4b947e0613dfc863b02d562617830e7edc9cbb0492ace5571e3055e"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_slider.png",
+      "bytes": 768362,
+      "sha256": "dbec6063a194f2eb08fdc8f20ac15d83efd79352b574f61b9903f2a0e7d5631d"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 682471,
+      "sha256": "774687488dc7874af4da9ac6f0c96fad0eae571c122e139abbc2444215f2a4a3"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 725689,
+      "sha256": "263c2bf87b66abeaa35314ed1e09bfe1cb05aeba234a68a5cec7ba01b74f3854"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_story_play.png",
+      "bytes": 792468,
+      "sha256": "99c6311313afb06f5d3e0fde4b0a94f772de72b44b3594bd4676eec3413d9d1e"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 793111,
+      "sha256": "c16153e00b2b2d6a1a970a2c9c34535472d14fbd3182e2eeaa3a1d4211b74f8f"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 723148,
+      "sha256": "aab9e469397bbf56f651342c8057735427dd0a92827d144c47357734938f7954"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 809755,
+      "sha256": "78be726ee7a41a8d18652c380a3412b8702af219dc974716562cd33307b489bf"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600303,
+      "sha256": "c857ea157a1cbdf094c8e8d3f543261ad6a7202963c0d5931052c5b64402fe4e"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 704329,
+      "sha256": "4efe8e44f66f7db067d0188854153f7385020cac9c10d52ed83786b3452a3f10"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 742763,
+      "sha256": "44db5828a10d49e7be77e56e3a8bea976df96f7430c85e9ffeac0671a162b5e3"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1011140,
+      "sha256": "96ea5dbab49c4b28699213a4c971e3e4c83bc6a03839e1de4fd1ff2b7fcbbfc2"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 808747,
+      "sha256": "f9228c2d5cc0c98cc6e15948d357287ed459f8550934079ecd1da7dd7becefd2"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 649828,
+      "sha256": "68eea9b80fd3a4e538dcb075c6960a206ae48fb0c440b4940107bc693313cf88"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 671277,
+      "sha256": "0068ca21cacedcaf45548b9d3f878d5cf526f8ffdc7732282eb5553b71149cc3"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 745590,
+      "sha256": "562e24c161d6358324a6fd69d9ef99f06876f659e962e3f17d04996d73be4d94"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 700495,
+      "sha256": "875f9c851b7e4875aa935f18a6b18f72a992b28529d1580eba85e4dcec965605"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 784579,
+      "sha256": "c50e327ee982d3ff4ae63206a967cbf89e4d3fe99eae5d0893f65b1266d3170f"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 786792,
+      "sha256": "dd73ee40ab8b2937dea26e42166f453ba0ddd71e0d9bfaa0a8440deadb9e53f1"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 672585,
+      "sha256": "5c337305581bd225c174d47dac4ec18631cfee52f8efc67e2a36edc9d4520dc6"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 781398,
+      "sha256": "34ec67e66af0cd3d71adbb5d2b5a1326efc87e16cc40a4b7d8f732e422f35a35"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_HUB_initial.png",
+      "bytes": 355740,
+      "sha256": "d2b6525955b2ef1163338d7691ac1916e70edd83533fd7e6bc2562c758fe874c"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 218042,
+      "sha256": "58e7c3c177065c4a3e0ec8a72389b4478cd0060f771b81d7ec61d44a36276794"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P01_initial.png",
+      "bytes": 217285,
+      "sha256": "f1b4c2eb286b85e8cac6e87bb9e1846c4dbce24f52e442b167e5aaea9737e202"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 285676,
+      "sha256": "2ae2f03ef805bf5ee000c0cd4ca37910a15d9cd5e6e8d5227efa8f47314b1026"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P03_initial.png",
+      "bytes": 268096,
+      "sha256": "4d20d540220636eaa22cdc6a59ad5ac22c8fb285799e090e35197fd06556029e"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 237031,
+      "sha256": "367f142dcae9f2875102b0ded0fae8cbef3b748854d6e4006f61df5021b15620"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1009775,
+      "sha256": "ba793de3866244bb5dcd0bd1b756715bc03666811529bc92419f6d255647c730"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 602222,
+      "sha256": "29559c13f38289febc84e32fd371fb0a3f54d033b74a2e5f01745655af31e72b"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P01_initial.png",
+      "bytes": 601229,
+      "sha256": "5dfc788ee11307f0b61773c3cae98679e904234be8463c71459272b80edce700"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 733396,
+      "sha256": "ec988d102ead1c1fa5355c6b7417fd73125a6fab2811c0e4cb1fcdebc64142a6"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P03_initial.png",
+      "bytes": 810631,
+      "sha256": "63671fa402a4f2299934c7fab9907d7e60cc5ccbb40084cdaca8d2ee46be0a24"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 649974,
+      "sha256": "572fc28b92c78aff0f264d792bed81275147cd9cee098fa15e4e40f04f52475c"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_HUB_initial.png",
+      "bytes": 715885,
+      "sha256": "32842b223d9a34bc5c24568f0b550963f31985e88c22d9b67eeb7bf9533b9108"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 453031,
+      "sha256": "3749ab22632336a4f84e0544f82e899f445188c2cdfc199a477b771b45c04069"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P01_initial.png",
+      "bytes": 450999,
+      "sha256": "5e7d6627c8fdc9814474fb2a912ed54bd8d03c8616875508f2a3826573a3c77f"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581173,
+      "sha256": "86f8195117a41cff31de7ac1eddbfbcdc37b06f4f669e05ac332d995a824c36a"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P03_initial.png",
+      "bytes": 514185,
+      "sha256": "5a1a3a08b943dfce40b3df72f6fa61ee0e822ce865fd8241c9322f4fad3a0863"
+    },
+    {
+      "run": 2,
+      "side": "original",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 446085,
+      "sha256": "322b1be5a067cd059f555d8d7bd993526ce7229f0309810198aae57733b66d9a"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600546,
+      "sha256": "42d21bcc1e41eadd06c8638996604675e89753b033f68c60c1192e597855571d"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 809878,
+      "sha256": "a716e763c962b5992ed468e6230cf7f1e13914911b93578591ce45d846826c7a"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 611362,
+      "sha256": "b5b3c6c2946d0465e20900d6f339cd3e22473250bc0559b43a1b0d4ac67b8551"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 602864,
+      "sha256": "efe5bba348a7d27e77cfb0617a416118a916a85e085d5de4cc2ae60f048de444"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 609359,
+      "sha256": "10ad241f937ef2bf27d7201cfec9ebf97fbfde9c8003ce937ae4f15ae9042418"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 566332,
+      "sha256": "43e993bdcba1f593b7bd5f7e482d5f73614de6dc0adfb9eade8534abd6c0a9a4"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 611442,
+      "sha256": "f7d314da3c82c4dc2e41a7aeb4d5b362a020269e7b42392e321d2ab590b8a248"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_initial.png",
+      "bytes": 601229,
+      "sha256": "5dfc788ee11307f0b61773c3cae98679e904234be8463c71459272b80edce700"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 612168,
+      "sha256": "f5384ef90b0f1a21b188e2f38e14f75f3e7c586739cdd9053e8f50ea15a70c76"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 614110,
+      "sha256": "991f86964915021f1ce653d21e02f167331e4c84c994b82cc0e1087f5e69b04a"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 610963,
+      "sha256": "b19dde34a8e8b58e65965ae7b8b2f04a715cff0e2c73a8c28498d93ab80e2cdc"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 610980,
+      "sha256": "1a6fac36d94693f165e7f9d1b04489758f79f6cad498b5bfd6c7a39111def847"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_assemble.png",
+      "bytes": 724820,
+      "sha256": "7e07dfa15807738b7910d4d8b1917ea145b56c40a6d703ee30d1a9b69c668ebe"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 751269,
+      "sha256": "37d012add72dc41ed199ac70f6a751b9ee4f30a194172a645d3eba4c79fb34ea"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_explode.png",
+      "bytes": 741793,
+      "sha256": "8606cbc460d4eeba88bc30d91d1b37be437b9e1f34df781e5af01ca02babdccb"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 749120,
+      "sha256": "71cc5efab26f388b7310441c6d56bc09b9f5fcda34078af8e2a041a11bfb8dbb"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761485,
+      "sha256": "08c696dfb7ff4956991178824c22fe1120e90ea3526550ce9fd197362a02ee72"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 716358,
+      "sha256": "6fad7f10c608d18f4103ebc1740da70046b099222fe4c63121ff18934fae7a76"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_slider.png",
+      "bytes": 796675,
+      "sha256": "74fe14aa3030c0bc3d19d21723febc47cded31064a0e22290e334f118bb9f334"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 682471,
+      "sha256": "774687488dc7874af4da9ac6f0c96fad0eae571c122e139abbc2444215f2a4a3"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 710137,
+      "sha256": "69c89eead8e73cab454ac0b6287950061d7ee9aec8a8a78997657429db2ad799"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_story_play.png",
+      "bytes": 792469,
+      "sha256": "f99f28f0ee43b7527743fc0dd028d88a407a3519e645acb89ce67021b72e53b5"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 792490,
+      "sha256": "7d816dd8d66e2d769636276407246c7f218d2534caf7799944d0e7d75566e7bd"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 723148,
+      "sha256": "aab9e469397bbf56f651342c8057735427dd0a92827d144c47357734938f7954"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 810323,
+      "sha256": "220f8f186d4e712323d502cec0412bba9e01b8e5ae29dc5354a35d0dc3971b5e"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600704,
+      "sha256": "7c7419977da76b6d8ea1765dc9d07903c9c337c4328a4c3bcaecacc5bc8f48c3"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 703696,
+      "sha256": "2032c112911d01f534185c0879a011db8993e2ff6290cb132654ae455bf952b8"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 744145,
+      "sha256": "d4b140f3cc98d90027e96a326e0174f2404e8c1c74f825b2d8fecdbf1cbaee28"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1010722,
+      "sha256": "18f0f212cf4b1e43fe4c41f72eb7d84359f137d9528ca4cc5559a0d98f41328b"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 808653,
+      "sha256": "e00c3e7cc4dba389cba2f8dda5b53f48a77879b702451da0b9972815472243e9"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 648543,
+      "sha256": "1573f9983df2e5d36bc056dcbf0164d25c28fd2e69649c4135569e280813726a"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 670452,
+      "sha256": "be1eb72dfbe47c295eda995671aa89971fb506659ddf3e90a834f31761d3f2dd"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 747865,
+      "sha256": "6b6f616183e9b9630c720a9bb943b605c92383606096025c12efc47d2f274890"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 700138,
+      "sha256": "fbf844fee2bc5840636c62f365158f23a812ca84e0373bb118d20292573743f6"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 782559,
+      "sha256": "9b50fa2a16b9bd3643a2bdfe0fce9b223ce34d56f6e7f4f8a2594b942d5718ef"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 786711,
+      "sha256": "b8ba1eb83d3fbbd702d2022b74c0f9edb9077d64ac779e294868216b5dd14757"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 672519,
+      "sha256": "5e39aba7267c60f16bbe242a0003500bb53d9fb027771b0b523920e48937a6c6"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 780960,
+      "sha256": "40bea8cc10db0bd47a23e6b2cfce127cae2fdb4fd416c2584379acbffe240048"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_HUB_initial.png",
+      "bytes": 356102,
+      "sha256": "a067096142c4dbdbe628020f6542441426d87f1ce5e65b3c905af23adf3ce783"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 217922,
+      "sha256": "2fbe7e9c8d51951322b3d200b113a59964c0b1b1ef1f6ac39c88fcfb1f93b8ef"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P01_initial.png",
+      "bytes": 217356,
+      "sha256": "a472f90d2c7c965161b7a01586dcbace62572f24422df290ee23f3bec93667db"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 286222,
+      "sha256": "f173e83ee848118914348ec8ac246248287efb29158d303982f6d366054dd798"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P03_initial.png",
+      "bytes": 267669,
+      "sha256": "51d5e0bbacfbaa49435949065387005287c5b5514e2fabf416b5b955ac0ac89a"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 238234,
+      "sha256": "a6690e33f23c2fdfdbee7cfc6cfae6134852857f940480eb539bc90bf87f665d"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1011155,
+      "sha256": "92148f5e34be1a6b9a3b7f280262942aff9d982e6560b8d47efb8e9f4d753275"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 602082,
+      "sha256": "a9f11773038d9880e16d13c6b079b8bde191658c544cff44bed9fd68758f5a25"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P01_initial.png",
+      "bytes": 600914,
+      "sha256": "788b175948c4a8039da241855edb6efd80a4d541b60ee5f4f3120de2e74d69bc"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 733396,
+      "sha256": "ec988d102ead1c1fa5355c6b7417fd73125a6fab2811c0e4cb1fcdebc64142a6"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P03_initial.png",
+      "bytes": 810271,
+      "sha256": "ffc0532ec37a8eac5e09aabfc28cec34534dcc986662115c74f0455540865804"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 651301,
+      "sha256": "63528698c458f96ef73ba8991aa9f88a0556373920a0c63bf4ae442f7a19f040"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_HUB_initial.png",
+      "bytes": 715250,
+      "sha256": "eb1a904dc7203a247fdfca11d4350ac71b02fc30771822c847554154cfc80089"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 453260,
+      "sha256": "6d58eac2883e1c323100f0bd40ca77253de325e8dd163e8b768ffdb7bac5d557"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P01_initial.png",
+      "bytes": 450617,
+      "sha256": "83634cf6ecad4f5d60d9b630ca4026395d904da75f457f2422b8b9ada1d10b15"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581199,
+      "sha256": "c41f4b6d12650fd1a44fbc019d545d2edc6a88890df89eb431c82660fc61220f"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P03_initial.png",
+      "bytes": 512512,
+      "sha256": "d9eae75a7de9827eb9a8ed13d79b6b7e00d657ddd0db019eada4061718eb2892"
+    },
+    {
+      "run": 2,
+      "side": "split",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 448186,
+      "sha256": "32d41c830db294e6c3c0cb38e3b9f4e588f80b0453135bf9390b7b235b55e08e"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1009775,
+      "sha256": "ba793de3866244bb5dcd0bd1b756715bc03666811529bc92419f6d255647c730"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600673,
+      "sha256": "17e1143a7c46a381b2132ca50a11614aafbd5a99ced8193d70ec40d7686bece0"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 810555,
+      "sha256": "1b14414ea507e96c304b038ee76d39a73ee51d5b129e6fe3aa62124447f9e61c"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 611045,
+      "sha256": "ff1499441e42830f4e5154bf67c081ff253db4a016da89ee9a63b6a13eb3f665"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 602506,
+      "sha256": "9e25bfd65fb7c3bae92a623038d462ca54b2980cd7653cf5f8f7e134c6236c56"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 608078,
+      "sha256": "d47b42e6f239051dd1c77e138483c729a843c13e0b2644647700063f4093dadd"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 581250,
+      "sha256": "a9e17ec98088f0d1b73edcad6203317c7f274e1edd5e6049134e4108ff8f1e0d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 611515,
+      "sha256": "1364dbd2da19b58028ddb441e68eaf14afe3efc8723620b732b9573d09c9ffa9"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_initial.png",
+      "bytes": 601229,
+      "sha256": "5dfc788ee11307f0b61773c3cae98679e904234be8463c71459272b80edce700"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 613359,
+      "sha256": "e2464cae6b1a586e9a0384edb962eb83ccf8a9fe15f158fa941dd7d8e7c8ecf0"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1011070,
+      "sha256": "ab86d7916e96e0e7188f3f7ad626caf0cec8fee22b5c2e42fd5ee998eafe5af3"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 613745,
+      "sha256": "07d04c59afdbc1e5dff245e52657563e4cea9348bac8c13cd1ebc2b38628a2dd"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 610583,
+      "sha256": "ec1236a11423a2c4ccde77e88cd8367ad679673fde1cd31a0d08c4b59c6b4c97"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 610805,
+      "sha256": "4f5a3afb7cf8e9dc6ea0f18689f9fed0d4849ad4f22376472c243806534fb424"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_assemble.png",
+      "bytes": 721140,
+      "sha256": "290f4a8645b3a8d808a1483971a3ad2f7146432b7a70c3319ceefeae5f304a30"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 720818,
+      "sha256": "964fccca3f72ced53bcd2027dab4ac0965d5f3b2df6cec11c2976108eea602fb"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_explode.png",
+      "bytes": 801103,
+      "sha256": "c40988b15e03960c55d42622dfc84d020e596bae96f0984191d6452087990391"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 753712,
+      "sha256": "09caa67189d67298244d2d643bdcaa1b4d649c37f6838dd4d40f196e23378f07"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1010317,
+      "sha256": "e72b1e22a12028d412d958910d7dccdad7640795eb58234275bedce49d302b20"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761898,
+      "sha256": "ac247974063ca2bfe9a03c1b583a619a948706f1c16939d2c07a2b6cef9dd920"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 684542,
+      "sha256": "947c29d1935f8169fbb2ddde4dac92efe9a24b02b7cf87374582963ab16c3f54"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_slider.png",
+      "bytes": 768362,
+      "sha256": "dbec6063a194f2eb08fdc8f20ac15d83efd79352b574f61b9903f2a0e7d5631d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 653280,
+      "sha256": "4d61c981f3eac37e7724075ca256fbb46a068a6eeb5429b33f17cb0e4abc4171"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 687501,
+      "sha256": "31acd3307e8f0dfae039f0b7f435e7ead4fd1f3d02ad2a2fdb7cade5d4793aef"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_story_play.png",
+      "bytes": 777085,
+      "sha256": "ad73cb335b8ba56b52dbbf5ac103b082695e6c8a0211f64706c913d1823fc9c6"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 778586,
+      "sha256": "d01911b52509f23ed8823d059ab69cccbaf3fe43a847a82cf0a3f44dd65d0c09"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 682808,
+      "sha256": "7cfdbeb8bd3d8b169e9e7437c045b10bd6fd70df37974ee9af5c8c95b9a5b9a6"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 808396,
+      "sha256": "143805975a5426edfad052f0f3f505f4230a9837474b74f7e44ea8bfd5931c2c"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600504,
+      "sha256": "56d6919f794e9724fb0a77486bb7b6fd2ad360b346507c6107d3cbb8cc57a59d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 707336,
+      "sha256": "98775ecce2140ab3af7c547eb75690efd49fae38773d4572041a921113bd8456"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 741948,
+      "sha256": "ccdb31be3862dcafbdb045cf7f4d83a16220051624091eb1424b7a4a65490877"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 809545,
+      "sha256": "fd3669ae0d366645e193cff2f9752581179903a517bdc229b46b3e01e6f2a2fa"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 648629,
+      "sha256": "90621c88e2c9ae7e6d7c53f72d46b8f0be3cd8f22dd735b0ca058558e97ee72d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 669636,
+      "sha256": "e21dd1e95ee6f20c5fe5f8740c311a01f9b283d2e163c62a123ec267f5fd8e1d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 745389,
+      "sha256": "1af06454d034f36048f7e8461cb71982eb030e750bf313f07807f8d1fcbd171a"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 699803,
+      "sha256": "cb3f701913513f4e1810cad9aa621f2aa308e25cd849bd9c17cf7d857ecd9929"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 781879,
+      "sha256": "f80d1a9ba1dfa4d90b90a7d80b76198d8734cd8d13d7d617e3dfdecc654d11dd"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 787793,
+      "sha256": "70b6247c5f572c041be07c88dcc0ea05d0c61489b12e1b2fb8ec832a2175a86b"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 671517,
+      "sha256": "33156becfce416284f64adcdd4b0a081c38157a6291d56e99ef524248a1f3668"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 781868,
+      "sha256": "fcc7c1e077dcbb5aac6f35ee73cbd2cc3a843be48a07c59542c1c798c4e36f44"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_HUB_initial.png",
+      "bytes": 356480,
+      "sha256": "d099e408d3f94e94d0fa0db275cee57805f779f51919e6790ce15eda63ac7fa9"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 217905,
+      "sha256": "57fec17606ca2b91ebd130a9a2d2f9e205e5a44748e96ee0f1712ff2533fc89d"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P01_initial.png",
+      "bytes": 217451,
+      "sha256": "f6440b405faef7bbaa2821002ae6fa2564949c10b89113b96a286c6d4ecec6fb"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 285676,
+      "sha256": "2ae2f03ef805bf5ee000c0cd4ca37910a15d9cd5e6e8d5227efa8f47314b1026"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P03_initial.png",
+      "bytes": 269179,
+      "sha256": "07237bfa48295feed153fee3c763d3b4b04404aacb8531f7d14f57fd91f1942a"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 238209,
+      "sha256": "aa1440010a3e5763084da11cf8bbd6ec23b033a20cade9ca8866319cee73ab1e"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1011114,
+      "sha256": "6acfdc88d88d5299318bb5d67b37ab0a8a006b29aba283d7f8e8b4bb72fca94c"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 602063,
+      "sha256": "967da15330165619f92423844344532e5e67899fc32d63a2ac911a214b54ab80"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P01_initial.png",
+      "bytes": 601229,
+      "sha256": "5dfc788ee11307f0b61773c3cae98679e904234be8463c71459272b80edce700"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 732870,
+      "sha256": "5184a237ce41e0477358459aab6ad1bd3c303b0fd08530a1e2fd9d4cc9f2baf7"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P03_initial.png",
+      "bytes": 811354,
+      "sha256": "a70c36dda3ee3ac57035e0fc1a9ee933bda4227aa0fc392ae18b784514c83266"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 649936,
+      "sha256": "884ffc11f6cbb321995864cf7c7d7f936014a5629560e3d4d2386777e5aa8518"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_HUB_initial.png",
+      "bytes": 715885,
+      "sha256": "32842b223d9a34bc5c24568f0b550963f31985e88c22d9b67eeb7bf9533b9108"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 453230,
+      "sha256": "d8384a230d0675b5cf5d902b36c2304dbb8233f46934b4b26a4bcc9baba565f6"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P01_initial.png",
+      "bytes": 450519,
+      "sha256": "ba57a0a58c037b2d032ed832b5a1035131aae6b3d17b81622ba30f04fcdf102e"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581199,
+      "sha256": "c41f4b6d12650fd1a44fbc019d545d2edc6a88890df89eb431c82660fc61220f"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P03_initial.png",
+      "bytes": 513877,
+      "sha256": "9dc650c54816f9b68463402f8070f866f26bff77329c9562fa59c17ac534096a"
+    },
+    {
+      "run": 3,
+      "side": "original",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 446313,
+      "sha256": "a5f89214fd6d3e67fe0466b270f4bbbfc7238886412da50e6a9086f1d841c388"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_HUB_initial.png",
+      "bytes": 1009775,
+      "sha256": "ba793de3866244bb5dcd0bd1b756715bc03666811529bc92419f6d255647c730"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_HUB_navigate_01-memory-capsule_html.png",
+      "bytes": 600591,
+      "sha256": "31ca1e48dbeac179b3aaf187fc92e1ca0ffed898bbee5c91e21d2c2fd5a78d0a"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_HUB_navigate_02-memory-stack_html.png",
+      "bytes": 734561,
+      "sha256": "7da17a195ae476c9ac2051ec412f9e0a8a816a2920aea7fbd6b8931f10b31cbf"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_HUB_navigate_03-tree-keeper_html.png",
+      "bytes": 809191,
+      "sha256": "909a82e8f31deceb41d9a36dbb603a4a5aaa0d9a0bfd816a94a9120a5a2d9e67"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_aura_selection.png",
+      "bytes": 611071,
+      "sha256": "961cb299fd80c766c8b9e1926e5be466a638c8689d3945a25ad9a6d4fbd9eb1f"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_auto_orbit.png",
+      "bytes": 601992,
+      "sha256": "c186ca786173630dce521f07a8c7eca8144c4f802c044f821d5ee3a44bd4c63f"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_drawer_close.png",
+      "bytes": 608107,
+      "sha256": "169e9993e3894a04c1d58541c1094a5bf9666e8f1a96cf3f3f81ac08528cbc3d"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_drawer_open.png",
+      "bytes": 581281,
+      "sha256": "7acaf444ed747d6336cd21d0065a89e5ddfd9d2a2fddd3e478387f85f3e92f9e"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_figure_selection.png",
+      "bytes": 611621,
+      "sha256": "1dd50536875a86ad0cc2c128fa0c9cdab9c5c978d0290df64c2edcf6e84403d9"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_initial.png",
+      "bytes": 600704,
+      "sha256": "7c7419977da76b6d8ea1765dc9d07903c9c337c4328a4c3bcaecacc5bc8f48c3"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_manual_drag_angle.png",
+      "bytes": 612667,
+      "sha256": "7e38faeb37c14a4b43fcf40b4b8806e72188b547980539b8a56d17b5000d318b"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_return_hub.png",
+      "bytes": 1011066,
+      "sha256": "a0b7d3b74034ea04c5800b811603c01e49a7eb814c6628e0547154068635a8ae"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_save_interaction.png",
+      "bytes": 613838,
+      "sha256": "a9b32f20a804f34e24dc04b9b47c16de92ae88c81c9f2c27a604c749eae0c038"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_sticker_tag_toggle.png",
+      "bytes": 611191,
+      "sha256": "c84eb084f26cf9e10a5b21b59b39d3bf76501b627f955d3423f4ede3f8ec97f5"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P01_wheel_rotation.png",
+      "bytes": 610960,
+      "sha256": "f4765046325723e0e53f051f6cf72080609ef71ab2fa319583e549cfb4d327cc"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_assemble.png",
+      "bytes": 724267,
+      "sha256": "189443e4eaab4efa90bbae230a4fe4657f06d7e863e37b5677706fb1edad7bc6"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_drag_rotation.png",
+      "bytes": 720808,
+      "sha256": "8f55d0ef7e6a80915495cf500e135afb82b7474d6ffca11d9b04f45fc779a07b"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_explode.png",
+      "bytes": 802346,
+      "sha256": "a0e20f7fe5e0bb6a39b2a0a354e212e5699cc98af42daaf520b904ff36a0bff1"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_legend_selection.png",
+      "bytes": 749027,
+      "sha256": "92b470ff04479314867663bf7c20e21372506828a8718a20541418402aab4635"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_return_hub.png",
+      "bytes": 1011155,
+      "sha256": "92148f5e34be1a6b9a3b7f280262942aff9d982e6560b8d47efb8e9f4d753275"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_selected_layer.png",
+      "bytes": 761922,
+      "sha256": "99e85db4c08d8924c0e268e66ce372cebc6bfeb1130c83e6cfb0e2cad2956a10"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_seven_layer_semantics.png",
+      "bytes": 684530,
+      "sha256": "01210569e1e1dd488028f115b21748b97a9a5c23b54534ba40d68307fcb28973"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_slider.png",
+      "bytes": 768362,
+      "sha256": "dbec6063a194f2eb08fdc8f20ac15d83efd79352b574f61b9903f2a0e7d5631d"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_story_completion.png",
+      "bytes": 653280,
+      "sha256": "4d61c981f3eac37e7724075ca256fbb46a068a6eeb5429b33f17cb0e4abc4171"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_story_pause_manual_takeover.png",
+      "bytes": 687488,
+      "sha256": "8d1ec361f527b885638439e4c825c17d0c3e28b5d69746070fcec5e51072627e"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_story_play.png",
+      "bytes": 777042,
+      "sha256": "4975ee1dc1e1b4dd742848f7ef6656fd917953f16553e66644c8077f2b5f265f"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_story_replay.png",
+      "bytes": 778335,
+      "sha256": "1d94c85949e82eefff8cfb441807108fc210cd2acaceaac7013d187ee62123e0"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P02_wheel_explode.png",
+      "bytes": 689053,
+      "sha256": "2db489e11ef0fd772391829a4bd615f3cca7c71e91ce75a11a7dccba70b5df61"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_autoplay.png",
+      "bytes": 809071,
+      "sha256": "22e8628408efa12b4f1592879f92f3e9b80190cd343f5f088df930d5334481ce"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_final_transition_to_p01.png",
+      "bytes": 600591,
+      "sha256": "31ca1e48dbeac179b3aaf187fc92e1ca0ffed898bbee5c91e21d2c2fd5a78d0a"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_keyboard_navigation.png",
+      "bytes": 703176,
+      "sha256": "3d9ef2116c1586fd9418c0e81ff3ebdf3ec7c7854fa633429fbc6a9d0f3227bd"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_look_selection.png",
+      "bytes": 742095,
+      "sha256": "d6d31b88e1c4a5bdb09fa41266089e76f515de01b1870e8195392b080177f96d"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_return_hub.png",
+      "bytes": 1010722,
+      "sha256": "18f0f212cf4b1e43fe4c41f72eb7d84359f137d9528ca4cc5559a0d98f41328b"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_01.png",
+      "bytes": 809882,
+      "sha256": "efbc5ef7ccd106b9ecb797fc098068c4c2f82912d7bd6001ff4ae1a694cb5efe"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_02.png",
+      "bytes": 647260,
+      "sha256": "a721f0595d91cdf16b71bf72bee900fd6361dbb4b3ce155b54b7b087952f7889"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_03.png",
+      "bytes": 671170,
+      "sha256": "41b1fa9b03b62ca254a2bbfd3e99c5e695a24b203bfbba1a3fab91d4f4d3224d"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_04.png",
+      "bytes": 747712,
+      "sha256": "444bb0478f03a646e19e74e42028cf9c14923a5a27a99c1ee88e827b914e528a"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_05_8angle_build.png",
+      "bytes": 699183,
+      "sha256": "dd3cbbcfcf6619e06dbddfe7fdb49e29691b69253325a726f3adb385d646d00e"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_scene_06_bloom.png",
+      "bytes": 781944,
+      "sha256": "ba6d5adba2ea697ddeb4187bdbcf2a8f0e96cb34b1daad383c2060e6fdc520de"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_skip_to_bloom.png",
+      "bytes": 785949,
+      "sha256": "a84ea8a8f3c714aa8f2fde54b48e07079ead68e26dc3a41ced67aa6f29846f37"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_synthetic_upload.png",
+      "bytes": 672236,
+      "sha256": "08de1c25932d529c0a231bdc6f5a6b1ebc186e66a5910935cf102c684734186d"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "D1_P03_wheel_navigation.png",
+      "bytes": 782434,
+      "sha256": "516378684f0bd96a73e85230a332fa7f16d65d49dc47425cbc87b7e2d47ca242"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_HUB_initial.png",
+      "bytes": 356102,
+      "sha256": "a067096142c4dbdbe628020f6542441426d87f1ce5e65b3c905af23adf3ce783"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P01_auto_orbit_probe.png",
+      "bytes": 217907,
+      "sha256": "ddd4526c34f100b4ebf69e9c7d1e632feeaabfc5dcb5cd15da5659557d60cde2"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P01_initial.png",
+      "bytes": 217390,
+      "sha256": "2dc4014ca184bb42e0ffadf12c2de54a1a74cfd41d190479ac4b95a5c7f9c003"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P02_initial.png",
+      "bytes": 287774,
+      "sha256": "83a4114fd269575e59b2405356844b53161a087be72c3ea4617c77c256129855"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P02_slider_probe.png",
+      "bytes": 285676,
+      "sha256": "2ae2f03ef805bf5ee000c0cd4ca37910a15d9cd5e6e8d5227efa8f47314b1026"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P03_initial.png",
+      "bytes": 267880,
+      "sha256": "d2bc2f82938c22ad5221bc68d5c4064f23a34ba59e581463a2fdcbfc36de5827"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "M1_P03_keyboard_probe.png",
+      "bytes": 238081,
+      "sha256": "9b8f2c37c729bea0a6431aa4c54c249f4cabbb928a223ecf78407670b8ab5f94"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_HUB_initial.png",
+      "bytes": 1010860,
+      "sha256": "e13e3a67f178a2b9eb08217c2ad1af26a81bfbee0a2e6f90dacc39dbac62abba"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P01_auto_orbit_probe.png",
+      "bytes": 602387,
+      "sha256": "21591ac49e975a1736f8908dcd09de3a3d68aee115306a052c22a8279cb2594c"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P01_initial.png",
+      "bytes": 601027,
+      "sha256": "2bad7ba8fffd1adf2fe78ae8a3fd8540a649fe86be2e3080593692c96c5f48b0"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P02_initial.png",
+      "bytes": 729650,
+      "sha256": "92660b638133fb3354772b5357478ae8af6296924074447631169b494bf030f3"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P02_slider_probe.png",
+      "bytes": 732870,
+      "sha256": "5184a237ce41e0477358459aab6ad1bd3c303b0fd08530a1e2fd9d4cc9f2baf7"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P03_initial.png",
+      "bytes": 813117,
+      "sha256": "2759b75bd26554365f6da7424f4992eed60adfab82b794eb48a545245480b357"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "R1_P03_keyboard_probe.png",
+      "bytes": 654264,
+      "sha256": "cb25efe4b304febba4af31e9d2a1134c9fd2cb2ef88c4ea40cdb4a16ad5276f8"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_HUB_initial.png",
+      "bytes": 715250,
+      "sha256": "eb1a904dc7203a247fdfca11d4350ac71b02fc30771822c847554154cfc80089"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P01_auto_orbit_probe.png",
+      "bytes": 452981,
+      "sha256": "7acc0407309aa0e7bffb46c50eaf43e38ecb60d0d7e41686a510f606008b885e"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P01_initial.png",
+      "bytes": 450745,
+      "sha256": "83dd4a9faf7dd2dc7c94d378bf49c5b5cac8595fb06d4434017d0d1e2927bc9a"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P02_initial.png",
+      "bytes": 582856,
+      "sha256": "3bae0ef887d0cb44e1223b091efe600b4dfe30a31d1737f14a108bed23ad47c6"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P02_slider_probe.png",
+      "bytes": 581173,
+      "sha256": "86f8195117a41cff31de7ac1eddbfbcdc37b06f4f669e05ac332d995a824c36a"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P03_initial.png",
+      "bytes": 512245,
+      "sha256": "3abcaf0f12ac0d518584fc0d3298bf0c3392cc6cd9171ec31c9a59ab5665f4bf"
+    },
+    {
+      "run": 3,
+      "side": "split",
+      "file": "T1_P03_keyboard_probe.png",
+      "bytes": 447818,
+      "sha256": "bdda9c8d2a59e9ab6c0d50cacb4e4f4f6658cb04907b79ba3b67bec9766624ff"
+    }
+  ]
+}

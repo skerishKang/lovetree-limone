@@ -1,0 +1,1077 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S4_PARITY_CANDIDATE",
+  "summary": {
+    "actions": 64,
+    "original_errors": {
+      "page": 0,
+      "console": 0,
+      "requestFailed": 0,
+      "http": 0
+    },
+    "split_errors": {
+      "page": 0,
+      "console": 0,
+      "requestFailed": 0,
+      "http": 0
+    },
+    "original_assets": {
+      "expected": 86,
+      "loaded": 86,
+      "failures": 0
+    },
+    "split_assets": {
+      "expected": 86,
+      "loaded": 86,
+      "failures": 0
+    },
+    "launcher_equal": true,
+    "allowed_projection_records": 65,
+    "allowed_classifications": [
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_RANDOM_SCALAR"
+    ],
+    "real_parity_diffs": 0,
+    "unclassified_residuals": 0,
+    "unclassified_residual_preview": [],
+    "transition_structure_fail_closed": true,
+    "keeper_state_compared": true,
+    "pairs_with_real_diffs": 0,
+    "real_diff_preview": [],
+    "raw_png_equality_used": false,
+    "pixel_tolerance_used": false,
+    "ssim_used": false,
+    "perceptual_hash_used": false,
+    "rng_patch_used": false,
+    "clock_patch_used": false,
+    "runtime_source_patch_used": false
+  },
+  "pairs": [
+    {
+      "key": "D1/HUB/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/HUB/navigate_01-memory-capsule.html",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/HUB/navigate_02-memory-stack.html",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/HUB/navigate_03-tree-keeper.html",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/auto_orbit",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/manual_drag_angle",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/wheel_rotation",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/figure_selection",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/aura_selection",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/sticker_tag_toggle",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/save_interaction",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/drawer_open",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/drawer_close",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P01/return_hub",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/slider",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/assemble",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/explode",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/selected_layer",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/legend_selection",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/drag_rotation",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/wheel_explode",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/seven_layer_semantics",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/story_play",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/story_pause_manual_takeover",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/story_completion",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/story_replay",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P02/return_hub",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_01",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_02",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/synthetic_upload",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_03",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_04",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/look_selection",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_05_8angle_build",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/scene_06_bloom",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/keyboard_navigation",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/wheel_navigation",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/autoplay",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/skip_to_bloom",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/return_hub",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "D1/P03/final_transition_to_p01",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/HUB/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P01/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P01/auto_orbit_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P02/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P02/slider_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P03/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "T1/P03/keyboard_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/HUB/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P01/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P01/auto_orbit_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P02/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P02/slider_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P03/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "M1/P03/keyboard_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/HUB/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P01/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P01/auto_orbit_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P02/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P02/slider_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P03/initial",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    },
+    {
+      "key": "R1/P03/keyboard_probe",
+      "diff_count": 0,
+      "diffs": [],
+      "unclassified_transition_residuals": []
+    }
+  ],
+  "allowed": [
+    {
+      "key": "D1/HUB/navigate_01-memory-capsule.html",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "D1/HUB/navigate_02-memory-stack.html",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 4,
+      "split_count": 4,
+      "original_targets": [
+        "layer"
+      ],
+      "split_targets": [
+        "layer"
+      ]
+    },
+    {
+      "key": "D1/HUB/navigate_03-tree-keeper.html",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P01/initial",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "D1/P01/initial",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "D1/P01/auto_orbit",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "D1/P01/auto_orbit",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "D1/P01/wheel_rotation",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "D1/P01/sticker_tag_toggle",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 2,
+      "split_count": 2,
+      "original_targets": [
+        "sticker s1 off"
+      ],
+      "split_targets": [
+        "sticker s1 off"
+      ]
+    },
+    {
+      "key": "D1/P01/save_interaction",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.burstScalars",
+      "original_count": 34,
+      "split_count": 34
+    },
+    {
+      "key": "D1/P01/drawer_open",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.burstScalars",
+      "original_count": 34,
+      "split_count": 34
+    },
+    {
+      "key": "D1/P01/drawer_open",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "drawer"
+      ],
+      "split_targets": [
+        "drawer"
+      ]
+    },
+    {
+      "key": "D1/P01/drawer_close",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.burstScalars",
+      "original_count": 34,
+      "split_count": 34
+    },
+    {
+      "key": "D1/P01/drawer_close",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "drawer"
+      ],
+      "split_targets": [
+        "drawer"
+      ]
+    },
+    {
+      "key": "D1/P02/slider",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 13,
+      "split_count": 13,
+      "original_targets": [
+        "layer active",
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer active",
+        "layer dim"
+      ]
+    },
+    {
+      "key": "D1/P02/assemble",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 13,
+      "split_count": 13,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "D1/P02/explode",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 13,
+      "split_count": 13,
+      "original_targets": [
+        "layer active",
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer active",
+        "layer dim"
+      ]
+    },
+    {
+      "key": "D1/P02/selected_layer",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 4,
+      "split_count": 4,
+      "original_targets": [
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer dim"
+      ]
+    },
+    {
+      "key": "D1/P02/legend_selection",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 14,
+      "split_count": 14,
+      "original_targets": [
+        "layer active",
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer active",
+        "layer dim"
+      ]
+    },
+    {
+      "key": "D1/P02/drag_rotation",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 4,
+      "split_count": 5,
+      "original_targets": [
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer dim",
+        "stack"
+      ]
+    },
+    {
+      "key": "D1/P02/wheel_explode",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 13,
+      "split_count": 13,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "D1/P02/seven_layer_semantics",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 4,
+      "split_count": 4,
+      "original_targets": [
+        "layer active"
+      ],
+      "split_targets": [
+        "layer active"
+      ]
+    },
+    {
+      "key": "D1/P02/story_play",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P02 850ms story interval phase",
+      "original_phase": 1,
+      "split_phase": 1,
+      "phase_delta": 0
+    },
+    {
+      "key": "D1/P02/story_pause_manual_takeover",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P02 850ms story interval phase",
+      "original_phase": 2,
+      "split_phase": 1,
+      "phase_delta": 1
+    },
+    {
+      "key": "D1/P02/story_pause_manual_takeover",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 14,
+      "split_count": 13,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "D1/P02/story_completion",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 7,
+      "split_count": 7,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "D1/P02/story_replay",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 7,
+      "split_count": 7,
+      "original_targets": [
+        "layer active",
+        "layer dim"
+      ],
+      "split_targets": [
+        "layer active",
+        "layer dim"
+      ]
+    },
+    {
+      "key": "D1/P03/scene_01",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_02",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/synthetic_upload",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_03",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_04",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_04",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 0,
+      "split_count": 1,
+      "original_targets": [],
+      "split_targets": [
+        "I"
+      ]
+    },
+    {
+      "key": "D1/P03/look_selection",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_05_8angle_build",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/scene_05_8angle_build",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P03 buildFigureSrc"
+    },
+    {
+      "key": "D1/P03/scene_05_8angle_build",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P03 scene-4 8-angle builder figure phase",
+      "recorded_scene": "4"
+    },
+    {
+      "key": "D1/P03/scene_06_bloom",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/keyboard_navigation",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/keyboard_navigation",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P03 scene-4 8-angle builder figure phase",
+      "recorded_scene": "4"
+    },
+    {
+      "key": "D1/P03/wheel_navigation",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/autoplay",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/skip_to_bloom",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "D1/P03/final_transition_to_p01",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "T1/P01/initial",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "T1/P01/initial",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "T1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "T1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "T1/P02/slider_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 7,
+      "split_count": 7,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "T1/P03/initial",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "T1/P03/keyboard_probe",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "M1/P01/initial",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "M1/P01/initial",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "M1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "M1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "M1/P02/slider_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 7,
+      "split_count": 7,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "M1/P03/initial",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "M1/P03/keyboard_probe",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "R1/P01/initial",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "R1/P01/initial",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "R1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_LIVE_PHASE",
+      "field": "P01 orbit angle/figure phase"
+    },
+    {
+      "key": "R1/P01/auto_orbit_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 1,
+      "split_count": 1,
+      "original_targets": [
+        "capsule"
+      ],
+      "split_targets": [
+        "capsule"
+      ]
+    },
+    {
+      "key": "R1/P02/slider_probe",
+      "classification": "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "field": "CSSTransition capture instant",
+      "original_count": 7,
+      "split_count": 7,
+      "original_targets": [
+        "layer",
+        "layer active"
+      ],
+      "split_targets": [
+        "layer",
+        "layer active"
+      ]
+    },
+    {
+      "key": "R1/P03/initial",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    },
+    {
+      "key": "R1/P03/keyboard_probe",
+      "classification": "AUTHORED_RANDOM_SCALAR",
+      "field": "state.particleScalars",
+      "original_count": 42,
+      "split_count": 42
+    }
+  ]
+}

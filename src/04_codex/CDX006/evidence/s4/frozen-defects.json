@@ -1,0 +1,56 @@
+{
+  "source_id": "CDX006",
+  "series": "LOCAL_K_LIPVOICE_RECUT_2",
+  "note": "Frozen authored source defects. RECUT2 changed no source, so each remains preserved and unrepaired. The visual_coverage field names the review-pack pair(s) on which CENTRAL can see the defect on BOTH sides.",
+  "frozen_defect_count": 6,
+  "defects": [
+    {
+      "id": "BD-01",
+      "summary": "no authored prefers-reduced-motion adaptation",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "both surfaces: 0 prefers-reduced-motion occurrences in hub/P01/P02/P03",
+      "visual_coverage": ["R1/P01/initial", "R1/P02/initial", "R1/P03/initial"]
+    },
+    {
+      "id": "BD-02",
+      "summary": "P01 responsive core-control loss (T1 right, M1 both sides + index)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": ["T1/P01/initial", "M1/P01/initial"]
+    },
+    {
+      "id": "BD-03",
+      "summary": "P02 physical direct 3D-layer pointer-selection unreliable; legend/DOM path works",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "physical blocked both sides, DOM+legend titles identical",
+      "visual_coverage": ["D1/P02/selected_layer", "D1/P02/legend_selection"]
+    },
+    {
+      "id": "BD-04",
+      "summary": "P02 responsive control loss (T1 story controls, M1 both sides)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": ["D1/P02/story_play", "D1/P02/story_completion", "M1/P02/initial"]
+    },
+    {
+      "id": "BD-05",
+      "summary": "P03 M1 index + AUTO STORY hidden",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": ["M1/P03/initial"]
+    },
+    {
+      "id": "BD-06",
+      "summary": "P03 T1 900x900 headline/scene-card authored layout collision",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces; h1 and #card overlap measured identically on ORIGINAL and SPLIT at 900x900",
+      "visual_coverage": ["T1/P03/initial"]
+    }
+  ]
+}

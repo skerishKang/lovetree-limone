@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.1",
+  "source_id": "CDX006",
+  "stage": "S4_SOURCE_SPLIT_PARITY_CANDIDATE",
+  "status": "ACCEPTED",
+  "status_note": "This file is retained as the historical CANDIDATE record of the accepted evidence series. CENTRAL accepted this candidate at PR #671 comment 5997822203 against accepted candidate head 0249d0eb6803a24ba291438d2cd326d262c9ad00. The lifecycle now lives in manifest.json and evidence/parity/accepted-parity.json.",
+  "parity_contract": "SUITE_SPECIFIC_MOTION_RANDOMNESS_AWARE",
+  "series": "LOCAL_K_LIPVOICE_RECUT_2",
+  "series_note": "Fresh 3-run series produced entirely on LOCAL_DEVICE=K_lipvoice by this capsule's own harness. It supersedes the earlier LOCAL_K_LIPVOICE_NEW_SERIES run1/run2/run3 evidence, which is retained only as historical evidence and is NOT accepted. The recut exists because that earlier series sampled P03's keeper inside its authored finite `out` transient (a fixed 120ms settle against a 180ms setTimeout plus a .55s transition), so Pair 15 recorded the keeper figure visible on one side and absent on the other, and the comparator absorbed that into an allowed projection instead of measuring it. No source repair was made and none is required: the ORIGINAL inline script and the SPLIT external script are byte-identical (SHA-256 feebaa6f...), as are the CSS halves.",
+  "evidence_produced_from_base_head": "4da727a0333a60b38e8f732a0b582a0599a1957a",
+  "producer_source_base_head": "4da727a0333a60b38e8f732a0b582a0599a1957a",
+  "measurement": {
+    "fresh_full_runs_required": 3,
+    "fresh_full_runs_completed": 3,
+    "paired_actions_per_run": 64,
+    "total_paired_actions": 192,
+    "screenshots_total": 384,
+    "runtime_assets_per_side_per_run": 86,
+    "suite_edges": 8,
+    "raw_png_equality_required": false,
+    "pixel_tolerance_gate": false,
+    "ssim_gate": false,
+    "perceptual_hash_gate": false,
+    "rng_seed_or_monkey_patch": false,
+    "clock_patch": false,
+    "performance_now_patch": false,
+    "source_runtime_mutation": false,
+    "source_normalization": false,
+    "frozen_defect_repair": false
+  },
+  "capture_method": {
+    "p03_keeper_stabilization": "SOURCE_AWARE_BOUNDED_WAIT",
+    "note": "P03 scene_01/initial states wait for #keeper to leave its authored finite transient (exists, complete, naturalWidth>0, no `out` class, displayed, opacity 1, no running keeper CSSTransition) plus a 2-rAF settle, with an 8000ms bounded timeout that FAILS CLOSED. The wait is scoped to #keeper only: it never waits on all animations, on infinite/live animations, or on any global page settle. All other states keep the original fixed 120ms settle.",
+    "clock_patched": false,
+    "rng_patched": false,
+    "runtime_source_patched": false
+  },
+  "comparator_method": {
+    "finite_transition_fail_closed": true,
+    "keeper_state_compared": true,
+    "note": "CSSTransitions are compared by structural signature (target, transitionProperty, duration, delay, iterations, easing). A transient may be projected as AUTHORED_FINITE_TRANSIENT_PHASE ONLY when both sides agree on that structure; any structural delta - including an empty ORIGINAL target set against a populated SPLIT one - is recorded as an UNCLASSIFIED residual and fails the run. Only capture-phase fields (currentTime, playState) are projected.",
+    "unclassified_residual_count": 0,
+    "finite_transition_structural_mismatches": 0
+  },
+  "aggregate": {
+    "clean_runs": "3/3",
+    "paired_actions_exact": "192/192",
+    "runtime_asset_sweeps": "516/516",
+    "real_parity_defects": 0,
+    "unclassified_residuals": 0,
+    "finite_transition_structural_mismatches": 0,
+    "pairs_with_real_diffs": 0,
+    "page_errors": 0,
+    "console_errors": 0,
+    "request_failed": 0,
+    "http_errors": 0,
+    "missing_runtime_assets": 0,
+    "launcher_equal_all_runs": true,
+    "actions_per_run": [
+      64,
+      64,
+      64
+    ],
+    "allowed_classifications": [
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_RANDOM_SCALAR"
+    ]
+  },
+  "pair15_recut": {
+    "subject": "M1/P03/initial keeper figure",
+    "original_root_cause": "LOAD_ORDER_OR_CAPTURE_TIMING",
+    "source_parity_defect": false,
+    "s3_source_repair_required": false,
+    "keeper_selector": "#keeper",
+    "diff_counts_per_run": [
+      {
+        "key": "M1/P03/initial",
+        "diff_count": 0
+      },
+      {
+        "key": "M1/P03/initial",
+        "diff_count": 0
+      },
+      {
+        "key": "M1/P03/initial",
+        "diff_count": 0
+      }
+    ],
+    "note": "The keeper is now captured after its authored transient on both sides, so the settled state (src, natural dimensions, opacity 1, rect, viewport intersection, parent rect) is compared exactly and agrees. The earlier asymmetry was the harness sampling inside the authored `out` window, not an execution-parity defect."
+  },
+  "frozen_source_defects": [
+    {
+      "id": "BD-01",
+      "summary": "no authored prefers-reduced-motion adaptation",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "both surfaces: 0 prefers-reduced-motion occurrences in hub/P01/P02/P03",
+      "visual_coverage": [
+        "R1/P01/initial",
+        "R1/P02/initial",
+        "R1/P03/initial"
+      ]
+    },
+    {
+      "id": "BD-02",
+      "summary": "P01 responsive core-control loss (T1 right, M1 both sides + index)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": [
+        "T1/P01/initial",
+        "M1/P01/initial"
+      ]
+    },
+    {
+      "id": "BD-03",
+      "summary": "P02 physical direct 3D-layer pointer-selection unreliable; legend/DOM path works",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "physical blocked both sides, DOM+legend titles identical",
+      "visual_coverage": [
+        "D1/P02/selected_layer",
+        "D1/P02/legend_selection"
+      ]
+    },
+    {
+      "id": "BD-04",
+      "summary": "P02 responsive control loss (T1 story controls, M1 both sides)",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": [
+        "D1/P02/story_play",
+        "D1/P02/story_completion",
+        "M1/P02/initial"
+      ]
+    },
+    {
+      "id": "BD-05",
+      "summary": "P03 M1 index + AUTO STORY hidden",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces",
+      "visual_coverage": [
+        "M1/P03/initial"
+      ]
+    },
+    {
+      "id": "BD-06",
+      "summary": "P03 T1 900x900 headline/scene-card authored layout collision",
+      "preserved": true,
+      "repaired": false,
+      "evidence": "preserved on both surfaces; h1 and #card overlap measured identically on ORIGINAL and SPLIT at 900x900",
+      "visual_coverage": [
+        "T1/P03/initial"
+      ]
+    }
+  ],
+  "p02_defect_probe": {
+    "physicalBlockedBoth": true,
+    "physicalTitleUnchangedBoth": true,
+    "domPathSame": true,
+    "legendPathSame": true,
+    "zeroErrors": true
+  },
+  "central_direct_visual_review": {
+    "status": "PASS_CANDIDATE_EVIDENCE",
+    "reviewer": "CENTRAL",
+    "accepted": true,
+    "run": 3,
+    "pair_count": 18,
+    "sheet_count": 4,
+    "CENTRAL_ACCEPTANCE_COMMENT": 5997820639,
+    "CENTRAL_REVIEWED_HEAD": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+    "central_pr_review_ref": "skerishKang/lovetree-limone#671 comment 5997822203",
+    "note": "CENTRAL performed and PASSED the direct visual review of accepted candidate head 0249d0eb6803a24ba291438d2cd326d262c9ad00. Acceptance is bound to that exact reviewed head. This promotion commit is acceptance-metadata only and changes no source, original, split or asset byte; CENTRAL did not visually review the promotion commit itself.",
+    "review_files": {
+      "review-sheet-1.jpg": {
+        "bytes": 425342,
+        "sha256": "4a754c5a934b1ea86324b54656119c87289fc5722f73d168fa8e2c7cb428efea"
+      },
+      "review-sheet-2.jpg": {
+        "bytes": 411677,
+        "sha256": "f4e46bca86e4502f83eb289d9a28bb02f135ae84b6c2c9b2b8a793a25b1c46ec"
+      },
+      "review-sheet-3.jpg": {
+        "bytes": 504390,
+        "sha256": "bd8c21a2be2f63ef125b592e5ddbc706b576f8637863f28d85c3d6c1a683df6a"
+      },
+      "review-sheet-4.jpg": {
+        "bytes": 265586,
+        "sha256": "1ee4d3be22f67be7d6387cbfee371d41d438fb29cfbe6fa7688398195020973d"
+      }
+    }
+  },
+  "accepted": true,
+  "accepted_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+  "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+  "candidate_state": {
+    "source_split_parity_pass": true,
+    "parity_ref": "evidence/parity/accepted-parity.json",
+    "S4_ACCEPTED": "YES",
+    "PRODUCT_ADOPTION": false,
+    "CAPABILITY_NATIVE_ADOPTION": false,
+    "PRODUCT_CANONICAL": false,
+    "DRIVE_MUTATION": 0
+  },
+  "provenance": {
+    "replay_harness": {
+      "path": "tests/s4-suite-replay.mjs",
+      "bytes": 27343,
+      "sha256": "2c0e2f924b1bd3c651f3f171dd16f8ce76b3300ee4225d52e361fdbf4390ec8b"
+    },
+    "comparator": {
+      "path": "tests/s4-suite-compare.mjs",
+      "bytes": 18626,
+      "sha256": "ec46a61b216234f9a633ad5e18475487b3e347675f9606375fb85f178eb01efc"
+    },
+    "p02_probe": {
+      "path": "tests/s4-p02-defect-probe.mjs",
+      "bytes": 3768,
+      "sha256": "b9b71cc1165cde88d1ec88e90528df55a8e29de217244d67d3a45a3263a69fd7"
+    },
+    "review_pack": {
+      "path": "tests/s4-review-pack.mjs",
+      "bytes": 4463,
+      "sha256": "050fce0a7bd8df8e03857d9a0fd593feeb1038f29c27600551fcec466528d541"
+    }
+  }
+}

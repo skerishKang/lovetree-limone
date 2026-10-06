@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "result": "PASS",
+  "expected_edge_count": 8,
+  "verified_edge_count": 8,
+  "edges": [
+    {
+      "from": "ROOT_LAUNCHER",
+      "to": "HUB",
+      "target": "개발과정/index.html",
+      "source_file": "최종본.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "최종본.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "HUB",
+      "to": "P01",
+      "target": "01-memory-capsule.html",
+      "source_file": "개발과정/index.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/index.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "HUB",
+      "to": "P02",
+      "target": "02-memory-stack.html",
+      "source_file": "개발과정/index.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/index.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "HUB",
+      "to": "P03",
+      "target": "03-tree-keeper.html",
+      "source_file": "개발과정/index.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/index.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "P01",
+      "to": "HUB",
+      "target": "index.html",
+      "source_file": "개발과정/01-memory-capsule.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/01-memory-capsule.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "P02",
+      "to": "HUB",
+      "target": "index.html",
+      "source_file": "개발과정/02-memory-stack.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/02-memory-stack.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "P03",
+      "to": "HUB",
+      "target": "index.html",
+      "source_file": "개발과정/03-tree-keeper.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/03-tree-keeper.html"
+      ],
+      "preserved": true
+    },
+    {
+      "from": "P03_FINAL",
+      "to": "P01",
+      "target": "01-memory-capsule.html",
+      "source_file": "개발과정/03-tree-keeper.html",
+      "original_target_present": true,
+      "split_target_present": true,
+      "split_target_files": [
+        "개발과정/03-tree-keeper.script.js"
+      ],
+      "preserved": true
+    }
+  ],
+  "note": "Every accepted authored suite target is present in ORIGINAL and in the mechanically split executable file set. Inline-JS navigation may move from split HTML to its companion *.script.js without URL rewrite. Browser behavior parity remains S4 and is not claimed here."
+}

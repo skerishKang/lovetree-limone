@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "status": "ACCEPTED",
+  "stage": "S2_SUITE_BASELINE",
+  "accepted_by": "CENTRAL",
+  "acceptance_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
+  "report": {
+    "repo": "skerishKang/workdiary",
+    "path": "lovetree-reports/2026-10-04/CENTRAL/589-mst108-cdx006-s2-suite-baseline.md",
+    "commit": "ca53e5252d6c12dab283a50293b49fe4e9a7a28d",
+    "blob": "86478c56ba5d5769ea93a460207f9caeccb1a365"
+  },
+  "authority": {
+    "mode": "SUITE_MULTI_EXECUTABLE",
+    "root_launcher": {
+      "relative_path": "최종본.html",
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99",
+      "baseline_surface": false
+    },
+    "member_surfaces": [
+      {
+        "label": "HUB",
+        "drive_file_id": "1L1bFbB1BB-pKysR1xy-Vup1iQhlR4MlG",
+        "relative_path": "개발과정/index.html",
+        "bytes": 6088,
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+      },
+      {
+        "label": "PROGRAM_01_MEMORY_CAPSULE",
+        "drive_file_id": "1lGCvpq8Eu2zIm713QWQ5_2k7Q9nmIQqt",
+        "relative_path": "개발과정/01-memory-capsule.html",
+        "bytes": 15991,
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+      },
+      {
+        "label": "PROGRAM_02_MEMORY_STACK",
+        "drive_file_id": "13F5tUplnEoHTh4gIrkbZ6o-g7Nk-OyUh",
+        "relative_path": "개발과정/02-memory-stack.html",
+        "bytes": 15578,
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+      },
+      {
+        "label": "PROGRAM_03_TREE_KEEPER",
+        "drive_file_id": "1mNp6oDUZ3QuOH1IKS3z6Dy34V09_UPrV",
+        "relative_path": "개발과정/03-tree-keeper.html",
+        "bytes": 18280,
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+      }
+    ]
+  },
+  "capture": {
+    "surface": "SUITE_MULTI_EXECUTABLE",
+    "serve_mode": "LOOPBACK_HTTP",
+    "file_protocol_used": false,
+    "contexts": [
+      {
+        "id": "D1",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1
+      },
+      {
+        "id": "T1",
+        "width": 900,
+        "height": 900,
+        "dpr": 1
+      },
+      {
+        "id": "M1",
+        "width": 390,
+        "height": 844,
+        "dpr": 1
+      },
+      {
+        "id": "R1",
+        "width": 1440,
+        "height": 900,
+        "dpr": 1,
+        "reduced_motion": "reduce"
+      }
+    ],
+    "captured_actions": 64,
+    "screenshots_total": 64,
+    "page_errors": 0,
+    "console_errors": 0,
+    "failed_requests": 0,
+    "http_error_responses": 0,
+    "broken_images": 0,
+    "missing_runtime_assets": 0,
+    "runtime_assets_expected": 86,
+    "runtime_assets_loaded": 86,
+    "suite_edges_expected": 8,
+    "suite_edges_verified": 8,
+    "screenshot_equality_claimed": false,
+    "evidence_fingerprints": {
+      "s2_json_sha256": "e2452205826c8527a732404b8a0dbe206c6823cdd9810af8647f5411ffa9c4b1",
+      "screenshot_manifest_sha256": "8ca3b11e1ef7daa77b209f087755136c6e4f404d7e6d8b4f57d6e392566f3358",
+      "harness_sha256": "c388cbfd42d8f18970741274a4a28fe5851ad1007fe9379a94af92328fee3e4f"
+    }
+  },
+  "motion_randomness": {
+    "prefers_reduced_motion_authored": false,
+    "math_random_sites": 9,
+    "math_random_by_surface": {
+      "index.html": 0,
+      "01-memory-capsule.html": 5,
+      "02-memory-stack.html": 0,
+      "03-tree-keeper.html": 4
+    },
+    "r1_motion_continues": true,
+    "future_parity_contract": "SUITE_SPECIFIC_MOTION_RANDOMNESS_AWARE"
+  },
+  "frozen_source_defects": [
+    {
+      "id": "BD-01",
+      "title": "no authored prefers-reduced-motion adaptation",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-02",
+      "title": "P01 T1/M1 responsive core-control loss",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-03",
+      "title": "P02 direct 3D-layer physical pointer-selection path is unreliable while legend path works",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-04",
+      "title": "P02 T1/M1 responsive core-control loss",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-05",
+      "title": "P03 M1 Experience Index and AUTO STORY controls hidden",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-06",
+      "title": "P03 T1 900x900 headline/scene-card authored layout collision",
+      "preserved": true,
+      "repaired": false
+    }
+  ],
+  "frozen_source_defect_count": 6,
+  "unclassified_residuals": 0,
+  "product_adoption": false,
+  "capability_native_adoption": false,
+  "product_canonical": false,
+  "drive_mutation": 0
+}

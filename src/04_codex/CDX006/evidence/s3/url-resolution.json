@@ -1,0 +1,712 @@
+{
+  "schema_version": "1.0",
+  "source_id": "CDX006",
+  "stage": "S3_MECHANICAL_SPLIT",
+  "result": "PASS",
+  "runtime_url_count": 86,
+  "resolved_original": 86,
+  "resolved_split": 86,
+  "url_rewrites": 0,
+  "reference_domains": [
+    {
+      "id": "FIGURES",
+      "count": 80,
+      "basis": "P01/P02/P03 authored relative assets/figures/ templates and fixed A-J x 8-angle domain"
+    },
+    {
+      "id": "KEEPER",
+      "count": 6,
+      "basis": "P03 authored scene k filenames + keeper.src relative assets/keeper/ composition"
+    }
+  ],
+  "records": [
+    {
+      "authored_url": "assets/figures/A_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3d2a75387485ead8a468dd89f0f21cb548b580d70094816b16c15fd2af3dda22",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "54ea07747dff646881333443b6d991d10e808688923ddbf22404477853f095a5",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "2f25c7e3d9f41440fe625015cc6a8354afcd365982a856c514f7292e5e725933",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "c05591977e539eef34c3e4431225750d56b9d17cf10ff6d542c357d5ec56c9e2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "7006f733161e789d0e82bba36d24781f5a652844c0d6e3045d775f4f84ddcb5c",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "1e177951e460d0e3088f4aacc7685d351c616e06299c3659de11afd9504e2cc2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "65074b948ef70864d81622e6c1046a6d8039700eab50827d9d105b8dadb6d3ec",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/A_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "7e1cedabf4122e1dc5d15d31d5ae386271c93a081c509f757aa13c5a617a79a3",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "6c191f87c4ad757ef4cb71d91bdbd8902b3036d80932e7c1dd7f7bb03202fe7e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "0e4732fbe5e9da3d7b4abe11be536ef57d0e4961494f5c284296b7a5281d26fb",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "2208320b15d73593bf76fede18893a2050a851dcf7b0bdacc9e718a1131bc23e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "16f171102aa68f79ef07ea12d8c93ffc50b0ee7e827e3bbf5be506c4bfd8c749",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "fd5516d210e8536ca1863ae157f2c55f8252668b9174d764c2519dd83c5a1aa8",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "252e3d40ae5109fcc1299098f464db05807088467761d84383a710f8ada287a8",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "fdf65fe539fa30c667adcd7d3d500bf5ad367c8ad3654d8f4249c078600a033e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/B_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3ecce85172b4044742e00adff9c7ba409c80ba97fa8ee483eab4bdf92f7ba19e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "c4036acf05883ed72955f4c841c1213217025711b061be9f1e0f9d289a5ae2de",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "fbd6181e55dc8f1d98e73c76ec48dfe5fbafc745d423f748d002f97f2939cc63",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3fde31b409ca23d7241d642e0b6a68aa429ef84c94d612547c25f67fc23a559b",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "253e24b8011333141a17fa7d602653324130c6bb13fe241c3ec074984ffbd90f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "6f6b0538313b4dee80c9c1d7162134802634020a1fbb5b740724dd881d29245f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "1185f3a84e8a42880fa87aa2950c1d6aa7f39805b8f1195985eb7168b82c76a4",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "496261bbd33b95f4ed0868632f023aa5a74751f222a2db9f5b36fbb2f6cad408",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/C_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "7d3f5a92175fb44c81972807792b27d15b1f292abac47f5a74f1b7293f1f8d7f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "7c260c1df9518aaf83eb1ee795015d04f2428d7690aee8e209a05c60b28e71b2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "d899c87196029b60b3e0afab02b1eadbda38adbb1ccb2c79c57ccba058ab8723",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "fb2a100ae6926dc6ad8b7e3a2902df9d7bd397e07b35643bf837f928ab0fdb2c",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "96dd47725a4e7887150e42ec330d9722ba1856e195f79510e301961853935952",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "9bc3c10a74505a99f83266db601076ff0dcc60613914463a6f143025a44571cf",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "4673865faa02b42772a29a6ec12529077a3746df262f55a0628330a806e218a9",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "23afc382c42f2c9433fe9b2f75be5e25687a605b3c6699c74083586a553f94dd",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/D_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "abca5ee2d40c0dd639e71a1cc88ff99084ff81bf3a985b4be821a157c5dc0d08",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "a6c762ce3adea4d2113f09461fe72b2961ba625ad63379626cc70ea1537d275e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "4795391336ce1b165d151ea51c061d1d5ce7d651d873c10650bbb345b67e046e",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "0250860949aaf1a9bd76aa7ec41fe344c662774dd24f70aa7ad7e9f761c1964f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "9c075061c78fe73db93a4e27d40f7e830146dbdcfb88df47349b57878db25c19",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "4cf1e1bef1509df9243921e4810b11f939f6fecf8a7685cf6ec35a6df46f74ed",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "4c2509114d28781f7cede2494b3bd69ba1d9e40d47b0677dba359927d5e1dda3",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "6f443aa27afa69ea2a8e060813db6e33a1418656d02e99824e19731a341c4fd9",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/E_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "1bb7f7d8d1ffe6cbf0c7d452224f423e648fcc6c9eae3339a039335c0b5609c6",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "635edc36c4db1869c18bfe3c0ab64d9b309e00ca0c60f67b7ee2e3f34503b19c",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "8b9839d344961a82eb2212e10945d86c00135a93ee8a3d8d0ec7b32bbee243c2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "dbfdbb09c8f9866519e2a538b3a75e2e012f558ec0d9921954e90902393c66bf",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "a367374e62ab4de2f68386421dcf926c3796a414d688390954b48cca1378c556",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "b4f615eb8cc25fe3a74295b86e38231a32cae565edb4c33a260d541ab764555d",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "d7316e58a1e79853a3f55e0c2bc1a76f05d68efb74a25ab5b68a8a5c992d72c4",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "b6c79629a984985cfb8494e32bd497dbcd35b3733d77ff87d5061fa8d2fe91da",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/F_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "e845b8904914ab88724baf1287fb6b73286d28ea88a14aae373ba706d8f1d724",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "087220a45e34dad9c57608fa05993f6d3239bf6a6585b5dfb2a1f69c8bcd75be",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "2926793324b2cf1b554cefa0b75ffa147e297b5c3d5f0d571826efa104347ead",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "948ac5fe3e93e15681aaebbf42b0eeb11cddf0e7c27821215af2a81a4c4daac2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3e30a8dd33c3130793779e9896964bfb4837b91d998dfcae37280f69687b8333",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "c230c9378678bb4d26774db4e3731e276bc59714b8a3f7d04eb7368d265412b6",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3f0133fdeae47904a6ca73d2a2288678b4d5325f2f39b28f248e2e070075ed13",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "bf9ccbb0deea075c7b658b46d8f99d6831977296dd2c426a1a30088f599bcb04",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/G_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "aa3f678fb9e16816e366c6da9d241c6c58fe0fd2bc4c1dc81b0618e231f12297",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "ed0129151f13bdd2ff1ef9f46b8851a7dfcb4797193a77ba9d0e04489e05e285",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "f9e20e43308d3ccd0f053e264327d60d06b87923c037925cbc17b64d41f8f485",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "09ea6db15b9b00f5a131094625c6049836a4fdf60f700656bb0fa31f99500015",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "a813ac89149b73c4c29bcc0d48a258dcc2270f156abf189fdcc37a98bb47c086",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "b858b469c924bf56cc7a2452bbd011a499cf62f2243684b7a4b44fe661119c7f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3cbb1d84b08c941930e4bad2fc15b56557b0e2a452c344c09c12a10d25fe8c95",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "4079f61b79c63156c6789f8d60369ebf5891a4ebb59941ad94437f30b459a791",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/H_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "73d7da4fe132b05efdca82e522ffea2df564bd0eea341130e3121f7192bef8c2",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "c34213ab213ea49e208be9a37c0041e7e60aa2745dfba1eb4350ff6755b8f99d",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "ac182697409e599bcc00faff437888d24d46aaceeea63fc4c58ba8fedcc74533",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "28bf9be59fc716ecea966c0d1a08d5462c3db22680207dc1ff9af98d784072f8",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "d40d3ee25d7d4e2befac8821c020580f5b75e2cf3a9ad213379fd111b0a04389",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "c51921adc838fb0fa05d4e6fa0bda480b1f579d9912989d8ad8b45fc426634bf",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "9e260d440494115fcfee8e3510545b42029774f2a360452744f260d36014282b",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "75c2fc18b0057e74dd5066263a278f8f957e15a3dc9fb3018c65ec2e0efee84f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/I_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "399f5334d86066f9ebf81a6b595853c62e0ff6f422deab1f5609168ec7cd5cd7",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_000.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "268675f60ab4b7c869c4743636bf8f0cc6b655261e8e0d6ea847b5341e79bd97",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_045.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "a2e66968b69e8f24074962e58221853e709248250f9347a0e0c5e108e57d4466",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_090.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "0dbbe338b8d1ff25783ee3fa137d5278d4422f174e5f07c37cb5cdd430f85fb4",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_135.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "6784d3b9a8b06bcc51a582f96e147055fa70758c5845f3eadd98d8b906a7321f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_180.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "3042cf2cf161ce43bffcdabc51e03bd2b568af650ea77b9f200022a38f4a6e11",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_225.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "1265cada128cf008048efb5bef2c2886de62758954699e5392ff2295dd798de9",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_270.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "762d1f9c5c348d37a722ddbc39461b892392734982d930cabddccc693e272d75",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/figures/J_315.png",
+      "reference_basis": "AUTHORED_DYNAMIC_FIGURE_DOMAIN_A_J_X_8_ANGLES",
+      "sha256": "9cd73e2c1d9cb5119976eb2c4a456fd49be28cda587217b3c5e740bb1c0690ae",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/01-welcome.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "fbc36d5741ba18e227045a3127e7945490d2d0bcd52d60707173e71f6b213af0",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/02-orb.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "a340ef518d05ab1ba468a7f6eb27b8531ed8b44126c3c0f0c3c77f8c0e1c825a",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/03-scan.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "344c16202a2e1d18cf6b8c44ac895947312ec39196fef1a570d4116fdec2e7c9",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/04-cards.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "3bf54d766cb9ab2857d812a4de9924d1fa01f80c9e0a7c5b08d9a867fef065b6",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/05-build.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "20696898e498db2a5ea7f5803847c47e9b8785bcf8758de43ac026b8045cff3f",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    },
+    {
+      "authored_url": "assets/keeper/06-bloom.png",
+      "reference_basis": "P03_AUTHORED_SCENE_KEEPER_FILENAME_DOMAIN",
+      "sha256": "61d634973e388a6545640c5a341668d07c0fdd802ab18bf8ee6b396196b1d68c",
+      "original_resolves": true,
+      "split_resolves": true,
+      "url_rewritten": false
+    }
+  ]
+}

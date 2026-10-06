@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX006",
+  "stage": "S3_MECHANICAL_SPLIT_CANDIDATE",
+  "master_id": "MST108",
+  "namespace": "CDX",
+  "identity": {
+    "semantic_identity": "Codex-06 3D Experience Collection suite",
+    "representation": "ONE_SUITE_CAPSULE",
+    "suite_member_surfaces": 4,
+    "child_namespace_ids": [],
+    "basis": "skerishKang/lovetree-limone#589 comments 5979757832 and 5980345669"
+  },
+  "authority": {
+    "mode": "SUITE_MULTI_EXECUTABLE",
+    "suite_root_folder_id": "131menEkP2-XGnPlu4DqsjynPErIptoQ_",
+    "root_launcher": {
+      "drive_file_id": "1PeYJa6ROLiNKsRxjcJsi5dYrXMyh7Aka",
+      "relative_path": "최종본.html",
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99",
+      "role": "BOOTSTRAP_PROVENANCE_ONLY",
+      "baseline_surface": false
+    },
+    "development_folder_id": "1qZmbgyCHAG_fX5gejZiOLQknynBJ99Ah",
+    "member_surfaces": [
+      {
+        "label": "HUB",
+        "drive_file_id": "1L1bFbB1BB-pKysR1xy-Vup1iQhlR4MlG",
+        "relative_path": "개발과정/index.html",
+        "bytes": 6088,
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+      },
+      {
+        "label": "PROGRAM_01_MEMORY_CAPSULE",
+        "drive_file_id": "1lGCvpq8Eu2zIm713QWQ5_2k7Q9nmIQqt",
+        "relative_path": "개발과정/01-memory-capsule.html",
+        "bytes": 15991,
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+      },
+      {
+        "label": "PROGRAM_02_MEMORY_STACK",
+        "drive_file_id": "13F5tUplnEoHTh4gIrkbZ6o-g7Nk-OyUh",
+        "relative_path": "개발과정/02-memory-stack.html",
+        "bytes": 15578,
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+      },
+      {
+        "label": "PROGRAM_03_TREE_KEEPER",
+        "drive_file_id": "1mNp6oDUZ3QuOH1IKS3z6Dy34V09_UPrV",
+        "relative_path": "개발과정/03-tree-keeper.html",
+        "bytes": 18280,
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+      }
+    ],
+    "project_note": {
+      "drive_file_id": "1ypR-qiD6Rv9U2SMSeCOLg6ZWYV0dxToi",
+      "relative_path": "00_프로젝트안내.md",
+      "bytes": 406,
+      "sha256": "cd71e8f1b1b99543797acac521ad0136032b94fe37ddf65e9c22b370a9170931"
+    },
+    "readme": {
+      "drive_file_id": "1biG9-VGd1mdH2s-4IaIJTvmSYIq-s0rq",
+      "relative_path": "개발과정/README.md",
+      "bytes": 1360,
+      "sha256": "b7d9b615a13aec211a39fc757a9310dd1ac7da61e3f517ab72c9bc4cc88d528f"
+    }
+  },
+  "asset_authority": {
+    "assets_folder_id": "1QYajNWJ0oVyLJiU_zX2NOFmNJnz0IykW",
+    "figures_folder_id": "1u_GCZa5ijfhMTt0GTFbkE-zyOPX-3sP-",
+    "keeper_folder_id": "1ikOgLzArHDiMNX-wM0wdjzdOyr7lSsQe",
+    "ui_folder_id": "1uZguJvsDRlldUiEl494sATp96omsyiM2",
+    "figure_files": 80,
+    "keeper_runtime_files": 6,
+    "keeper_reference_only_files": 2,
+    "runtime_files": 86,
+    "total_asset_files": 88,
+    "url_resolution_ref": "evidence/s3/url-resolution.json",
+    "source_empty_directories": [
+      "개발과정/assets/ui"
+    ],
+    "git_empty_directory_note": "Git has no empty-directory object; authored empty assets/ui is recorded here and no synthetic file is added.",
+    "url_rewrites": 0,
+    "reencode": 0,
+    "resize": 0,
+    "format_change": 0
+  },
+  "suite_topology": {
+    "edge_count": 8,
+    "edges": [
+      {
+        "from": "ROOT_LAUNCHER",
+        "to": "HUB",
+        "target": "개발과정/index.html",
+        "preserved": true
+      },
+      {
+        "from": "HUB",
+        "to": "P01",
+        "target": "01-memory-capsule.html",
+        "preserved": true
+      },
+      {
+        "from": "HUB",
+        "to": "P02",
+        "target": "02-memory-stack.html",
+        "preserved": true
+      },
+      {
+        "from": "HUB",
+        "to": "P03",
+        "target": "03-tree-keeper.html",
+        "preserved": true
+      },
+      {
+        "from": "P01",
+        "to": "HUB",
+        "target": "index.html",
+        "preserved": true
+      },
+      {
+        "from": "P02",
+        "to": "HUB",
+        "target": "index.html",
+        "preserved": true
+      },
+      {
+        "from": "P03",
+        "to": "HUB",
+        "target": "index.html",
+        "preserved": true
+      },
+      {
+        "from": "P03_FINAL",
+        "to": "P01",
+        "target": "01-memory-capsule.html",
+        "preserved": true
+      }
+    ]
+  },
+  "serving_contract": {
+    "mode": "LOOPBACK_HTTP",
+    "required": true,
+    "external_runtime_dependencies": 0
+  },
+  "frozen_source_defects": [
+    {
+      "id": "BD-01",
+      "title": "no authored prefers-reduced-motion adaptation",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-02",
+      "title": "P01 T1/M1 responsive core-control loss",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-03",
+      "title": "P02 direct 3D-layer physical pointer-selection path is unreliable while legend path works",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-04",
+      "title": "P02 T1/M1 responsive core-control loss",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-05",
+      "title": "P03 M1 Experience Index and AUTO STORY controls hidden",
+      "preserved": true,
+      "repaired": false
+    },
+    {
+      "id": "BD-06",
+      "title": "P03 T1 900x900 headline/scene-card authored layout collision",
+      "preserved": true,
+      "repaired": false
+    }
+  ],
+  "authored_randomness": {
+    "math_random_sites": 9,
+    "by_surface": {
+      "index.html": 0,
+      "01-memory-capsule.html": 5,
+      "02-memory-stack.html": 0,
+      "03-tree-keeper.html": 4
+    }
+  },
+  "authored_reduced_motion_adaptation": false,
+  "stage_gate": {
+    "s3_release": "RELEASED",
+    "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
+    "s4_release": "HOLD_CENTRAL",
+    "parity_capture_authorized": false,
+    "skip_reason": "CENTRAL_S4_NOT_RELEASED"
+  },
+  "product_adoption": false,
+  "capability_native_adoption": false,
+  "product_canonical": false,
+  "drive_mutation": 0
+}
