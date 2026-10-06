@@ -28,7 +28,7 @@ PILOT_SELECTION = NO
 APP_V4_MUTATION = NO
 PUBLIC_MVP_RUNTIME_MUTATION = NO
 SOURCE_RUNTIME_MUTATION = NO
-BACKEND_AUTH_DB_AUTH_MUTATION = NO
+BACKEND_AUTH_DB_MUTATION = NO
 DRIVE_MUTATION = 0
 ```
 
@@ -166,6 +166,23 @@ here):
    pins the version it was parity-verified against.
 5. No component may be created by copying an existing MVP-owned bridge into "canonical" form
    without a documented, reviewed mapping (see §7).
+6. **Canonical companion location.** After CLEAN acceptance, `src/03_sources/**` and
+   `src/04_codex/**` are **immutable authority trees**; a future canonical Product
+   bridge/companion must **not** be inserted into them. The default canonical owner of a
+   reusable Product adapter/companion is `src/06_components/**`. Canonical ownership is
+   **forbidden** in `public/mvp/NN/**`, `app/v4/**`, `src/03_sources/**` and
+   `src/04_codex/**`: a consumer's public realization may carry generated/copied/bound
+   artifacts, but it never becomes the canonical owner of the adapter/companion.
+7. **Product-only augmentation is not source mutation.** A reusable companion/adapter MAY
+   expose a bounded, Product-only augmentation (e.g. Product-mode editing UI or an extra
+   bridge event) **only** with an exact Product Owner/CENTRAL authorization reference,
+   implemented **outside** the frozen source authority, recorded explicitly in the adoption
+   record (`owner_authorized_product_delta_ref`, see schema doc), and proven by Product
+   parity + visual/interaction verification. The concrete precedent on current main is the
+   #596-authorized SRC057 Product-mode title/memo edit emitting `UPDATE_MEMORY_REQUEST`,
+   with the frozen Source authority bytes unchanged. Frozen Source/Codex authority itself is
+   **never** mutated by this schema; a real source-authority exception, if ever needed, is a
+   separate Source-lifecycle owner waiver and is not authorized here (see §12 / schema §6).
 
 Today `src/06_components/` is README-only ("No real component is created in the #569 setup
 slice"). That is the correct current state and must remain true until an owner-released
@@ -205,10 +222,20 @@ no source-visual change):
 |---|---|
 | Immutable clean authority | `src/03_sources/SRC064\|058\|056\|057\|060/split/**` (byte-locked) |
 | Reusable presentation adapter | **evidence:** `public/mvp/01/srcXXX-adapter.js` (pure `projectMvp001ContextToSrcXXX`). Becomes the seed for a `src/06_components` adapter only in a later owner-released slice. |
-| Source Product companion bridge | **evidence:** `public/mvp/01/surfaces/srcXXX/<id>-product-bridge.js` (hydrates via `SOURCE_INIT`, emits `MEMORY_SELECTED`/`TREE_SELECTED`/`NAVIGATE`). |
+| Source Product companion bridge | **evidence:** `public/mvp/01/surfaces/srcXXX/<id>-product-bridge.js` (hydrates via `SOURCE_INIT`, emits `MEMORY_SELECTED`/`TREE_SELECTED`/`NAVIGATE`). **SRC057 specifically** additionally carries the #596-authorized Product-mode `title/memo` edit augmentation that emits a validated `UPDATE_MEMORY_REQUEST` — a bounded Product-only implementation evidence, with the frozen SRC057 authority bytes unchanged. |
 | Composition (flow/step/nav/shell) | **evidence:** `public/mvp/01/productization-contract.js` + `product-orchestrator.js` + `productized-alpha.js` + `shell.js` (5 steps: entry→board→relationships→memory→explore). |
 | Public/app consumer | **evidence:** `public/mvp/01/index.html` served by the Worker `/mvp/01` static adapter. |
 | Derivation lock | `public/mvp/01/product-derivation-manifest.json` + `tests/mvp001-isolated-static.test.mjs`. |
+
+**Current state (kept, not promoted):**
+
+```text
+public/mvp/01/**        = Product implementation EVIDENCE (adapters, companions, shell)
+src/06_components/**    = reusable canonical layer, STILL EMPTY (no real component yet)
+```
+
+Nothing above is promoted into canonical reusable ownership by this mapping; the SRC057
+Product-mode seam is documented as current implementation evidence only.
 
 **Migration stance:** the reusable + composition layers are *extracted from* this evidence in
 later slices; the current files are never deleted or repurposed to make extraction trivial.
@@ -283,31 +310,39 @@ DERIVATION_LOCK_INTACT = YES
 
 ## 10. Adoption Lifecycle
 
-Explicit, ordered states. The current state is held at `OWNER_RELEASED = NO`; nothing here
-advances it.
+Explicit, ordered states that **preserve every standing #565 gate** S5–S10; a Product route
+may be released only after `PROMOTION_READY` (= #565 S10), never immediately after Product
+parity. The current state is held at `OWNER_RELEASED = NO`; nothing here advances it.
 
 ```text
 S4_SOURCE_PARITY_PASS
         → ADOPTION_CANDIDATE
         → OWNER_RELEASED
-        → REUSABLE_ADAPTER_BOUND
-        → COMPOSITION_BOUND
-        → PRODUCT_PARITY_PASS
-        → PRODUCT_ROUTE_RELEASED
+        → REUSABLE_ADAPTER_BOUND            (maps to #565 S5 CANONICAL_ADAPTER_BOUND)
+        → COMPOSITION_BOUND / PRODUCT_SHELL_CONNECTED  (maps to #565 S6 PRODUCT_SHELL_CONNECTED)
+        → PRODUCT_PARITY_PASS               (maps to #565 S7 SOURCE_PRODUCT_PARITY_PASS)
+        → WEB_VERIFICATION_PASS             (maps to #565 S8 WEB_VERIFICATION_PASS)
+        → INDEPENDENT_VERIFICATION_PASS     (maps to #565 S9 LUNA1_INDEPENDENT_VERIFICATION_PASS)
+        → PROMOTION_READY                   (maps to #565 S10 PROMOTION_READY)
+        → PRODUCT_ROUTE_RELEASED            (allowed only after S10 / PROMOTION_READY)
 ```
 
-| State | Meaning | Gate to enter |
-|---|---|---|
-| `S4_SOURCE_PARITY_PASS` | The source↔split parity stage for the unit is accepted (existing #565 stage S4 / `accepted-parity.json`). | Parity evidence accepted. |
-| `ADOPTION_CANDIDATE` | The unit is nominated for a reusable-adapter/component extraction. | This document + adoption-record schema present. |
-| `OWNER_RELEASED` | **Product Owner** explicitly authorizes releasing this unit into the reusable layer. | Owner release reference recorded. **Held = NO today.** |
-| `REUSABLE_ADAPTER_BOUND` | A `src/06_components` adapter/component, versioned by contract, is bound to the exact accepted source head. | §9 hash invariant passes. |
-| `COMPOSITION_BOUND` | A `src/07_compositions` composition (MVP001/002/app-v4) binds the reusable adapter at a pinned contract version. | Composition regression + visual/interaction parity proof. |
-| `PRODUCT_PARITY_PASS` | Product consumer parity (source bytes unchanged, behavior unchanged) is proven. | #596 parity gates + §9 gate. |
-| `PRODUCT_ROUTE_RELEASED` | The consumer is live on its route (`/mvp/NN` or `app/v4` route). | Route/registry release; MVP registry entry updated (#590). |
+| State | Meaning | Standing #565 gate | Gate to enter |
+|---|---|---|---|
+| `S4_SOURCE_PARITY_PASS` | The source↔split parity stage for the unit is accepted (existing #565 stage S4 / `accepted-parity.json`). | S4 | Parity evidence accepted. |
+| `ADOPTION_CANDIDATE` | The unit is nominated for a reusable-adapter/component extraction. | (post-S4) | This document + adoption-record schema present. |
+| `OWNER_RELEASED` | **Product Owner** explicitly authorizes releasing this unit into the reusable layer. | (pre-S5 owner release) | Owner release reference recorded. **Held = NO today.** |
+| `REUSABLE_ADAPTER_BOUND` | A `src/06_components` adapter/component, versioned by contract, is bound to the exact accepted source head. | S5 `CANONICAL_ADAPTER_BOUND` | §9 hash invariant passes; adapter bound. |
+| `COMPOSITION_BOUND` / `PRODUCT_SHELL_CONNECTED` | A `src/07_compositions` composition (MVP001/002/app-v4) binds the reusable adapter at a pinned contract version and the Product shell is connected. | S6 `PRODUCT_SHELL_CONNECTED` | Composition regression + shell connection. |
+| `PRODUCT_PARITY_PASS` | Product consumer parity (source bytes unchanged, behavior unchanged) is proven. | S7 `SOURCE_PRODUCT_PARITY_PASS` | #596 parity gates + §9 gate. |
+| `WEB_VERIFICATION_PASS` | Web verification of the connected product path passes. | S8 `WEB_VERIFICATION_PASS` | Web verification evidence. |
+| `INDEPENDENT_VERIFICATION_PASS` | Independent verification (LUNA1) passes. | S9 `LUNA1_INDEPENDENT_VERIFICATION_PASS` | Independent verification evidence. |
+| `PROMOTION_READY` | All standing gates through S10 are satisfied. | S10 `PROMOTION_READY` | S5–S9 evidence complete. |
+| `PRODUCT_ROUTE_RELEASED` | The consumer is live on its route (`/mvp/NN` or `app/v4` route). | post-S10 only | Route/registry release; MVP registry entry updated (#590). **Requires `PROMOTION_READY`.** |
 
-Transitions are **explicit** and reference-bound; `MERGED != PRODUCT_COMPLETE` and
-`CI GREEN != PRODUCT_ACCEPTED`.
+Transitions are **explicit** and reference-bound; no state may be skipped — in particular
+`PRODUCT_ROUTE_RELEASED` is unreachable without the full S5→S10 chain. `MERGED !=
+PRODUCT_COMPLETE` and `CI GREEN != PRODUCT_ACCEPTED`.
 
 ---
 
