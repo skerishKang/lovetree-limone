@@ -2,11 +2,12 @@
   "schema_version": "1.1",
   "source_id": "CDX006",
   "stage": "S4_SOURCE_SPLIT_PARITY_CANDIDATE",
-  "status": "CANDIDATE_PENDING_CENTRAL",
+  "status": "ACCEPTED",
+  "status_note": "This file is retained as the historical CANDIDATE record of the accepted evidence series. CENTRAL accepted this candidate at PR #671 comment 5997822203 against accepted candidate head 0249d0eb6803a24ba291438d2cd326d262c9ad00. The lifecycle now lives in manifest.json and evidence/parity/accepted-parity.json.",
   "parity_contract": "SUITE_SPECIFIC_MOTION_RANDOMNESS_AWARE",
   "series": "LOCAL_K_LIPVOICE_RECUT_2",
   "series_note": "Fresh 3-run series produced entirely on LOCAL_DEVICE=K_lipvoice by this capsule's own harness. It supersedes the earlier LOCAL_K_LIPVOICE_NEW_SERIES run1/run2/run3 evidence, which is retained only as historical evidence and is NOT accepted. The recut exists because that earlier series sampled P03's keeper inside its authored finite `out` transient (a fixed 120ms settle against a 180ms setTimeout plus a .55s transition), so Pair 15 recorded the keeper figure visible on one side and absent on the other, and the comparator absorbed that into an allowed projection instead of measuring it. No source repair was made and none is required: the ORIGINAL inline script and the SPLIT external script are byte-identical (SHA-256 feebaa6f...), as are the CSS halves.",
-  "accepted_head": "4da727a0333a60b38e8f732a0b582a0599a1957a",
+  "evidence_produced_from_base_head": "4da727a0333a60b38e8f732a0b582a0599a1957a",
   "producer_source_base_head": "4da727a0333a60b38e8f732a0b582a0599a1957a",
   "measurement": {
     "fresh_full_runs_required": 3,
@@ -164,13 +165,17 @@
     "zeroErrors": true
   },
   "central_direct_visual_review": {
-    "status": "PENDING_CENTRAL_REVIEW",
-    "reviewer": null,
-    "accepted": false,
+    "status": "PASS_CANDIDATE_EVIDENCE",
+    "reviewer": "CENTRAL",
+    "accepted": true,
     "run": 3,
     "pair_count": 18,
     "sheet_count": 4,
-    "note": "Review pack regenerated and hash-consistent. CENTRAL has NOT yet performed or passed the direct visual review. LOCAL must not and does not assert a CENTRAL pass.",
+    "CENTRAL_ACCEPTANCE_COMMENT": 5997820639,
+    "CENTRAL_REVIEWED_HEAD": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+    "central_pr_review_ref": "skerishKang/lovetree-limone#671 comment 5997822203",
+    "note": "CENTRAL performed and PASSED the direct visual review of accepted candidate head 0249d0eb6803a24ba291438d2cd326d262c9ad00. Acceptance is bound to that exact reviewed head. This promotion commit is acceptance-metadata only and changes no source, original, split or asset byte; CENTRAL did not visually review the promotion commit itself.",
     "review_files": {
       "review-sheet-1.jpg": {
         "bytes": 425342,
@@ -190,11 +195,13 @@
       }
     }
   },
-  "accepted": false,
+  "accepted": true,
+  "accepted_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+  "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
   "candidate_state": {
-    "source_split_parity_pass": false,
-    "parity_ref": null,
-    "S4_ACCEPTED": "NO",
+    "source_split_parity_pass": true,
+    "parity_ref": "evidence/parity/accepted-parity.json",
+    "S4_ACCEPTED": "YES",
     "PRODUCT_ADOPTION": false,
     "CAPABILITY_NATIVE_ADOPTION": false,
     "PRODUCT_CANONICAL": false,

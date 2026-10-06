@@ -147,12 +147,12 @@
     "raw_authority_locked": true,
     "baseline_captured": true,
     "mechanical_split_complete": true,
-    "source_split_parity_pass": false
+    "source_split_parity_pass": true
   },
   "s3_status": "ACCEPTED",
   "central_s3_accepted": true,
-  "s4_status": "CANDIDATE_PENDING_CENTRAL",
-  "parity_ref": null,
+  "s4_status": "ACCEPTED",
+  "parity_ref": "evidence/parity/accepted-parity.json",
   "stage_gate": {
     "s3_release": "RELEASED",
     "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
@@ -170,8 +170,19 @@
   "capability_native_adoption": false,
   "product_canonical": false,
   "drive_mutation": 0,
-  "central_s4_accepted": false,
+  "central_s4_accepted": true,
   "s4_candidate_ref": "evidence/s4/candidate-proof.json",
+  "s4_acceptance": {
+    "accepted_candidate_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "accepted_series": "LOCAL_K_LIPVOICE_RECUT_2",
+    "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+    "central_acceptance_comment": 5997820639,
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+    "central_acceptance_ref_secondary": "skerishKang/lovetree-limone#649 comment 5997821238",
+    "central_pr_review_ref": "skerishKang/lovetree-limone#671 comment 5997822203",
+    "central_reviewed_visual_candidate_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "note": "Acceptance is bound to the reviewed candidate head. This promotion commit is acceptance-metadata only and changes no source, original, split or asset byte; CENTRAL did not visually review this promotion commit."
+  },
   "s4_evidence_series": "LOCAL_K_LIPVOICE_RECUT_2",
   "s4_evidence_series_superseded": [
     {

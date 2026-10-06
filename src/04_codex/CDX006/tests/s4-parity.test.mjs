@@ -3,35 +3,81 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import {
+  validateAcceptedParityComparisons,
+  validateMotionAwareParityFields,
+} from '../../../08_harness/source-capsule-validator.mjs';
 
 const capsule = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(capsule, rel));
 const json = (rel) => JSON.parse(read(rel).toString('utf8'));
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
 
-/* The five accepted authority originals, SHA-256 as they exist at the accepted S3 head
- * 44e3506b5e6d09d0f0a11a8edc180aedb4fb3c8d. These were recomputed from the actual checkout after
- * confirming `git status` reports NO modification under original/** or split/**, i.e. the working
- * tree is byte-identical to the accepted head. The previous values in this file did not match the
- * files they named, so the lock was asserting against the wrong bytes. */
-const PROTECTED = new Map([
-  ['original/최종본.html', 'fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99'],
-  ['original/개발과정/index.html', '656d76d4919468fa32adf697e7d40b752eabf3f924d4bde157ce2eaed787ff3d'],
-  ['original/개발과정/01-memory-capsule.html', '10a10b17c0b9db2c7da32251f3d447efe11e91482424eb526ca57a2130501ad7'],
-  ['original/개발과정/02-memory-stack.html', '222a3457b8472d99864ad9ed67c93ee17c30c813ad9f3d6732ec070dea82f657'],
-  ['original/개발과정/03-tree-keeper.html', '5f16d19ea6d17c00535299e0ecfba03d11b54cdeae63ad966148dc09e6a9bdd4'],
-]);
+/* Committed-Git-blob truth. The authoring device K_lipvoice has core.autocrlf=true, so checked-out
+ * worktree bytes carry CRLF and can NEVER reproduce the committed authority SHA-256 locally. The
+ * protected-runtime lock therefore reads committed blob truth (git rev-parse + git cat-file), the
+ * same source CENTRAL verified independently (HUB 6088, P01 15991, P02 15578, P03 18280). It fails
+ * closed on any protected-runtime mutation and is platform-independent. */
+const toplevel = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+  cwd: capsule,
+  encoding: 'utf8',
+}).trim();
+const gitRel = (rel) => path.relative(toplevel, path.join(capsule, rel)).split(path.sep).join('/');
+const gitSha1 = (rel) => execFileSync('git', ['rev-parse', `HEAD:${gitRel(rel)}`], {
+  cwd: capsule,
+  encoding: 'utf8',
+}).trim();
+const gitBlob = (sha1) => execFileSync('git', ['cat-file', 'blob', sha1], {
+  cwd: capsule,
+  maxBuffer: 64 * 1024 * 1024,
+});
 
-test('S4 candidate keeps all accepted authority originals byte-locked', () => {
-  for (const [rel, expected] of PROTECTED) {
-    assert.equal(sha(read(rel)), expected, rel);
+test('protected runtime remains the committed Git blob truth recorded in accepted-parity.json', () => {
+  const manifest = json('manifest.json');
+  const p = json('evidence/parity/accepted-parity.json');
+  assert.equal(p.frozen_authority.authority_bytes_source, 'COMMITTED_GIT_BLOB_TRUTH');
+  /* The five accepted authority originals: committed blob sha1 + SHA-256 + byte count must equal
+   * the records in accepted-parity.json, and those records must agree with the manifest's Drive
+   * authority block (Drive ids, SHA-256, bytes) - locking out any transcription drift. */
+  const originalSurface = p.protected_runtime.original_surface;
+  assert.equal(Object.keys(originalSurface).length, 5, 'five protected original surfaces');
+  for (const [rel, rec] of Object.entries(originalSurface)) {
+    const suffix = rel.slice('original/'.length);
+    const authority = manifest.authority.member_surfaces.find((m) => m.relative_path === suffix)
+      ?? (suffix === manifest.authority.root_launcher.filename ? manifest.authority.root_launcher : null);
+    assert.ok(authority, `${rel} must correspond to a manifest authority entry`);
+    const frozen = p.frozen_authority.member_surfaces.find((m) => m.relative_path === suffix)
+      ?? (suffix === p.frozen_authority.root_launcher.filename ? p.frozen_authority.root_launcher : null);
+    assert.ok(frozen, `${rel} must carry a frozen_authority entry`);
+    assert.equal(frozen.drive_file_id, authority.drive_file_id, `${rel} Drive file id must agree across records`);
+    assert.equal(rec.sha256, authority.sha256, `${rel} authority SHA-256 must match the manifest`);
+    assert.equal(rec.bytes, authority.bytes, `${rel} authority byte count must match the manifest`);
+    assert.equal(rec.sha256, frozen.sha256, `${rel} frozen_authority SHA-256 must agree`);
+    const sha1 = gitSha1(rel);
+    assert.equal(sha1, rec.git_blob_sha1, `${rel} committed blob identity`);
+    const bytes = gitBlob(sha1);
+    assert.equal(sha(bytes), rec.sha256, `${rel} committed blob SHA-256`);
+    assert.equal(bytes.length, rec.bytes, `${rel} committed blob byte count`);
+  }
+  /* The split surface is protected runtime too: every committed blob must still equal what
+   * accepted-parity recorded, so no later head may mutate a split byte under a clean status. */
+  for (const [rel, rec] of Object.entries(p.protected_runtime.split_surface)) {
+    const sha1 = gitSha1(rel);
+    assert.equal(sha1, rec.git_blob_sha1, `${rel} committed blob identity`);
+    const bytes = gitBlob(sha1);
+    assert.equal(sha(bytes), rec.sha256, `${rel} committed blob SHA-256`);
+    assert.equal(bytes.length, rec.bytes, `${rel} committed blob byte count`);
   }
 });
 
-test('S4 candidate proof is exactly three clean fresh full runs of the RECUT2 series', () => {
+test('the RECUT2 candidate proof is exactly three clean fresh full runs, accepted by CENTRAL', () => {
   const proof = json('evidence/s4/candidate-proof.json');
-  assert.equal(proof.status, 'CANDIDATE_PENDING_CENTRAL');
+  assert.equal(proof.status, 'ACCEPTED');
+  assert.equal(proof.accepted, true);
+  assert.equal(proof.accepted_head, '0249d0eb6803a24ba291438d2cd326d262c9ad00');
+  assert.equal(proof.central_acceptance_ref, 'skerishKang/lovetree-limone#589 comment 5997820639');
   assert.equal(proof.parity_contract, 'SUITE_SPECIFIC_MOTION_RANDOMNESS_AWARE');
   assert.equal(proof.series, 'LOCAL_K_LIPVOICE_RECUT_2');
   assert.equal(proof.measurement.fresh_full_runs_required, 3);
@@ -243,17 +289,17 @@ test('all eight authored suite edges are exercised and agree across every run an
   assert.equal(EDGE_ACTIONS.length + 1, 8, '7 in-suite navigations + the launcher root = 8 edges');
 });
 
-test('the CENTRAL review pack is present, hash-consistent, and still PENDING review', () => {
-  /* The pack itself must exist and be fingerprint-consistent, but CENTRAL has NOT reviewed it.
-   * LOCAL must never be able to make this suite green by asserting a CENTRAL pass: the status is
-   * required to be PENDING_CENTRAL_REVIEW with a null reviewer and accepted=false, and a
-   * premature PASS_CANDIDATE_EVIDENCE claim FAILS here. CENTRAL flips these when it reviews. */
+test('the CENTRAL review pack is present, hash-consistent, and accepted at the bound candidate head', () => {
+  /* The pack must exist and be fingerprint-consistent. CENTRAL accepted this candidate at the
+   * exact bound reference; the acceptance is recorded against the reviewed candidate head, not
+   * against any later promotion commit, which is asserted here and nowhere else. */
   const proof = json('evidence/s4/candidate-proof.json');
   const vr = proof.central_direct_visual_review;
-  assert.equal(vr.status, 'PENDING_CENTRAL_REVIEW', 'the visual review must remain pending');
-  assert.equal(vr.reviewer, null, 'no reviewer may be recorded before CENTRAL reviews');
-  assert.equal(vr.accepted, false, 'the candidate is not visually accepted');
-  assert.notEqual(vr.status, 'PASS_CANDIDATE_EVIDENCE', 'a premature CENTRAL PASS is a failure');
+  assert.equal(vr.status, 'PASS_CANDIDATE_EVIDENCE');
+  assert.equal(vr.reviewer, 'CENTRAL');
+  assert.equal(vr.accepted, true);
+  assert.equal(vr.CENTRAL_ACCEPTANCE_COMMENT, 5997820639);
+  assert.equal(vr.CENTRAL_REVIEWED_HEAD, '0249d0eb6803a24ba291438d2cd326d262c9ad00');
   assert.equal(vr.run, 3);
   assert.equal(vr.pair_count, 18);
   assert.equal(vr.sheet_count, 4);
@@ -296,23 +342,104 @@ test('review pack carries the two RECUT2 pairs that matter and maps all six froz
   assert.ok(cov['BD-05'].includes('M1/P03/initial'), 'BD-05 must be covered by M1/P03/initial');
 });
 
-test('candidate lifecycle fails closed before CENTRAL S4 acceptance', () => {
+test('candidate lifecycle reflects CENTRAL S4 acceptance and remains bounded', () => {
   const manifest = json('manifest.json');
   assert.equal(manifest.s3_status, 'ACCEPTED');
   assert.equal(manifest.central_s3_accepted, true);
   assert.equal(manifest.stages.mechanical_split_complete, true);
-  assert.equal(manifest.stages.source_split_parity_pass, false);
-  assert.equal(manifest.s4_status, 'CANDIDATE_PENDING_CENTRAL');
-  assert.equal(manifest.central_s4_accepted, false);
-  assert.equal(manifest.parity_ref, null);
+  assert.equal(manifest.stages.source_split_parity_pass, true);
+  assert.equal(manifest.s4_status, 'ACCEPTED');
+  assert.equal(manifest.central_s4_accepted, true);
+  assert.equal(manifest.parity_ref, 'evidence/parity/accepted-parity.json');
   assert.equal(manifest.s4_candidate_ref, 'evidence/s4/candidate-proof.json');
   assert.equal(manifest.stage_gate.s4_release, 'RELEASED');
   assert.equal(manifest.stage_gate.parity_capture_authorized, true);
+  assert.equal(manifest.stage_gate.skip_reason, null);
   assert.equal(manifest.product_adoption, false);
   assert.equal(manifest.capability_native_adoption, false);
   assert.equal(manifest.product_canonical, false);
   assert.equal(manifest.drive_mutation, 0);
-  assert.equal(fs.existsSync(path.join(capsule, 'evidence', 'parity', 'accepted-parity.json')), false);
+  assert.equal(manifest.s4_evidence_series, 'LOCAL_K_LIPVOICE_RECUT_2');
+  assert.ok(fs.existsSync(path.join(capsule, 'evidence', 'parity', 'accepted-parity.json')),
+    'the accepted-parity artifact must exist');
+  /* The superseded series stays recorded in history; it is retained, never accepted. */
+  const superseded = manifest.s4_evidence_series_superseded;
+  assert.equal(superseded.length, 1);
+  assert.equal(superseded[0].series, 'LOCAL_K_LIPVOICE_NEW_SERIES');
+  assert.equal(superseded[0].disposition, 'SUPERSEDED_FOR_ACCEPTANCE');
+});
+
+test('the accepted-parity artifact binds the CENTRAL acceptance under the shared validator contract', () => {
+  const p = json('evidence/parity/accepted-parity.json');
+  assert.equal(p.source_id, 'CDX006');
+  assert.equal(p.master_id, 'MST108');
+  assert.equal(p.stage, 'S4_SOURCE_SPLIT_PARITY');
+  assert.equal(p.status, 'ACCEPTED');
+  const b = p.binding;
+  assert.equal(b.accepted_candidate_head, '0249d0eb6803a24ba291438d2cd326d262c9ad00');
+  assert.equal(b.capture_head, b.accepted_candidate_head);
+  assert.equal(b.accepted_series, 'LOCAL_K_LIPVOICE_RECUT_2');
+  assert.equal(b.pull_request, 671);
+  assert.equal(b.central_acceptance_comment, 5997820639);
+  assert.equal(b.central_reviewed_visual_candidate_head, '0249d0eb6803a24ba291438d2cd326d262c9ad00');
+  assert.equal(p.measurement.fresh_full_runs, '3/3');
+  assert.equal(p.measurement.paired_actions, '192/192');
+  assert.equal(p.measurement.runtime_assets, '516/516');
+  assert.equal(p.measurement.runtime_assets_per_side_per_run, 86);
+  assert.equal(p.measurement.suite_edges, '8/8');
+  for (const [k, v] of Object.entries(p.gates)) assert.equal(v, 0, `gates.${k}`);
+  assert.equal(p.three_run_proof.required_runs, 3);
+  assert.equal(p.three_run_proof.runs_recorded, 3);
+  assert.equal(p.three_run_proof.runs_clean, true);
+  assert.equal(p.three_run_proof.three_run_proof, true);
+  assert.equal(p.three_run_proof.averaging_or_best_of, 'FORBIDDEN');
+  assert.equal(p.three_run_proof.carried_over_prior_proof, false);
+  for (const r of p.three_run_proof.runs) {
+    assert.equal(r.real_parity_defects, 0, `run${r.run_index}`);
+    assert.equal(r.unclassified_residuals, 0, `run${r.run_index}`);
+    assert.equal(r.finite_transition_structural_mismatches, 0, `run${r.run_index}`);
+    assert.equal(r.page_errors, 0, `run${r.run_index}`);
+    assert.equal(r.console_errors, 0, `run${r.run_index}`);
+    assert.equal(r.request_failed, 0, `run${r.run_index}`);
+    assert.equal(r.http_errors, 0, `run${r.run_index}`);
+    assert.equal(r.launcher_equal, true, `run${r.run_index}`);
+  }
+  const vr = p.visual_review;
+  assert.equal(vr.performed, true);
+  assert.equal(vr.result, 'PASS');
+  assert.equal(vr.central_visual_pass, true);
+  assert.equal(vr.central_direct_artifact_review, true);
+  assert.equal(vr.status, 'PASS_CANDIDATE_EVIDENCE');
+  assert.equal(vr.reviewer, 'CENTRAL');
+  assert.equal(vr.accepted, true);
+  assert.equal(vr.review_sheets, 4);
+  assert.equal(vr.visual_pairs, 18);
+  assert.equal(p.frozen_source_defects.preserved, true);
+  assert.equal(p.frozen_source_defects.repaired, false);
+  assert.equal(p.frozen_source_defects.visual_coverage_complete, '6/6');
+  assert.deepEqual(p.frozen_source_defects.ids, ['BD-01','BD-02','BD-03','BD-04','BD-05','BD-06']);
+  for (const key of [
+    'raw_png_equality_used',
+    'pixel_tolerance_used',
+    'ssim_used',
+    'perceptual_hash_used',
+    'rng_patch_used',
+    'clock_patch_used',
+    'performance_now_patch_used',
+    'runtime_source_patch_used',
+    'qa_clock_patch_used',
+    'qa_raf_patch_used',
+    'qa_runtime_hook_used',
+  ]) assert.equal(p[key], false, key);
+  assert.equal(p.browser_errors, 0);
+  assert.equal(p.adoption.product_adoption, false);
+  assert.equal(p.adoption.capability_native_adoption, false);
+  assert.equal(p.adoption.product_canonical, false);
+  assert.equal(p.adoption.drive_mutation, 0);
+  /* The shared fail-closed validator contract must be clean for this artifact: any weakening of
+   * the motion-aware policy or the comparison result re-fails here. */
+  assert.deepEqual(validateAcceptedParityComparisons('CDX006', p, []), []);
+  assert.deepEqual(validateMotionAwareParityFields('CDX006', p), []);
 });
 
 test('source randomness and reduced-motion defect scope remains authored and unpatched', () => {

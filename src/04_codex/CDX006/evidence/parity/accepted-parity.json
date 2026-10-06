@@ -1,0 +1,313 @@
+{
+  "schema_version": "1.0",
+  "codex_id": "CDX006",
+  "source_id": "CDX006",
+  "master_id": "MST108",
+  "identity_key_note": "CDX capsules retain their CDX identity. source_id mirrors codex_id only for the shared accepted-parity validator; CDX006 is not converted into a Source identity. It is an authored multi-executable SUITE of four member surfaces plus a root launcher.",
+  "stage": "S4_SOURCE_SPLIT_PARITY",
+  "status": "ACCEPTED",
+  "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+  "identity": {
+    "codex_id": "CDX006",
+    "source_id": "CDX006",
+    "master_id": "MST108",
+    "parity_contract": "SOURCE_SPECIFIC_MOTION_AWARE",
+    "authority_mode": "SUITE_MULTI_EXECUTABLE",
+    "member_surface_count": 4
+  },
+  "frozen_authority": {
+    "suite_root_folder_id": "131menEkP2-XGnPlu4DqsjynPErIptoQ_",
+    "authority_mode": "SUITE_MULTI_EXECUTABLE",
+    "root_launcher": {
+      "drive_file_id": "1PeYJa6ROLiNKsRxjcJsi5dYrXMyh7Aka",
+      "filename": "최종본.html",
+      "relative_path": "최종본.html",
+      "bytes": 958,
+      "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99",
+      "role": "BOOTSTRAP_PROVENANCE_ONLY"
+    },
+    "member_surfaces": [
+      {
+        "label": "HUB",
+        "drive_file_id": "1L1bFbB1BB-pKysR1xy-Vup1iQhlR4MlG",
+        "relative_path": "개발과정/index.html",
+        "bytes": 6088,
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841"
+      },
+      {
+        "label": "PROGRAM_01_MEMORY_CAPSULE",
+        "drive_file_id": "1lGCvpq8Eu2zIm713QWQ5_2k7Q9nmIQqt",
+        "relative_path": "개발과정/01-memory-capsule.html",
+        "bytes": 15991,
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922"
+      },
+      {
+        "label": "PROGRAM_02_MEMORY_STACK",
+        "drive_file_id": "13F5tUplnEoHTh4gIrkbZ6o-g7Nk-OyUh",
+        "relative_path": "개발과정/02-memory-stack.html",
+        "bytes": 15578,
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785"
+      },
+      {
+        "label": "PROGRAM_03_TREE_KEEPER",
+        "drive_file_id": "1mNp6oDUZ3QuOH1IKS3z6Dy34V09_UPrV",
+        "relative_path": "개발과정/03-tree-keeper.html",
+        "bytes": 18280,
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d"
+      }
+    ],
+    "authority_bytes_source": "COMMITTED_GIT_BLOB_TRUTH",
+    "authority_bytes_note": "core.autocrlf=true on the authoring device, so checked-out worktree bytes carry CRLF and do NOT reproduce these SHA-256 values locally. These are the committed Git blob contents at accepted_candidate_head, independently verified by CENTRAL. Byte-exact authority verification must read committed Git blob truth, never the CRLF worktree checkout. No authority file was rewritten to satisfy a local hash."
+  },
+  "protected_runtime": {
+    "original_surface": {
+      "original/최종본.html": {
+        "git_blob_sha1": "7c7d7e00e6cdc8a7ee4499076fde87b1d8ea6e78",
+        "sha256": "fdcc0ea79b342d051e90f8f073f7c7b8d8ce5c71f00c49f71461b314e78caf99",
+        "bytes": 958
+      },
+      "original/개발과정/index.html": {
+        "git_blob_sha1": "8bfc95ab8a597213f02e5df37797b827b6267244",
+        "sha256": "3b526a20743101fedfdf951e035c1a8370a0f88c88e3133cc642dc8c290a8841",
+        "bytes": 6088
+      },
+      "original/개발과정/01-memory-capsule.html": {
+        "git_blob_sha1": "8f51397adea56ce6df31dc0aa4347bb484005dfa",
+        "sha256": "cc0c3815300b87140c94a8b0ce5831dfb0e03d091147eb2b19deaa59c6ac9922",
+        "bytes": 15991
+      },
+      "original/개발과정/02-memory-stack.html": {
+        "git_blob_sha1": "8b885deedbbec6bb41fe0d8a83dc011f7cd91a14",
+        "sha256": "0114c705dcb316b99e46931cd131e2ae211c4e5824b759ccb9f594ea31e23785",
+        "bytes": 15578
+      },
+      "original/개발과정/03-tree-keeper.html": {
+        "git_blob_sha1": "dada7ecb7f05b9fa3bf5846850b5a9e725ec73f0",
+        "sha256": "9979c145895537d3f1f626d717112069190286894e16aa63458d94a761c7aa5d",
+        "bytes": 18280
+      }
+    },
+    "split_surface": {
+      "split/개발과정/index.html": {
+        "git_blob_sha1": "0e6d4d0362670f45c3e790b0a0bc43b0aa60fd7d",
+        "sha256": "7ebae624d63af9d640a8fd7fadf7985730b79145e187642026d78060f7ef402f",
+        "bytes": 2180
+      },
+      "split/개발과정/01-memory-capsule.html": {
+        "git_blob_sha1": "8173c914343762cf5ef34ae3de04cbf31f45497d",
+        "sha256": "ed36a6becaad3b91626ec7306b049a54c472812b6412ec4c11d99e3a80de3bcf",
+        "bytes": 3343
+      },
+      "split/개발과정/02-memory-stack.html": {
+        "git_blob_sha1": "9633f4159bd4e7fabe145cb21559b70fc5926753",
+        "sha256": "82b517d78429c2b451ff2422cc71b1026f73925abe86f40b4866daa31dc37193",
+        "bytes": 2255
+      },
+      "split/개발과정/03-tree-keeper.html": {
+        "git_blob_sha1": "aa81e18875148bf703e4bc19aebb458a1de28bcc",
+        "sha256": "f97aadc6e8268cb7934b99eeb2e70a551501891ebeefa61fb34fe905337061a8",
+        "bytes": 1700
+      },
+      "split/개발과정/03-tree-keeper.styles.css": {
+        "git_blob_sha1": "6068ee0a48fcc2b720af578a573f7caf5056a4c2",
+        "sha256": "e1dde1117902c3584fc13ecb47ce553b073d06daaa9d3cdaa85002811169f572",
+        "bytes": 9486
+      },
+      "split/개발과정/03-tree-keeper.script.js": {
+        "git_blob_sha1": "ebc6c8c1a0e781774bb9e507b743481ac21e1e06",
+        "sha256": "feebaa6f388a290549d6e2199dcbc3a40d83f9b9241a26002f69364ae005d1e6",
+        "bytes": 7170
+      }
+    },
+    "p03_extraction_byte_identity": {
+      "note": "P03 is the surface whose earlier S4 evidence was recut. The ORIGINAL inline <script> body and the SPLIT external script are byte-identical, and the inline <style> and the extracted stylesheet are byte-identical, so the split is a pure structural extraction with no reinterpretation and no source repair.",
+      "inline_script_sha256": "feebaa6f388a290549d6e2199dcbc3a40d83f9b9241a26002f69364ae005d1e6",
+      "external_script_sha256": "feebaa6f388a290549d6e2199dcbc3a40d83f9b9241a26002f69364ae005d1e6",
+      "inline_style_bytes": 9486,
+      "external_style_bytes": 9486,
+      "url_rewrites": 0,
+      "source_repairs": 0
+    },
+    "asset_preservation": {
+      "runtime_asset_files": 86,
+      "reference_only_asset_files": 2,
+      "total_asset_files": 88,
+      "note": "80 figure PNGs plus 6 runtime keeper PNGs are loaded at runtime on both surfaces and sweep 86/86 identically; lumi-sheet.png and lumi-sheet-green.png are reference-only in both originals and are not runtime-loaded."
+    }
+  },
+  "binding": {
+    "accepted_candidate_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "capture_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "accepted_series": "LOCAL_K_LIPVOICE_RECUT_2",
+    "pull_request": 671,
+    "central_acceptance_issue": "skerishKang/lovetree-limone#589",
+    "central_acceptance_comment": 5997820639,
+    "central_acceptance_ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+    "central_acceptance_ref_secondary": "skerishKang/lovetree-limone#649 comment 5997821238",
+    "central_pr_review_ref": "skerishKang/lovetree-limone#671 comment 5997822203",
+    "central_reviewed_visual_candidate_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "s3_release_ref": "skerishKang/lovetree-limone#589 comment 5980345669",
+    "superseded_series": [
+      {
+        "series": "LOCAL_K_LIPVOICE_NEW_SERIES",
+        "disposition": "SUPERSEDED_FOR_ACCEPTANCE",
+        "reason": "Captured P03 inside the authored finite keeper `out` transient, so pair M1/P03/initial recorded the keeper figure on one side only and the comparator absorbed that into an allowed projection instead of measuring the element. Retained as historical evidence; never accepted."
+      }
+    ],
+    "note": "This record binds accepted parity to the reviewed candidate head 0249d0eb.... It is not self-referential about the promotion commit: the promotion commit that creates this file necessarily has a different head, and CENTRAL verifies that head by exact-head CI after the promotion push. No claim is made that CENTRAL visually reviewed this promotion commit."
+  },
+  "measurement": {
+    "fresh_full_runs": "3/3",
+    "paired_actions_per_run": 64,
+    "paired_actions": "192/192",
+    "runtime_assets_per_side_per_run": 86,
+    "runtime_assets": "516/516",
+    "suite_edges": "8/8",
+    "screenshots_fingerprinted": 384,
+    "raw_png_equality_required": false,
+    "pixel_tolerance_gate": false,
+    "ssim_gate": false,
+    "perceptual_hash_gate": false
+  },
+  "three_run_proof": {
+    "required_runs": 3,
+    "runs_recorded": 3,
+    "runs_clean": true,
+    "three_run_proof": true,
+    "averaging_or_best_of": "FORBIDDEN",
+    "carried_over_prior_proof": false,
+    "runs": [
+      { "run_index": 1, "real_parity_defects": 0, "unclassified_residuals": 0, "finite_transition_structural_mismatches": 0, "page_errors": 0, "console_errors": 0, "request_failed": 0, "http_errors": 0, "runtime_assets_original": "86/86", "runtime_assets_split": "86/86", "launcher_equal": true },
+      { "run_index": 2, "real_parity_defects": 0, "unclassified_residuals": 0, "finite_transition_structural_mismatches": 0, "page_errors": 0, "console_errors": 0, "request_failed": 0, "http_errors": 0, "runtime_assets_original": "86/86", "runtime_assets_split": "86/86", "launcher_equal": true },
+      { "run_index": 3, "real_parity_defects": 0, "unclassified_residuals": 0, "finite_transition_structural_mismatches": 0, "page_errors": 0, "console_errors": 0, "request_failed": 0, "http_errors": 0, "runtime_assets_original": "86/86", "runtime_assets_split": "86/86", "launcher_equal": true }
+    ]
+  },
+  "comparisons": {
+    "dom": "EQUAL",
+    "geometry": "EQUAL",
+    "computed_style": "EQUAL",
+    "runtime_state": "EQUAL",
+    "interactions": "EQUAL",
+    "media_identity": "EQUAL",
+    "screenshots": "MOTION_AWARE_STATE_PARITY_CENTRAL_VISUAL_ACCEPTED"
+  },
+  "comparison_policy": {
+    "keeper_element_state_compared_exactly": true,
+    "keeper_capture": "SOURCE_AWARE_BOUNDED_WAIT on #keeper only; waits for exists, complete, naturalWidth>0, no authored `out` class, displayed, visible, opacity 1 and no running keeper CSSTransition, plus a 2-rAF settle, with an 8000ms bounded timeout that fails closed",
+    "finite_transition_rule": "Authored CSS transition structure (transition-property/-duration/-delay/-timing-function) is compared exactly. AUTHORED_FINITE_TRANSIENT_PHASE is permitted only when both sides agree on that structure; any structural delta is an UNCLASSIFIED residual that fails the run. Capture-phase fields (currentTime, playState) and the loopback serving port embedded in currentSrc are the only projections.",
+    "allowed_classifications": [
+      "AUTHORED_FINITE_TRANSIENT_PHASE",
+      "AUTHORED_LIVE_PHASE",
+      "AUTHORED_RANDOM_SCALAR"
+    ],
+    "unclassified_residuals": 0,
+    "raw_png_equality_used": false,
+    "pixel_tolerance_used": false,
+    "ssim_used": false,
+    "perceptual_hash_used": false
+  },
+  "gates": {
+    "real_parity_defects": 0,
+    "unclassified_residuals": 0,
+    "finite_transition_structural_mismatches": 0,
+    "pairs_with_real_diffs": 0,
+    "page_errors": 0,
+    "console_errors": 0,
+    "request_failed": 0,
+    "http_errors": 0,
+    "browser_errors": 0,
+    "required_network_errors": 0,
+    "unexpected_failed_requests": 0,
+    "missing_runtime_assets": 0
+  },
+  "frozen_source_defects": {
+    "ids": ["BD-01", "BD-02", "BD-03", "BD-04", "BD-05", "BD-06"],
+    "preserved": true,
+    "repaired": false,
+    "preserved_every_run": true,
+    "visual_coverage_complete": "6/6",
+    "visual_coverage": {
+      "BD-01": ["R1/P01/initial", "R1/P03/initial"],
+      "BD-02": ["T1/P01/initial"],
+      "BD-03": ["D1/P02/selected_layer", "D1/P02/legend_selection"],
+      "BD-04": ["D1/P02/story_play", "D1/P02/story_completion"],
+      "BD-05": ["M1/P03/initial"],
+      "BD-06": ["T1/P03/initial"]
+    }
+  },
+  "visual_review": {
+    "performed": true,
+    "result": "PASS",
+    "central_visual_pass": true,
+    "central_direct_artifact_review": true,
+    "status": "PASS_CANDIDATE_EVIDENCE",
+    "reviewer": "CENTRAL",
+    "accepted": true,
+    "ref": "skerishKang/lovetree-limone#589 comment 5997820639",
+    "reviewed_head": "0249d0eb6803a24ba291438d2cd326d262c9ad00",
+    "review_sheets": 4,
+    "visual_pairs": 18,
+    "required_pairs_of_interest": [
+      "M1/P03/initial (keeper captured after its authored transient; settled keeper figure identical on both sides)",
+      "T1/P03/initial (BD-06 authored headline/scene-card collision present identically on both sides)"
+    ],
+    "method": "direct qualitative review of the ORIGINAL|SPLIT contact sheets for the accepted candidate head 0249d0eb.... No pixel tolerance, SSIM, perceptual threshold or raw-PNG equality is used.",
+    "review_pack_committed": 4
+  },
+  "visual_comparison_policy": {
+    "raw_png_byte_equality_required": false,
+    "pixel_tolerance": "NONE",
+    "ssim": "NONE",
+    "perceptual_hash": "NONE",
+    "screenshots_are": "EVIDENCE_CHANNEL_ONLY"
+  },
+  "stochastic_projection": {
+    "policy": "FIELD_LEVEL_ONLY_RANDOM_SCALARS; the enclosing particle and burst structure is still compared exactly. No Math.random seed, no monkey-patch, no clock patch, no performance.now patch, no source normalization, no runtime source patch.",
+    "math_random_seed_or_monkey_patch": false,
+    "clock_or_performance_now_patch": false,
+    "qa_clock_patch_used": false,
+    "qa_raf_patch_used": false,
+    "qa_runtime_hook_used": false,
+    "source_normalization": false
+  },
+  "adoption": {
+    "product_adoption": false,
+    "capability_native_adoption": false,
+    "product_canonical": false,
+    "drive_mutation": 0
+  },
+  "candidate_evidence_refs": {
+    "candidate_proof": "evidence/s4/candidate-proof.json",
+    "run1_comparison": "evidence/s4/run1-comparison.json",
+    "run2_comparison": "evidence/s4/run2-comparison.json",
+    "run3_comparison": "evidence/s4/run3-comparison.json",
+    "screenshot_manifest": "evidence/s4/screenshot-manifest.json",
+    "frozen_defects": "evidence/s4/frozen-defects.json",
+    "p02_defect_probe": "evidence/s4/p02-defect-probe.json",
+    "review_pack": "evidence/s4/review-pack/",
+    "s3_roundtrip_historical": "evidence/s3/roundtrip.json"
+  },
+  "raw_png_equality_used": false,
+  "pixel_tolerance_used": false,
+  "ssim_used": false,
+  "perceptual_hash_used": false,
+  "rng_patch_used": false,
+  "clock_patch_used": false,
+  "performance_now_patch_used": false,
+  "runtime_source_patch_used": false,
+  "qa_clock_patch_used": false,
+  "qa_raf_patch_used": false,
+  "qa_runtime_hook_used": false,
+  "browser_errors": 0,
+  "required_network_errors": 0,
+  "unexpected_failed_requests": 0,
+  "product_adoption": false,
+  "product_canonical": false,
+  "notes": [
+    "CDX006 S4 accepted by CENTRAL at PR #671, issue comment 5997820639, against accepted candidate head 0249d0eb6803a24ba291438d2cd326d262c9ad00.",
+    "The acceptance is bound to the reviewed candidate head. This promotion commit is metadata-only and changes no source, original, split, or asset byte.",
+    "Authority SHA-256 values are committed Git blob truth. The authoring device has core.autocrlf=true, so local worktree bytes carry CRLF and will not reproduce them; no authority file was rewritten to satisfy a local hash.",
+    "The earlier LOCAL_K_LIPVOICE_NEW_SERIES evidence is superseded for acceptance and retained only as history.",
+    "No S4 acceptance implies Product adoption, native capability adoption, canonical status, or any Drive mutation."
+  ]
+}
