@@ -1,8 +1,10 @@
 {
   "componentId": "COMP_SRC064",
   "sourceOrCodexId": "SRC064",
-  "state": "S5_CANDIDATE_PENDING_CENTRAL",
-  "note": "Component metadata, not Source authority. First reusable SRC064 adoption candidate (#674). No consumer ownership: no consumer path references this layer yet; MVP001 remains byte-unchanged on its existing files (Phase B isolation, #673 comment 6014271766).",
+  "state": "S5_ACCEPTED",
+  "central_s5_accepted": true,
+  "s5AcceptanceRef": "PR #675 comment 6020686874",
+  "note": "Component metadata, not Source authority. SRC064 reusable adoption component accepted at S5 by CENTRAL exact-head review (PR #675 comment 6020686874); reusable adapter bound. No consumer ownership: no consumer path references this layer yet; MVP001 remains byte-unchanged on its existing files. S6 (composition binding, product-route release) remains unreleased. File hashes below reference the accepted candidate bytes unchanged.",
   "adapterContractVersion": 1,
   "authorityRef": "src/03_sources/SRC064/authority",
   "acceptedParityRef": "src/03_sources/SRC064/evidence/parity/accepted-parity.json",

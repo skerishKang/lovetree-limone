@@ -5,14 +5,27 @@
  * Fail-closed guard for the current clean-generation mechanical source phase.
  * Enforces that active src/ contains no TS/TSX/JSX files, no component
  * directory under 06_components other than the exact generation-state released
- * pilot set (each with a matching adoption ledger record), no premature MVP
- * compositions beyond README.md, and no reintroduced clean-generation MVP
- * composition contract tests under tests/.
+ * pilot set (each corroborated by its adoption ledger record), no premature
+ * MVP compositions beyond README.md, and no reintroduced clean-generation
+ * MVP composition contract tests under tests/.
  *
  * Release authority for components comes ONLY from
  * src/01_registry/generation-state.json -> componentization. The adoption
  * ledger is corroborating evidence, never a release: a ledger record on its
- * own never permits a component directory.
+ * own never permits a component directory (an orphan record for an unreleased
+ * pilot is inert evidence, not authority).
+ *
+ * Accepted lifecycle (promoted by CENTRAL exact-head review, PR #675 comment
+ * 6020686874, binding the ordering ADOPTION_CANDIDATE -> OWNER_RELEASED ->
+ * REUSABLE_ADAPTER_BOUND): the guard pins the promoted truth and fails closed
+ * on any deviation in either direction — broad_release=false,
+ * released_pilots=["SRC064"], stage_by_id.SRC064=REUSABLE_ADAPTER_BOUND,
+ * s5_accepted=true, reusable_adapter_bound=true, while
+ * product_composition_released / product_adoption_complete must stay false.
+ * Each released pilot's ledger record must carry
+ * adoption_status=REUSABLE_ADAPTER_BOUND and the exact owner release
+ * reference. Demoting back to a candidate state is a FAIL; over-claiming a
+ * product composition release or product adoption completion is a FAIL.
  *
  * Exit 0 = PASS, Exit 1 = FAIL (any violation).
  *
@@ -28,6 +41,13 @@ const ADOPTION_LEDGER = join(ROOT, 'src/01_registry/adoptions');
 const GENERATION_STATE = join(ROOT, 'src/01_registry/generation-state.json');
 
 const FORBIDDEN_EXTENSIONS = new Set(['.ts', '.tsx', '.jsx']);
+
+// Phase-pinned accepted lifecycle (promotion authority: PR #675 comment
+// 6020686874). The guard fails closed on ANY deviation in either direction:
+// demotion back to a candidate state is as much a FAIL as an over-claim.
+const EXPECTED_STAGE = 'REUSABLE_ADAPTER_BOUND';
+const EXPECTED_LEDGER_STATUS = 'REUSABLE_ADAPTER_BOUND';
+const OWNER_RELEASE_REF = 'PR #675 comment 6020686874';
 
 let violations = [];
 
@@ -71,12 +91,18 @@ function checkNoTypeScriptInSrc() {
  * Returns null on any structural problem (missing file, malformed JSON,
  * missing/invalid fields); callers must treat null as FAIL (fail-closed).
  *
- * Release authority model:
+ * Release authority model (S5 accepted lifecycle, PR #675 comment 6020686874):
  *   componentization.broad_release === false
  *   componentization.released_pilots = exact released pilot ID set
- *   componentization.stage_by_id[id]  = per-pilot stage string
+ *   componentization.stage_by_id[id]  = REUSABLE_ADAPTER_BOUND per pilot
+ *   componentization.s5_accepted === true
+ *   componentization.reusable_adapter_bound === true
+ *   componentization.product_composition_released === false
+ *   componentization.product_adoption_complete === false
  * The adoption ledger never releases anything on its own — it only
- * corroborates a pilot that generation-state already released.
+ * corroborates a pilot that generation-state already released, and at the
+ * accepted stage it must record adoption_status=REUSABLE_ADAPTER_BOUND with
+ * the exact owner release reference.
  */
 function readReleaseAuthority() {
   let raw;
@@ -125,13 +151,38 @@ function readReleaseAuthority() {
       return null;
     }
   }
-  // Candidate-lifecycle invariants: this componentization release may never
-  // claim acceptance or downstream states.
-  const forbiddenTrue = ['s5_accepted', 'reusable_adapter_bound', 'product_composition_released', 'product_adoption_complete'];
-  for (const key of forbiddenTrue) {
-    if (comp[key] === true) {
-      violations.push(`LIFECYCLE_CLAIM_FORBIDDEN: componentization.${key} must not be true at this stage`);
+  // Accepted-lifecycle invariants (promotion: PR #675 comment 6020686874).
+  // The S5 candidate has been accepted and the reusable adapter is bound;
+  // exactly that truth must be recorded. Demoting a flag back to false or
+  // leaving a pilot in a candidate stage fails closed.
+  if (comp.s5_accepted !== true) {
+    violations.push(`S5_LIFECYCLE_MISMATCH: componentization.s5_accepted must be exactly true at the accepted stage (got ${JSON.stringify(comp.s5_accepted)})`);
+    return null;
+  }
+  if (comp.reusable_adapter_bound !== true) {
+    violations.push(`S5_LIFECYCLE_MISMATCH: componentization.reusable_adapter_bound must be exactly true at the accepted stage (got ${JSON.stringify(comp.reusable_adapter_bound)})`);
+    return null;
+  }
+  for (const id of pilots) {
+    if (stages[id] !== EXPECTED_STAGE) {
+      violations.push(`STAGE_NOT_REUSABLE_ADAPTER_BOUND: componentization.stage_by_id.${id} must be exactly ${EXPECTED_STAGE} at the accepted stage (got ${JSON.stringify(stages[id])})`);
       return null;
+    }
+  }
+  // S6 must not be claimed: product composition release / product adoption
+  // completion remain separate unreleased states (both here and in the
+  // product_adoption block, which must record the same truth).
+  const pa = state.product_adoption;
+  if (!pa || typeof pa !== 'object' || Array.isArray(pa)) {
+    violations.push('PRODUCT_ADOPTION_MALFORMED: product_adoption block missing or not an object');
+    return null;
+  }
+  for (const [label, obj] of [['componentization', comp], ['product_adoption', pa]]) {
+    for (const key of ['product_composition_released', 'product_adoption_complete']) {
+      if (obj[key] !== false) {
+        violations.push(`PRODUCT_LIFECYCLE_CLAIM_FORBIDDEN: ${label}.${key} must be exactly false (got ${JSON.stringify(obj[key])})`);
+        return null;
+      }
     }
   }
   return { releasedPilots: pilots, stageById: stages };
@@ -140,7 +191,10 @@ function readReleaseAuthority() {
 /**
  * Corroborate one released pilot against the adoption ledger. The ledger
  * cannot release a pilot (generation-state already did), but a released pilot
- * without a valid ledger record is a mismatch => FAIL.
+ * whose ledger record is missing or fails to corroborate the accepted
+ * lifecycle is a mismatch => FAIL. At the accepted stage the record must
+ * carry adoption_status=REUSABLE_ADAPTER_BOUND bound to the exact owner
+ * release reference.
  */
 function ledgerMatchesPilot(pilotId) {
   const rec = join(ADOPTION_LEDGER, `${pilotId}.json`);
@@ -160,6 +214,12 @@ function ledgerMatchesPilot(pilotId) {
   if (data.source_or_codex_id !== pilotId) {
     return `released pilot ${pilotId} ledger source_or_codex_id mismatch (got ${JSON.stringify(data.source_or_codex_id)})`;
   }
+  if (data.adoption_status !== EXPECTED_LEDGER_STATUS) {
+    return `released pilot ${pilotId} ledger adoption_status mismatch (expected ${EXPECTED_LEDGER_STATUS}, got ${JSON.stringify(data.adoption_status)})`;
+  }
+  if (data.owner_release_ref !== OWNER_RELEASE_REF) {
+    return `released pilot ${pilotId} ledger owner_release_ref mismatch (expected exactly ${JSON.stringify(OWNER_RELEASE_REF)}, got ${JSON.stringify(data.owner_release_ref)})`;
+  }
   return null;
 }
 
@@ -167,8 +227,9 @@ function ledgerMatchesPilot(pilotId) {
  * Check 2: src/06_components/ — README.md always allowed; a component
  * directory is allowed ONLY when generation-state release authority says so:
  * broad_release=false, the directory name is in the exact released_pilots
- * set, and its adoption ledger record corroborates that pilot. Ledger
- * self-registration alone never releases a component (fail-closed).
+ * set, and its adoption ledger record corroborates the promoted lifecycle
+ * (adoption_status=REUSABLE_ADAPTER_BOUND + exact owner release reference).
+ * Ledger self-registration alone never releases a component (fail-closed).
  */
 function checkComponentsReadOnly() {
   // Release authority is always validated (malformed generation-state must

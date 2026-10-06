@@ -34,6 +34,7 @@
   "source_visual_mutation": false,
   "source_before_after_hash_invariant": true,
   "owner_authorized_product_delta_ref": "#673 comment 6014271766",
-  "adoption_status": "ADOPTION_CANDIDATE",
-  "state_note": "S5 implementation candidate only. Not REUSABLE_ADAPTER_BOUND; S5 acceptance requires a CENTRAL exact-head review (#674)."
+  "owner_release_ref": "PR #675 comment 6020686874",
+  "adoption_status": "REUSABLE_ADAPTER_BOUND",
+  "state_note": "S5 lifecycle promoted: CENTRAL exact-head acceptance of the S5 candidate at PR #675 comment 6020686874 binds the ADOPTION_CANDIDATE -> OWNER_RELEASED -> REUSABLE_ADAPTER_BOUND ordering and records this record as REUSABLE_ADAPTER_BOUND. S6 remains unreleased: no product parity, web verification, independent verification, promotion-ready, or product-route release is recorded here."
 }

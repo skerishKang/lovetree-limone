@@ -531,14 +531,17 @@ test('F2. component manifest declares the exact canonical file set with matching
     const sha = createHash('sha256').update(blob).digest('hex');
     assert.equal(sha, meta.sha256, `${name} sha256 must match the manifest exactly`);
   }
-  assert.equal(manifest.state, 'S5_CANDIDATE_PENDING_CENTRAL');
+  assert.equal(manifest.state, 'S5_ACCEPTED');
+  assert.equal(manifest.central_s5_accepted, true);
+  assert.equal(manifest.s5AcceptanceRef, 'PR #675 comment 6020686874');
   assert.equal(manifest.consumerOwnership, 'NONE');
+  assert.deepEqual(manifest.consumerMembership, []);
 });
 
 // ---------------------------------------------------------------------------
 // G. adoption record: fail-closed candidate state
 // ---------------------------------------------------------------------------
-test('G1. adoption record is an ADOPTION_CANDIDATE with no consumer membership', () => {
+test('G1. adoption record is a REUSABLE_ADAPTER_BOUND at the accepted S5 lifecycle with no consumer membership', () => {
   const rec = JSON.parse(readFileSync(join(ROOT, '..', 'src/01_registry/adoptions/SRC064.json'), 'utf8'));
   assert.equal(rec.identity, 'LOVETREE_ADOPTION_RECORD');
   assert.equal(rec.schema_version, 1);
@@ -552,6 +555,14 @@ test('G1. adoption record is an ADOPTION_CANDIDATE with no consumer membership',
   assert.equal(rec.source_visual_mutation, false);
   assert.equal(rec.source_before_after_hash_invariant, true);
   assert.equal(rec.owner_authorized_product_delta_ref, '#673 comment 6014271766');
-  assert.equal(rec.adoption_status, 'ADOPTION_CANDIDATE');
-  assert.notEqual(rec.adoption_status, 'REUSABLE_ADAPTER_BOUND');
+  assert.equal(rec.adoption_status, 'REUSABLE_ADAPTER_BOUND');
+  assert.equal(rec.owner_release_ref, 'PR #675 comment 6020686874');
+  assert.ok(
+    !('product_parity_ref' in rec)
+      && !('web_verification_ref' in rec)
+      && !('independent_verification_ref' in rec)
+      && !('promotion_ready_ref' in rec)
+      && !('product_route_release_ref' in rec),
+    'no S6 state fields may be recorded at the accepted S5 boundary',
+  );
 });

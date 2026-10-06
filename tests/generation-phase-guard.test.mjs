@@ -6,13 +6,22 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // ---------------------------------------------------------------------------
-// Generation phase guard — release authority contract (#674 / PR #675).
+// Generation phase guard — accepted-lifecycle contract (#674 / PR #675).
 //
-// The guard's component release authority comes ONLY from
+// Component release authority comes ONLY from
 // src/01_registry/generation-state.json -> componentization (currently
 // broad_release=false, released_pilots=["SRC064"]). The adoption ledger is
 // corroborating evidence and NEVER a release: a ledger record on its own must
-// not permit a component directory.
+// not permit a component directory (an orphan record for an unreleased pilot
+// is inert).
+//
+// Accepted lifecycle (promotion: PR #675 comment 6020686874, ordering
+// ADOPTION_CANDIDATE -> OWNER_RELEASED -> REUSABLE_ADAPTER_BOUND):
+//   componentization: s5_accepted=true, reusable_adapter_bound=true,
+//   stage_by_id.SRC064=REUSABLE_ADAPTER_BOUND, broad_release=false,
+//   product_composition_released=false, product_adoption_complete=false
+//   ledger: adoption_status=REUSABLE_ADAPTER_BOUND bound to the exact owner
+//   release reference.
 //
 // Each scenario mutates the real repository tree, runs the guard as a
 // subprocess, and restores the tree in a finally block. The final test
@@ -57,6 +66,7 @@ function src999LedgerRecord() {
     schema_version: 1,
     source_or_codex_id: 'SRC999',
     adoption_status: 'ADOPTION_CANDIDATE',
+    owner_release_ref: 'PR #675 comment 6020686874',
   }, null, 2)}\n`;
 }
 
@@ -64,7 +74,11 @@ function existsSrc064Stash() {
   return existsSync(SRC064_STASH);
 }
 
-test('G1. baseline: released pilot SRC064 + matching directory + corroborating ledger => PASS', () => {
+function failGuard(out) {
+  assert.ok(out.includes('GENERATION_PHASE_GUARD = FAIL'), out);
+}
+
+test('G1. baseline: promoted accepted state (SRC064 REUSABLE_ADAPTER_BOUND + corroborating ledger) => PASS', () => {
   const { code, out } = runGuard();
   assert.equal(code, 0, out);
   assert.ok(out.includes('GENERATION_PHASE_GUARD = PASS'), out);
@@ -81,7 +95,7 @@ test('G2. SRC999 component directory + SRC999 ledger, not released in generation
     const { code, out } = runGuard();
     assert.equal(code, 1, out);
     assert.ok(out.includes('UNRELEASED_COMPONENT: src/06_components/SRC999'), out);
-    assert.ok(out.includes('GENERATION_PHASE_GUARD = FAIL'), out);
+    failGuard(out);
   } finally {
     rmSync(SRC999_DIR, { recursive: true, force: true });
     rmSync(SRC999_LEDGER, { force: true });
@@ -94,6 +108,7 @@ test('G3. unregistered SRC999 component directory (no ledger record) => FAIL', (
     const { code, out } = runGuard();
     assert.equal(code, 1, out);
     assert.ok(out.includes('UNRELEASED_COMPONENT: src/06_components/SRC999'), out);
+    failGuard(out);
   } finally {
     rmSync(SRC999_DIR, { recursive: true, force: true });
   }
@@ -119,7 +134,7 @@ test('G5. released pilot SRC064 with missing adoption ledger => FAIL', () => {
     const { code, out } = runGuard();
     assert.equal(code, 1, out);
     assert.ok(out.includes('RELEASED_PILOT_LEDGER_MISMATCH'), out);
-    assert.ok(out.includes('GENERATION_PHASE_GUARD = FAIL'), out);
+    failGuard(out);
   } finally {
     renameSync(SRC064_STASH, SRC064_LEDGER);
   }
@@ -188,10 +203,140 @@ test('G7. composition directory added under src/07_compositions => FAIL (README-
     const { code, out } = runGuard();
     assert.equal(code, 1, out);
     assert.ok(out.includes('FORBIDDEN_COMPOSITION: src/07_compositions/version-001'), out);
-    assert.ok(out.includes('GENERATION_PHASE_GUARD = FAIL'), out);
+    failGuard(out);
   } finally {
     rmSync(COMPO_DIR, { recursive: true, force: true });
   }
+});
+
+// --- Accepted-lifecycle negative matrix (promotion: PR #675 comment 6020686874) ---
+
+function withStateMutation(mutate, marker, label) {
+  const original = readFileSync(STATE_FILE, 'utf8');
+  mutate();
+  try {
+    const { code, out } = runGuard();
+    assert.equal(code, 1, `generation-state ${label} must FAIL: ${out}`);
+    assert.ok(out.includes(marker), `guard output must cite ${marker} (got: ${out})`);
+  } finally {
+    writeFileSync(STATE_FILE, original);
+  }
+}
+
+function withLedgerMutation(mutate, marker, label) {
+  const original = readFileSync(SRC064_LEDGER, 'utf8');
+  const data = JSON.parse(original);
+  mutate(data);
+  writeFileSync(SRC064_LEDGER, `${JSON.stringify(data, null, 2)}\n`);
+  try {
+    const { code, out } = runGuard();
+    assert.equal(code, 1, `ledger ${label} must FAIL: ${out}`);
+    assert.ok(out.includes(marker), `guard output must cite ${marker} (got: ${out})`);
+  } finally {
+    writeFileSync(SRC064_LEDGER, original);
+  }
+}
+
+test('H1. stage REUSABLE_ADAPTER_BOUND with s5_accepted=false => FAIL (demotion blocked)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.componentization.s5_accepted = false;
+      writeState(s);
+    },
+    'S5_LIFECYCLE_MISMATCH',
+    's5_accepted demoted',
+  );
+});
+
+test('H2. stage REUSABLE_ADAPTER_BOUND with reusable_adapter_bound=false => FAIL (demotion blocked)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.componentization.reusable_adapter_bound = false;
+      writeState(s);
+    },
+    'S5_LIFECYCLE_MISMATCH',
+    'reusable_adapter_bound demoted',
+  );
+});
+
+test('H3. stage demoted back to S5_CANDIDATE_PENDING_CENTRAL => FAIL (ordering is binding)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.componentization.stage_by_id.SRC064 = 'S5_CANDIDATE_PENDING_CENTRAL';
+      writeState(s);
+    },
+    'STAGE_NOT_REUSABLE_ADAPTER_BOUND',
+    'stage demoted',
+  );
+});
+
+test('H4. ledger adoption_status=ADOPTION_CANDIDATE while generation-state says REUSABLE_ADAPTER_BOUND => FAIL', () => {
+  withLedgerMutation(
+    (rec) => {
+      rec.adoption_status = 'ADOPTION_CANDIDATE';
+    },
+    'adoption_status mismatch',
+    'ledger status demoted',
+  );
+});
+
+test('H5. ledger missing owner_release_ref at REUSABLE_ADAPTER_BOUND => FAIL', () => {
+  withLedgerMutation(
+    (rec) => {
+      delete rec.owner_release_ref;
+    },
+    'owner_release_ref mismatch',
+    'owner release ref missing',
+  );
+});
+
+test('H6. ledger with a wrong owner_release_ref => FAIL (exact binding)', () => {
+  withLedgerMutation(
+    (rec) => {
+      rec.owner_release_ref = 'PR #675 comment 0000000000';
+    },
+    'owner_release_ref mismatch',
+    'owner release ref mismatched',
+  );
+});
+
+test('H7. componentization product_composition_released=true => FAIL (S6 not claimed)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.componentization.product_composition_released = true;
+      writeState(s);
+    },
+    'PRODUCT_LIFECYCLE_CLAIM_FORBIDDEN',
+    'product composition release claimed',
+  );
+});
+
+test('H8. product_adoption product_composition_released=true => FAIL (S6 not claimed)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.product_adoption.product_composition_released = true;
+      writeState(s);
+    },
+    'PRODUCT_LIFECYCLE_CLAIM_FORBIDDEN',
+    'product composition release claimed (product_adoption block)',
+  );
+});
+
+test('H9. product_adoption product_adoption_complete=true => FAIL (adoption not complete)', () => {
+  withStateMutation(
+    () => {
+      const s = readState();
+      s.product_adoption.product_adoption_complete = true;
+      writeState(s);
+    },
+    'PRODUCT_LIFECYCLE_CLAIM_FORBIDDEN',
+    'product adoption completion claimed',
+  );
 });
 
 test('G8. tree restored: baseline PASS and no test artifacts remain', () => {

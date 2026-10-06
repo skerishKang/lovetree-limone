@@ -58,33 +58,34 @@
     "broad_release": false,
     "released_pilots": ["SRC064"],
     "stage_by_id": {
-      "SRC064": "S5_CANDIDATE_PENDING_CENTRAL"
+      "SRC064": "REUSABLE_ADAPTER_BOUND"
     },
-    "s5_accepted": false,
-    "reusable_adapter_bound": false,
+    "s5_accepted": true,
+    "reusable_adapter_bound": true,
     "product_composition_released": false,
     "product_adoption_complete": false,
-    "note": "Sole componentization release authority for src/06_components/. broad_release=false: no broad componentization release exists. released_pilots is the exact allowlist the generation phase guard resolves; only these pilot IDs may have a component directory. An adoption ledger record is corroborating evidence for a released pilot and NEVER releases a component on its own. Stage values remain candidate states; S5 acceptance requires a CENTRAL exact-head review (#674 / PR #675)."
+    "note": "Sole componentization release authority for src/06_components/. broad_release=false: no broad componentization release exists. released_pilots is the exact allowlist the generation phase guard resolves. S5 lifecycle promoted: CENTRAL exact-head acceptance at PR #675 comment 6020686874 bound the ADOPTION_CANDIDATE -> OWNER_RELEASED -> REUSABLE_ADAPTER_BOUND ordering, so the released pilot SRC064 is REUSABLE_ADAPTER_BOUND and its adoption ledger must corroborate that status with the exact owner release reference. An orphan adoption ledger record still never releases a component on its own. S6 remains unreleased: product composition release and product adoption completion are both false; S6 wiring is a later, separately released slice."
   },
   "product_adoption": {
     "phase_state": "S5_IMPLEMENTATION_CANDIDATE",
-    "scope": "The PRODUCT_ADOPTION phase remains separate and unreleased as a whole. This records only that the first reusable S5 component candidate is released for implementation; it does NOT record S5 acceptance, REUSABLE_ADAPTER_BOUND, composition binding, or any downstream state.",
+    "scope": "The PRODUCT_ADOPTION phase remains separate and unreleased as a whole: no product composition is released and product adoption is not complete. This records that the first reusable S5 component candidate (SRC064) was accepted at S5 by CENTRAL exact-head review and its reusable adapter is bound (REUSABLE_ADAPTER_BOUND); composition binding and product-route release remain later, separately released slices.",
     "first_s5_candidate": {
       "source_or_codex_id": "SRC064",
       "component_path": "src/06_components/SRC064",
       "adoption_record": "src/01_registry/adoptions/SRC064.json",
-      "adoption_status": "ADOPTION_CANDIDATE",
+      "adoption_status": "REUSABLE_ADAPTER_BOUND",
       "accepted_source_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
       "released_by": "#673 comment 6014271766",
+      "owner_release_ref": "PR #675 comment 6020686874",
       "implementation_issue": "#674",
-      "s5_accepted": false,
-      "reusable_adapter_bound": false,
+      "s5_accepted": true,
+      "reusable_adapter_bound": true,
       "product_composition_released": false,
       "product_adoption_complete": false
     },
-    "guard_exception": "The generation phase guard permits a component directory under src/06_components/ only when generation-state componentization.released_pilots explicitly lists that pilot (currently exactly SRC064, broad_release=false) AND its adoption ledger record exists with matching identity/source_or_codex_id. Adding an adoption ledger record alone does NOT release a new pilot; released pilot set, component directories, and ledger records must match exactly. Any malformed/missing/mismatched generation-state or ledger is a FAIL.",
-    "s5_accepted": false,
-    "reusable_adapter_bound": false,
+    "guard_exception": "The generation phase guard permits a component directory under src/06_components/ only when generation-state componentization.released_pilots explicitly lists that pilot (currently exactly SRC064, broad_release=false) AND its adoption ledger record corroborates the promoted lifecycle with matching identity/source_or_codex_id, adoption_status=REUSABLE_ADAPTER_BOUND, and the exact owner release reference PR #675 comment 6020686874. An orphan adoption ledger record alone does NOT release a new pilot; released pilot set, component directories, and ledger records must match exactly. Product composition release and product adoption completion must stay false. Any malformed/missing/mismatched generation-state or ledger is a FAIL.",
+    "s5_accepted": true,
+    "reusable_adapter_bound": true,
     "product_composition_released": false,
     "product_adoption_complete": false
   },
