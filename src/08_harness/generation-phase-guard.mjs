@@ -3,21 +3,22 @@
  * generation-phase-guard.mjs
  *
  * Fail-closed guard for the current clean-generation mechanical source phase.
- * Enforces that active src/ contains no TS/TSX/JSX files, no premature
- * component records beyond README.md, no premature MVP compositions
- * beyond README.md, and no reintroduced clean-generation MVP composition
- * contract tests under tests/.
+ * Enforces that active src/ contains no TS/TSX/JSX files, no unregistered
+ * component records under 06_components (ledger-registered S5 candidates are
+ * allowed), no premature MVP compositions beyond README.md, and no
+ * reintroduced clean-generation MVP composition contract tests under tests/.
  *
  * Exit 0 = PASS, Exit 1 = FAIL (any violation).
  *
  * Runtime: .mjs only — TS/TSX forbidden in current phase.
  */
 
-import { readdirSync, statSync, existsSync } from 'node:fs';
+import { readdirSync, statSync, existsSync, readFileSync } from 'node:fs';
 import { join, relative, extname, basename } from 'node:path';
 
 const SRC_ROOT = join(import.meta.dirname, '..');
 const ROOT = join(SRC_ROOT, '..');
+const ADOPTION_LEDGER = join(ROOT, 'src/01_registry/adoptions');
 
 const FORBIDDEN_EXTENSIONS = new Set(['.ts', '.tsx', '.jsx']);
 
@@ -59,8 +60,25 @@ function checkNoTypeScriptInSrc() {
 }
 
 /**
- * Check 2: src/06_components/ — only README.md allowed
+ * Check 2: src/06_components/ — README.md always allowed; a component
+ * directory is allowed ONLY if it is registered in the canonical adoption
+ * ledger (src/01_registry/adoptions/<ID>.json). Unregistered entries remain
+ * forbidden (fail-closed). This advances the setup-slice "only README.md"
+ * policy to the released S5 reusable-component candidate phase (#674)
+ * without loosening the guard to arbitrary directories.
  */
+function isLedgerRegisteredComponent(name) {
+  const rec = join(ADOPTION_LEDGER, `${name}.json`);
+  if (!existsSync(rec)) return false;
+  try {
+    const data = JSON.parse(readFileSync(rec, 'utf8'));
+    return data && data.identity === 'LOVETREE_ADOPTION_RECORD'
+      && data.source_or_codex_id === name;
+  } catch {
+    return false; // unreadable/invalid record => not registered (fail closed)
+  }
+}
+
 function checkComponentsReadOnly() {
   const dir = join(ROOT, 'src/06_components');
   if (!existsSync(dir)) {
@@ -70,10 +88,11 @@ function checkComponentsReadOnly() {
   const entries = readdirSync(dir);
   for (const entry of entries) {
     if (entry === 'README.md') continue;
-    violations.push(`FORBIDDEN_COMPONENT: src/06_components/${entry} — only README.md allowed in current phase`);
+    if (isLedgerRegisteredComponent(entry)) continue; // released S5 candidate
+    violations.push(`FORBIDDEN_COMPONENT: src/06_components/${entry} — not registered in the adoption ledger (src/01_registry/adoptions/${entry}.json)`);
   }
-  if (entries.every(e => e === 'README.md')) {
-    console.log('PASS: src/06_components/ contains only README.md');
+  if (entries.every(e => e === 'README.md' || isLedgerRegisteredComponent(e))) {
+    console.log('PASS: src/06_components/ contains only README.md and ledger-registered components');
   }
 }
 

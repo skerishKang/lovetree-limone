@@ -54,6 +54,22 @@
       "conclusion": "SUCCESS"
     }
   },
+  "product_adoption": {
+    "phase_state": "S5_IMPLEMENTATION_CANDIDATE",
+    "scope": "The PRODUCT_ADOPTION phase remains separate and unreleased as a whole. This records only that the first reusable S5 component candidate is released for implementation; it does NOT record S5 acceptance, REUSABLE_ADAPTER_BOUND, composition binding, or any downstream state.",
+    "first_s5_candidate": {
+      "source_or_codex_id": "SRC064",
+      "component_path": "src/06_components/SRC064",
+      "adoption_record": "src/01_registry/adoptions/SRC064.json",
+      "adoption_status": "ADOPTION_CANDIDATE",
+      "accepted_source_head": "8de2c3286184ca8fca81af6ec50f8fbd9bd26891",
+      "released_by": "#673 comment 6014271766",
+      "implementation_issue": "#674",
+      "s5_accepted": false,
+      "reusable_adapter_bound": false
+    },
+    "guard_exception": "generation-phase-guard allows a component directory under src/06_components/ only when it is registered in the adoption ledger (src/01_registry/adoptions/<ID>.json); unregistered entries remain forbidden (fail-closed)."
+  },
   "notes": [
     "CALIBRATION begins only after the setup harness merged and fresh Source authority was re-resolved.",
     "SRC056 is the first real calibration Source. No Codex, family, component, or product composition runtime is released; Source mechanical rollout is now released.",
