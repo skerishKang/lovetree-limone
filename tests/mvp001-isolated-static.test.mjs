@@ -393,3 +393,99 @@ test('8. Committed-blob lock: EOL smudge cannot fake drift; committed drift and 
     rmSync(gitRoot, { recursive: true, force: true });
   }
 });
+
+// ---------------------------------------------------------------------------
+// 9. #677 CENTRAL correction: byte-source mode classification must not
+// depend on the success of a git command.
+//
+//   Case A: true non-Git fixture (.git absent)
+//           -> mode 'fixture', fixture bytes, mutations detected
+//   Case B: real repo metadata + committed blob available
+//           -> mode 'committed', committed bytes, smudge stays clean
+//   Case C: real repo metadata + committed blob unavailable
+//           -> mode 'committed' (NEVER demoted to fixture), read = null,
+//              validator fails closed with COMMITTED_BLOB_UNAVAILABLE
+// ---------------------------------------------------------------------------
+
+test('9. Byte-source classification: fixture vs real repo vs unavailable committed blob', () => {
+  // Case A — true synthetic / non-Git fixture: no .git marker.
+  const fixtureRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-fixture-'));
+  try {
+    writeMinimalCapsule(fixtureRoot, 'SRC104', Buffer.from('<html>\nfixture\n</html>\n', 'utf8'));
+    const fixtureSource = createAuthorityByteSource(fixtureRoot);
+    assert.equal(fixtureSource.mode, 'fixture', 'absent .git marker -> fixture mode');
+    const fixtureBuf = fixtureSource.read('src/03_sources/SRC104/original/original.html');
+    assert.ok(fixtureBuf && fixtureBuf.toString('utf8').includes('fixture'), 'fixture mode reads fixture worktree bytes');
+    // Intentional fixture mutation is still detected on fixture bytes.
+    const manifestPath = join(fixtureRoot, 'src/03_sources/SRC104/manifest.json');
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    manifest.authority.sha256 = '1'.repeat(64);
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    const failed = validateSourceCapsules({ repoRoot: fixtureRoot, sourceDirs: ['SRC104'], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(
+      failed.some((f) => f.includes('Drive SHA256 mismatch') || f.includes('frozen original SHA256 drift')),
+      `an intentional fixture mutation must still be detected: ${JSON.stringify(failed)}`,
+    );
+  } finally {
+    rmSync(fixtureRoot, { recursive: true, force: true });
+  }
+
+  // Case B — real repo metadata + committed blob available.
+  const realRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-real-'));
+  try {
+    execFileSync('git', ['init'], { cwd: realRoot, stdio: 'ignore' });
+    gitRun(realRoot, ['config', 'core.autocrlf', 'false']);
+    const originalLf = Buffer.from('<html>\nreal-repo fixture\n</html>\n', 'utf8');
+    writeMinimalCapsule(realRoot, 'SRC105', originalLf);
+    gitRun(realRoot, ['add', '-A']);
+    gitRun(realRoot, ['commit', '-m', 'fixture']);
+    const realSource = createAuthorityByteSource(realRoot);
+    assert.equal(realSource.mode, 'committed', '.git marker present -> committed mode');
+    assert.equal(
+      realSource.read('src/03_sources/SRC105/original/original.html').toString('utf8'),
+      originalLf.toString('utf8'),
+      'committed mode reads committed blob bytes',
+    );
+    // The CRLF worktree smudge of a real repo still fakes no drift.
+    writeFileSync(
+      join(realRoot, 'src/03_sources/SRC105/original/original.html'),
+      originalLf.toString('utf8').split('\n').join('\r\n'),
+      'utf8',
+    );
+    assert.deepEqual(
+      validateSourceCapsules({ repoRoot: realRoot, sourceDirs: ['SRC105'], phase: 'ROLLOUT', calibrationSet: new Set() }),
+      [],
+      'a CRLF smudged worktree of a real repo must not fake drift',
+    );
+  } finally {
+    rmSync(realRoot, { recursive: true, force: true });
+  }
+
+  // Case C — real repo metadata + committed blob unavailable. A `.git`
+  // marker classifies the root as committed even though no valid
+  // repository/blobs exist here; the read must be null and the validator
+  // must fail closed — never a demotion to fixture mode.
+  const unavailableRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-unavail-'));
+  try {
+    writeMinimalCapsule(unavailableRoot, 'SRC106', Buffer.from('<html>\nunavailable\n</html>\n', 'utf8'));
+    mkdirSync(join(unavailableRoot, '.git')); // repo metadata marker, no valid repo, no blobs
+    const unavailableSource = createAuthorityByteSource(unavailableRoot);
+    assert.equal(
+      unavailableSource.mode,
+      'committed',
+      'real-repo metadata must stay committed mode when the committed blob is unavailable',
+    );
+    assert.equal(
+      unavailableSource.read('src/03_sources/SRC106/original/original.html'),
+      null,
+      'unavailable committed blob -> null (COMMITTED_BLOB_UNAVAILABLE)',
+    );
+    const unavailableFailures = validateSourceCapsules({ repoRoot: unavailableRoot, sourceDirs: ['SRC106'], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(
+      unavailableFailures.some((f) => f.includes('COMMITTED_BLOB_UNAVAILABLE')),
+      `the validator must fail closed on an unavailable committed blob: ${JSON.stringify(unavailableFailures)}`,
+    );
+  } finally {
+    rmSync(unavailableRoot, { recursive: true, force: true });
+  }
+});

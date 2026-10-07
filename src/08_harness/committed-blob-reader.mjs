@@ -15,11 +15,25 @@
  * bytes are read, so a genuine committed-content change still fails.
  *
  * Root model:
- *   real current Git repository       -> committed blob authority
- *                                       (git cat-file blob HEAD:<path>)
- *   synthetic / non-Git fixture root  -> fixture worktree bytes
- *                                       (intentional fixture mutations must
- *                                        still be detected)
+ *   real current Git repository / worktree
+ *                                  -> committed blob authority
+ *                                     (git cat-file blob HEAD:<path>)
+ *   synthetic / non-Git fixture root -> fixture worktree bytes
+ *                                        (intentional fixture mutations
+ *                                         must still be detected)
+ *
+ * Real-repo vs fixture classification is based on source-controlled
+ * FILESYSTEM evidence at the root, NOT on the success of a git command:
+ *
+ *   <root>/.git exists (directory)  -> normal clone
+ *   <root>/.git exists (file)       -> git worktree / submodule pointer
+ *   <root>/.git exists (symlink)    -> marker of a repo claim
+ *   <root>/.git absent              -> true non-Git synthetic fixture
+ *
+ * Invariant: a missing or failing git binary is NOT proof that a root is a
+ * synthetic fixture. A real repository whose git command is unavailable or
+ * whose blobs are missing stays in committed mode and fails closed with
+ * COMMITTED_BLOB_UNAVAILABLE.
  *
  * Fail-closed: in committed mode a Git failure or unavailable blob yields
  * COMMITTED_BLOB_UNAVAILABLE; there is never a silent worktree fallback.
@@ -31,29 +45,30 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 // 64 MiB covers the largest frozen original (multi-MB HTML) with margin.
 const BLOB_MAX_BUFFER = 64 * 1024 * 1024;
 
 /**
- * True when rootDir is inside a real Git worktree. Synthetic fixture roots
- * (mkdtemp directories holding copied capsule files) are not Git repos and
- * therefore stay on fixture worktree bytes. Fixture roots must live OUTSIDE
- * the repository so they are never misclassified as committed authority.
+ * True when rootDir carries source-controlled repository metadata: a `.git`
+ * entry present as a directory (normal clone), a file (git worktree /
+ * submodule pointer), or a symlink (repo claim). A git binary being absent
+ * or a git command failing is deliberately NOT used as fixture evidence —
+ * such a root stays in committed mode and fails closed. Synthetic fixture
+ * roots (mkdtemp directories holding copied capsule files) have no `.git`
+ * entry and stay on fixture worktree bytes. Fixture roots must live
+ * OUTSIDE the repository so they are never misclassified.
  */
 export function isGitRepoRoot(rootDir) {
+  let st;
   try {
-    const out = execFileSync('git', ['rev-parse', '--is-inside-work-tree'], {
-      cwd: rootDir,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    return out.trim() === 'true';
+    st = lstatSync(join(rootDir, '.git'));
   } catch {
-    return false; // Git unavailable or not a worktree: fixture semantics.
+    return false; // no .git marker: true non-Git fixture
   }
+  return st.isDirectory() || st.isFile() || st.isSymbolicLink();
 }
 
 function isRepoRelativePosixPath(p) {
