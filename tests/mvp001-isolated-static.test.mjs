@@ -16,14 +16,16 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parseMvp001UrlState } from '../public/mvp/01/productization-contract.js';
+import { createAuthorityByteSource, readCommittedBlob } from '../src/08_harness/committed-blob-reader.mjs';
+import { validateSourceCapsules } from '../src/08_harness/source-capsule-validator.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
-const SOURCES_ROOT = join(ROOT, 'src/03_sources');
 const SURFACES_ROOT = join(ROOT, 'public/mvp/01/surfaces');
 
 const SOURCES = [
@@ -39,14 +41,21 @@ function sha256(buf) {
 }
 
 test('1. Source capsules in src/03_sources/ remain untouched and match authority', () => {
+  // #676: read COMMITTED blob bytes, not worktree bytes. A CRLF checkout
+  // smudges the worktree to differ from the committed LF authority; the
+  // committed blob is the authoritative input. Equality semantics unchanged.
+  const bytes = createAuthorityByteSource(ROOT);
   for (const { id } of SOURCES) {
-    const authShaPath = join(SOURCES_ROOT, id, 'authority/sha256.txt');
-    assert.ok(existsSync(authShaPath), `${id} must have authority/sha256.txt`);
-    const expectedSha = readFileSync(authShaPath, 'utf8').trim().split(/\s+/)[0];
+    const authShaRel = `src/03_sources/${id}/authority/sha256.txt`;
+    const originalRel = `src/03_sources/${id}/original/original.html`;
+    assert.ok(existsSync(join(ROOT, authShaRel)), `${id} must have authority/sha256.txt`);
+    const expectedShaBuf = bytes.read(authShaRel);
+    assert.ok(expectedShaBuf, `${id} authority/sha256.txt COMMITTED_BLOB_UNAVAILABLE`);
+    const expectedSha = expectedShaBuf.toString('utf8').trim().split(/\s+/)[0];
 
-    const originalPath = join(SOURCES_ROOT, id, 'original/original.html');
-    assert.ok(existsSync(originalPath), `${id} must have original.html`);
-    const originalBuf = readFileSync(originalPath);
+    assert.ok(existsSync(join(ROOT, originalRel)), `${id} must have original.html`);
+    const originalBuf = bytes.read(originalRel);
+    assert.ok(originalBuf, `${id} original.html COMMITTED_BLOB_UNAVAILABLE`);
     assert.equal(sha256(originalBuf), expectedSha, `${id} original.html must match authority SHA256`);
   }
 });
@@ -67,6 +76,9 @@ test('2. Product surfaces derive from frozen source split with derivation-manife
   const manifestPath = join(ROOT, 'public/mvp/01/product-derivation-manifest.json');
   assert.ok(existsSync(manifestPath), 'product-derivation-manifest.json must exist');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  // #676: authority + protected-product byte comparisons read COMMITTED Git
+  // blob bytes; a CRLF worktree smudge is not authority (platform-neutral).
+  const bytes = createAuthorityByteSource(ROOT);
   assert.equal(manifest.mvpId, 'MVP001');
   assert.equal(manifest.schemaVersion, 1);
   assert.deepEqual(
@@ -89,26 +101,36 @@ test('2. Product surfaces derive from frozen source split with derivation-manife
       `${id} manifest product must declare the three split files`,
     );
 
-    const splitDir = join(SOURCES_ROOT, id, 'split');
     const targetDir = join(SURFACES_ROOT, surface);
 
     assert.ok(existsSync(targetDir), `Surface directory ${surface} must exist`);
 
+    // #676: read artifact bytes from COMMITTED Git blobs (fail-closed on an
+    // unavailable blob). Only WHAT BYTES ARE READ changes — expected hashes,
+    // exact equality, occurrence counts, and allowed seam identifiers are
+    // unchanged.
+    const blob = (rel, what) => {
+      const buf = bytes.read(rel);
+      assert.ok(buf, `${what} COMMITTED_BLOB_UNAVAILABLE (fail-closed)`);
+      return buf;
+    };
+
     // (a) Authority hashes: the manifest must record the actual frozen bytes.
     for (const file of ['index.html', 'script.js', 'styles.css']) {
-      const actual = sha256(readFileSync(join(splitDir, file)));
+      const actual = sha256(blob(`src/03_sources/${id}/split/${file}`, `${id} authority ${file}`));
       assert.equal(entry.authority[file], actual, `${id} manifest authority ${file} hash must equal actual src/03_sources bytes`);
     }
 
     // (b) Product CSS hash: must be byte-identical to the authority CSS.
-    const cssSrc = readFileSync(join(splitDir, 'styles.css'));
-    const cssDst = readFileSync(join(targetDir, 'styles.css'));
+    const cssSrc = blob(`src/03_sources/${id}/split/styles.css`, `${id} authority CSS`);
+    const cssDst = blob(`public/mvp/01/surfaces/${surface}/styles.css`, `${id} product CSS`);
     assert.equal(sha256(cssDst), sha256(cssSrc), `${id}/styles.css must be byte-identical to authority`);
     assert.equal(entry.product['styles.css'], entry.authority['styles.css'], `${id} manifest must lock product CSS to authority CSS`);
 
     // (c) Product index: authority + exactly the declared bridge include.
-    const htmlSrc = readFileSync(join(splitDir, 'index.html'), 'utf8');
-    const htmlDst = readFileSync(join(targetDir, 'index.html'), 'utf8');
+    const htmlSrc = blob(`src/03_sources/${id}/split/index.html`, `${id} authority index`).toString('utf8');
+    const htmlDstBuf = blob(`public/mvp/01/surfaces/${surface}/index.html`, `${id} product index`);
+    const htmlDst = htmlDstBuf.toString('utf8');
     const bridgeTag = `<script src="./${surface}-product-bridge.js"></script>`;
     assert.equal(entry.bridgeInclude.tag, bridgeTag, `${id} manifest bridge tag must match the surface include`);
     assert.equal(entry.bridgeInclude.occurrences, 1, `${id} manifest must declare exactly one bridge include`);
@@ -116,12 +138,13 @@ test('2. Product surfaces derive from frozen source split with derivation-manife
     assert.equal(occurrences, 1, `${id}/index.html must reference its Product bridge exactly once`);
     let htmlStripped = htmlDst.replace(`\n${bridgeTag}`, '').replace(bridgeTag, '');
     assert.equal(htmlStripped, htmlSrc, `${id}/index.html must be authority plus bridge tag only`);
-    assert.equal(entry.product['index.html'], sha256(htmlDst), `${id} manifest product index hash must equal actual product bytes`);
+    assert.equal(entry.product['index.html'], sha256(htmlDstBuf), `${id} manifest product index hash must equal actual product bytes`);
 
     // (d) Product script: must preserve authority identity hooks and carry
     // only the declared bounded Product seam.
-    const jsSrc = readFileSync(join(splitDir, 'script.js'), 'utf8');
-    const jsDst = readFileSync(join(targetDir, 'script.js'), 'utf8');
+    const jsSrc = blob(`src/03_sources/${id}/split/script.js`, `${id} authority script`).toString('utf8');
+    const jsDstBuf = blob(`public/mvp/01/surfaces/${surface}/script.js`, `${id} product script`);
+    const jsDst = jsDstBuf.toString('utf8');
     const authHooks = [...jsSrc.matchAll(/window\.(__[A-Za-z0-9_]+)\s*=/g)].map((m) => m[1]);
     assert.ok(authHooks.length > 0, `${id}/script.js authority must expose identity hooks`);
     for (const hook of authHooks) {
@@ -136,18 +159,18 @@ test('2. Product surfaces derive from frozen source split with derivation-manife
       assert.ok(jsDst.includes(marker), `${id}/script.js must expose bounded seam ${marker}`);
       assert.ok(!jsSrc.includes(marker), `${id} authority script.js must not contain Product seam ${marker}`);
     }
-    assert.equal(entry.product['script.js'], sha256(jsDst), `${id} manifest product script hash must equal actual product bytes (reviewed expected hash)`);
+    assert.equal(entry.product['script.js'], sha256(jsDstBuf), `${id} manifest product script hash must equal actual product bytes (reviewed expected hash)`);
 
     // (e) Companion bridge: exists exactly once, hash locked by the manifest.
     assert.equal(entry.bridge.file, `${surface}-product-bridge.js`, `${id} manifest must declare the companion bridge file`);
     const bridgePath = join(targetDir, entry.bridge.file);
     assert.ok(existsSync(bridgePath), `${id} companion bridge must exist`);
-    assert.equal(entry.bridge.sha256, sha256(readFileSync(bridgePath)), `${id} manifest bridge hash must equal actual bridge bytes`);
+    assert.equal(entry.bridge.sha256, sha256(blob(`public/mvp/01/surfaces/${surface}/${entry.bridge.file}`, `${id} companion bridge`)), `${id} manifest bridge hash must equal actual bridge bytes`);
 
     // Authority split must contain no Product bridge references
     for (const file of ['index.html', 'styles.css', 'script.js']) {
       assert.ok(
-        !readFileSync(join(splitDir, file), 'utf8').includes('product-bridge'),
+        !blob(`src/03_sources/${id}/split/${file}`, `${id} authority ${file}`).toString('utf8').includes('product-bridge'),
         `${id} authority ${file} must not reference Product bridge`
       );
     }
@@ -218,4 +241,251 @@ test('7. Generation phase guard remains PASS', () => {
 
   const output = execFileSync('node', [guardPath], { encoding: 'utf8' });
   assert.ok(output.includes('GENERATION_PHASE_GUARD = PASS'), 'Guard execution must yield PASS');
+});
+
+// ---------------------------------------------------------------------------
+// 8. #676 platform regression: committed-blob authority lock
+//
+// Pins the cross-platform contract:
+//   real Git repository        -> committed blob bytes are the authority
+//                                  (an EOL-smudged worktree cannot fake
+//                                  drift, and a genuine committed-content
+//                                  change still fails)
+//   synthetic non-Git fixture  -> fixture worktree bytes are validated
+//                                  (intentional fixture mutations still
+//                                   fail — they are not silently resolved
+//                                  against another repository's HEAD)
+// ---------------------------------------------------------------------------
+
+function gitRun(cwd, args) {
+  try {
+    return execFileSync('git', args, {
+      cwd,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        GIT_AUTHOR_NAME: '676-fixture',
+        GIT_AUTHOR_EMAIL: '676-fixture@localhost',
+        GIT_COMMITTER_NAME: '676-fixture',
+        GIT_COMMITTER_EMAIL: '676-fixture@localhost',
+      },
+    });
+  } catch (e) {
+    return e;
+  }
+}
+
+// Minimal SINGLE-authority capsule whose recorded bytes match originalBytes.
+function writeMinimalCapsule(root, sourceId, originalBytes) {
+  const rel = `src/03_sources/${sourceId}`;
+  const sha = createHash('sha256').update(originalBytes).digest('hex');
+  const authority = {
+    drive_folder_id: 'fixture-folder',
+    drive_file_id: `fixture-file-${sourceId}`,
+    filename: `${sourceId}-fixture.html`,
+    bytes: originalBytes.length,
+    sha256: sha,
+    status: 'LOCKED',
+  };
+  mkdirSync(join(root, rel, 'authority'), { recursive: true });
+  mkdirSync(join(root, rel, 'original'), { recursive: true });
+  mkdirSync(join(root, rel, 'evidence/source'), { recursive: true });
+  writeFileSync(join(root, rel, 'original/original.html'), originalBytes);
+  writeFileSync(join(root, rel, 'manifest.json'), JSON.stringify({
+    source_id: sourceId,
+    authority_mode: 'SINGLE',
+    authority,
+    stages: {
+      identity_verified: true,
+      raw_authority_locked: true,
+      baseline_captured: false,
+      mechanical_split_complete: false,
+      source_split_parity_pass: false,
+    },
+  }, null, 2));
+  writeFileSync(join(root, rel, 'authority/authority.json'), JSON.stringify({
+    source_id: sourceId,
+    authority_mode: 'SINGLE',
+    authority_status: 'LOCKED',
+    ...authority,
+  }, null, 2));
+  writeFileSync(join(root, rel, 'authority/sha256.txt'), `${sha}  original/original.html\n`);
+  writeFileSync(join(root, rel, 'evidence/source/drive-authority-readback.json'), JSON.stringify({
+    source_id: sourceId,
+    verification_mode: 'CENTRAL_FRESH_DRIVE_READBACK',
+    fresh_drive: {
+      folder_id: authority.drive_folder_id,
+      file_id: authority.drive_file_id,
+      filename: authority.filename,
+      bytes: authority.bytes,
+      sha256: authority.sha256,
+    },
+  }, null, 2));
+}
+
+test('8. Committed-blob lock: EOL smudge cannot fake drift; committed drift and fixture mutations still fail', () => {
+  // (1) Synthetic Git fixture: a minimal capsule committed with LF bytes.
+  const gitRoot = mkdtempSync(join(tmpdir(), 'lovetree-676-gitfixture-'));
+  try {
+    execFileSync('git', ['init'], { cwd: gitRoot, stdio: 'ignore' });
+    gitRun(gitRoot, ['config', 'core.autocrlf', 'false']); // deterministic LF blobs
+    const originalLf = Buffer.from('<html>\n<body>fixture orbit</body>\n</html>\n', 'utf8');
+    writeMinimalCapsule(gitRoot, 'SRC101', originalLf);
+    gitRun(gitRoot, ['add', '-A']);
+    gitRun(gitRoot, ['commit', '-m', 'fixture capsule']);
+
+    // (3) The committed-blob reader returns the original committed LF bytes.
+    const committed = readCommittedBlob(gitRoot, 'src/03_sources/SRC101/original/original.html');
+    assert.ok(committed, 'committed blob must resolve for the fixture capsule');
+    assert.equal(committed.toString('utf8'), originalLf.toString('utf8'), 'reader must return committed LF bytes');
+
+    // (2) The worktree copy is smudged to CRLF — the platform artifact.
+    const smudged = originalLf.toString('utf8').split('\n').join('\r\n');
+    writeFileSync(join(gitRoot, 'src/03_sources/SRC101/original/original.html'), smudged, 'utf8');
+    const worktreeSha = sha256(readFileSync(join(gitRoot, 'src/03_sources/SRC101/original/original.html')));
+    assert.notEqual(worktreeSha, sha256(committed), 'smudged worktree SHA must differ from committed SHA');
+
+    // (5) The validator still uses the committed authority: the smudge alone
+    // produces NO drift, and the capsule validates clean.
+    assert.deepEqual(
+      validateSourceCapsules({ repoRoot: gitRoot, sourceDirs: ['SRC101'], phase: 'ROLLOUT', calibrationSet: new Set() }),
+      [],
+      'a CRLF worktree smudge must not fake authority drift (committed-blob input)',
+    );
+
+    // A genuinely changed committed content is still AUTHORITY DRIFT.
+    writeFileSync(join(gitRoot, 'src/03_sources/SRC101/original/original.html'), '<html>\n<body>DRIFTED</body>\n</html>\n', 'utf8');
+    gitRun(gitRoot, ['add', '-A']);
+    gitRun(gitRoot, ['commit', '-m', 'drift']);
+    const drifted = validateSourceCapsules({ repoRoot: gitRoot, sourceDirs: ['SRC101'], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(
+      drifted.some((f) => f.includes('frozen original') && (f.includes('SHA256 drift') || f.includes('byte count drift'))),
+      `a genuine committed-content change must fail: ${JSON.stringify(drifted)}`,
+    );
+
+    // Unavailable blobs fail closed (never a worktree fallback).
+    assert.equal(readCommittedBlob(gitRoot, 'src/03_sources/SRC101/does-not-exist.txt'), null, 'unknown path -> COMMITTED_BLOB_UNAVAILABLE');
+
+    // (4) Synthetic NON-Git fixture root: fixture worktree bytes are
+    // validated, and an intentional fixture mutation is still detected —
+    // it is never silently resolved against another repository's HEAD.
+    const fixtureRoot = mkdtempSync(join(tmpdir(), 'lovetree-676-fixture-'));
+    try {
+      writeMinimalCapsule(fixtureRoot, 'SRC102', originalLf);
+      assert.deepEqual(
+        validateSourceCapsules({ repoRoot: fixtureRoot, sourceDirs: ['SRC102'], phase: 'ROLLOUT', calibrationSet: new Set() }),
+        [],
+        'a consistent non-Git fixture validates clean on fixture bytes',
+      );
+      const manifestPath = join(fixtureRoot, 'src/03_sources/SRC102/manifest.json');
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      manifest.authority.sha256 = '0'.repeat(64); // a real, intentional mutation
+      writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+      const failed = validateSourceCapsules({ repoRoot: fixtureRoot, sourceDirs: ['SRC102'], phase: 'ROLLOUT', calibrationSet: new Set() });
+      assert.ok(
+        failed.some((f) => f.includes('Drive SHA256 mismatch') || f.includes('frozen original SHA256 drift')),
+        `an intentional fixture mutation must still be detected: ${JSON.stringify(failed)}`,
+      );
+    } finally {
+      rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+  } finally {
+    rmSync(gitRoot, { recursive: true, force: true });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 9. #677 CENTRAL correction: byte-source mode classification must not
+// depend on the success of a git command.
+//
+//   Case A: true non-Git fixture (.git absent)
+//           -> mode 'fixture', fixture bytes, mutations detected
+//   Case B: real repo metadata + committed blob available
+//           -> mode 'committed', committed bytes, smudge stays clean
+//   Case C: real repo metadata + committed blob unavailable
+//           -> mode 'committed' (NEVER demoted to fixture), read = null,
+//              validator fails closed with COMMITTED_BLOB_UNAVAILABLE
+// ---------------------------------------------------------------------------
+
+test('9. Byte-source classification: fixture vs real repo vs unavailable committed blob', () => {
+  // Case A — true synthetic / non-Git fixture: no .git marker.
+  const fixtureRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-fixture-'));
+  try {
+    writeMinimalCapsule(fixtureRoot, 'SRC104', Buffer.from('<html>\nfixture\n</html>\n', 'utf8'));
+    const fixtureSource = createAuthorityByteSource(fixtureRoot);
+    assert.equal(fixtureSource.mode, 'fixture', 'absent .git marker -> fixture mode');
+    const fixtureBuf = fixtureSource.read('src/03_sources/SRC104/original/original.html');
+    assert.ok(fixtureBuf && fixtureBuf.toString('utf8').includes('fixture'), 'fixture mode reads fixture worktree bytes');
+    // Intentional fixture mutation is still detected on fixture bytes.
+    const manifestPath = join(fixtureRoot, 'src/03_sources/SRC104/manifest.json');
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    manifest.authority.sha256 = '1'.repeat(64);
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    const failed = validateSourceCapsules({ repoRoot: fixtureRoot, sourceDirs: ['SRC104'], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(
+      failed.some((f) => f.includes('Drive SHA256 mismatch') || f.includes('frozen original SHA256 drift')),
+      `an intentional fixture mutation must still be detected: ${JSON.stringify(failed)}`,
+    );
+  } finally {
+    rmSync(fixtureRoot, { recursive: true, force: true });
+  }
+
+  // Case B — real repo metadata + committed blob available.
+  const realRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-real-'));
+  try {
+    execFileSync('git', ['init'], { cwd: realRoot, stdio: 'ignore' });
+    gitRun(realRoot, ['config', 'core.autocrlf', 'false']);
+    const originalLf = Buffer.from('<html>\nreal-repo fixture\n</html>\n', 'utf8');
+    writeMinimalCapsule(realRoot, 'SRC105', originalLf);
+    gitRun(realRoot, ['add', '-A']);
+    gitRun(realRoot, ['commit', '-m', 'fixture']);
+    const realSource = createAuthorityByteSource(realRoot);
+    assert.equal(realSource.mode, 'committed', '.git marker present -> committed mode');
+    assert.equal(
+      realSource.read('src/03_sources/SRC105/original/original.html').toString('utf8'),
+      originalLf.toString('utf8'),
+      'committed mode reads committed blob bytes',
+    );
+    // The CRLF worktree smudge of a real repo still fakes no drift.
+    writeFileSync(
+      join(realRoot, 'src/03_sources/SRC105/original/original.html'),
+      originalLf.toString('utf8').split('\n').join('\r\n'),
+      'utf8',
+    );
+    assert.deepEqual(
+      validateSourceCapsules({ repoRoot: realRoot, sourceDirs: ['SRC105'], phase: 'ROLLOUT', calibrationSet: new Set() }),
+      [],
+      'a CRLF smudged worktree of a real repo must not fake drift',
+    );
+  } finally {
+    rmSync(realRoot, { recursive: true, force: true });
+  }
+
+  // Case C — real repo metadata + committed blob unavailable. A `.git`
+  // marker classifies the root as committed even though no valid
+  // repository/blobs exist here; the read must be null and the validator
+  // must fail closed — never a demotion to fixture mode.
+  const unavailableRoot = mkdtempSync(join(tmpdir(), 'lovetree-677-unavail-'));
+  try {
+    writeMinimalCapsule(unavailableRoot, 'SRC106', Buffer.from('<html>\nunavailable\n</html>\n', 'utf8'));
+    mkdirSync(join(unavailableRoot, '.git')); // repo metadata marker, no valid repo, no blobs
+    const unavailableSource = createAuthorityByteSource(unavailableRoot);
+    assert.equal(
+      unavailableSource.mode,
+      'committed',
+      'real-repo metadata must stay committed mode when the committed blob is unavailable',
+    );
+    assert.equal(
+      unavailableSource.read('src/03_sources/SRC106/original/original.html'),
+      null,
+      'unavailable committed blob -> null (COMMITTED_BLOB_UNAVAILABLE)',
+    );
+    const unavailableFailures = validateSourceCapsules({ repoRoot: unavailableRoot, sourceDirs: ['SRC106'], phase: 'ROLLOUT', calibrationSet: new Set() });
+    assert.ok(
+      unavailableFailures.some((f) => f.includes('COMMITTED_BLOB_UNAVAILABLE')),
+      `the validator must fail closed on an unavailable committed blob: ${JSON.stringify(unavailableFailures)}`,
+    );
+  } finally {
+    rmSync(unavailableRoot, { recursive: true, force: true });
+  }
 });
