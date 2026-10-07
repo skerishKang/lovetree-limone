@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { checkVariantEntry, resolveAuthorityMode, validateDualVariantSelector } from './dual-variant-mechanical.mjs';
+import { createAuthorityByteSource } from './committed-blob-reader.mjs';
 
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 
@@ -269,7 +270,7 @@ export function validateAcceptedParityComparisons(sourceId, parity, failures = [
  * executable authorities, explicit neutral selector, no default, fail closed).
  * SINGLE capsules never reach this branch; their behavior is unchanged.
  */
-function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback }) {
+function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback, byteSource }) {
   const failures = [];
   const fail = (message) => failures.push(`${sourceId}: ${message}`);
 
@@ -338,9 +339,11 @@ function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, author
 
   for (const key of ['A', 'B']) requirePath(repoRoot, `${base}/original/${key}/original.html`, failures);
   for (const key of ['A', 'B']) {
-    const originalPath = path.join(repoRoot, base, 'original', key, 'original.html');
-    if (!fs.existsSync(originalPath)) continue;
-    const original = fs.readFileSync(originalPath);
+    const original = byteSource.read(`${base}/original/${key}/original.html`);
+    if (original === null) {
+      if (byteSource.mode === 'committed') fail(`frozen original ${key} COMMITTED_BLOB_UNAVAILABLE (fail-closed; no worktree fallback)`);
+      continue;
+    }
     if (typeof mv?.[key]?.bytes === 'number' && original.length !== mv[key].bytes) fail(`frozen original ${key} byte count drift`);
     if (typeof mv?.[key]?.sha256 === 'string' && sha256(original) !== mv[key].sha256) fail(`frozen original ${key} SHA256 drift`);
   }
@@ -417,6 +420,11 @@ function validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, author
 export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibrationSet }) {
   const failures = [];
   const fixedCalibrationSet = calibrationSet ?? new Set();
+  // #676: root-dependent frozen-authority byte source. Real Git repositories
+  // validate against committed blob bytes (worktree EOL smudge is not
+  // authority); synthetic non-Git fixture roots keep fixture worktree bytes
+  // so intentional fixture mutations are still detected.
+  const byteSource = createAuthorityByteSource(repoRoot);
 
   if (phase === 'CALIBRATION') {
     if (!sourceDirs.includes('SRC056')) failures.push('CALIBRATION must include first calibration SRC056');
@@ -449,7 +457,7 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
       continue;
     }
     if (authorityMode === 'DUAL_VARIANT') {
-      failures.push(...validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback }));
+      failures.push(...validateDualVariantCapsule({ repoRoot, base, sourceId, manifest, authority, driveReadback, byteSource }));
       continue;
     }
 
@@ -469,11 +477,15 @@ export function validateSourceCapsules({ repoRoot, sourceDirs, phase, calibratio
     if (a.authority_status !== 'LOCKED' || m.status !== 'LOCKED') failures.push(`${sourceId}: authority must be LOCKED`);
     if (driveReadback.verification_mode !== 'CENTRAL_FRESH_DRIVE_READBACK') failures.push(`${sourceId}: Drive readback mode drift`);
 
-    const originalPath = path.join(repoRoot, base, 'original/original.html');
-    if (fs.existsSync(originalPath)) {
-      const original = fs.readFileSync(originalPath);
+    const original = byteSource.read(`${base}/original/original.html`);
+    if (original !== null) {
       if (original.length !== m.bytes) failures.push(`${sourceId}: frozen original byte count drift`);
       if (sha256(original) !== m.sha256) failures.push(`${sourceId}: frozen original SHA256 drift`);
+    } else if (byteSource.mode === 'committed') {
+      // Fail closed: a real Git repository must be able to resolve the frozen
+      // original from its committed authority. Never fall back to worktree
+      // bytes (worktree EOL smudge is not authority).
+      failures.push(`${sourceId}: frozen original COMMITTED_BLOB_UNAVAILABLE (fail-closed; no worktree fallback)`);
     }
     const shaPath = path.join(repoRoot, base, 'authority/sha256.txt');
     if (fs.existsSync(shaPath) && !fs.readFileSync(shaPath, 'utf8').trim().startsWith(m.sha256)) failures.push(`${sourceId}: sha256.txt mismatch`);
